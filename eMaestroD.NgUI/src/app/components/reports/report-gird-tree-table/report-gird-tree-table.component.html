@@ -1,0 +1,72 @@
+<div class="container">
+  <div class="card">
+    <div class="table-header row" style="margin-top: 8px;margin-bottom: 8px;">
+      <span *ngIf="row == 1" style="color:var(--red-600)" translate>Not Record Found!</span>
+      <div class="col-md-6">
+        <span class="p-input-icon-left ml-auto" *ngIf="AllowGlobalFilter && row != 1">
+          <i class="pi pi-search"></i>
+          <input pInputText type="text" (input)="applyFilterGlobal($event, 'contains',table)" [placeholder]="'Search keyword'|translate" />
+        </span>
+      </div>
+
+      <div class="col-md-6" style="text-align:right !important;">
+        <span class="p-buttonset" *ngIf="AllowPrintButtons && row != 1">
+          <p-button (click)="confirmDailog()" icon="pi pi-send" styleClass="p-button p-button-sm p-button-secondary" *ngIf="AllowSendMail" [style]="{'margin-right': '8px', 'border-radius':'0.25rem'}" title="Send Mail"></p-button>
+          <p-button (click)="op.toggle($event)" icon="pi pi-angle-down" styleClass="p-button p-button-sm p-button-info" [style]="{'margin-right': '8px' , 'border-radius':'0.25rem' }" title="Show/Hide Columns"></p-button>
+          <!-- <p-button icon="pi pi-file-excel" styleClass="p-button p-button-sm p-button-success" (onClick)="dt;" [style]="{'margin-right': '8px' , 'border-radius':'0.25rem'}" title="Export Excel"></p-button> -->
+          <p-button icon="pi pi-file-pdf" styleClass="p-button p-button-sm p-button-danger" (onClick)="exportPdf()" [style]="{'margin-right': '8px' , 'border-radius':'0.25rem'}" title="Export PDF"></p-button>
+          <p-button icon="pi pi-fw pi-cog" styleClass="p-button p-button-sm p-button-secondary" (click)="reportSettingVisiblity=true" *ngIf="AllowHeaderSetting" [style]="{'margin-right': '8px' , 'border-radius':'0.25rem'}" title="Header Footer Setting"></p-button>
+        </span>
+      </div>
+    </div>
+    <p-treeTable #dt [value]="data" [columns]="selectedColumns" selectionMode="single" [styleClass]="'p-datatable-sm p-datatable-striped'" [scrollable]="true" scrollHeight="420px">
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{col.header | translate}}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+        <tr [ttRow]="rowNode">
+          <td *ngFor="let col of columns">
+            <ng-container *ngIf="col.controlType == 'enum_ColTypes.Date'">
+              {{rowData.data[col.field] | timezoneDate:"dd-MM-yyyy hh:mm:ss"}}
+            </ng-container>
+            <ng-container *ngIf="col.controlType != 'enum_ColTypes.Date' && col.controlType != 'enum_ColTypes.link' && col.controlType != 'enum_ColTypes.Currency'">
+              <span [ngStyle]="{'color': (rowData.data[col.field] < 0) ? 'red' : 'gray-900'}">{{rowData.data[col.field]}}</span>
+            </ng-container>
+            <ng-container *ngIf="col.controlType == 'enum_ColTypes.link'">
+              <a (click)="viewInvoiceDetail(rowData.data[col.field])" style="color:blue;" class="invoiceNo">{{rowData.data[col.field]}}</a>
+            </ng-container>
+            <ng-container *ngIf="col.controlType == 'enum_ColTypes.Currency'">
+              <span [ngStyle]="{'color': (rowData.data[col.field] < 0) ? 'red' : 'gray-900'}">{{rowData.data[col.field] | number : '1.2-2'}}</span>
+            </ng-container>
+          </td>
+        </tr>
+      </ng-template>
+    </p-treeTable>
+  </div>
+</div>
+
+<p-overlayPanel #op [style]="{'width': '450px'}">
+  <ng-template pTemplate="content">
+    <div class="row">
+      <div *ngFor="let colName of cols" class="field-checkbox col-6" style="margin-bottom: 10px;">
+        <p-checkbox name="group" [value]="colName" [(ngModel)]="selectedColumns" label="{{colName.header | translate}}"></p-checkbox>
+      </div>
+    </div>
+  </ng-template>
+</p-overlayPanel>
+
+<p-overlayPanel #setting>
+  <ng-template pTemplate="content">
+    <button type="button" class="btn btn-primary btn-sm" (click)="reportSettingVisiblity=true" translate>Report Setting</button>
+  </ng-template>
+</p-overlayPanel>
+
+<p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+
+<p-dialog #cstDailog [modal]="true" [(visible)]="reportSettingVisiblity" [style]="{width: '40vw'}">
+  <app-report-setting (dataEvent)="handleChildData($event)"></app-report-setting>
+</p-dialog>

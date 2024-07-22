@@ -1,0 +1,22 @@
+<div class="container">
+  <h4 translate>{{title}}</h4>
+  <div style="border-Top: 3px solid #eee;" class="row">
+    <div class="col-12">
+      <label class="col-form-label date-label col-12 required" translate>Bank Name</label>
+      <input pInputText #inputFieldTableCst autofocus (keyup.enter)="onEnterTableInput(0)" id="code" class="col-form-label col-12" name="code"  [(ngModel)]="list[0].bankName"/>
+      <label class="col-form-label date-label col-12 required" translate>Branch Code</label>
+      <input pInputText #inputFieldTableCst autofocus maxlength="15" (keyup.enter)="onEnterTableInput(1)" id="code" class="col-form-label col-12" name="code"  [(ngModel)]="list[0].branchCode"/>
+      <label class="col-form-label date-label col-12 required" translate>Account No</label>
+      <input pInputText #inputFieldTableCst autofocus (keyup.enter)="onEnterTableInput(2)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" id="code" class="col-form-label col-12" name="code"  [(ngModel)]="list[0].accountNo"/>
+      <label class="col-form-label date-label col-12 required" translate>IBAN</label>
+      <input pInputText #inputFieldTableCst autofocus (keyup.enter)="onEnterTableInput(3)" id="code" class="col-form-label col-12" name="code"  [(ngModel)]="list[0].IBAN"/>
+      <!-- <label class="col-form-label date-label col-12 required" translate>Country</label>
+      <input pInputText #inputFieldTableCst autofocus (keyup.enter)="onEnterTableInput(4)" id="code" class="col-form-label col-12" name="code"  [(ngModel)]="list[0].country"/> -->
+    </div>
+    <div class="col-12" style="text-align: right;">
+      <br>
+      <button #savebtn (click)="saveBank()" translate class="btn btn-primary col-3"><i class="fa fa-save"></i> Save</button>&nbsp;
+      <button #cancelbtn (click)="sendDataToParent()" translate class="btn btn-danger col-3"><i class="fa fa-undo"></i> Cancel</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,73 @@
+<div class="container" style="margin-top: 20px;">
+  <div class="card" style="height: 80vh; box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; overflow: hidden;">
+    <div class="row ">
+      <div class="col-8">
+        <div style="padding:25px;">
+          <label class="col-form-label Type-label required col-12" translate>Email Address</label>
+          <input pInputText class="col-12"  #inputField [(ngModel)]="List[0].email" email [minLength]="1" >
+          <label class="col-form-label Type-label required col-12" translate>Plan</label>
+          <p-autoComplete styleClass="col-12" (onSelect)="changePaymentValue()" #inputField [(ngModel)]="SelectedPlan" [suggestions]="filterPlanList"  (completeMethod)="FilterPlan($event)"
+          field="" value="" [minLength]="1"  [dropdown]="true" ></p-autoComplete>
+          <label class="col-form-label Type-label required col-12" style="font-size: 20px; font-weight: bold;" translate>Optional Add-ons</label>
+          <label class="col-form-label Type-label required col-6" translate>Add More Users</label>
+          <label class="col-form-label Type-label required col-6" style="text-align: right;" translate>{{userPrice}}$ per user per month</label>
+          <input pInputText type="number" class="col-12"  #inputField (change)="calculateTotal()" [(ngModel)]="addUser" oninput="this.value = Math.abs(this.value)" min="0">
+          <label class="col-form-label Type-label required col-6" translate>Add More Companies</label>
+          <label class="col-form-label Type-label required col-6" style="text-align: right;" translate>{{companyPrice}}$ per company per month</label>
+          <input pInputText type="number" class="col-12"  #inputField (change)="calculateTotal()" [(ngModel)]="addCompany" oninput="this.value = Math.abs(this.value)" min="0">
+          <label class="col-form-label Type-label required col-6" translate>Add More Location</label>
+          <label class="col-form-label Type-label required col-6"   style="text-align: right;" translate>{{locationPrice}}$ per location per month</label>
+          <input pInputText type="number" class="col-12"  #inputField (change)="calculateTotal()" [(ngModel)]="addLocation" oninput="this.value = Math.abs(this.value)" min="0">
+
+        </div>
+      </div>
+      <div class="col-4">
+        <div style="padding:25px">
+      <div class="col-12">
+        <h3 class="text-center" translate>Checkout</h3>
+        <p style="border-bottom: 3px solid #0d6efd;"></p>
+      </div>
+      <div class="col-12">
+        <label class="col-form-label col-6 required" translate>Plan : <span>{{SelectedPlan}}</span> </label>
+        <label class="col-form-label col-6 required" style="text-align:right; font-weight: bold;" translate><span>{{planAmount | number : '1.2-2'}}$</span></label>
+        <div *ngIf="SelectedPlan != undefined">
+          <div *ngIf="SelectedPlan == 'Basic'">
+            <li *ngFor="let item of basicList">
+              {{item}}
+            </li>
+          </div>
+          <div *ngIf="SelectedPlan == 'Standard'">
+            <li *ngFor="let item of StandardList">
+              {{item}}
+            </li>
+          </div>
+          <div *ngIf="SelectedPlan == 'Premium'">
+            <li *ngFor="let item of PremiumList">
+              {{item}}
+            </li>
+          </div>
+        </div>
+        <label class="col-form-label col-6 required" translate>Add-On Charges : </label>
+        <label class="col-form-label col-6 required" style="text-align:right; font-weight: bold;" translate><span>{{totalAddOnCharges | number : '1.2-2'}}$</span></label>
+        <label class="col-form-label col-6 required" translate>Total Charges : </label>
+        <label class="col-form-label col-6 required" style="text-align:right; font-weight: bold;" translate><span>{{totalCharges | number : '1.2-2'}}$</span></label>
+      </div>
+      <div class="col-12" class="text-center">
+
+        <button  translate (click)="CheckOut()" #savebtn class="btn btn-primary btn-lg btn-login float-right" style="width: 100%;background-image:linear-gradient(to right, rgb(244,160,200) 0%, rgb(112,40,228) 100%); border: none;">
+       Proceed to Checkout</button>
+      </div>
+    </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<p-dialog [modal]="true" [(visible)]="paypalVisiblity" [style]="{width: '60vw'}">
+  <div id="paypal-button-container"></div>
+</p-dialog>
+
+

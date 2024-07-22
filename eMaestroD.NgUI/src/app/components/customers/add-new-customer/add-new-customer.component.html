@@ -1,0 +1,92 @@
+<div class="container">
+    <h4 translate>{{title}}</h4>
+    <div style="border-Top: 3px solid #eee;" class="row">
+        <div class="col-12">
+
+          <div class="col-12">
+            <label
+              [ngClass]="{
+                'active-style': isCstSupp === false
+              }"
+              class="col-6"
+              for="isCstSuppCustomer"
+            >
+              <input
+                type="radio"
+                id="isCstSuppCustomer"
+                style="margin-left:10px; margin-top:10px;"
+                [value]="false"
+                name="isCstSupp"
+                [(ngModel)]="isCstSupp"
+              />
+              Customer
+            </label>
+
+            <label
+              [ngClass]="{
+                'active-style': isCstSupp === true
+              }"
+              class="col-6"
+              for="isCstSuppBoth"
+            >
+              <input
+                type="radio"
+                id="isCstSuppBoth"
+                style="margin-left:10px; margin-top:10px;"
+                [value]="true"
+                name="isCstSupp"
+                [(ngModel)]="isCstSupp"
+              />
+              Customer & Supplier
+            </label>
+          </div>
+
+
+
+            <div class="col-12">
+                <label class="col-form-label date-label col-12 required" translate>Code</label>
+                <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(0)" maxlength="10" name="code" [(ngModel)]="customerList[0].cstCode" class="col-form-label col-12"/>
+            </div>
+            <div class="col-12">
+                <label class="col-form-label date-label col-12 required" translate>Name</label>
+                <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(1)" id="name" class="col-form-label col-12"  name="name" autofocus  [(ngModel)]="customerList[0].cstName"/>
+            </div>
+            <div class="col-12">
+                <label class="col-form-label date-label col-12 required" translate>Address</label>
+                    <input pInputText id="shortName" #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(2)" class="col-form-label col-12" name="Address"  [(ngModel)]="customerList[0].address">
+            </div>
+            <div class="col-12">
+                <label class="col-form-label date-label col-12 required" translate>Phone</label>
+                <p-inputMask pInputMask mask="+99 999 999 9999"  #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(3)" styleClass="col-form-label col-12"  [(ngModel)]="customerList[0].contPhone" ></p-inputMask>
+                <!-- <input pInputText id="region" #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(3)" class="col-form-label col-12"  name="phone"  [(ngModel)]="customerList[0].contPhone"/> -->
+            </div>
+            <div class="col-12">
+              <label class="col-form-label date-label col-7 required" translate>Customer Opening Balance</label>
+              <label *ngIf="isCstSupp" class="col-form-label date-label col-5 required" translate>Supplier Opening Balance</label>
+              <input pInputText id="cstBal" #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(4)" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="10" class="col-form-label" [ngClass]="isCstSupp?'col-5':'col-12'" name="vat"   [(ngModel)]="customerList[0].opnBal" />
+              <input *ngIf="isCstSupp" pInputText id="vendbal" #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(5)" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="10" class="col-form-label offset-2 col-5" name="vat"   [(ngModel)]="customerList[0].vendorBal" />
+            </div>
+            <div class="col-12">
+                <label class="col-form-label date-label col-7 required" translate>VAT No</label>
+                <label class="col-form-label date-label col-5 required" translate>VAT %</label>
+                <input pInputText #inputFieldTableCst (keyup.enter)="isCstSupp? onEnterTableInputCst(6) : onEnterTableInputCst(5)" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="15" class="col-form-label col-5" name="vat"   [(ngModel)]="customerList[0].taxNo" />
+                <label class="col-2"></label>
+                <input pInputText (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="2" #inputFieldTableCst (keyup.enter)="isCstSupp? onEnterTableInputCst(7) : onEnterTableInputCst(6)" class="col-form-label col-5" name="taxValue"  [(ngModel)]="customerList[0].taxValue" />
+            </div>
+            <div class="col-12" style="text-align: right;">
+                <br>
+                <button #savebtn (click)="saveCustomer()" translate class="btn btn-primary col-3"><i class="fa fa-save"></i> Save</button>&nbsp;
+                <button #cancelbtn (click)="sendDataToParent()" translate class="btn btn-danger col-3"><i class="fa fa-undo"></i> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+  .active-style {
+  font-weight: bold;
+  background-color: gainsboro;
+  cursor: pointer;
+}
+</style>

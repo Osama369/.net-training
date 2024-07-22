@@ -1,0 +1,112 @@
+
+<div class="container">
+  <div class="card">
+  <div class="row">
+      <div class="col-12">
+        <div class="row">
+          <label class="col-3" style="border-left: 3px solid #3B82F6; font-size: 1.5rem;font-weight: 500;color: var(--surface-900);" translate>&nbsp;Expense Voucher</label>
+          <label class="col-form-label date-label col-3 required" translate>Date</label>
+          <label class="col-form-label Type-label col-3 required" translate>Payment Method</label>
+          <label *ngIf="BankVisible" class="col-form-label Vendor-label col-2 required" translate>Bank </label>
+          <label *ngIf="!BankVisible" class="col-form-label Vendor-label col-2 required" translate></label>
+
+          <label class="col-1 text-right"><i class="pi pi-times-circle" (click)="confirmDailog('close')" style="font-size: 1.5rem; float:right"></i></label>
+        </div>
+
+        <div class="row">
+          <div class="col-3">
+          </div>
+
+          <div class="col-3">
+              <p-calendar #inputField  [maxDate]="maxDate" (keyup.enter)="onEnterComplex(0)" [(ngModel)]="selectedDate" [showIcon]="true" dateFormat="dd/mm/yy"></p-calendar>
+          </div>
+          <div class="col-3">
+            <p-autoComplete #inputField1 pAutoFocus [autofocus]="true"  [(ngModel)]="SelectedType[0]" [suggestions]="filterType"  (completeMethod)="filtersType($event)" (keyup.enter)="onEnterComplex(0)"
+            field="name" [minLength]="1" (ngModelChange)="typeOnChange()" [dropdown]="true" ></p-autoComplete>
+          </div>
+
+          <div class="col-3"  *ngIf="BankVisible">
+            <p-autoComplete #inputField1  [(ngModel)]="SelectedBank" [suggestions]="FilterBanklist" (completeMethod)="filterBank($event)" (keyup.enter)="onEnterComplex(3)"
+            field="acctName" value="COAID" [minLength]="1" [dropdown]="true" ></p-autoComplete>
+          </div>
+
+          <div class="col-3"  *ngIf="!BankVisible">
+          </div>
+        </div>
+
+      </div>
+      <div class="col-9">
+          <br>
+          <p-table #dt [value]="voucherList" dataKey="voucherNo" editMode="row"  styleClass="p-datatable-sm" [scrollable]="true" class="JournalTable"  scrollHeight="220px" scrollDirection="vertical">
+              <ng-template pTemplate="header">
+                  <tr>
+                      <th translate>Account</th>
+                      <th class="" translate>Details</th>
+                      <th class="" translate>Comments</th>
+                      <th class="" style="text-align: center;" translate>Amount</th>
+                      <th translate></th>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
+                  <tr (click)="activeAllModule(ri)" [style.background-color]="ri == rowNmb ? 'lightgray' : 'white'">
+                    <td class="add-custom-table" >
+                      <p-autoComplete #autoComplete  [style]="{'width':'40px !important'}" #inputField  [(ngModel)]="rowData.parentlist" [suggestions]="FilterCoaAccountList" (completeMethod)="filterCoaAccount($event)"
+                      field="acctName" value="COAID" [minLength]="1" (keyup.enter)="onEnterTableInput(1,ri)" (onBlur)="getCoaChildList(rowData.parentlist,ri)" class="girdRow"  (onFocus)="onFocus(autoComplete, $event)"  (onBlur)="onBlur(autoComplete)"></p-autoComplete>
+                    </td>
+                    <td>
+                      <p-autoComplete  #autoComplete1 [style]="{'width':'40px !important'}" #inputField (keyup.enter)="onEnterTableInput(2,ri)" [(ngModel)]="rowData.childlist" [suggestions]="FilterCoaAccountListForChild" (onFocus)="onFocus(autoComplete1, $event)" (onBlur)="onBlur(autoComplete1)" (completeMethod)="filterCoaAccountForChild($event)"
+                      field="acctName" value="COAID" [minLength]="1" class="girdRow"></p-autoComplete>
+                      <!-- (keydown)="productVisible($event)"   (keyup.enter)="onChange(rowData.prodName,ri)" -->
+                    </td>
+
+                    <td >
+                      <p-autoComplete  #inputField [(ngModel)]="rowData.glComments" (keyup.enter)="onEnterTableInput(3,ri)" [ngModelOptions]="{standalone: true}" [minLength]="1" class="girdRow girdRowforAmount"></p-autoComplete>
+                  </td>
+                  <td >
+                    <p-autoComplete  #inputField [(ngModel)]="rowData.debit" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" (onBlur)="addRow(ri)" (keyup.enter)="onEnterTableInput(4,ri)" (ngModelChange)="CalcaluteTotal(ri)" [ngModelOptions]="{standalone: true}" [minLength]="1" class="girdRow girdRowforAmount"></p-autoComplete>
+                </td>
+              <td>
+                <button pButton type="button" icon="pi pi-trash" (click)="onRowDeleteInit(rowData,ri)" class="p-button-rounded p-button-text" [style]="{'height': '32px !important','width': '30px !important',color:'var(--gray-900)'}"></button>
+              </td>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="footer" >
+                <button (click)="addRow(voucherList.length-1)"  class="btn btn-primary" translate><i class="fa fa-plus"></i> Add</button>
+              </ng-template>
+          </p-table>
+          <br/>
+          <label class="col-form-label date-label col-3 required" translate>Comments</label>
+          <textarea [style]="{'width':'500px !important','min-width':'100%'}" [maxlength]="150" pInputText #inputFieldTable class="p-inputtext-sm" (keyup.enter)="focusOnSaveButton()" type="textarea" [(ngModel)]="glComments"></textarea>
+          <br/>
+          <br/>
+        </div>
+        <div class="col-3">
+            <div class="row" style="margin-top: 20px; background-color:var(--surface-900);color: var(--surface-0); padding:4px; height: 35px !important;" (click)="showInvoiceDetails()">
+              <h4 class="col-9" style="color: var(--surface-0);" translate>Detail</h4>
+              <i class="pi pi-angle-up col-3" *ngIf="invoiceDetailShow" style="font-size: 2rem; float: right;padding: 0px !important;text-align: right;padding-right: 5px !important;"></i>
+              <i class="pi pi-angle-down col-3"  *ngIf="!invoiceDetailShow" style="font-size: 2rem; float: right;padding: 0px !important;text-align: right;padding-right: 5px !important;"></i>
+          </div>
+          <div class="row" *ngIf="invoiceDetailShow">
+              <div class="col-12" style="border-radius: 10px; background-color: '';">
+                <label class="col-form-label col-6 required" translate><strong translate>Total</strong></label>
+                <label class="col-form-label col-6" style="text-align: right;" name="TotalBalance" [(ngModel)]="TotalBalance" ngDefaultControl >{{TotalBalance | number : '1.2-2'}}</label>
+                  <label class="col-form-label col-6 required" translate hidden><strong translate>Total</strong></label>
+                  <label class="col-form-label col-6" style="text-align: right;" hidden name="TotalRemaining" [(ngModel)]="TotalRemaining" ngDefaultControl >{{TotalRemaining | number : '1.2-2'}}</label>
+              </div>
+          </div>
+
+          <div style="position: absolute;bottom:40px;right: 20px;">
+            <button #savebtn (click)="saveInvoice()" [disabled]="savebtnDisable" class="btn btn-primary" translate><i class="fa fa-save"></i> Save</button>
+            <button #cancelbtn (click)="confirmDailog('cancel')"   style="margin-left: 10px;" class="btn btn-danger" translate><i class="fa fa-undo"></i> Cancel</button>
+            <button #cancelbtn (click)="confirmDailog('close')"   style="margin-left: 10px;" class="btn btn-danger" translate><i class="fa fa-close"></i> Close</button>
+          </div>
+
+        </div>
+    </div>
+  </div>
+
+</div>
+
+  <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+
+  <app-please-wait *ngIf="showPleaseWait"></app-please-wait>

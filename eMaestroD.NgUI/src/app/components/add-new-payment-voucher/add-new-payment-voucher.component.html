@@ -1,0 +1,233 @@
+
+<div class="container">
+  <div class="card">
+  <div class="row">
+      <div class="col-12">
+        <div class="row">
+
+        </div>
+        <div class="row">
+
+          <label class="col-3" style="border-left: 3px solid #3B82F6; font-size: 1.5rem;font-weight: 500;color: var(--surface-900);" translate>&nbsp;Payment Voucher</label>
+          <label class="col-form-label date-label col-3 required" translate>Date</label>
+          <label class="col-form-label Vendor-label col-3 required" translate>Supplier Name</label>
+          <label class="col-3 text-right" translate><i class="pi pi-times-circle" (click)="confirmDailog('close')" style="font-size: 1.5rem; float:right"></i></label>
+        </div>
+
+        <div class="row">
+          <!-- <div class="col-4">
+              <p-inputNumber [disabled]="true" (keyup.enter)="onEnterComplex(0)" [useGrouping]="false" placeholder="SVN-00000000" [(ngModel)]="invoiceNo1"prefix="SVN-"></p-inputNumber>
+          </div> -->
+
+          <div class="col-3">
+          </div>
+
+          <div class="col-3">
+              <p-calendar #inputField   [maxDate]="maxDate"  (keyup.enter)="onEnterComplex(0)"   [(ngModel)]="selectedDate" [showIcon]="true" dateFormat="dd/mm/yy"></p-calendar>
+          </div>
+
+
+
+          <div class="col-3">
+              <p-autoComplete #inputField [autofocus]="true"  pAutoFocus [(ngModel)]="selectedVendorName" [suggestions]="VendorList" (keydown)="VendorVisible($event)"  (completeMethod)="filterVendor($event)" (keyup.enter)="onEnterComplex(1)"
+              field="vendName" value="vendID" [minLength]="1"  [readonly]="isEdit" [dropdown]="!isEdit" (ngModelChange)="VendorOnChange()">
+              <ng-template let-vendor pTemplate="item">
+                <div>{{vendor.vendCode}} - {{vendor.vendName}}</div>
+              </ng-template>
+            </p-autoComplete>
+          </div>
+        </div>
+          <!-- <div class="row">
+              <h4>Sale Invoice</h4>
+          </div> -->
+
+          <div class="row">
+              <!-- <label class="col-form-label date-label col-4 required">Invoice No</label>  -->
+
+               <label class="col-form-label Type-label col-3 required" translate>Payment Method</label>
+               <label *ngIf="BankVisible" class="col-form-label Vendor-label col-3 required" translate>Bank </label>
+               <label *ngIf="CreditCardVisible" class="col-form-label customer-label col-3 required" translate>Bank </label>
+               <label *ngIf="!CreditCardVisible && !BankVisible" class="col-form-label customer-label col-3 required" translate></label>
+               <label class="col-form-label date-label col-3 required" translate>Amount</label>
+          </div>
+          <div class="row">
+
+              <div class="col-3">
+                <p-autoComplete #inputField  [(ngModel)]="SelectedType[0]" [suggestions]="filterType"  (completeMethod)="filtersType($event)" (keyup.enter)="onEnterComplex(2)"
+                field="name" [minLength]="1" (ngModelChange)="typeOnChange()" [dropdown]="true"  ></p-autoComplete>
+            </div>
+
+              <div class="col-3"  *ngIf="BankVisible">
+                <p-autoComplete #inputField  [(ngModel)]="SelectedBank" [suggestions]="FilterBanklist" (completeMethod)="filterBank($event)" (keyup.enter)="onEnterComplex(3)"
+                field="acctName" value="COAID" [minLength]="1" [dropdown]="true"  ></p-autoComplete>
+              </div>
+
+
+              <div class="col-3"  *ngIf="!BankVisible && !CreditCardVisible">
+              </div>
+
+
+              <div class="col-3"  *ngIf="CreditCardVisible">
+                <p-autoComplete #inputField  [(ngModel)]="SelectedCreditCard" [suggestions]="FilterCreditCardlist" (completeMethod)="filterCreditCard($event)" (keyup.enter)="onEnterComplex(3)"
+                field="acctName" value="COAID" [minLength]="1" [dropdown]="true" ></p-autoComplete>
+              </div>
+
+
+            <div class="col-3">
+              <p-autoComplete #inputField  [(ngModel)]="Amount" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" class="text-right" (onBlur)="SetAmountToEnterAmount()" (change)="SetAmountToEnterAmount()" (keyup.enter)="SetAmountToEnterAmount()" [minLength]="1" [dropdown]="false"></p-autoComplete>
+          </div>
+          </div>
+        </div>
+        <div class="col-9">
+          <br>
+          <p-table #dt [value]="voucherList" dataKey="voucherNo" editMode="row"  styleClass="p-datatable-sm" [scrollable]="true" class="ReceiptTable"  scrollHeight="220px" scrollDirection="vertical">
+              <ng-template pTemplate="header">
+                  <tr>
+                      <th translate>Voucher No</th>
+                      <th class="" translate>Date</th>
+                      <th class="" translate style="text-align: center;">Balance Amount</th>
+                      <th class="" translate style="text-align: center;" >Enter Amount</th>
+                  </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
+                  <tr (click)="activeAllModule(ri)" [style.background-color]="ri == rowNmb ? 'lightgray' : ''">
+                      <td >
+                                  <input  [style]="{'width':'100px !important','min-width':'100%' ,'font-weight': 'bold'}" pInputText (keyup.enter)="onEnterTableInput(0,ri)"  appFocusNext class="p-inputtext-sm" type="text" [(ngModel)]="rowData.voucherNo" readonly (change)="Itemcalculation(ri)" class="girdRow">
+                      </td>
+                      <td >
+                                  <input  [style]="{'width':'100px !important','min-width':'100%' ,'font-weight': 'bold'}" pInputText (keyup.enter)="onEnterTableInput(0,ri)"  appFocusNext class="p-inputtext-sm" type="text" ngModel="{{rowData.dtTx | date:'dd-MMM-yyyy hh:mm'}}" readonly  (change)="Itemcalculation(ri)" class="girdRow" >
+                      </td>
+
+                      <td>
+                                  <input [style]="{'width':'100px !important','min-width':'100%','text-align':'right' ,'font-weight': 'bold'}" pInputText  (keyup.enter)="onEnterTableInput(1,ri)" class="p-inputtext-sm" type="text" [ngModel]="rowData.amount" readonly (change)="Itemcalculation(ri)" class="girdRow">
+                      </td>
+
+                      <td>
+                                  <input  [style]="{'width':'100px !important','min-width':'100%' ,'text-align':'right','font-weight': 'bold'}" pInputText #inputFieldTable class="p-inputtext-sm" (keyup.enter)="onEnterTableInput(0,ri)" type="text" [(ngModel)]="rowData.enterAmount" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" (ngModelChange)="ValidateAmount(ri)"  class="girdRow">
+                      </td>
+                  </tr>
+              </ng-template>
+          </p-table>
+          <br/>
+          <label class="col-form-label date-label col-3 required" translate>Comments</label>
+          <textarea [style]="{'width':'500px !important','min-width':'100%'}" [maxlength]="150" pInputText #inputFieldTable class="p-inputtext-sm" (keyup.enter)="focusOnSaveButton()" type="textarea" [(ngModel)]="glComments"></textarea>
+          <br/>
+          <br/>
+
+        </div>
+        <div class="col-3">
+            <div class="row" style="margin-top: 20px; background-color:var(--surface-900);color: var(--surface-0);padding:4px; height: 35px !important;" (click)="showInvoiceDetails()">
+              <h4 class="col-9" style="color: var(--surface-0);" translate>Detail</h4>
+              <i class="pi pi-angle-up col-3" *ngIf="invoiceDetailShow" style="font-size: 2rem; float: right;padding: 0px !important;text-align: right;padding-right: 5px !important;"></i>
+              <i class="pi pi-angle-down col-3"  *ngIf="!invoiceDetailShow" style="font-size: 2rem; float: right;padding: 0px !important;text-align: right;padding-right: 5px !important;"></i>
+          </div>
+          <div class="row" *ngIf="invoiceDetailShow">
+              <div class="col-12" style="border-radius: 10px; background-color: '';">
+                <label class="col-form-label col-6 required" translate><strong translate>Total Balance</strong></label>
+                <label class="col-form-label col-6" style="text-align: right;" name="TotalBalance" [(ngModel)]="TotalBalance" ngDefaultControl >{{TotalBalance | number : '1.2-2'}}</label>
+
+                <label class="col-form-label col-6 required" translate><strong translate>Total Paid</strong></label>
+                <label class="col-form-label col-6" style="text-align: right;" name="totalPaid" [(ngModel)]="TotalPaid" ngDefaultControl >{{TotalPaid | number : '1.2-2'}}</label>
+
+                  <label class="col-form-label col-8 required" translate><strong translate>Total Remaining</strong></label>
+                  <label class="col-form-label col-4" style="text-align: right;" name="TotalRemaining" [(ngModel)]="TotalRemaining" ngDefaultControl >{{TotalRemaining | number : '1.2-2'}}</label>
+              </div>
+          </div>
+
+          <div style="position: absolute;bottom:40px;right: 20px;">
+            <button #savebtn (click)="saveInvoice()" translate [disabled]="savebtnDisable" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+            <button #cancelbtn (click)="confirmDailog('cancel')" translate style="margin-left: 10px;" class="btn btn-danger"><i class="fa fa-undo"></i> Cancel</button>
+            <button #cancelbtn (click)="confirmDailog('close')"   style="margin-left: 10px;" class="btn btn-danger" translate><i class="fa fa-close"></i> Close</button>
+          </div>
+
+        </div>
+    </div>
+  </div>
+
+</div>
+<!--
+  <p-dialog [(visible)]="visible" [style]="{width: '90vw'}">
+      <div class="table-container">
+          <div class="table">
+              <h4>Purchase Rate</h4>
+              <p-table #dt [value]="productlist" dataKey="prodID" scrollHeight="100px"  styleClass="p-datatable-sm">
+                  <ng-template pTemplate="header">
+                      <tr>
+                          <th class="">Product Name</th>
+                          <th class="">Purchase Price</th>
+                      </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
+                      <tr>
+
+
+                          <td>
+                              {{rowData.prodName}}
+                          </td>
+                          <td>
+                              {{rowData.purchRate}}
+                          </td>
+
+                      </tr>
+                  </ng-template>
+              </p-table>
+          </div>
+          <div class="table">
+              <h4>Vendor History</h4>
+              <p>Vendor Name : {{selectedVendorName}}</p>
+              <p-table #dt [value]="invoicelist" dataKey="cstID" scrollHeight="100px" styleClass="p-datatable-sm">
+                  <ng-template pTemplate="header">
+                      <tr>
+                          <th class="">Invoice No</th>
+                          <th class="">Product Name</th>
+                          <th class="">Price</th>
+                      </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
+                      <tr>
+                          <td>
+                              {{rowData.voucherNo}}
+                          </td>
+                          <td>
+                              {{rowData.prodName}}
+                          </td>
+                          <td>
+                              {{rowData.unitPrice}}
+                          </td>
+                      </tr>
+                  </ng-template>
+              </p-table>
+          </div>
+      </div>
+  </p-dialog>
+  <p-dialog [(visible)]="Reportvisible" [style]="{width: '60vw'}" (onHide)="closeReportRegistration()">
+      <div class="container" *ngIf="Reportvisible">
+          <app-invoices [voucherName]="invoiceNo" [type]="printtype"></app-invoices>
+      </div>
+  </p-dialog>
+
+  <p-dialog #cstDailog [(visible)]="VendorsVisible" [style]="{width: '40vw'}" (onHide)="closeVendorRegistration()">
+      <app-add-new-Vendor [title]="'Vendor Registration'" (dataEvent)="handleChildData()"></app-add-new-Vendor>
+  </p-dialog>
+
+
+  <p-dialog #PrdDailog [(visible)]="ProductsVisible" [style]="{width: '40vw'}" (onHide)="closeProductsRegistration()">
+      <app-add-new-product [title]="'Product Registration'" (dataEvent)="handleChildData()"></app-add-new-product>
+  </p-dialog>
+
+
+  <p-dialog [(visible)]="PrintringVisible" [style]="{width: '20vw'}">
+      <div class="container">
+            <input type="radio" id="html" name="fav_language" (change)="onChangePrint($event)" value="thermal" checked>
+            <label for="html">Thermal View</label><br>
+            <input type="radio" id="css" name="fav_language" (change)="onChangePrint($event)" value="A4">
+            <label for="css">A4 View</label><br>
+          <br>
+          <button (click)="onPrinterClick()" autofocus class="btn btn-outline-primary">Submit</button>
+      </div>
+  </p-dialog> -->
+
+
+  <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+
+  <app-please-wait *ngIf="showPleaseWait"></app-please-wait>

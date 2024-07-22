@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="card">
+    <div class="row">
+      <div class="col-12">
+          <h4 translate>{{heading}}</h4>
+      </div>
+      <div class="col-12">
+        <div class="row">
+          <ng-container *ngFor="let data of list">
+            <div *ngIf="data.type === 'checkbox'" class="field-checkbox col-6" style="margin-bottom: 10px;">
+              <p-checkbox [(ngModel)]="data.value" [binary]="true" [value]="data" label="{{ data.key | translate }}"></p-checkbox>
+            </div>
+            <div *ngIf="data.type === 'radioButton'" class="field-radioButton col-6" style="margin-bottom: 10px;">
+              <input type="radio" [value]="data.value" name="printView"  [checked]="data.value" (change)="OnRadioChange(data)"> {{ data.key | translate }}
+            </div>
+            <div *ngIf="data.type === 'radioButton1'" class="field-radioButton col-6" style="margin-bottom: 10px;">
+              <input type="radio" [value]="data.value" name="radioButton1"  [checked]="data.value" (change)="OnRadioChange1(data)"> {{ data.key | translate }}
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div style="text-align: right;">
+        <button #savebtn (click)="save()" translate class="btn btn-primary col-3"><i class="fa fa-save"></i> Save</button>
+        <button #cancelbtn (click)="close()" translate style="margin-left: 10px;" class="btn btn-danger col-3"><i class="fa fa-undo"></i> Cancel</button>
+      </div>
+    </div>
+
+</div>
+</div>

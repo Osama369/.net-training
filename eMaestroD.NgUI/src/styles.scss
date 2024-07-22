@@ -1,0 +1,331 @@
+
+/* You can add global styles to this file, and also import other style files */
+
+$gutter: 1rem; //for primeflex grid system
+@import "assets/layout/styles/layout/layout.scss";
+
+/* PrimeNG */
+@import "../node_modules/primeng/resources/primeng.min.css";
+// @import "../node_modules/primeflex/primeflex.scss";
+@import "../node_modules/primeicons/primeicons.css";
+@import  "../node_modules/@fortawesome/fontawesome-free/css/all.min.css";
+//@import "primeng/resources/themes/lara-light-blue/theme.css";
+//@import "primeng/resources/themes/md-dark-indigo/theme.css";
+//@import "primeng/resources/themes/arya-orange/theme.css"; //dark
+//  @import "primeng/resources/themes/nova-alt/theme.css";
+//@import "primeng/resources/themes/rhea/theme.css";
+//@import "primeng/resources/themes/fluent-light/theme.css";
+// @import "primeng/resources/themes/viva-light/theme.css";
+
+
+@import "primeng/resources/primeng.css";
+@import "primeicons/primeicons.css";
+@import 'ngx-toastr/toastr';
+
+/* Demos */
+@import "assets/demo/styles/flags/flags.css";
+@import "assets/demo/styles/badges.scss";
+@import "assets/demo/styles/code.scss";
+
+body {
+    // font-family: var(--font-family);
+    font-family: system-ui;
+    font-size: 1.1rem !important;
+}
+
+input {
+     font-size: small !important;
+     //height: 25px !important;
+   // width: 160px !important;
+}
+
+.p-dropdown-items, .p-dropdown .p-dropdown-label {
+    font-size: small !important;
+}
+
+.p-datatable-wrapper {
+    min-height: calc(100vh - 300px);
+  }
+.AddTable .p-datatable-wrapper {
+    min-height: calc(100vh - 350px);
+  }
+
+.ReceiptTable .p-datatable-wrapper {
+  min-height: calc(100vh - 470px);
+}
+.JournalTable .p-datatable-wrapper {
+  min-height: calc(100vh - 390px);
+}
+
+.ServiceTable .p-datatable-wrapper {
+  min-height: calc(100vh - 420px);
+}
+
+.COATABLE .p-datatable-wrapper{
+  min-height: calc(100vh - 200px);
+}
+.COATABLE .p-treetable .p-treetable-tbody > tr > td
+{
+  padding: 0px !important;
+}
+  .table-container {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .table {
+    width: 50%; /* Adjust the width as needed */
+    padding: 10px;
+    margin: 5px;
+  }
+
+  .table:first-child{
+    border-right: 1px solid black;
+  }
+
+  // .p-datatable .p-datatable-thead > tr > td {
+  //   // padding:13px !important;
+  // }
+  .p-datatable .p-datatable-thead > tr > th , .p-treetable-thead > tr > th {
+    background-color: #0d6efd;
+    // background-color:var(--teal-900);
+    color: white;
+    // background: rgb(0, 0, 0) !important;
+}
+
+// .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
+//   padding: 0rem 0.5rem !important;
+// }
+
+// .p-datatable .p-datatable-tbody > tr > td, .p-datatable .p-datatable-thead > tr > th{
+//   // padding: 13px !important;
+//   // padding: 8px !important;
+// }
+
+
+.p-dialog-header{
+  padding: 0rem !important;
+}
+
+
+.myClass .p-inputtext{
+  width: 100% !important;
+}
+
+.girdRow .p-inputtext, .girdRow{
+  height: 25px !important;
+}
+
+.serviceDropDown .p-inputtext{
+width: 100% !important;
+}
+
+.girdRowCode .p-inputtext{
+  width: 100% !important;
+}
+
+.girdRowforAmount .p-inputtext{
+  width: 100% !important;
+}
+
+label, .p-inputtext{
+  font-weight: 500;
+}
+
+.p-datatable-scrollable-table>.p-datatable-tfoot {
+  position: inherit !important;
+}
+
+.p-datatable .p-datatable-header, .p-paginator {
+  padding: 0.20rem !important;
+}
+
+spinnericon{
+  display: none !important;
+}
+
+.CurrencyDropDown > .p-autocomplete{
+  width: 33.33% !important;
+}
+
+.logoUploader .p-fileupload{
+  width: 93% !important;
+  // margin-left: 16.665% !important;
+  // margin-top: -28px !important;
+  // position: static;
+}
+
+.invoiceNo:hover,.p-checkbox-label{
+  cursor:pointer;
+}
+
+:host ::ng-deep .ui-multiselect-label {
+  visibility: collapse;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.p-multiselect-filter, .p-multiselect-filter-icon{
+  visibility: hidden !important;
+}
+
+.ReportDropDown .p-inputtext{
+  width: 8rem !important;
+}
+a:hover{
+  color:#0d6efd !important;
+  cursor:pointer;
+
+}
+// .btn-outline-success{
+//   // color:yellow !important;
+//   // border-color:yellow !important;
+//   // background-color: yellow !important;
+// }
+
+.p-dialog-mask{
+  background: rgba(0,0,0,0.4);
+  width: 100%;
+  height: 100%;
+  // position: absolute;
+  z-index: 9999 !important;
+}
+
+.card-img-absolute{
+  position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+}
+
+.custom-table{
+  padding: 13px !important;
+}
+
+// .custom-table > tr > td{
+//   padding: 13px !important;
+// }
+
+.p-datatable.p-datatable-striped .p-datatable-tbody > tr:nth-child(even){
+  background: var(--surface-300) !important;
+  // color: var(--surface-100) !important;
+}
+
+.p-paginator{
+  padding-top: 10px !important;
+  margin-top: 10px !important;
+  border-top: 3px solid #eee !important;
+}
+
+.add-custom-table{
+  padding: 0.25rem 0.25rem !important;
+}
+
+ol, ul{
+  padding-left:0px !important;
+  margin-bottom: 0px !important;
+}
+
+.btns{
+  border-radius: .25rem;
+}
+
+.authRow{
+  padding: 0px !important;
+}
+
+.btnSetting{
+  height: 44px;
+  margin-bottom: 3px;
+}
+
+
+.notification{
+  // width: 300px;
+  height:500px !important;
+  overflow: auto;
+}
+
+.p-password-input{
+  width: 100%;
+}
+
+
+
+
+.logged-out {
+  /* Styles for when the user is logged out */
+  background-image: linear-gradient(to right, rgb(244,160,200) 0%, rgb(112,40,228) 100%);
+  padding: 3rem 2rem 2rem 4rem;
+}
+.custom-tooltip {
+  position: relative;
+  display: inline-block;
+  cursor:pointer;
+}
+
+.custom-tooltip .tooltip-text {
+  visibility: hidden;
+  width: 200px; /* Adjust width as needed */
+  background-color: #333 ;
+  color: #fff;
+  text-align: left;
+  border-radius: 6px;
+  padding: 10px;
+  position: absolute;
+  z-index: 9999;
+  top: calc(100% + 5px); /* Positioned below the icon with a small gap */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.custom-tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+.custom-tooltip i {
+  // color: #007bff;
+  font-size: 14px;
+  margin-right: 5px;
+  vertical-align: middle; /* Align the icon vertically */
+}
+
+
+.p-highlight .p-tabview-nav-link
+{
+  background-color: gray;
+  color:white;
+}
+
+.p-highlight .p-tabview-nav-link:hover
+{
+  color:white !important;
+}
+
+.custom-style .p-dropdown .p-dropdown-label {
+  font-size:1.2rem !important;
+  color:black;
+  font-weight:bold;
+}
+.toast-container{
+  max-width: 400px !important; /* Adjust this width as needed */
+}
+.toast-success {
+  background-color: white !important;
+  color: black !important;
+  border-left: 5px solid rgb(0,255,0);
+  background-image: url("../src/assets/Images/circle-check-solid.svg");
+  // border-left: 5px solid #F0E102;
+  // background-image: url("../src/assets/Images/bell_circle.svg");
+  white-space: nowrap; /* Prevent text wrapping */
+  width: 100% !important;
+}
+
+.toast-success .toast-message {
+  display: inline-block;
+  // vertical-align: middle;
+  font-weight: 500;
+}

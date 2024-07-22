@@ -1,0 +1,35 @@
+<div class="container">
+  <h4 translate>{{title| translate}}</h4>
+  <div style="border-Top: 3px solid #eee;" class="row">
+      <div class="col-12">
+          <!-- <div class="col-12">
+          <label class="col-form-label date-label col-12 required">Head Account : &nbsp;</label>
+          <p-autoComplete styleClass="myclass" [(ngModel)]="SelectedHeadAccount" [suggestions]="FilterHeadAccountlist" (completeMethod)="filterHeadAccount($event)"
+          field="acctName" value="COAID" [minLength]="1" (keyup.enter)="onEnterTableInputCst(0)" (ngModelChange)="enableField()" [dropdown]="true" class="col-form-label col-12" [style]="{'width':'60% !important','min-width':'60%'}"></p-autoComplete>
+          </div> -->
+          <div class="col-12">
+            <label class="col-form-label date-label col-12 required" translate>Parent Account &nbsp;</label>
+            <p-autoComplete #inputFieldTableCOA styleClass="myclass col-12" translate [(ngModel)]="SelectedParentAccount" [suggestions]="FilterParentAccountList" (completeMethod)="filterParentAccount($event)"
+            field="acctName" value="COAID" [minLength]="1" (keyup.enter)="onEnterTableInputCst(0)" [disabled]="enabled"  [dropdown]="true" class="col-form-label col-12" [style]="{'width':'60% !important','min-width':'60%'}"></p-autoComplete>
+            </div>
+
+          <div class="col-12">
+              <label class="col-form-label date-label col-12 required" translate>Code</label>
+              <input pInputText #inputFieldTableCOA (keyup.enter)="onEnterTableInputCst(1)" translate id="code" class="col-form-label col-12" name="code"  [(ngModel)]="COAList[0].acctNo" autofocus/>
+          </div>
+          <div class="col-12">
+              <label class="col-form-label date-label col-12 required" translate>Name</label>
+              <input pInputText id="name" #inputFieldTableCOA (keyup.enter)="onEnterTableInputCst(2)" class="col-form-label col-12" name="name"  [(ngModel)]="COAList[0].acctName">
+          </div>
+          <div class="col-12">
+            <label class="col-form-label date-label col-12 required" translate>Opening Balance</label>
+            <input pInputText id="name" #inputFieldTableCOA (keypress)="($event.charCode >= 46 && $event.charCode < 58)" (keyup.enter)="onEnterTableInputCst(3)" class="col-form-label col-12" name="bal"  [(ngModel)]="COAList[0].openBal">
+          </div>
+          <div class="col-12" style="text-align: right;">
+              <br>
+              <button #savebtn (click)="saveCOA()" class="btn btn-primary col-3" translate><i class="fa fa-save"> </i> Save</button>&nbsp;
+              <button #cancelbtn (click)="sendDataToParent()" class="btn btn-danger col-3" translate><i class="fa fa-undo"> </i> Cancel</button>
+          </div>
+      </div>
+  </div>
+</div>

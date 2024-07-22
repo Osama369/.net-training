@@ -1,0 +1,61 @@
+<div class="card">
+  <div class="row">
+      <div class="col-12">
+          <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;{{heading}}
+            <a *ngIf="!bookmark"  (click)="UpdateBookmark(true)" title="Add Bookmark"><i class="pi pi-bookmark" style="font-size: 1.5rem;"></i></a>
+            <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark"><i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i></a>
+        </h4>
+      </div>
+      <div class="col-12">
+
+<p-treeTable #dt1 [value]="files"  selectionMode="single" [(selection)]="selectedRow"
+[scrollable]="true" [tableStyle]="{'min-width':'50rem'}" scrollHeight="330px" rowExpandMode="single" [globalFilterFields]="['name']"
+(onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)">
+  <ng-template pTemplate="caption">
+    <div class="table-header row">
+        <div class="col-md-6">
+          <span class="p-input-icon-left ml-auto">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" (input)="dt1.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'Search keyword'|translate" />
+          </span>
+        </div>
+        <div class="col-md-6" style="text-align:right !important;">
+          <span class="p-buttonset">
+            <button pButton type="button" label="Expand all" (click)="expandAll()" class="mr-2 btns" style="margin-right: 5px;"></button>
+            <button pButton type="button" label="Collapse all" (click)="collapseAll()" class="btns" style="margin-right: 5px;"></button>
+
+            <p-button (onClick)="onAdd()"  icon="pi pi-plus" styleClass="p-button-rounded p-button-secondary btns" [style]="{'margin-right': '5px'}" title="Add"></p-button>
+            <p-button (onClick)="OnEdit()"  icon="pi pi-pencil" styleClass="p-button-rounded p-button-success btns" [style]="{'margin-right': '5px'}" title="Edit"></p-button>
+            <p-button (onClick)="onDelete()"  icon="pi pi-trash" styleClass="p-button-rounded p-button-danger btns" title="Delete"></p-button>
+          </span>
+        </div>
+      </div>
+  </ng-template>
+  <ng-template pTemplate="header">
+      <tr>
+          <!-- For Practicing Apply Translation -->
+          <th class="col-12" translate>Account Name</th>
+          <!-- <button (click)="changeLanguage('en')">Switch to English</button>
+          <button (click)="changeLanguage('fr')">Switch to French</button>
+          <button (click)="changeLanguage('ar')">Switch to Arabic</button> -->
+          <!-- <th class="col-3"></th> -->
+      </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+      <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
+          <td class="col-11">
+            <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+              {{ rowData.name | translate }}
+          </td>
+      </tr>
+  </ng-template>
+</p-treeTable>
+      </div>
+  </div>
+</div>
+
+<p-dialog #cstDailog [modal]="true" [(visible)]="AddNewCoaVisibility" [style]="{width: '40vw'}" (onHide)="hide()">
+  <app-add-coa   [title]="title" [parentID]="parentID" [isEdit]="IsEdit" [COADATA]="coaData" (dataEvent)="handleChildData($event)"></app-add-coa>
+</p-dialog>
+
+

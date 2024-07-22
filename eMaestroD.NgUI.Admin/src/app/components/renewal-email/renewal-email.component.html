@@ -1,0 +1,192 @@
+<div class="card">
+  <div class="row">
+      <div class="col-6">
+          <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Tenants</h4>
+      </div>
+      <!-- <div class="col-6" style="text-align: right;">
+      <button pButton type="button" icon="pi pi-plus" [routerLink]="'./../AddNewSale'" style="padding: 0.5rem !important;">Add New</button>
+      </div> -->
+  </div>
+  <p-table #dt1 [value]="tenantlist"
+      [rows]="100" [(selection)]="selectedList" dataKey="tenantID" [showCurrentPageReport]="true" [rowsPerPageOptions]="[100,500,1000]" [loading]="loading"
+      [paginator]="true" scrollHeight="100px" [scrollable]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [globalFilterFields]="['tenantName','firstName','lastName','address1','email','businessPhone','isEmailConfirmed','country','subscriptionType','subscriptionDate','subscriptionEndDate','isSuspended','maxUserCount','maxCompaniesCount','maxLocationCount']">
+      <ng-template pTemplate="caption">
+
+          <div class="table-header row">
+              <div class="col-md-6">
+                <span class="p-input-icon-left ml-auto">
+                  <input pInputText type="text" (input)="dt1.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'Search keyword'" />
+                </span>
+              </div>
+              <div class="col-md-6" style="text-align:right !important;">
+                <span class="p-buttonset">
+                  <p-button (onClick)="sendEmailToTenant()" icon="pi pi-send" title="Send Email" styleClass="p-button-rounded" label="Send Mail"></p-button>
+                  <!-- <p-button icon="pi pi-plus" styleClass="p-button p-button-sm" (onClick)="AddNew()"></p-button> -->
+                  <!-- <p-button icon="pi pi-file-excel" styleClass="p-button p-button-sm p-button-success" (onClick)="exportExcel()" ></p-button> -->
+                  <!-- <p-button icon="pi pi-file-pdf" styleClass="p-button p-button-sm p-button-danger" (onClick)="exportPdf()" ></p-button> -->
+                </span>
+              </div>
+            </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 4rem" pFrozenColumn>
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+              <th style="min-width:12rem" translate>
+                <div class="flex justify-content-center align-items-center" translate>
+                  Company Name
+                </div>
+              </th>
+              <th style="min-width:12rem" translate>
+                  <div class="flex justify-content-center align-items-center" translate>
+                    First Name
+                  </div>
+              </th>
+              <th style="min-width:12rem" translate>
+                <div class="flex justify-content-center align-items-center" translate>
+                  Last Name
+                </div>
+            </th>
+            <th style="min-width:12rem" translate>
+              <div class="flex justify-content-center align-items-center" translate>
+                Address
+              </div>
+            </th>
+              <th style="min-width:12rem" translate>
+                  <div class="flex justify-content-center align-items-center" translate>
+                    Email Address
+                  </div>
+              </th>
+              <th style="min-width:12rem" translate>
+                <div class="flex justify-content-center align-items-center" translate>
+                  Phone No
+                </div>
+              </th>
+              <th style="min-width:12rem" translate>
+                <div class="flex justify-content-center align-items-center" translate>
+                  Email Confirmed
+                </div>
+              </th>
+              <th style="min-width:9rem" translate>
+                <div class="flex justify-content-center align-items-center" translate>
+                  Country
+                </div>
+              </th>
+              <th style="min-width:9rem" translate>
+                <div class="flex justify-content-center align-items-center" translate>
+                    Type
+                </div>
+              </th>
+              <th style="min-width:12rem" translate>
+                <div class="flex justify-content-center align-items-center" translate>
+                    Suspended
+                </div>
+              </th>
+              <th style="min-width:12rem" translate>
+                <div class="flex justify-content-center align-items-center" translate>
+                   Sign Up Date
+                </div>
+              </th>
+              <th style="min-width:12rem" translate>
+                <div class="flex justify-content-center align-items-center" translate>
+                   Subscription End Date
+                </div>
+              </th>
+              <th style="min-width:12rem" translate>
+                <div class="flex justify-content-center align-items-center" translate>
+                   Max User Count
+                </div>
+              </th>
+              <th style="min-width:12rem" translate>
+                <div class="flex justify-content-center align-items-center" translate>
+                   Max Companies Count
+                </div>
+              </th>
+
+              <th style="min-width:12rem" translate>
+                <div class="flex justify-content-center align-items-center" translate>
+                   Max Location Count
+                </div>
+              </th>
+
+
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-tl>
+          <tr [style.background-color]="isExpired(tl.subscriptionEndDate) ? 'red' : ''" [style.color]="isExpired(tl.subscriptionEndDate) ? 'white' : 'black'">
+             <td pFrozenColumn>
+              <p-tableCheckbox [value]="tl"></p-tableCheckbox>
+            </td>
+            <!-- <td pFrozenColumn style="text-align: center !important;">
+                  <span class="p-buttonset">
+                    <p-button (onClick)="sendEmailToTenant(tl)" icon="pi pi-send" title="Send Email" styleClass="p-button-rounded"></p-button>
+                    <p-button (onClick)="editView(tl)" icon="pi pi-pencil" title="Edit Tenant" styleClass="p-button-rounded p-button-success"></p-button>
+                    <p-button (onClick)="Delete(tl)" icon="pi pi-trash" title="Delete Tenant" styleClass="p-button-rounded p-button-danger"  [style.color]="isExpired(tl.subscriptionEndDate) ? 'white !important' : ''" ></p-button>
+                  </span>
+              </td> -->
+              <td>
+                {{tl.tenantName}}
+              </td>
+              <td>
+                  {{tl.firstName}}
+              </td>
+              <td>
+                  {{tl.lastName}}
+              </td>
+              <td>
+                {{tl.address1}}
+              </td>
+              <td>
+                {{tl.email}}
+              </td>
+              <td>
+                {{tl.businessPhone}}
+              </td>
+              <td>
+                {{tl.isEmailConfirmed}}
+              </td>
+              <td>
+                {{tl.country}}
+              </td>
+              <td>
+                {{tl.subscriptionType}}
+              </td>
+              <td>
+                {{tl.isSuspended}}
+              </td>
+              <td>
+                {{tl.subscriptionDate | date:"dd-MM-yyyy"}}
+              </td>
+              <td>
+                {{tl.subscriptionEndDate | date:"dd-MM-yyyy"}}
+              </td>
+              <td>
+                {{tl.maxUserCount}}
+              </td>
+              <td>
+                {{tl.maxCompaniesCount}}
+              </td>
+              <td>
+                {{tl.maxLocationCount}}
+              </td>
+
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+          <tr>
+              <td colspan="7" translate>No Record found.</td>
+          </tr>
+      </ng-template>
+  </p-table>
+</div>
+
+
+
+
+<p-dialog #cstDailog [(visible)]="AddTenantVisibility" [style]="{width: '50vw'}">
+  <app-add-new   [title]="title" [DATA]="list" (dataEvent)="handleChildData($event)"></app-add-new>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>

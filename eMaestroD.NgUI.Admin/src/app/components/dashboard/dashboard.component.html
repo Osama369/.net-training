@@ -1,0 +1,123 @@
+<div class="container">
+  <div class="grid">
+      <div class="col-12 lg:col-6 xl:col-4">
+          <div class="card mb-0 dashboard-card dashboard-card"  style="background:linear-gradient(to right, #90caf9, #047edf 99%) !important; color:white">
+            <img src="../../../assets/Images/circle.svg" class="card-img-absolute">
+              <div class="justify-content-between">
+                  <div>
+                    <div class="align-items-center justify-content-center" [style]="{width: '2.5rem', height: '2.5rem'}">
+                      <i class="fa-solid fa-boxes-stacked text-xl"></i>
+                    </div>
+                    <div class="font-medium text-xl" >{{totalTenants}}</div>
+                      <span class="block font-medium" translate>Total Tenants</span>
+                  </div>
+                      <!-- <i class="pi pi-shopping-cart text-blue-500 text-xl"></i> -->
+              </div>
+          </div>
+      </div>
+      <div class="col-12 lg:col-6 xl:col-4">
+          <div class="card mb-0 dashboard-card" style="background:linear-gradient(to right, #84d9d2, #07cdae) !important; color:white">
+            <img src="../../../assets/Images/circle.svg" class="card-img-absolute">
+              <div class="justify-content-between">
+                  <div>
+                    <div class="align-items-center justify-content-center" [style]="{width: '2.5rem', height: '2.5rem'}">
+                      <i class="fa-solid fa-users text-xl"></i>
+                    </div>
+                    <div class="font-medium text-xl">{{TrialTenants}}</div>
+                      <span class="block font-medium" translate>Trial Tenants</span>
+                  </div>
+
+              </div>
+          </div>
+      </div>
+      <div class="col-12 lg:col-6 xl:col-4">
+        <div class="card mb-0 dashboard-card"  style="background:linear-gradient(to right, #ffbf96, #fe7096) !important; color:white">
+          <img src="../../../assets/Images/circle.svg" class="card-img-absolute">
+            <div class="justify-content-between">
+                <div>
+                  <div class="align-items-center justify-content-center" [style]="{width: '2.5rem', height: '2.5rem'}">
+                    <i class="fa-solid fa-people-group text-xl"></i>
+                  </div>
+                  <div class="font-medium text-xl" >{{LicenseTenants}}</div>
+                    <span class="block font-medium" translate>License Tenants</span>
+                </div>
+                    <!-- <i class="pi pi-shopping-cart text-blue-500 text-xl"></i> -->
+            </div>
+        </div>
+      </div>
+
+      <div class="col-12 lg:col-6 xl:col-6">
+        <div class="card mb-0 dashboard-card"  style="background:linear-gradient(to right, #da8cff, #9a55ff);color:white">
+          <img src="../../../assets/Images/circle.svg" class="card-img-absolute">
+            <div class="justify-content-between">
+                <div>
+                  <div class="align-items-center justify-content-center" [style]="{width: '2.5rem', height: '2.5rem'}">
+                    <i class="fa-solid fa-money-bill-trend-up text-xl"></i>
+                  </div>
+                  <div class="font-medium text-xl" >{{ActiveTrialTenants}}</div>
+                    <span class="block font-medium" translate>Active Trial Tenants</span>
+                </div>
+                    <!-- <i class="pi pi-shopping-cart text-blue-500 text-xl"></i> -->
+            </div>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6 xl:col-6">
+        <div class="card mb-0 dashboard-card" style="background:linear-gradient(to right, #90caf9, #047edf 99%) !important; color:white">
+          <img src="../../../assets/Images/circle.svg" class="card-img-absolute">
+          <div class="justify-content-between">
+                <div>
+                  <div class="align-items-center justify-content-center" [style]="{width: '2.5rem', height: '2.5rem'}">
+                    <i class="pi pi-shopping-cart  text-xl"></i>
+                  </div>
+                  <div class="font-medium text-xl">{{ExpireTrialTenants}}</div>
+                    <span class="block font-medium" translate>Expire Trial Tenants</span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-12 lg:col-6 xl:col-6">
+      <div class="card mb-0 dashboard-card"  style="background:linear-gradient(to right, #84d9d2, #07cdae) !important; color:white">
+        <img src="../../../assets/Images/circle.svg" class="card-img-absolute">
+          <div class="justify-content-between">
+              <div>
+                <div class="align-items-center justify-content-center" [style]="{width: '2.5rem', height: '2.5rem'}">
+                  <i class="fa-solid fa-hand-holding-dollar text-xl"></i>
+                </div>
+                <div class="font-medium text-xl" >{{ActiveLicenseTenants}}</div>
+                  <span class="block font-medium" translate>Active License Tenants</span>
+              </div>
+                  <!-- <i class="pi pi-shopping-cart text-blue-500 text-xl"></i> -->
+          </div>
+      </div>
+    </div>
+
+
+    <div class="col-12 lg:col-6 xl:col-6">
+      <div class="card mb-0 dashboard-card"  style="background:linear-gradient(to right, #ffbf96, #fe7096) !important; color:white">
+        <img src="../../../assets/Images/circle.svg" class="card-img-absolute">
+          <div class="justify-content-between">
+              <div>
+                <div class="align-items-center justify-content-center" [style]="{width: '2.5rem', height: '2.5rem'}">
+                  <i class="fa-solid fa-money-bill text-xl"></i>
+                </div>
+                <div class="font-medium text-xl" >{{ExpireLicenseTenants}}</div>
+                  <span class="block font-medium" translate>Expire License Tenants</span>
+              </div>
+                  <!-- <i class="pi pi-shopping-cart text-blue-500 text-xl"></i> -->
+          </div>
+      </div>
+  </div>
+</div>
+
+
+
+<style>
+  .font-medium{
+    font-size : 1.5rem !important;
+    color:black;
+  }
+  .text-xl{
+    color:black;
+  }
+  </style>

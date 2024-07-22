@@ -1,0 +1,37 @@
+<div class="container">
+  <h4 translate>{{title}}</h4>
+  <div style="border-Top: 3px solid #eee;" class="row">
+      <div class="col-12">
+          <div class="col-12">
+              <label class="col-form-label date-label col-12 required" translate>Code</label>
+              <input pInputText #inputFieldTable maxlength="10" (keyup.enter)="onEnterTableInputCst(0)" name="code" autofocus class="col-form-label col-12" [(ngModel)]="locationList[0].locCode"/>
+          </div>
+
+          <div class="col-12">
+              <label class="col-form-label date-label col-12 required" translate>Name</label>
+              <input pInputText #inputFieldTable (keyup.enter)="onEnterTableInputCst(1)" id="name" class="col-form-label col-12" autofocus  name="name"  [(ngModel)]="locationList[0].locName"/>
+          </div>
+
+          <div class="col-12">
+              <label class="col-form-label date-label col-12 required" translate>Description</label>
+              <input pInputText id="descr" #inputFieldTable (keyup.enter)="onEnterTableInputCst(2)" class="col-form-label col-12"  name="descr"  [(ngModel)]="locationList[0].descr"/>
+          </div>
+
+          <div class="col-12">
+              <label class="col-form-label date-label col-12 required" translate>Address</label>
+              <input pInputText id="address" #inputFieldTable (keyup.enter)="onEnterTableInputCst(3)" class="col-form-label col-12" name="address"  [(ngModel)]="locationList[0].locAddress" />
+          </div>
+
+          <div class="col-12">
+              <label class="col-form-label date-label col-12 required" translate>Phone</label>
+              <input pInputText id="phone" #inputFieldTable (keyup.enter)="onEnterTableInputCst(4)" class="col-form-label col-12" name="phone"  [(ngModel)]="locationList[0].locPhone"/>
+          </div>
+          <br>
+          <div class="col-12" style="text-align: right;">
+              <button #savebtn (click)="saveLoc()" class="btn btn-primary col-3" translate><i class="fa fa-save"></i> Save</button>&nbsp;
+              <button #cancelbtn (click)="sendDataToParent()" class="btn btn-danger col-3" translate><i class="fa fa-undo"></i> Cancel</button>
+          </div>
+
+      </div>
+  </div>
+</div>

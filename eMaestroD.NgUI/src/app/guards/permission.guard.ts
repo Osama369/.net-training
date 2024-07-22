@@ -1,0 +1,29 @@
+import { ActivatedRouteSnapshot, CanActivate, CanActivateFn, Router, RouterStateSnapshot } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { Observable, catchError, map, of } from 'rxjs';
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root',
+})
+
+export class PermissionGuard implements CanActivate {
+  constructor(private authService: AuthService, private router: Router) {
+  }
+
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot):boolean{
+    let key : boolean = true;
+    const screenName = route.data['requiredPermission'];
+    // Make a request to the server to check the user's permissions
+    this.authService.checkPermission(screenName).subscribe((hasPermission: any) => {
+        if (hasPermission) {
+          key = true;
+        } else {
+          this.router.navigate(['/not-authorized']);
+          key= false;
+        }
+      });
+      return key;
+  }
+}
+

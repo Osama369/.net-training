@@ -1,0 +1,119 @@
+<div class="card">
+  <div class="row">
+      <div class="col-6">
+          <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Print Barcode
+            <a *ngIf="!bookmark"  (click)="UpdateBookmark(true)" title="Add Bookmark"><i class="pi pi-bookmark" style="font-size: 1.5rem;"></i></a>
+            <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark"><i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i></a>
+          </h4>
+      </div>
+      <!-- <div class="col-6" style="text-align: right;">
+      <button pButton type="button" icon="pi pi-plus" [routerLink]="'./../AddNewSale'" style="padding: 0.5rem !important;">Add New</button>
+      </div> -->
+  </div>
+  <p-table #dt1 [value]="products" dataKey="prodID" styleClass="p-datatable-striped" [(selection)]="selectedProducts"
+      [rows]="100" [showCurrentPageReport]="true" [rowsPerPageOptions]="[100,500,1000]" [loading]="loading"
+      [paginator]="true" scrollHeight="100px" [scrollable]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [globalFilterFields]="['prodCode','prodName','prodGrpName']">
+      <ng-template pTemplate="caption">
+
+          <div class="table-header row" style="margin-top: 8px;margin-bottom: 8px;">
+              <div class="col-md-6">
+                <span class="p-input-icon-left ml-auto">
+                  <i class="pi pi-search"></i>
+                  <input pInputText type="text" (input)="dt1.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'Search keyword'|translate" />
+                </span>
+                &nbsp;
+                <label class="col-form-label date-label required" translate>Category<span>:</span>&nbsp;</label>
+                <p-autoComplete #inputField [(ngModel)]="SelectedproductGrouplist" [suggestions]="FilterProductGrouplist" (completeMethod)="filterCategory($event)"
+                field="prodGrpName" value="prodGrpID" [minLength]="1" class="ReportDropDown" [dropdown]="true" (ngModelChange)="ChangeProducts()"></p-autoComplete>
+                &nbsp;
+              </div>
+              <div class="col-md-6" style="text-align:right !important;">
+                <span class="p-buttonset">
+                  <label class="col-form-label">Enter Qty <span>:</span></label>
+                  &nbsp;
+                  <input pInputText type="text" [(ngModel)]="quantity" maxlength="3" (change)="CheckQty()" (keypress)="($event.charCode >= 46 && $event.charCode < 58)">
+                  &nbsp;
+                  <p-button icon="fa-solid fa-print" styleClass="p-button p-button-sm p-button-info btns" (onClick)="showPageSetting()" [style]="{'margin-right': '8px'}" label="Print Barcode" title="Print"></p-button>
+                  <!-- <p-button icon="pi pi-file-excel" styleClass="p-button p-button-sm p-button-success btns" (onClick)="exportExcel()" [style]="{'margin-right': '8px'}" title="Export Excel"></p-button> -->
+                  <!-- <p-button icon="pi pi-file-pdf" styleClass="p-button p-button-sm p-button-danger btns" (onClick)="exportPdf()" title="Export PDF"></p-button> -->
+                </span>
+              </div>
+            </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 0.5rem; text-align: center;">
+              <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+            </th>
+            <th style="width: 1rem;">
+                Product Barcode
+            </th>
+            <th style="width: 1rem;">
+              Category
+            </th>
+            <th style="width:11rem" translate>
+                Product Name
+            </th>
+      </ng-template>
+      <ng-template pTemplate="body" let-alert>
+          <tr>
+            <th style="text-align: center;" >
+              <p-tableCheckbox  [value]="alert"></p-tableCheckbox>
+            </th>
+            <td>
+              {{alert.prodCode}}
+            </td>
+            <td>
+              {{alert.prodGrpName}}
+            </td>
+            <td>
+              {{alert.prodName}}
+            </td>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+          <tr>
+              <td colspan="7" translate>No Record found.</td>
+          </tr>
+      </ng-template>
+  </p-table>
+</div>
+
+
+<p-dialog [modal]="true" [(visible)]="printView" [style]="{width: '60vw'}">
+  <div class="container">
+    <iframe [src]="url" width="100%" height="600"></iframe>
+  </div>
+</p-dialog>
+
+
+<p-dialog [modal]="true" [(visible)]="pageSettingView" [style]="{width: '30vw'}">
+  <div class="container">
+    <h4 translate>Page Setup</h4>
+    <div style="border-Top: 3px solid #eee;" class="row">
+      <label class="col-form-label date-label col-6 required" translate>Page Width (in mm)</label>
+      <label class="col-form-label date-label col-6 required" translate>Page Height (in mm)</label>
+      <input pInputText type="text" #inputFieldTable class="col-form-label col-5"  name="width" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"  [(ngModel)]="width"/>
+      <label class="col-1"></label>
+      <input pInputText type="text" #inputFieldTable class="col-form-label col-5"  name="height" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"  [(ngModel)]="height"/>
+      <label class="col-form-label date-label col-6 required" translate>Margin Left (in mm)</label>
+      <label class="col-form-label date-label col-6 required" translate>Margin Right (in mm)</label>
+      <input pInputText type="text" #inputFieldTable class="col-form-label col-5"  name="height" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"  [(ngModel)]="marginLeft"/>
+      <label class="col-1"></label>
+      <input pInputText type="text" #inputFieldTable class="col-form-label col-5"  name="height" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" [(ngModel)]="marginRight"/>
+      <label class="col-form-label date-label col-6 required" translate>Margin Top (in mm)</label>
+      <label class="col-form-label date-label col-6 required" translate>Margin Bottom (in mm)</label>
+      <input pInputText type="text" #inputFieldTable class="col-form-label col-5"  name="height" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"  [(ngModel)]="marginTop"/>
+      <label class="col-1"></label>
+      <input pInputText type="text" #inputFieldTable class="col-form-label col-5"  name="height" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"  [(ngModel)]="marginBottom"/>
+      <label class="col-form-label date-label col-12 required" translate>No of barcode in one row <span><i class="fa fa-info-circle" title="only accept 1 or 2"></i></span></label>
+      <input pInputText type="text" #inputFieldTable class="col-form-label col-12" min="1" max="2" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" name="height" title="Only Accept 1 or 2" (change)="checkNoOfBarcode()"  [(ngModel)]="noOfBarcode"/>
+      <div class="col-12" style="text-align: right">
+        <br>
+        <button #savebtn (click)="ShowPrintView()" class="btn btn-primary col-3" translate><i class="fa fa-save"></i> Submit</button>&nbsp;
+        <button #cancelbtn (click)="pageSettingView=false" class="btn btn-danger col-3" translate><i class="fa fa-undo"></i> Close</button>
+    </div>
+    </div>
+  </div>
+</p-dialog>

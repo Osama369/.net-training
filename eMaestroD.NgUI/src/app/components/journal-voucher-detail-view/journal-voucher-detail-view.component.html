@@ -1,0 +1,40 @@
+<div class="card">
+  <div class="row">
+      <div class="col-12">
+          <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;{{heading}}
+          <i class="pi pi-times-circle" (click)="back()"  style="font-size: 1.5rem; float:right"></i>
+        </h4>
+      </div>
+      <div class="col-12">
+          <label class="col-form-label col-6 required" style="font-weight: bold;" translate>Date</label>
+          <label class="col-form-label col-6 required" style="font-weight: bold;" translate>Voucher No</label>
+          <label class="col-form-label col-6 required">{{ date | timezoneDate:"dd/MM/yyyy hh:mm:ss"}}</label>
+          <label class="col-form-label col-6 required">{{EditVoucherNo}}</label>
+        </div>
+        <div class="col-12" style="background-color: #0d6efd;color: white; padding:6px">
+        <label class="col-form-label col-4 required" translate>Account</label>
+        <label class="col-form-label col-4 required" translate>Detail</label>
+        <label class="col-form-label col-2 required" translate>Debit</label>
+        <label class="col-form-label col-2 required" translate>Credit</label>
+      </div>
+      <div class="col-12" *ngFor="let list of voucherlist" style="padding:6px">
+        <label class="col-form-label col-4 required">{{list.parentAccountName}}</label>
+        <label class="col-form-label col-4 required">{{list.ChildAccountName}}</label>
+        <label class="col-form-label col-2 required">{{list.debit | number : '1.2-2'}}</label>
+        <label class="col-form-label col-2 required">{{list.credit | number : '1.2-2'}}</label>
+      </div>
+
+      <div class="col-12">
+        <br>
+        <button #printbtn (click)="showReportDialog()" translate class="btn btn-primary col-2"><i class="fa fa-print"></i> Print</button>
+        <button #cancelbtn (click)="back()" translate style="margin-left: 10px;" class="btn btn-danger col-2"><i class="fa fa-undo"></i> Close</button>
+      </div>
+  </div>
+</div>
+
+
+<!-- <p-dialog [(visible)]="Reportvisible" [style]="{width: '60vw'}">
+  <div class="container" *ngIf="Reportvisible">
+      <app-invoices [voucherName]="EditVoucherNo" [type]="'A4'"></app-invoices>
+  </div>
+</p-dialog> -->

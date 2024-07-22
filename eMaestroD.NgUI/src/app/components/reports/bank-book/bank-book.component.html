@@ -1,0 +1,55 @@
+<div class="container">
+  <div class="gird">
+
+          <div class="card">
+
+          <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Bank Book Report
+            <a *ngIf="!bookmark"  (click)="UpdateBookmark(true)" title="Add Bookmark"><i class="pi pi-bookmark" style="font-size: 1.5rem;"></i></a>
+            <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark"><i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i></a>
+          </h4>
+              <div class="col-12 lg:col-6 xl:col-3">
+
+              <label class="col-form-label date-label required" translate>Bank<span>:</span>&nbsp;</label>
+              <!-- <p-autoComplete #inputField styleClass="myclass" [(ngModel)]="SelectedProduct" [suggestions]="Filterproductlist" (completeMethod)="filterProduct($event)"
+              field="acctName" value="COAID" [minLength]="1" [dropdown]="true"></p-autoComplete> -->
+
+              <p-dropdown
+                #inputField
+                styleClass="myclass"
+                [(ngModel)]="SelectedProduct"
+                [options]="products"
+                optionLabel="acctName"
+                [filter]="true"
+                [filterBy]="'acctName'"
+                [showClear]="true"
+                >
+            </p-dropdown>
+
+              &nbsp;
+              <label class="col-form-label date-label required" translate>Date From<span>:</span>&nbsp;</label>
+              <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" [autofocus]="true" pAutoFocus [(ngModel)]="DateFrom" dateFormat="dd/mm/yy"></p-calendar>
+              &nbsp;
+              <label class="col-form-label date-label required" translate>Date To <span>:</span>&nbsp;</label>
+              <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" [(ngModel)]="DateTo" dateFormat="dd/mm/yy"></p-calendar>
+              &nbsp;
+              <button #savebtn (click)="submit()" translate class="btn btn-primary btnSetting"> <i class="far fa-paper-plane"></i> Submit</button>
+          </div>
+      <!-- <br>
+      <iframe [src]="pdfUrl" width="100%" height="380"></iframe> -->
+      </div>
+  </div>
+</div>
+
+
+<app-report-gird
+heading="BankBook Report"
+[dtFrom]="DateFrom"
+[dtTo]="DateTo"
+[columns]="cols"
+[data]="data"
+[AllowHeaderSetting]="allowBtn"
+[AllowGlobalFilter]="allowBtn"
+[AllowPrintButtons]="allowBtn"
+>
+</app-report-gird>
+

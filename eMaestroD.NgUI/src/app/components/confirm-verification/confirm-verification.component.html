@@ -1,0 +1,29 @@
+<div class="container">
+  <div class="card">
+    <div class="row ">
+      <div class="col-12">
+        <!-- <h4 style="border-left: 3px solid #3B82F6;">&nbsp; Create New Account</h4> -->
+        <h4 class="text-center" translate>Email Verification</h4>
+      </div>
+      <div style="width: 60%; margin: auto; background-color: rgba(227, 227, 227, 0.499);">
+        <div style="margin-left: 40px;">
+
+        <div class="12">
+        </div>
+        <div class="col-12">
+          <br>
+          <p translate>Verification code has been send to your email <strong>{{email}}</strong></p>
+          <!-- <label class="col-form-label Type-label required col-11">Verification Code &nbsp;</label> -->
+          <input pInputText class="col-11"  #inputField [(ngModel)]="confirmCode" [minLength]="1" [maxlength]="4" placeholder="Enter verification code">
+        </div>
+        <br>
+      </div>
+      </div>
+      <div class="col-12" class="text-center">
+        <br>
+        <button (click)="submit()" translate [disabled]="disable" #savebtn class="btn btn-success p-button-rounded col-5">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+

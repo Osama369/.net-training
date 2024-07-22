@@ -1,0 +1,62 @@
+<div class="container">
+  <h4 style="border-left: 3px solid blue;" translate>&nbsp;{{title}}</h4>
+  <div class="row">
+      <div class="col-12">
+            <label class="col-form-label date-label col-12 required" translate>Company Name</label>
+            <input pInputText #inputFieldTable (keyup.enter)="onEnterTableInputCst(0)" id="name" class="col-form-label col-12" name="name"  [(ngModel)]="tenantList[0].tenantName" autofocus/>
+            <label class="col-form-label date-label col-7 required" translate>First Name</label>
+            <label class="col-form-label date-label col-5 required" translate>Last Name</label>
+            <input pInputText #inputFieldTable (keyup.enter)="onEnterTableInputCst(0)" id="name" class="col-form-label col-5" name="name"  [(ngModel)]="tenantList[0].firstName" autofocus/>
+            <label class="col-2"></label>
+            <input pInputText id="value" #inputFieldTable (keyup.enter)="onEnterTableInputCst(1)" class="col-form-label col-5" name="value"  [(ngModel)]="tenantList[0].lastName">
+
+            <label class="col-form-label date-label col-12 required" translate>Address</label>
+            <input pInputText id="value" #inputFieldTable (keyup.enter)="onEnterTableInputCst(2)" class="col-form-label col-12" name="value"  [(ngModel)]="tenantList[0].address1">
+
+            <label class="col-form-label date-label col-12 required" translate>Email</label>
+            <input pInputText id="value" #inputFieldTable (keyup.enter)="onEnterTableInputCst(3)" class="col-form-label col-12" name="value"  [readOnly]="true" [(ngModel)]="tenantList[0].email">
+
+            <label class="col-form-label date-label col-7 required" translate>Phone No</label>
+            <label class="col-form-label date-label col-5 required" translate>Email Confirmed</label>
+            <input pInputText id="value" #inputFieldTable (keyup.enter)="onEnterTableInputCst(3)" class="col-form-label col-5" name="value"  [readOnly]="true" [(ngModel)]="tenantList[0].businessPhone">
+            <label class="col-2"></label>
+            <p-dropdown [options]="dropdownlist" [(ngModel)]="SelectedEmailConfirm" [styleClass]="'col-5'"></p-dropdown>
+
+            <label class="col-form-label date-label col-7 required" translate>Country</label>
+            <label class="col-form-label date-label col-5 required" translate>Type</label>
+            <p-dropdown [options]="countryList" [(ngModel)]="SelectedCountry" [styleClass]="'col-5'"></p-dropdown>
+            <label class="col-2"></label>
+            <p-dropdown [options]="dropdownlistType" [(ngModel)]="SelectedType" [styleClass]="'col-5'"></p-dropdown>
+
+            <label class="col-form-label date-label col-7 required" translate>Sign Up Date</label>
+            <label class="col-form-label date-label col-5 required" translate>Subscription End Date</label>
+            <p-calendar [(ngModel)]="SelectedSubDate" dateFormat="dd-MM-yy" [styleClass]="'col-5'" [showIcon]="true"></p-calendar>
+            <label class="col-2"></label>
+            <p-calendar [(ngModel)]="SelectedSubEndDate" dateFormat="dd-MM-yy" [styleClass]="'col-5'" [showIcon]="true"></p-calendar>
+
+            <label class="col-form-label date-label col-3 required" translate>Suspended</label>
+            &nbsp;
+            <label class="col-form-label date-label col-3 required" translate>Max Users</label>
+            &nbsp;
+            <label class="col-form-label date-label col-3 required" translate>Max Companies</label>
+            &nbsp;
+            <label class="col-form-label date-label col-2 required" translate>Max Locations</label>
+
+            <p-dropdown [options]="dropdownlist" [(ngModel)]="SelectedSuspended" [styleClass]="'col-3'"></p-dropdown>
+            &nbsp;
+            <input pInputText id="value" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" #inputFieldTable (keyup.enter)="onEnterTableInputCst(8)" class="col-form-label col-3" name="value"  [(ngModel)]="tenantList[0].maxUserCount">
+            &nbsp;
+            <input pInputText id="value" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" #inputFieldTable (keyup.enter)="onEnterTableInputCst(9)" class="col-form-label col-3" name="value"  [(ngModel)]="tenantList[0].maxCompaniesCount">
+            &nbsp;
+            <input pInputText id="value" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" #inputFieldTable (keyup.enter)="onEnterTableInputCst(9)" class="col-form-label col-2" name="value"  [(ngModel)]="tenantList[0].maxLocationCount">
+
+          <div class="col-12">
+            <br>
+              <button #savebtn (click)="saveTax()" translate class="btn btn-outline-primary col-5">Save</button>&nbsp;
+              <button #cancelbtn (click)="sendDataToParent()" translate class="btn btn-outline-danger col-5">Cancel</button>
+          </div>
+      </div>
+  </div>
+</div>
+
+

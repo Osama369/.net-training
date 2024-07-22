@@ -1,0 +1,32 @@
+<div class="layout-wrapper" [ngClass]="containerClass">
+  <ng-container *ngIf="this.auth.isAuthenticatedforLogin();then authenticated1 else notAuthenticated1">
+
+  </ng-container>
+  <ng-template #authenticated1>
+    <app-topbar></app-topbar>
+        <div  class="layout-sidebar">
+            <app-sidebar></app-sidebar>
+        </div>
+        <!-- <div class="layout-toggle">
+          <button #menubutton class="p-link layout-menu-button layout-topbar-button" style="width: 100%;height: 100%;" (click)="layoutService.onMenuToggle()">
+            <i class="pi pi-angle-left"></i>
+          </button>
+        </div> -->
+    <div class="layout-main-container">
+        <div class="layout-main">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+  </ng-template>
+
+    <ng-template #notAuthenticated1>
+      <div class="layout-main-container logged-out">
+        <div class="layout-main">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </ng-template>
+</div>
+
+
+

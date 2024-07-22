@@ -1,0 +1,90 @@
+<div class="card">
+  <div>
+    <strong> <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;{{ tableheading }}
+      <a *ngIf="!bookmark"  (click)="UpdateBookmark(true)" title="Add Bookmark"><i class="pi pi-bookmark" style="font-size: 1.5rem;"></i></a>
+      <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark"><i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i></a>
+    </h4></strong>
+    <p-table #table [columns]="columns" [value]="data" dataKey="id"
+    [rows]="rowcount" [(first)]="first" [rowHover]="true" dataKey="id" [rows]="rowcount"
+    [rowsPerPageOptions]="[100,500,1000]"  [paginator]="true" [filterDelay]="0"
+    [tableStyle]="{'min-width':'75rem'}" scrollHeight="355px" [showCurrentPageReport]="true"
+    styleClass="p-datatable-sm p-datatable-striped mt-3"
+    [scrollable]="true"
+    >
+          <ng-template *ngIf="allowGlobalFilter" pTemplate="caption">
+            <div class="table-header row" style="margin-top: 8px;margin-bottom: 8px;">
+              <div class="col-sm-6">
+                <span class="p-input-icon-left ml-auto">
+                  <i class="pi pi-search"></i>
+                  <input  pInputText type="text" (input)="applyFilterGlobal($event, 'contains',table)" [placeholder]="'Search keyword' | translate" />
+                </span>
+                &nbsp;
+                <label *ngIf="tableheading == 'Products'" class="col-form-label date-label required" translate>Category<span>:</span>&nbsp;</label>
+                <p-autoComplete #inputField *ngIf="tableheading == 'Products'" [(ngModel)]="SelectedproductGrouplist" [suggestions]="FilterProductGrouplist" (completeMethod)="filterCategory($event)"
+                field="prodGrpName" value="prodGrpID" [minLength]="1" class="ReportDropDown" [dropdown]="true" (ngModelChange)="ChangeProducts()"></p-autoComplete>
+                &nbsp;
+              </div>
+              <div class="col-sm-6" style="text-align:right !important;">
+                <!-- <app-buttons
+                [allowAddButtons]="allowAddButtons"
+                [tableheading] ="tableheading"
+                [columns]="columns"
+                [data]="data" ></app-buttons> -->
+                <span class="p-buttonset">
+                  <p-button *ngIf="allowUploadButtons" icon="pi pi-upload" styleClass="p-button p-button-sm p-button-secondary btns" [style]="{'margin-right': '8px'}" (onClick)="sendDataToParentforUpload()" title="Upload"></p-button>
+                  <p-button *ngIf="allowAddButtons" icon="pi pi-plus" styleClass="p-button p-button-sm btns" (onClick)="sendDataToParent('add',undefined)" [style]="{'margin-right': '8px'}" title="Add"></p-button>
+                  <p-button *ngIf="allowAddButtons" icon="pi pi-file-excel" styleClass="p-button p-button-sm p-button-success btns" (onClick)="exportExcel()" [style]="{'margin-right': '8px'}" title="Export Excel"></p-button>
+                  <p-button *ngIf="allowAddButtons" icon="pi pi-file-pdf" styleClass="p-button p-button-sm p-button-danger btns" (onClick)="exportPdf()" title="Export PDF"></p-button>
+                </span>
+              </div>
+            </div>
+        </ng-template>
+
+        <ng-template pTemplate="header" let-columns>
+          <tr *ngIf="allowColSort" >
+            <th *ngIf="allowActionButtons"  style="min-width:4rem !important;text-align: center;"  pFrozenColumn translate>ACTIONS</th>
+            <ng-container *ngFor="let col of columns" >
+                <th *ngIf="!col.isHidden" translate style="min-width:15rem;text-align: left;" [pSortableColumn]="col.field" >{{ col.header }}<p-sortIcon [field]="col.header"></p-sortIcon></th>
+            </ng-container>
+           </tr>
+
+        <tr *ngIf="!allowColSort" >
+          <th *ngIf="allowActionButtons" class="custom-table" style="min-width:10rem;text-align: center;"  pFrozenColumn translate>ACTIONS</th>
+          <ng-container *ngFor="let col of columns" >
+            <th *ngIf="!col.isHidden" class="custom-table" translate style="min-width:10rem;text-align: left;" >{{ col.header }}</th>
+        </ng-container>
+       </tr>
+        <tr *ngIf="allowColFilter">
+          <th *ngIf="allowActionButtons" style="min-width:10rem;text-align: center;" pFrozenColumn></th>
+          <ng-container *ngFor="let col of columns" >
+            <th *ngIf="!col.isHidden" translate style="min-width:15rem;text-align: left;">
+              <p-columnFilter type="text" [field]="col.field | translate"></p-columnFilter>
+          </th>
+          </ng-container>
+        </tr>
+
+        </ng-template>
+      <ng-template pTemplate="body" let-obj  let-columns="columns">
+        <tr class=" text-center">
+          <td *ngIf="allowActionButtons" pFrozenColumn style="text-align: center !important; z-index: 0;">
+            <span class="p-buttonset">
+              <p-button *ngIf="allowPdfButton" (onClick)="sendDataToParent('view',obj)"  icon="pi pi-file-pdf" styleClass="p-button-rounded p-button-info p-button-text" title="View"></p-button>
+              <p-button *ngIf="!obj.isActionBtn" (onClick)="sendDataToParent('edit',obj)" icon="pi pi-pencil" styleClass="p-button-rounded p-button-success p-button-text" title="Edit"></p-button>
+              <p-button  *ngIf="!obj.isActionBtn" (onClick)="sendDataToParent('delete',obj)" icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-text" title="Delete"></p-button>
+            </span>
+            </td>
+          <ng-container *ngFor="let col of columns">
+              <td style="text-align: left !important;min-width:15rem;" *ngIf="!col.isHidden && col.controlType === enum_ColTypes.Currency " >{{ obj[col.field] | number : '1.2-2'}}</td>
+              <td style="text-align: left !important;min-width:15rem;" *ngIf="!col.isHidden && col.controlType === enum_ColTypes.Date " >{{ obj[col.field] | timezoneDate :'MMM-dd-yyyy' }} </td>
+              <td style="text-align: left !important;min-width:8rem;" *ngIf="!col.isHidden && col.controlType === enum_ColTypes.ToggleSwitch " >
+                <p-inputSwitch [(ngModel)]="obj[col.field]" (onChange)="sendDataToParent('isDefault',obj)" [readonly]="obj[col.field]"></p-inputSwitch>
+              </td>
+              <td style="text-align: left !important;min-width:15rem;" *ngIf="!col.isHidden && col.uppercase   && col.controlType === enum_ColTypes.Text " >{{ obj[col.field] | uppercase }} </td>
+              <td style="text-align: left !important;min-width:15rem;" *ngIf="!col.isHidden && !col.uppercase && col.controlType === enum_ColTypes.Text " > {{ obj[col.field] === true ? 'Yes' : obj[col.field] === false ? 'No' : obj[col.field] }} </td>
+            </ng-container>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+

@@ -1,0 +1,55 @@
+<div class="container">
+  <div class="card">
+      <div class="col-12">
+          <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Account Payable Report
+            <a *ngIf="!bookmark"  (click)="UpdateBookmark(true)" title="Add Bookmark"><i class="pi pi-bookmark" style="font-size: 1.5rem;"></i></a>
+            <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark"><i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i></a>
+          </h4>
+          <div class="row">
+                      <div class="col-12">
+                      <label class="col-form-label date-label required" translate>Name<span>:</span>&nbsp;</label>
+                      <!-- <p-autoComplete #inputField styleClass="myclass" [(ngModel)]="SelectedProduct" [suggestions]="Filterproductlist" (completeMethod)="filterProduct($event)"
+                      field="vendName" value="vendID" [minLength]="1" [dropdown]="true">
+                      <ng-template let-vendor pTemplate="item">
+                        <div>{{vendor.vendCode}} - {{vendor.vendName}}</div>
+                      </ng-template>
+                    </p-autoComplete> -->
+                    <p-dropdown
+                    #inputField
+                    styleClass="col-2"
+                    [(ngModel)]="SelectedProduct"
+                    [options]="vendors"
+                    optionLabel="vendName"
+                    [filter]="true"
+                    [filterBy]="'vendName'"
+                    [showClear]="true"
+                    >
+                    <ng-template let-vendor pTemplate="item">
+                      <div>{{vendor.vendCode}} - {{vendor.vendName}}</div>
+                    </ng-template>
+                    </p-dropdown>
+                      &nbsp;
+                      <label class="col-form-label date-label required" translate>As Of Date <span>:</span>&nbsp;</label>
+                      <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" [(ngModel)]="DateTo" dateFormat="dd/mm/yy"></p-calendar>
+                      &nbsp;
+                      <button #savebtn (click)="submit()" translate class="btn btn-primary btnSetting"> <i class="far fa-paper-plane"></i> Submit</button>
+                  </div>
+
+
+              </div>
+          </div>
+      </div>
+</div>
+
+
+<app-report-gird
+heading="Account Payable Report"
+[dtFrom]="DateFrom"
+[dtTo]="DateTo"
+[columns]="cols"
+[data]="data"
+[AllowHeaderSetting]="allowBtn"
+[AllowGlobalFilter]="allowBtn"
+[AllowPrintButtons]="allowBtn"
+>
+</app-report-gird>

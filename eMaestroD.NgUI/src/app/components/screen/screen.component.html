@@ -1,0 +1,86 @@
+<div class="card">
+  <div class="row">
+      <div class="col-6">
+          <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Screen</h4>
+      </div>
+      <!-- <div class="col-6" style="text-align: right;">
+      <button pButton type="button" icon="pi pi-plus" [routerLink]="'./../AddNewSale'" style="padding: 0.5rem !important;">Add New</button>
+      </div> -->
+  </div>
+  <p-table #dt1 [value]="Screen" dataKey="id"
+      [rows]="100" [showCurrentPageReport]="true" [rowsPerPageOptions]="[100,500,1000]" [loading]="loading"
+      [paginator]="true" scrollHeight="100px" [scrollable]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [globalFilterFields]="['FirstName','LastName','Mobile','Email','RoleName','Companies']">
+      <ng-template pTemplate="caption">
+
+          <div class="table-header row">
+              <div class="col-md-6">
+                <span class="p-input-icon-left ml-auto">
+                  <i class="pi pi-search"></i>
+                  <input pInputText type="text" (input)="dt1.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'Search keyword'|translate" />
+                </span>
+              </div>
+              <div class="col-md-6" style="text-align:right !important;">
+                <span class="p-buttonset">
+                  <p-button icon="pi pi-plus" styleClass="p-button p-button-sm btns" (onClick)="AddNewUser()" ></p-button>
+                  <p-button icon="pi pi-file-excel" styleClass="p-button p-button-sm p-button-success btns" (onClick)="exportExcel()" ></p-button>
+                  <p-button icon="pi pi-file-pdf" styleClass="p-button p-button-sm p-button-danger btns" (onClick)="exportPdf()" ></p-button>
+                </span>
+              </div>
+            </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+          <tr>
+              <th style="min-width:6rem;text-align: center;" translate  pFrozenColumn>ACTIONS</th>
+              <th style="min-width:8rem" translate>
+                  <div class="flex justify-content-center align-items-center" translate>
+                     Screen Parent Name
+                  </div>
+              </th>
+              <th style="min-width:8rem" translate>
+                <div class="flex justify-content-center align-items-center" translate>
+                   Screen Name
+                </div>
+              </th>
+              <th style="min-width:8rem" translate>
+                  <div class="flex justify-content-center align-items-center" translate>
+                    path
+                  </div>
+              </th>
+
+              <!-- <th th style="min-width:11rem">
+
+              </th> -->
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-screen>
+          <tr>
+              <td pFrozenColumn style="text-align: center !important;z-index: 0;">
+                  <span class="p-buttonset">
+                    <p-button  (onClick)="editView(screen)" icon="pi pi-pencil" styleClass="p-button-rounded p-button-success p-button-text"></p-button>
+                    <!-- <p-button  (onClick)="deleteView(user)" icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-text"></p-button> -->
+                  </span>
+              </td>
+              <td>
+                  {{screen.screenParentName}}
+              </td>
+              <td>
+                {{screen.screenName}}
+              </td>
+              <td>
+                {{screen.path}}
+              </td>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+          <tr>
+              <td colspan="7" translate>No Record found.</td>
+          </tr>
+      </ng-template>
+  </p-table>
+</div>
+
+
+<p-dialog [modal]="true" #cstDailog [(visible)]="ScreenVisibility"  [style]="{width: '40vw'}">
+  <app-add-new-screen [ScreenDATA]="ScreenList" [title]="title" (dataEvent)="handleChildData($event)"></app-add-new-screen>
+</p-dialog>

@@ -1,0 +1,60 @@
+<div class="container" >
+  <div class="card" style="min-height: 80vh">
+    <div class="row">
+      <div class="col-8">
+        <h4 translate>&nbsp;Welcome To eMaestro</h4>
+    </div>
+    <div class="col-4">
+      <button  class="btn btn-success" title="Add New Company" translate style="float: right;" (click)="openDailogForCreateNewCompany()"><i class="pi pi-plus"></i></button>
+    </div>
+
+      <!-- <div class="col-12">
+          <p class="col-6" translate></p>
+          <button (click)="openDailogForCreateNewCompany()" [disabled]="btnReg" #savebtn class="btn btn-outline-success float-end p-button-rounded col-6" translate></button>
+      </div> -->
+      <div style="width: 90%; margin: auto;">
+        <div class="col-12">
+        </div>
+        <div class="col-12">
+          <label class="col-form-label Type-label required col-12" style="font-size: 20px;" translate> <span style="color: #0d6efd;">Companies List</span> &nbsp;</label>
+        </div>
+
+        <div class="col-12" style="font-size:16px">
+            <div *ngFor="let row of companylist">
+                <a (click)="SetCompany(row)" #savebtn class="btn p-button-text p-button-rounded" style="width: 100%; font-size: 16px;text-align: left !important; color:#000" translate><i style="font-size:12px; margin-right: 8px;" class="fa-solid fa-arrow-right"></i> {{row.companyName}}</a>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="col-12" class="text-center">
+        <br>
+        <button (click)="logout()" translate [disabled]="btnReg" #savebtn class="btn btn-outline-primary p-button-rounded col-4">Logout</button>
+      </div> -->
+
+    </div>
+  </div>
+</div>
+
+
+  <p-dialog [modal]="true" #prodDailog [(visible)]="AddCompanyVisible" [style]="{width: '30vw'}" >
+    <div class="container">
+      <h4 translate>Add New Company</h4>
+      <div style="border-Top: 3px solid #eee;" class="row">
+          <div class="col-12">
+                  <label class="col-form-label date-label col-12 required" translate>Company Name</label>
+                <input pInputText #inputFieldTableCst autofocus id="code" class="col-form-label col-12" name="code"  [(ngModel)]="NewCompanyList[0].companyName"/>
+                <label class="col-form-label date-label col-12 required" translate>TAX/VAT No</label>
+                <input pInputText #inputFieldTableCst autofocus id="vat" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="15" class="col-form-label col-12" name="vat"  [(ngModel)]="NewCompanyList[0].productionType"/>
+                <br>
+                <div class="col-12" style="text-align: right;">
+                <br>
+                  <button #savebtn (click)="RegisterNewCompany()" translate [disabled]="check" class="btn btn-primary col-3"><i class="fa fa-save"></i>                    Save</button>&nbsp;
+                  <button #cancelbtn (click)="AddCompanyVisible=false" translate [disabled]="check" class="btn btn-danger col-3"><i class="fa fa-undo"></i>                    Cancel</button>
+              </div>
+          </div>
+      </div>
+    </div>
+  </p-dialog>
+
+
+
+

@@ -1,0 +1,27 @@
+<div class="card">
+    <div class="row" style="height: 40px !important;">
+        <div class="col-12">
+            <h4 class="col-12" translate><span translate>Upload</span>&nbsp;{{ uploadHeading | translate }} </h4>
+            <button pButton type="button" style="float:right;padding: 5px !important;top: -40px;" icon="pi pi-download" translate [label]="'Download Template'| translate " (click)="downloadTemplate()"></button>
+        </div>
+    </div>
+   <p-fileUpload #file name="demo" accept=".xlsx" [showCancelButton]="false" [showUploadButton]="false">
+
+   <ng-template pTemplate="content">
+
+   </ng-template>
+    <ng-template pTemplate="content">
+        <ul *ngIf="uploadedFiles.length">
+            <li translate *ngFor="let file of uploadedFiles">{{ file.name }} - {{ file.size }} bytes</li>
+        </ul>
+    </ng-template>
+    </p-fileUpload>
+    <br>
+    <button pButton type="button"  translate [label]="'Upload'|translate" [disabled]="UploadBtnDisable" (click)="onUpload()"></button>
+
+</div>
+
+
+<p-dialog appendTo="body" [modal]="true" #prodDailog [(visible)]="ProductGroupVisible" [style]="{width: '40vw'}" (onHide)="closeConfirmCategoryDailog()">
+  <app-confirm-category  [Data]="prodCategoryList" (dataEvent)="handleChildData($event)"></app-confirm-category>
+</p-dialog>

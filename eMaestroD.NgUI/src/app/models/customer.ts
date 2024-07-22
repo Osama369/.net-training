@@ -1,0 +1,31 @@
+export interface Customer {
+    cstID? : any;
+    regionID? : any;
+    regionName? : any;
+    cityID? : any;
+    cityName? : any;
+    areasID? : any;
+    areasName? : any;
+    cstCode? : any;
+    cstName? : any;
+    cstShortName? : any;
+    isLicence? : true;
+    city? : any;
+    state? : any;
+    active? : true;
+    crtBy? : any;
+    crtDate? : any;
+    modby? : any;
+    modDate? : any;
+    address?: any;
+    contPhone?: any;
+    taxNo?:any;
+    taxValue?:any;
+    comment?:any;
+    comID?:any;
+    opnBal?:any;
+    vendorBal?:any;
+    message?:any;
+    isActionBtn?:any;
+    empID?:any;
+}

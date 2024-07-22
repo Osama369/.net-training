@@ -1,0 +1,43 @@
+<!-- <div *ngIf="list$ | async as data">
+  <app-gird
+  tableheading="Vendors"
+  [columns]="cols"
+  [data]="data"
+  [rowcount]=10
+  [allowColSort]="true"
+  [allowColFilter]="false"
+  [allowGlobalFilter]="true"
+  [allowActionButtons]="false"
+  (dataEvent)="handleChildData($event)"
+>
+</app-gird>
+</div> -->
+
+
+<div *ngIf="vendors">
+
+  <app-gird
+  tableheading="Suppliers"
+  [columns]="cols"
+  [data]="vendors"
+  [rowcount]=100
+  [allowColSort]="false"
+  [allowColFilter]="false"
+  [allowGlobalFilter]="true"
+  [allowActionButtons]="true"
+  (dataEvent)="handleChildData($event)"
+  (handleToolVisibility)="handleTool($event)"
+>
+</app-gird>
+
+</div>
+
+
+
+<p-dialog [modal]="true" #cstDailog [(visible)]="VendorVisible" [style]="{width: '40vw'}" (onHide)="closeVendorRegistration()">
+  <app-add-new-vendor [vndData]="vndList" [title]="title" (dataEvent)="handleChildData($event)"></app-add-new-vendor>
+</p-dialog>
+
+<p-dialog [modal]="true" [(visible)]="UploadToolVisibility" [style]="{width: '40vw'}">
+  <app-file-upload [uploadHeading]="'Supplier'" [data]="exportedCol" [serviceName]="serviceName" [methodName]="methodName" (dataEvent)="getInsertedRow($event)"></app-file-upload>
+</p-dialog>

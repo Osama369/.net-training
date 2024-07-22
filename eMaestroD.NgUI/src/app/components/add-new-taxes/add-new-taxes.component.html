@@ -1,0 +1,28 @@
+<div class="container">
+  <h4 translate>{{title}}</h4>
+  <div style="border-Top: 3px solid #eee;"  class="row">
+      <div class="col-12">
+          <div class="col-12">
+              <label class="col-form-label date-label col-12 required" translate>Tax Name</label>
+              <input pInputText #inputFieldTableCOA (keyup.enter)="onEnterTableInputCst(0)" id="name" class="col-form-label col-12" name="name"  [(ngModel)]="taxList[0].TaxName" autofocus/>
+          </div>
+
+          <div class="col-12">
+              <label class="col-form-label date-label col-12 required" translate>Tax Value</label>
+              <input pInputText id="value" #inputFieldTableCOA maxlength="5" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" (keyup.enter)="onEnterTableInputCst(2)" class="col-form-label col-12" name="value"  [(ngModel)]="taxList[0].taxValue">
+          </div>
+
+
+          <!-- <div class="col-12">
+            <label class="col-form-label date-label col-4 required">is Default</label>
+            <p-inputSwitch [(ngModel)]="taxList[0].isDefault"></p-inputSwitch>
+          </div>
+           -->
+           <br>
+          <div class="col-12" style="text-align: right;">
+              <button #savebtn (click)="saveTax()" translate class="btn btn-primary col-3"><i class="fa fa-save"></i> Save</button>&nbsp;
+              <button #cancelbtn (click)="sendDataToParent()" translate class="btn btn-danger col-3"><i class="fa fa-undo"></i> Cancel</button>
+          </div>
+      </div>
+  </div>
+</div>

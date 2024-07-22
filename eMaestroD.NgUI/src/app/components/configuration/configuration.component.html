@@ -1,0 +1,113 @@
+
+
+
+<div class="container">
+
+
+
+  <div class="card">
+
+    <p-tabView [(activeIndex)]="activeIndex">
+
+
+      <p-tabPanel header="Company">
+        <div style="position: absolute;    right: 29px;    top: 42px;">
+          <a *ngIf="!bookmark"  (click)="UpdateBookmark(true)" title="Add Bookmark"><i class="pi pi-bookmark" style="font-size: 1.5rem;"></i></a>
+          <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark"><i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i></a>
+        </div>
+        <div class="">
+
+            <label class="col-form-label Type-label required col-6"  translate>Company Name</label>
+            <label class="col-form-label Type-label required col-6"  translate>Company Name (in Arabic)</label>
+            <input pInputText class="col-5" [disabled]="editable" #inputField [(ngModel)]="configurationList[0].companyName" [minLength]="1" >
+            <!-- <textarea pInputText class="col-5" [disabled]="editable" #inputField [(ngModel)]="configurationList[0].address" [minLength]="1" ></textarea> -->
+            <input pInputText class="col-5 offset-1" [disabled]="editable" #inputField [(ngModel)]="configurationList[0].softwareVersion">
+
+            <label class="col-form-label Type-label required col-6"  translate>Company Address</label>
+            <label class="col-form-label Type-label required col-6"  translate>Company Contact No</label>
+            <input pInputText class="col-5" [disabled]="editable" #inputField [(ngModel)]="configurationList[0].address">
+            <input pInputText class="col-5 offset-1" [disabled]="editable" #inputField [(ngModel)]="configurationList[0].contactNo" [minLength]="1" >
+
+            <label class="col-form-label Type-label required col-6"  translate>Company TAX/VAT No</label>
+            <label class="col-form-label Type-label required col-6"  translate>Country </label>
+            <input pInputText class="col-5 "  [disabled]="editable" #inputField [(ngModel)]="configurationList[0].productionType" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="15" [minLength]="1" >
+            <p-autoComplete styleClass="col-5 offset-1" translate #inputField [(ngModel)]="SelectedCountry" [suggestions]="filterCountryList"  (completeMethod)="filterCountry($event)"
+            field="" value="" [disabled]="editable" [minLength]="1"  [dropdown]="true" ></p-autoComplete>
+            <!-- <label class="col-form-label Type-label required col-6"  translate>   Company Tax % </label>
+            <input pInputText class="col-5" [disabled]="editable" #inputField [(ngModel)]="configurationList[0].taxPercentage" [minLength]="1" > -->
+
+            <div class="col-12">
+            <label class="col-form-label Type-label required col-6"  translate>Currency </label>
+            <label class="col-form-label Type-label required col-6"  translate>Time Zone</label>
+            <p-autoComplete   #inputField [(ngModel)]="SelectedCurrency" [suggestions]="filterCurrencyList"  (completeMethod)="filterCurrency($event)"
+              field="Name" value="CurrencyCode" class="col-5" styleClass="col-5" [disabled]="editable" [minLength]="1"  [dropdown]="true" ></p-autoComplete>
+
+              <p-autoComplete   #inputField [(ngModel)]="SelectedTimeZone" [suggestions]="filterTimeZoneList"  (completeMethod)="filterTimeZone($event)"
+              field="timeZone" value="timeZoneID" styleClass="col-12" styleClass="col-5 offset-1" [disabled]="editable" [minLength]="1"  [dropdown]="true" ></p-autoComplete>
+            </div>
+            <div class="col-12">
+                <label class="col-form-label Type-label required col-11"  translate>Change Logo</label>
+                <p-fileUpload #file translate
+                [customUpload]="true"
+                 [disabled]="editable"
+                 accept=".png"
+                [auto]="true" class="logoUploader" >
+                </p-fileUpload>
+              </div>
+
+              <div class="col-12">
+                <label class="col-form-label Type-label required col-5"  translate>Theme  </label>
+                <label class="col-form-label Type-label required col-5"  translate>Language  </label>
+                <label class="col-form-label Type-label required col-2"  translate>Multi Payment In Sales  </label>
+                <p-autoComplete #inputField  [(ngModel)]="SelectedTheme" translate [readonly]="true" [suggestions]="filterThemeList"  (completeMethod)="filterTheme($event)"
+                  field="" value="" (click)="changeTheme(SelectedTheme)" class="col-4" styleClass="col-4" [disabled]="editable" [minLength]="1"  [dropdown]="true" ></p-autoComplete>
+                  <p-autoComplete #inputField   [(ngModel)]="SelectedLanguage" translate [readonly]="true" [suggestions]="filterLanguageList"  (completeMethod)="filterLanguage($event)"
+                    field="name" value="val" (click)="changeLanguage(SelectedLanguage.val)" class="col-4" styleClass="col-4 offset-1" [disabled]="editable" [minLength]="1"  [dropdown]="true" ></p-autoComplete>
+                    <p-inputSwitch [(ngModel)]="configurationList[0].isMultiPayment" styleClass="offset-1"></p-inputSwitch>
+                </div>
+          <div class="col-12">
+            <br>
+            <button *ngIf="editable" (click)="editable=false" #editbtn class="btn btn-outline-primary col-5" translate>Edit</button>
+            <button *ngIf="!editable" (click)="saveCompanyDetail()" #savebtn class="btn btn-primary col-3" translate><i class="fa fa-save"></i> Save</button>
+            <!-- <button #cancelbtn (click)="confirmDailog('cancel')" style="margin-left: 10px;" class="btn btn-outline-danger col-5" translate>Cancel</button> -->
+          </div>
+
+        </div>
+      </p-tabPanel>
+      <p-tabPanel header="Owner">
+        <div class="col-12" >
+          <label class="col-form-label Type-label required col-6" translate>Owner Name </label>
+          <label class="col-form-label Type-label required col-6" translate> Phone No </label>
+          <input pInputText class="col-5" [disabled]="editable" #inputField [(ngModel)]="configurationList[0].owner" [minLength]="1" >
+          <input pInputText class="col-5 offset-1" [disabled]="editable" #inputField [(ngModel)]="configurationList[0].phone" [minLength]="1" >
+        </div>
+
+
+        <div class="col-12" >
+          <label class="col-form-label Type-label required col-6" translate>Email </label>
+          <label class="col-form-label Type-label required col-6" translate> City </label>
+          <input pInputText class="col-5" [disabled]="true" #inputField [(ngModel)]="configurationList[0].email" [minLength]="1" >
+          <input pInputText class="col-5 offset-1" [disabled]="editable" #inputField [(ngModel)]="configurationList[0].city" [minLength]="1" >
+        </div>
+
+        <div class="col-12">
+          <label class="col-form-label Type-label required col-12"  translate>Country </label>
+          <p-autoComplete styleClass="col-5" translate #inputField [(ngModel)]="SelectedCountry" [suggestions]="filterCountryList"  (completeMethod)="filterCountry($event)"
+          field="" value="" [disabled]="editable" [minLength]="1"  [dropdown]="true" ></p-autoComplete>
+        </div>
+
+        <div class="col-12">
+          <br>
+          <button *ngIf="editable" (click)="editable=false" translate #editbtn class="btn btn-outline-primary col-5">Edit</button>
+          <button *ngIf="!editable" (click)="saveCompanyDetail()" translate #savebtn class="btn btn-primary col-3"><i class="fa fa-save"></i> Save</button>
+          <!-- <button #cancelbtn (click)="confirmDailog('cancel')" translate style="margin-left: 10px;" class="btn btn-outline-danger col-5">Cancel</button> -->
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+
+
+  </div>
+</div>
+
+<p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>
+

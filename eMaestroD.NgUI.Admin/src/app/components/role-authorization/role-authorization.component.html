@@ -1,0 +1,59 @@
+<div class="card">
+  <div class="row">
+      <div class="col-12">
+          <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;{{heading}}</h4>
+      </div>
+      <div class="col-12">
+        <label class="col-form-label date-label col-1 required" style="text-align: right;" translate>Roles <span>:</span> &nbsp;</label>
+        <p-autoComplete styleClass="myclass" translate [(ngModel)]="SelectedRoles" [suggestions]="FilteredRolesList" (completeMethod)="filtersRole($event)"
+        field="roleName" value="roleID" [minLength]="1" [dropdown]="true" class="col-form-label col-3" styleClass="col-3"></p-autoComplete>
+        &nbsp;
+        <button #savebtn (click)="submit()" class="btn btn-primary btnSetting" translate><i class="far fa-paper-plane"></i> Submit</button>&nbsp;
+        </div>
+        <br>
+        <br>
+        <div class="col-11" *ngIf="datalist" style="text-align: right;">
+          <label><input type="checkbox" [(ngModel)]="SelectAll"  (change)="selectAllOnChange()" /> Select All</label>
+          &nbsp;
+          <button #savebtn (click)="save()" class="btn btn-primary col-2" translate><i class="fa fa-save"></i> SAVE</button>&nbsp;
+        </div>
+        <div class="row">
+          <div *ngFor="let group of datalist" style="box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; margin:25px;padding-bottom:20px !important; border-radius: 5px !important;" class="col-5 authRow btns">
+            <div style="background-color: #0d6efd; margin: 8px;">
+              <div class="row">
+              <h3 style="color:white; padding: 7px 7px 7px 14px;; font-size:20px !important; margin-bottom: 0px !important;"  class="col-8 mb-0">{{ group[0].screenGrpName }}</h3>
+              <div class="col-1" style="padding: 7px;"><input style="width: 13px;height: 13px;" type="checkbox"  [checked]="isAllAddChecked(group)" (change)="SelectAddColumn(group,  $event.target)"/></div>
+              <div class="col-1" style="padding: 7px;"><input style="width: 13px;height: 13px;" type="checkbox"  [checked]="isAllEditChecked(group)" (change)="SelectEditColumn(group, $event.target)"  /></div>
+              <div class="col-1" style="padding: 7px;"><input  style="width: 13px;height: 13px;" type="checkbox"  [checked]="isAllDeleteChecked(group)" (change)="SelectDeleteColumn(group,$event.target)"  /></div>
+              <div class="col-1" style="padding: 7px;"><input style="width: 13px;height: 13px;" type="checkbox"  [checked]="isAllViewChecked(group)"  (change)="SelectViewColumn(group, $event.target)"  /></div>
+              </div>
+            </div>
+
+            <div>
+
+              <div class="row" style="padding: 7px;margin: -4px">
+                <p style="font-weight: bold" class="col-8 mb-0">MODULE</p>
+                <p class="col-1 text-center mb-0"><i class=" pi pi-plus text-default" title="Create" style="margin-right:4px;"></i></p>
+                <p class="col-1 text-center mb-0"><i class="pi pi-pencil text-primaryPencil" title="Edit" style="margin-right:6px;"></i></p>
+                <p class="col-1 text-center mb-0"><i class="pi pi-trash text-danger" title="Delete" style="margin-right:4px;"></i></p>
+                <p class="col-1 text-center mb-0"> <i class="pi pi-list var(--surface-900)" title="view" style="margin-right:3px"></i></p>
+              </div>
+              <div *ngFor="let lst of group">
+                <div class="row" style="padding: 0px 10px 0px 13px !important">
+                  <span class="col-8">{{lst.screenName}}</span>
+                  <div class="col-1"><input style="width: 13px;height: 13px;" type="checkbox" [(ngModel)]="lst.Add" /></div>
+                  <div class="col-1"><input style="width: 13px;height: 13px;" type="checkbox" [(ngModel)]="lst.Edit" /></div>
+                  <div class="col-1"><input  style="width: 13px;height: 13px;" type="checkbox" [(ngModel)]="lst.Delete" /></div>
+                  <div class="col-1"><input style="width: 13px;height: 13px;" type="checkbox" [(ngModel)]="lst.isShow" /></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-11" *ngIf="datalist" style="text-align: right;">
+            <button #savebtn (click)="save()" class="btn btn-primary col-2" translate><i class="fa fa-save"></i> SAVE</button>&nbsp;
+        </div>
+      <!-- <div class="col-6" style="text-align: right;">
+      <button pButton type="button" icon="pi pi-plus" [routerLink]="'./../AddNewSale'" style="padding: 0.5rem !important;">Add New</button>
+      </div> -->
+  </div>
+</div>

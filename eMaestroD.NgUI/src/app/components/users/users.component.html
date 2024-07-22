@@ -1,0 +1,132 @@
+<div class="card">
+  <div class="row">
+      <div class="col-6">
+          <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Users
+            <a *ngIf="!bookmark"  (click)="UpdateBookmark(true)" title="Add Bookmark"><i class="pi pi-bookmark" style="font-size: 1.5rem;"></i></a>
+            <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark"><i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i></a>
+          </h4>
+      </div>
+      <!-- <div class="col-6" style="text-align: right;">
+      <button pButton type="button" icon="pi pi-plus" [routerLink]="'./../AddNewSale'" style="padding: 0.5rem !important;">Add New</button>
+      </div> -->
+  </div>
+  <p-table #dt1 [value]="User" dataKey="id"
+      [rows]="100" [showCurrentPageReport]="true" [rowsPerPageOptions]="[100,500,1000]" [loading]="loading"
+      [paginator]="true" scrollHeight="100px" [scrollable]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+      [globalFilterFields]="['FirstName','LastName','Mobile','Email','RoleName','Companies']">
+      <ng-template pTemplate="caption">
+
+          <div class="table-header row" style="margin-top: 8px;margin-bottom: 8px;">
+              <div class="col-md-6">
+                <span class="p-input-icon-left ml-auto">
+                  <i class="pi pi-search"></i>
+                  <input pInputText type="text" (input)="dt1.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'Search keyword'|translate" />
+                </span>
+              </div>
+              <div class="col-md-6" style="text-align:right !important;">
+                <span class="p-buttonset">
+                  <p-button icon="pi pi-plus" styleClass="p-button p-button-sm btns" (onClick)="AddNewUser()" [style]="{'margin-right': '8px'}" title="Add"></p-button>
+                  <p-button icon="pi pi-file-excel" styleClass="p-button p-button-sm p-button-success btns" (onClick)="exportExcel()" [style]="{'margin-right': '8px'}" title="Export Excel"></p-button>
+                  <p-button icon="pi pi-file-pdf" styleClass="p-button p-button-sm p-button-danger btns" (onClick)="exportPdf()" title="Export PDF"></p-button>
+                </span>
+              </div>
+            </div>
+      </ng-template>
+      <ng-template pTemplate="header">
+          <tr>
+              <th style="min-width:15rem;text-align: center;" translate  pFrozenColumn>ACTIONS</th>
+              <th style="min-width:8rem" translate>
+                  <div class="flex justify-content-center align-items-center" translate>
+                      First Name
+                  </div>
+              </th>
+              <th style="min-width:8rem" translate>
+                  <div class="flex justify-content-center align-items-center" translate>
+                    Last Name
+                  </div>
+              </th>
+              <th style="min-width:12rem" translate>
+                  Email Address
+              </th>
+              <th style="min-width:10rem" translate>
+                  <div class="flex justify-content-center align-items-right" translate>
+                      Phone
+                  </div>
+              </th>
+              <th style="min-width:10rem" translate>
+                <div class="flex justify-content-center align-items-right" translate>
+                    Roles
+                </div>
+            </th>
+            <th style="min-width:12rem" translate>
+              <div class="flex justify-content-center align-items-right" translate>
+                  Companies
+              </div>
+          </th>
+              <!-- <th th style="min-width:11rem">
+
+              </th> -->
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-user>
+          <tr>
+              <td pFrozenColumn style="text-align: center !important;z-index: 0;">
+                  <span class="p-buttonset">
+                    <p-button  (onClick)="SetAuthorization(user)" icon="fa-solid fa-user-check" styleClass="p-button-rounded p-button-info p-button-text" title="Authorize"></p-button>
+                    <p-button  (onClick)="ResetView(user)" icon="pi pi-unlock" styleClass="p-button-rounded p-button-secondary p-button-text" title="Reset Password"></p-button>
+                    <p-button  (onClick)="editView(user)" icon="pi pi-pencil" styleClass="p-button-rounded p-button-success p-button-text" title="Edit"></p-button>
+                    <p-button  (onClick)="deleteView(user.UserID)" icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-text" title="Delete"></p-button>
+                  </span>
+              </td>
+              <td>
+                  {{user.FirstName}}
+              </td>
+              <td>
+                {{user.LastName}}
+              </td>
+              <td>
+                {{user.Email}}
+              </td>
+              <td>
+                {{user.Mobile}}
+              </td>
+                <td>
+                  {{user.RoleName}}
+              </td>
+              <td>
+                {{user.Companies}}
+            </td>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+          <tr>
+              <td colspan="7" translate>No Record found.</td>
+          </tr>
+      </ng-template>
+  </p-table>
+</div>
+
+
+<p-dialog [modal]="true" #cstDailog [(visible)]="UserVisibility"  [style]="{width: '40vw'}">
+  <app-add-new-user [UserData]="UserList" [title]="title" (dataEvent)="handleChildData($event)"></app-add-new-user>
+</p-dialog>
+
+
+<p-dialog [modal]="true" #cstDailog [(visible)]="resetPasswordVisibility"  [style]="{width: '30vw'}">
+  <div class="container">
+    <h4 translate>Reset Password</h4>
+    <div style="border-Top: 3px solid #eee;" class="row">
+        <div class="col-12">
+                <label class="col-form-label date-label col-12 required" translate>New Password</label>
+              <p-password type="password" [toggleMask]="true" #inputFieldTableCst autofocus id="code" autocomplete="new-password" styleClass="col-form-label col-12" name="code"  [(ngModel)]="newPassword"/>
+
+              <br>
+              <div class="col-12" style="text-align: right;">
+              <br>
+                <button #savebtn (click)="ResetPassword()" translate  class="btn btn-primary col-3"><i class="fa fa-save"></i>                    Save</button>&nbsp;
+                <button #cancelbtn (click)="resetPasswordVisibility=false" translate class="btn btn-danger col-3"><i class="fa fa-undo"></i>                    Cancel</button>
+            </div>
+        </div>
+    </div>
+  </div>
+</p-dialog>

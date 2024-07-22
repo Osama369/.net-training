@@ -1,0 +1,25 @@
+<div *ngIf="customers">
+
+    <app-gird
+    tableheading="Customers"
+    [columns]="cols"
+    [data]="customers"
+    [rowcount]=100
+    [allowColSort]="false"
+    [allowColFilter]="false"
+    [allowGlobalFilter]="true"
+    [allowActionButtons]="true"
+    (dataEvent)="handleChildData($event)"
+    (handleToolVisibility)="handleTool($event)"
+  >
+  </app-gird>
+
+  </div>
+
+<p-dialog #cstDailog [(visible)]="CustomerVisible" [modal]="true" [style]="{width: '40vw'}" (onHide)="closeCustomerRegistration()">
+    <app-add-new-customer [cstData]="cstList" [title]="title" (dataEvent)="handleChildData($event)"></app-add-new-customer>
+</p-dialog>
+
+<p-dialog [(visible)]="UploadToolVisibility" [modal]="true" [style]="{width: '40vw'}">
+  <app-file-upload [uploadHeading]="'Customers'" [data]="exportedCol" [serviceName]="serviceName" [methodName]="methodName" (dataEvent)="getInsertedRow($event)"></app-file-upload>
+</p-dialog>

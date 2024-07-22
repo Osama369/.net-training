@@ -1,0 +1,138 @@
+<div class="card">
+    <div class="row">
+        <div class="col-6">
+            <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Quotations
+              <a *ngIf="!bookmark"  (click)="UpdateBookmark(true)" title="Add Bookmark"><i class="pi pi-bookmark" style="font-size: 1.5rem;"></i></a>
+              <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark"><i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i></a>
+            </h4>
+        </div>
+        <!-- <div class="col-6" style="text-align: right;">
+        <button pButton type="button" icon="pi pi-plus" [routerLink]="'./../AddNewQuotation'" style="padding: 0.5rem !important;">Add New</button>
+        </div> -->
+    </div>
+    <p-table #dt1 [value]="invoices" dataKey="id"  styleClass="p-datatable-striped"
+        [rows]="100" [showCurrentPageReport]="true" [rowsPerPageOptions]="[100,500,1000]" [loading]="loading"
+        [paginator]="true" scrollHeight="200px" [scrollable]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [globalFilterFields]="['cstName','dtTx','amount','voucherNo']">
+        <ng-template pTemplate="caption">
+            <div class="table-header row" style="margin-top: 8px;margin-bottom: 8px;">
+                <div class="col-md-6">
+                  <span class="p-input-icon-left ml-auto">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" (input)="dt1.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'Search keyword' | translate"/>
+                  </span>
+                </div>
+                <div class="col-md-6" style="text-align:right !important;">
+                  <span class="p-buttonset">
+                    <p-button icon="pi pi-plus" styleClass="p-button p-button-sm btns" [routerLink]="'./../AddNewQuotation'"  [style]="{'margin-right': '8px'}" title="Add"></p-button>
+                    <p-button icon="pi pi-file-excel" styleClass="p-button p-button-sm p-button-success btns" (onClick)="exportExcel()" [style]="{'margin-right': '8px'}" title="Export Excel"></p-button>
+                    <p-button icon="pi pi-file-pdf" styleClass="p-button p-button-sm p-button-danger btns" (onClick)="exportPdf()" [style]="{'margin-right': '8px'}" title="Export PDF"></p-button>
+                    <p-button icon="pi pi-fw pi-cog" styleClass="p-button p-button-sm p-button-secondary btns" (click)="reportSettingVisiblity=true" [style]="{'margin-right': '8px'}" title="Invoice Report Setting"></p-button>
+                  </span>
+                </div>
+              </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="min-width:11rem;text-align: center;"  pFrozenColumn translate>ACTIONS</th>
+                <th style="min-width:12rem" translate>
+                    <div class="flex justify-content-center align-items-center" translate>
+                        Quotation Date
+                    </div>
+                </th>
+                <th style="min-width:10rem" translate>
+                    <div class="flex justify-content-center align-items-center" translate>
+                        Quotation No
+                    </div>
+                </th>
+                <th style="min-width:10rem" translate>
+                       Customer Name
+                </th>
+                <th style="min-width:8rem" translate>
+                    <div class="flex justify-content-center align-items-right" translate>
+                        Amount
+                    </div>
+                </th>
+                <th th style="min-width:15rem;" translate>
+
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-invoices>
+            <tr>
+                <td pFrozenColumn style="text-align: center !important;z-index: 0;">
+                    <span class="p-buttonset">
+                      <p-button (onClick)="printView(invoices.voucherNo)"  icon="pi pi-file-pdf" styleClass="p-button-rounded p-button-info p-button-text" title="Print"></p-button>
+                      <p-button *ngIf="invoices.glComments == 'Convert To Sale'" (onClick)="editView(invoices.voucherNo)" icon="pi pi-pencil" styleClass="p-button-rounded p-button-success p-button-text" title="Edit"></p-button>
+                      <p-button *ngIf="invoices.glComments == 'Convert To Sale'" (onClick)="deleteView(invoices.voucherNo)" icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-text" title="Delete"></p-button>
+                    </span>
+                </td>
+                <td>
+                    {{invoices.dtTx | timezoneDate : "dd-MM-yyyy hh:mm:ss"}}
+                </td>
+                <td>
+                  <a (click)="viewInvoiceDetail(invoices.voucherNo)" style="color:blue;" class="invoiceNo">{{invoices.voucherNo}} </a>
+                </td>
+                <td>
+                  <a *ngIf="invoices.type.toLowerCase() == 'credit'" href="/PartyLedgerReport/{{invoices.cstID}}" target="_blank">{{invoices.cstName}} </a>
+                  <span *ngIf="invoices.type.toLowerCase() != 'credit'">{{invoices.cstName}} </span>
+                </td>
+                <td>
+                    {{invoices.amount | number : '1.2-2'}}
+                </td>
+                <td style="float: right;">
+                    <button pButton type="button" style="padding: 4px !important;" translate *ngIf="invoices.glComments == 'Convert To Sale'" (click)="ConvertToSale(invoices.voucherNo,invoices.glComments)" class="p-button-danger">{{invoices.glComments}}</button>
+                    <button pButton type="button" style="padding: 4px !important;" translate *ngIf="invoices.glComments != 'Convert To Sale'" (click)="ConvertToSale(invoices.voucherNo,invoices.glComments)" class="p-button-success">{{invoices.glComments}}</button>
+                    <!-- <button pButton type="button" icon="pi pi-file-pdf" (click)="printView(invoices.voucherNo)" class="p-button-secondary" style="margin-left: 5px;"></button>
+                    <button *ngIf="invoices.glComments == 'Convert To Sale'" pButton type="button" icon="pi pi-pencil" (click)="editView(invoices.voucherNo)"  class="p-button-secondary" style="margin-left: 5px;">
+                    </button>
+                    <button  *ngIf="invoices.glComments == 'Convert To Sale'" pButton type="button" icon="pi pi-trash" (click)="deleteView(invoices.voucherNo)" class="p-button-secondary" style="margin-left: 5px;"></button> -->
+                </td>
+                <!-- <td>
+                    <p-progressBar [value]="invoices.amount" [showValue]="false"></p-progressBar>
+                </td>
+                <td class="text-center">
+                    <i class="pi" [ngClass]="{'true-icon pi-check-circle': invoices.dtTx, 'false-icon pi-times-circle': !invoices.dtTx}"></i>
+                </td> -->
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="7" translate>No Record found.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+
+
+<p-dialog [modal]="true" [(visible)]="PrintringVisible" [style]="{width: '25vw'}">
+  <div class="container">
+        <div class="col-12">
+          <input type="radio" id="css" name="fav_language" (change)="onChangePrint($event)" value="A4"checked>
+          &nbsp;
+          <label class="col-4" for="css" translate>A4 View</label>
+          <input type="radio" id="html" name="fav_language" (change)="onChangePrint($event)" value="thermal">
+          &nbsp;
+          <label class="col-4" for="html" translate>Thermal View</label>
+          <br>
+        </div>
+      <p-checkbox [(ngModel)]="isBankInfo" [hidden]="bankDetail" [binary]="true" [value]="isBankInfo" label=" Include bank detail on print"></p-checkbox>
+      <div style="text-align: right;">
+        <br>
+        <button (click)="onPrinterClick()" translate autofocus class="btn btn-primary"><i class="fa fa-save"></i> Submit</button>
+        &nbsp;<button (click)="PrintringVisible=false" translate class="btn btn-danger"><i class="fa fa-undo"></i> Close</button>
+      </div>
+    </div>
+</p-dialog>
+
+<p-dialog [modal]="true" [(visible)]="Reportvisible" [style]="{width: '60vw'}">
+    <div class="container" *ngIf="Reportvisible">
+        <app-invoices [voucherName]="invoiceNo" [isBankInfo]="isBankInfo" [isProductCode]="isProductCode"  [isArabic]="isArabic" [type]="printtype"></app-invoices>
+    </div>
+</p-dialog>
+
+
+<p-dialog #cstDailog [modal]="true" [(visible)]="reportSettingVisiblity" [style]="{width: '40vw'}">
+  <app-invoice-report-settings [screenName]="'Quotation'" (dataEvent)="handleChildData($event)"></app-invoice-report-settings>
+</p-dialog>
