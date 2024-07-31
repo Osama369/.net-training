@@ -45,7 +45,6 @@ import { AddNewJournalVoucherComponent } from './components/add-new-journal-vouc
 import { AddNewPurchaseOrderComponent } from './components/add-new-purchase-order/add-new-purchase-order.component';
 import { PurchaseOrderComponent } from './components/purchase-order/purchase-order.component';
 import { AddNewProdGroupComponent } from './components/products/add-new-prod-group/add-new-prod-group.component';
-import { ConfigurationComponent } from './components/configuration/configuration.component';
 import { DaybookComponent } from './components/daybook/daybook.component';
 import { InvoiceDetailViewComponent } from './components/invoice-detail-view/invoice-detail-view.component';
 import { VoucherDetailViewComponent } from './components/voucher-detail-view/voucher-detail-view.component';
@@ -62,27 +61,16 @@ import { PurchaseReturnComponent } from './components/purchase-return/purchase-r
 import { SaleReturnComponent } from './components/sale-return/sale-return.component';
 import { ReportGirdComponent } from './components/reports/report-gird/report-gird.component';
 import { ReportSettingComponent } from './components/reports/report-setting/report-setting.component';
-import { COAComponent } from './components/coa/coa.component';
-import { AddCoaComponent } from './components/add-coa/add-coa.component';
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient } from '@angular/common/http';
-import { LocationsComponent } from './components/locations/locations.component';
-import { AddLocationComponent } from './components/add-location/add-location.component';
  import { RecaptchaModule } from "ng-recaptcha";
 import { environment } from 'src/environments/environment';
-import { TaxesComponent } from './components/taxes/taxes.component';
-import { AddNewTaxesComponent } from './components/add-new-taxes/add-new-taxes.component';
 import {DashboardModule} from './components/dashboard/dashboard.module';
 import { LowStockComponent } from './components/low-stock/low-stock.component';
 import { TrialBalanceComponent } from './components/reports/trial-balance/trial-balance.component';
 import { BalanceSheetComponent } from './components/reports/balance-sheet/balance-sheet.component';
-import { UsersComponent } from './components/users/users.component';
-import { AddNewUserComponent } from './components/add-new-user/add-new-user.component';
-import { RoleAuthorizationComponent } from './components/role-authorization/role-authorization.component';
-import { ScreenComponent } from './components/screen/screen.component';
-import { AddNewScreenComponent } from './components/add-new-screen/add-new-screen.component';
 import { PermissionGuard } from './guards/permission.guard';
 import { ItemWiseProfitComponent } from './components/reports/item-wise-profit/item-wise-profit.component';
 import { AdvancedSearchReportComponent } from './components/reports/advanced-search-report/advanced-search-report.component';
@@ -91,16 +79,10 @@ import { GeneralJournalComponent } from './components/reports/general-journal/ge
 import { ConfirmCategoryComponent } from './components/products/confirm-category/confirm-category.component';
 import { BankComponent } from './components/bank/bank.component';
 import { AddNewBankComponent } from './components/bank/add-new-bank/add-new-bank.component';
-import { NotificationAlertComponent } from './components/notification-alert/notification-alert.component';
-import { AddNotificaitonAlertComponent } from './components/notification-alert/add-notificaiton-alert/add-notificaiton-alert.component';
-import { NotificationComponent } from './components/notification/notification.component';
-import { FiscalYearComponent } from './components/fiscal-year/fiscal-year.component';
-import { AddNewFiscalYearComponent } from './components/add-new-fiscal-year/add-new-fiscal-year.component';
 import { AddPurchaseReturn2Component } from './components/add-purchase-return2/add-purchase-return2.component';
 import { AddSaleReturn2Component } from './components/add-sale-return2/add-sale-return2.component';
 import { SaleReturn2Component } from './components/sale-return2/sale-return2.component';
 import { PurchaseReturn2Component } from './components/purchase-return2/purchase-return2.component';
-import { EndFiscalYearComponent } from './components/end-fiscal-year/end-fiscal-year.component';
 import { AccountsReceivableComponent } from './components/reports/accounts-receivable/accounts-receivable.component';
 import { AccountsPayableComponent } from './components/reports/accounts-payable/accounts-payable.component';
 import { ProductBarcodeComponent } from './components/product-barcode/product-barcode.component';
@@ -122,6 +104,7 @@ import { CreditCardReportComponent } from './components/reports/credit-card-repo
 import { BulkStockUpdateComponent } from './components/bulk-stock-update/bulk-stock-update.component';
 import { AddNewBulkStockUpdateComponent } from './components/add-new-bulk-stock-update/add-new-bulk-stock-update.component';
 import { SharedModule } from './Shared/shared.module';
+import { AdministrationModule } from './Administration/administration.module';
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);
@@ -166,7 +149,6 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     AddNewPurchaseOrderComponent,
     PurchaseOrderComponent,
     AddNewProdGroupComponent,
-    ConfigurationComponent,
     DaybookComponent,
     InvoiceDetailViewComponent,
     VoucherDetailViewComponent,
@@ -183,20 +165,9 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     SaleReturnComponent,
     ReportGirdComponent,
     ReportSettingComponent,
-    COAComponent,
-    AddCoaComponent,
-    LocationsComponent,
-    AddLocationComponent,
-    TaxesComponent,
-    AddNewTaxesComponent,
     LowStockComponent,
     TrialBalanceComponent,
     BalanceSheetComponent,
-    UsersComponent,
-    AddNewUserComponent,
-    RoleAuthorizationComponent,
-    ScreenComponent,
-    AddNewScreenComponent,
     ItemWiseProfitComponent,
     AdvancedSearchReportComponent,
     ProductGroupsComponent,
@@ -204,16 +175,10 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     ConfirmCategoryComponent,
     BankComponent,
     AddNewBankComponent,
-    NotificationAlertComponent,
-    AddNotificaitonAlertComponent,
-    NotificationComponent,
-    FiscalYearComponent,
-    AddNewFiscalYearComponent,
     AddPurchaseReturn2Component,
     AddSaleReturn2Component,
     SaleReturn2Component,
     PurchaseReturn2Component,
-    EndFiscalYearComponent,
     AccountsReceivableComponent,
     AccountsPayableComponent,
     ProductBarcodeComponent,
@@ -236,24 +201,11 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     AddNewBulkStockUpdateComponent
   ],
   imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    SharedModule,
-    FormsModule,
-    HttpClientModule,
-    ToastrModule.forRoot(),
     CommonModule,
+    SharedModule,
     AppLayoutModule,
-    RecaptchaModule,
     DashboardModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient],
-      },
-    })
+    AdministrationModule
     ],
     providers: [
       DatePipe,

@@ -1,0 +1,128 @@
+import { empty } from 'rxjs';
+import { Component, ElementRef, EventEmitter, Input, Output, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { Location } from '../..//Models/location';
+import { LocationService } from '../../Services/location.service';
+
+@Component({
+  selector: 'app-add-location',
+  templateUrl: './add-location.component.html',
+  styleUrls: ['./add-location.component.css']
+})
+
+export class AddLocationComponent {
+  @Input() locationVisible : boolean;
+  locationList: Location[] = [];
+  @ViewChildren('inputFieldTable') inputFieldTable: QueryList<any>;
+  @ViewChild('savebtn') savebtn: ElementRef<HTMLElement>;
+  @Output() dataEvent = new EventEmitter<any>();
+  @Input() LocData : any;
+  @Input() title : any;
+  isEdit: boolean = false;
+
+  sendDataToParent() {
+    this.clear();
+    this.dataEvent.emit({type:'',value:false});
+  }
+
+  ngOnInit(): void {
+    this.locationList = [{
+      locCode : "",
+      locName : "",
+      locPhone : "",
+      locAddress : "",
+      descr : "",
+    }]
+  }
+  constructor(
+    private router: Router,
+    private toastr: ToastrService,
+    private el: ElementRef,
+    private locaitonService : LocationService,
+    ) {}
+
+  ngOnChanges(changes: SimpleChanges) {
+
+    if(this.LocData != undefined && this.LocData.length != 0)
+    {
+      this.isEdit = true;
+       this.locationList[0] = this.LocData;
+    }
+    else
+    {
+      this.isEdit = false;
+       this.clear();
+    }
+}
+  clear()
+  {
+    this.locationList = [{
+      locCode : "",
+      locName : "",
+      locPhone : "",
+      locAddress : "",
+      descr : "",
+    }]
+  }
+  saveLoc()
+  {
+    if(this.locationList[0].locCode == "" || this.locationList[0].locCode == undefined)
+    {
+      this.toastr.error("Please write location code");
+      this.onEnterTableInputCst(-1);
+    }
+    else if(this.locationList[0].locName == "" || this.locationList[0].locName == undefined)
+    {
+      this.toastr.error("Please write location name");
+      this.onEnterTableInputCst(0);
+    }
+    else
+    {
+      this.locationList[0].locTypeID= 1;
+      this.locationList[0].comID= localStorage.getItem('comID');
+      this.locationList[0].active = true;
+      this.locaitonService.saveLoc(this.locationList[0]).subscribe({
+        next: (loc) => {
+          if(this.title == "Location Registration")
+          {
+            this.toastr.success("Location has been successfully added");
+            this.dataEvent.emit({type:'added',value:loc});
+          }
+          else
+          {
+            this.toastr.success("Location has been successfully updated");
+            this.dataEvent.emit({type:'',value:loc});
+          }
+
+        },
+        error: (response) => {
+          this.toastr.error(response.error);
+          this.onEnterTableInputCst(-1);
+        },
+      });
+    }
+
+  }
+
+  onEnterTableInputCst(index: number) {
+    if (index < this.inputFieldTable.length-1) {
+      this.focusOnTableInputCst(index + 1);
+    }
+    else
+    {
+        let el: HTMLElement = this.savebtn.nativeElement;
+        el.focus();
+    }
+
+  }
+
+  private focusOnTableInputCst(index: number) {
+    const inputFieldARRAY = this.inputFieldTable.toArray();
+    const inputField = inputFieldARRAY[index].nativeElement;
+    inputField.focus();
+    inputField.select();
+  }
+
+}

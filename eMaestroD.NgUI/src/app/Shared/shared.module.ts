@@ -25,6 +25,8 @@ import { TokenInterceptor } from '../interceptors/token.interceptor';
 import { InvoicesComponent } from './Components/invoices/invoices.component';
 import { AddRowDirective } from './Directive/add-row.directive';
 import { DateFilterPipe } from './Pipes/date-filter-pipe.pipe';
+import { AdministrationModule } from '../Administration/administration.module';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);
@@ -56,6 +58,13 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     FormsModule,
     HttpClientModule,
     ToastrModule.forRoot(),
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient],
+      },
+    })
 ],
   exports: [
     CommonModule,
