@@ -90,15 +90,30 @@ namespace eMaestroD.Api.Controllers
 
             var products = await _AMDbContext.Products.Where(x => x.comID == comID && x.active == true).ToListAsync();
 
-            var productIds = products.Select(x => x.prodGrpID).ToList();
+            var productIds = products.Select(x => x.prodID).ToList();
+            
+            var productGrpIds = products.Select(x => x.prodGrpID).ToList();
             var prodGroups = await _AMDbContext.ProdGroups
-                .Where(x => productIds.Contains(x.prodGrpID))
+                .Where(x => productGrpIds.Contains(x.prodGrpID))
+                .ToListAsync();
+
+
+            var vendorsIds = products.Select(x => x.vendID).ToList();
+            var vendors = await _AMDbContext.Vendors
+                .Where(x => vendorsIds.Contains(x.vendID))
+                .ToListAsync();
+
+            var productBarCodes = await _AMDbContext.ProductBarCodes
+                .Where(x => productIds.Contains(x.prodID))
                 .ToListAsync();
 
             foreach (var product in products)
             {
                 var prodGroup = prodGroups.FirstOrDefault(x => x.prodGrpID == product.prodGrpID);
                 product.prodGrpName = prodGroup?.prodGrpName;
+                var vendor = vendors.FirstOrDefault(x => x.vendID == product.vendID);
+                product.vendName = vendor?.vendName;
+                product.ProductBarCodes = productBarCodes.Where(x => x.prodID == product.prodID).ToList();
             }
 
             var VAT = await _AMDbContext.Taxes.Where(x => x.isDefault == true).ToListAsync();
@@ -109,12 +124,10 @@ namespace eMaestroD.Api.Controllers
             }
             else if (VAT.Count > 0)
             {
-                products.Add(new Product
-                {
-                    tax = VAT[0].taxValue,
-                    taxName = VAT[0].TaxName
-                }
-                );
+                products.Add(new Product{
+                        tax = VAT[0].taxValue,
+                        taxName = VAT[0].TaxName
+                    });
             }
             ResponsedGroupListVM vM = new ResponsedGroupListVM();
             vM.enttityDataSource = products;
@@ -165,16 +178,20 @@ namespace eMaestroD.Api.Controllers
                     await _AMDbContext.Products.AddAsync(product);
                     await _AMDbContext.SaveChangesAsync();
 
-
-                    ProductBarCodes pd = new ProductBarCodes()
+                    foreach (var item in product.ProductBarCodes)
                     {
-                        prodID = product.prodID,
-                        BarCode = product.prodCode,
-                        Qty = 1,
-                        Unit = product.prodUnit,
-                        Active = true,
-                    };
-                    await _AMDbContext.ProductBarCodes.AddAsync(pd);
+                        item.Active = true;
+                        item.prodID = product.prodID;
+                    }
+                    //ProductBarCodes pd = new ProductBarCodes()
+                    //{
+                    //    prodID = product.prodID,
+                    //    BarCode = product.prodCode,
+                    //    Qty = 1,
+                    //    Unit = product.prodUnit,
+                    //    Active = true,
+                    //};
+                    await _AMDbContext.ProductBarCodes.AddRangeAsync(product.ProductBarCodes);
                     await _AMDbContext.SaveChangesAsync();
 
 

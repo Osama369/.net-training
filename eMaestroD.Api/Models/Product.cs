@@ -19,6 +19,10 @@ namespace eMaestroD.Api.Models
         [HiddenOnRender]
         public int? comID { get; set; }
 
+        [HiddenOnRender]
+        public int? vendID { get; set; }
+
+
         //public String? comName { get; set; }
 
         //public String? prodGrpName { get; set; }
@@ -27,6 +31,9 @@ namespace eMaestroD.Api.Models
         [NotMapped]
         [DisplayName(Name = "Category")]
         public string? prodGrpName { get; set; }
+        [NotMapped]
+        [DisplayName(Name = "Supplier Name")]
+        public string? vendName { get; set; }
 
         [DisplayName(Name = "Code")]
         public string? prodCode { get; set; }
@@ -109,6 +116,10 @@ namespace eMaestroD.Api.Models
         public string? modby { get; set; }
         [HiddenOnRender]
         public DateTime? modDate { get; set; }
+
+        [HiddenOnRender]
+        [NotMapped]
+        public List<ProductBarCodes> ProductBarCodes { get; set; }
 
 
         //public bool isDiscount { get; set; }

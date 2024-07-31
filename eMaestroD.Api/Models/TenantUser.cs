@@ -9,9 +9,9 @@ namespace eMaestroD.Api.Models
         public int? tenantID     { get; set; }
         public string? userID    { get; set; }
         public string? email     { get; set; }
-        public bool? isPrimary   { get; set; }
+        public Boolean? isPrimary   { get; set; }
         public int? ordinal      { get; set; }
-        public bool? active      { get; set; }
+        public Boolean? active      { get; set; }
         public DateTime? created { get; set; }
         public string? crtBy     { get; set; }
         public DateTime? updated { get; set; }

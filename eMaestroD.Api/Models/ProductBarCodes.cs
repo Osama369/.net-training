@@ -6,7 +6,7 @@ namespace eMaestroD.Api.Models
     {
         [Key]
         public int prodBCID { get; set; }
-        public int? prodID { get; set; }
+        public int prodID { get; set; }
         public string? BarCode { get; set; }
         public decimal? Qty { get; set; }
         public string? Unit { get; set; }

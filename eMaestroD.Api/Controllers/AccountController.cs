@@ -192,8 +192,8 @@ namespace eMaestroD.Api.Controllers
                         tenantID = tenants.tenantID,
                         userID = userExist.Id,
                         email = tenants.email,
-                        isPrimary = false, 
-                        ordinal = 2, 
+                        isPrimary = false,
+                        ordinal = 2,
                         active = true,
                         created = DateTime.Now,
                         crtBy = tenants.firstName + " " + tenants.lastName,
@@ -328,6 +328,14 @@ namespace eMaestroD.Api.Controllers
             return BadRequest("Something Went Wrong.");
         }
 
+        [HttpGet]
+        [Route("{tenantID}")]
+        public async Task<IActionResult> UpdateConnectionString(int tenantID)
+        {
+            var emp = _Context.Tenants.Where(x => x.tenantID == tenantID).FirstOrDefault();
+            var token = CreateToken(emp, emp.email);
+            return Ok(new { idToken = token });
+        }
 
         [HttpPost]
         public async Task<IActionResult> loginUser(Tenants tenant)
@@ -349,14 +357,23 @@ namespace eMaestroD.Api.Controllers
 
                 if (result.Succeeded)
                 {
-                    var tenantUser = _AMDbContext.TenantUsers.Where(x => x.userID == user.Id).ToList();
-                    var tenantNames = new List<string>();
-                    foreach (var item in tenantUser)
+                    var tenantUser = await _AMDbContext.TenantUsers.Where(x => x.userID == user.Id).ToListAsync();
+
+                    var tenantNames = tenantUser.Select(item => new
                     {
-                        var tenantName = _AMDbContext.Tenants.Where(x => x.tenantID == item.tenantID).FirstOrDefault().tenantName;
-                        tenantNames.Add(tenantName);
-                    }
-                    var emp = _AMDbContext.Tenants.Where(x => x.tenantID == tenantUser.FirstOrDefault(x => x.isPrimary == true).tenantID).FirstOrDefault();
+                        tenantName = _AMDbContext.Tenants.FirstOrDefault(x => x.tenantID == item.tenantID).tenantName,
+                        tenantID = item.tenantID,
+                        isPrimary = item.isPrimary
+                    }).ToList();
+
+                    //var tenantNames = new List<string>();
+                    //foreach (var item in tenantUser)
+                    //{
+                    //    var tenantName = _AMDbContext.Tenants.Where(x => x.tenantID == item.tenantID).FirstOrDefault().tenantName;
+                    //    tenantNames.Add(tenantName);
+                    //}
+                    var id = tenantUser.FirstOrDefault(x => x.isPrimary == true).tenantID;
+                    var emp = _AMDbContext.Tenants.Where(x => x.tenantID == id).FirstOrDefault();
                     if (emp.subscriptionEndDate < DateTime.Now)
                     {
                         if (emp.subscriptionType == "Trial")
