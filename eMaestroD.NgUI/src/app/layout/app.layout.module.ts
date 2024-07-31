@@ -25,9 +25,8 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { CommonModule } from '@angular/common';
 import { PasswordModule } from 'primeng/password';
-import { DateFilterPipe } from '../date-filter-pipe.pipe';
-import { TimezoneDatePipe } from './../timezone-date.pipe';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { SharedModule } from '../Shared/shared.module';
 
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -41,9 +40,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
         AppFooterComponent,
         AppMenuComponent,
         AppSidebarComponent,
-        AppLayoutComponent,
-        DateFilterPipe,
-        TimezoneDatePipe
+        AppLayoutComponent
     ],
     imports: [
         BrowserModule,
@@ -64,6 +61,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
         ButtonModule,
         PasswordModule,
         AutoCompleteModule,
+        SharedModule,
         TranslateModule.forRoot({
           loader: {
             provide: TranslateLoader,
@@ -72,6 +70,6 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
           },
         })
     ],
-    exports: [AppLayoutComponent, TimezoneDatePipe]
+    exports: [AppLayoutComponent]
 })
 export class AppLayoutModule { }

@@ -4,15 +4,24 @@
       <div class="col-8">
         <h4 translate>&nbsp;Welcome To eMaestro</h4>
     </div>
+
     <div class="col-4">
       <button  class="btn btn-success" title="Add New Company" translate style="float: right;" (click)="openDailogForCreateNewCompany()"><i class="pi pi-plus"></i></button>
     </div>
+
 
       <!-- <div class="col-12">
           <p class="col-6" translate></p>
           <button (click)="openDailogForCreateNewCompany()" [disabled]="btnReg" #savebtn class="btn btn-outline-success float-end p-button-rounded col-6" translate></button>
       </div> -->
       <div style="width: 90%; margin: auto;">
+        <div class="col-12" style="font-size:16px">
+          <select class="form-control" [(ngModel)]="selectedTenant" (change)="setTenant(selectedTenant)">
+            <option *ngFor="let tenant of tenantlist" [ngValue]="tenant.tenantID">
+              {{tenant.tenantName}}
+            </option>
+          </select>
+        </div>
         <div class="col-12">
         </div>
         <div class="col-12">

@@ -7,29 +7,13 @@ import { InvoicesComponent } from './components/invoices/invoices.component';
 import { NewInvoiceComponent } from './components/add-sale-invoice/addnewsale.component';
 import { FormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { Dropdown, DropdownModule } from 'primeng/dropdown';
-import { TableModule } from 'primeng/table';
-import { AutoCompleteModule } from 'primeng/autocomplete';
-import { AddRowDirective } from './add-row.directive';
 import { Toast, ToastrModule } from 'ngx-toastr';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { InputTextModule } from 'primeng/inputtext';
-import { CalendarModule } from 'primeng/calendar';
-import { AutoFocusModule } from 'primeng/autofocus';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import {MultiSelectModule} from 'primeng/multiselect';
-import { DialogModule } from 'primeng/dialog';
-import { AnimateModule } from 'primeng/animate';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { SliderModule } from 'primeng/slider';
-import { SafePipe } from './safe.pipe';
 import { CustomersComponent } from './components/customers/customers.component';
 import { ProductsComponent } from './components/products/products.component';
 import { StockComponent } from './components/reports/stock/stock.component';
 import { DailyinvoiceComponent } from './components/reports/dailyinvoice/dailyinvoice.component';
 import { CommonModule, DatePipe } from '@angular/common';
 import { AppLayoutModule } from './layout/app.layout.module';
-import { SpeedDialModule } from 'primeng/speeddial';
 import { PartyledgerComponent } from './components/reports/partyledger/partyledger.component';
 import { VendorledgerComponent } from './components/reports/vendorledger/vendorledger.component';
 import { GeneralledgerComponent } from './components/reports/generalledger/generalledger.component';
@@ -44,7 +28,6 @@ import { CashRegisterComponent } from './components/reports/cash-register/cash-r
 import { QuotationInvoiceComponent } from './components/add-new-quotation/addNewQuotation.component';
 import { SaleInvoiceComponent } from './components/sale-invoice/sale-invoice.component';
 import { QuotationComponent } from './components/quotation/quotation.component';
-import { LoginComponent } from './components/login/login.component';
 import { PurchaseComponent } from './components/purchase/purchase.component';
 import { AddPurchaseComponent } from './components/add-purchase/add-purchase.component';
 import { VendorsComponent } from './components/vendors/vendors.component';
@@ -52,11 +35,7 @@ import { AddNewProductComponent } from './components/products/add-new-product/ad
 import { AddNewVendorComponent } from './components/vendors/add-new-vendor/add-new-vendor.component';
 import { AddNewCustomerComponent } from './components/customers/add-new-customer/add-new-customer.component'
 import { ConfirmationService, MessageService } from 'primeng/api';
-import { GirdComponent } from './components/gird/gird.component';
-import { TagModule } from 'primeng/tag';
-import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
-import { FileUploadModule } from 'primeng/fileupload';
 import { AddNewRecieptVoucherComponent } from './components/add-new-reciept-voucher/add-new-reciept-voucher.component';
 import { ReceiptVoucherComponent } from './components/receipt-voucher/receipt-voucher.component';
 import { PaymentVoucherComponent } from './components/payment-voucher/payment-voucher.component';
@@ -82,34 +61,19 @@ import { AddSaleReturnComponent } from './components/add-sale-return/add-sale-re
 import { PurchaseReturnComponent } from './components/purchase-return/purchase-return.component';
 import { SaleReturnComponent } from './components/sale-return/sale-return.component';
 import { ReportGirdComponent } from './components/reports/report-gird/report-gird.component';
-import { CheckboxModule } from 'primeng/checkbox';
-import { OverlayPanelModule } from 'primeng/overlaypanel';
-import { ButtonModule } from 'primeng/button';
-import { DividerModule } from 'primeng/divider';
-import { SignUpComponent } from './components/sign-up/sign-up.component';
 import { ReportSettingComponent } from './components/reports/report-setting/report-setting.component';
 import { COAComponent } from './components/coa/coa.component';
-import { TreeTableModule } from 'primeng/treetable';
 import { AddCoaComponent } from './components/add-coa/add-coa.component';
 import { TokenInterceptor } from './interceptors/token.interceptor';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient } from '@angular/common/http';
-import { TabViewModule } from 'primeng/tabview';
-import { ConfirmVerificationComponent } from './components/confirm-verification/confirm-verification.component';
 import { LocationsComponent } from './components/locations/locations.component';
 import { AddLocationComponent } from './components/add-location/add-location.component';
-import { SelectCompanyComponent } from './components/select-company/select-company.component';
-// import {CaptchaModule} from 'primeng/captcha';
  import { RecaptchaModule } from "ng-recaptcha";
 import { environment } from 'src/environments/environment';
 import { TaxesComponent } from './components/taxes/taxes.component';
 import { AddNewTaxesComponent } from './components/add-new-taxes/add-new-taxes.component';
-//  import { CaptchaModule } from "primeng/captcha";
-import { InputSwitchModule } from 'primeng/inputswitch';
-import {ChartModule} from 'primeng/chart';
-import {ToolbarModule} from 'primeng/toolbar';
-import {ToastModule} from 'primeng/toast';
 import {DashboardModule} from './components/dashboard/dashboard.module';
 import { LowStockComponent } from './components/low-stock/low-stock.component';
 import { TrialBalanceComponent } from './components/reports/trial-balance/trial-balance.component';
@@ -119,8 +83,6 @@ import { AddNewUserComponent } from './components/add-new-user/add-new-user.comp
 import { RoleAuthorizationComponent } from './components/role-authorization/role-authorization.component';
 import { ScreenComponent } from './components/screen/screen.component';
 import { AddNewScreenComponent } from './components/add-new-screen/add-new-screen.component';
-import { NotFoundComponent } from './components/not-found/not-found.component';
-import { NotAuthorizeComponent } from './components/not-authorize/not-authorize.component';
 import { PermissionGuard } from './guards/permission.guard';
 import { ItemWiseProfitComponent } from './components/reports/item-wise-profit/item-wise-profit.component';
 import { AdvancedSearchReportComponent } from './components/reports/advanced-search-report/advanced-search-report.component';
@@ -132,10 +94,6 @@ import { AddNewBankComponent } from './components/bank/add-new-bank/add-new-bank
 import { NotificationAlertComponent } from './components/notification-alert/notification-alert.component';
 import { AddNotificaitonAlertComponent } from './components/notification-alert/add-notificaiton-alert/add-notificaiton-alert.component';
 import { NotificationComponent } from './components/notification/notification.component';
-import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
-import { PasswordModule } from 'primeng/password';
-import { InputMaskModule } from 'primeng/inputmask';
-import { RegisterComponent } from './components/register/register.component';
 import { FiscalYearComponent } from './components/fiscal-year/fiscal-year.component';
 import { AddNewFiscalYearComponent } from './components/add-new-fiscal-year/add-new-fiscal-year.component';
 import { AddPurchaseReturn2Component } from './components/add-purchase-return2/add-purchase-return2.component';
@@ -158,12 +116,12 @@ import { ReportGirdTreeTableComponent } from './components/reports/report-gird-t
 import { AddOrderToPurchaseComponent } from './components/add-order-to-purchase/add-order-to-purchase.component';
 import { StockShortageComponent } from './components/stock-shortage/stock-shortage.component';
 import { AddNewStockShortageComponent } from './components/add-new-stock-shortage/add-new-stock-shortage.component';
-import { PleaseWaitComponent } from './components/please-wait/please-wait.component';
 import { CreditCardComponent } from './components/credit-card/credit-card.component';
 import { AddNewCreditCardComponent } from './components/credit-card/add-new-credit-card/add-new-credit-card.component';
 import { CreditCardReportComponent } from './components/reports/credit-card-report/credit-card-report.component';
 import { BulkStockUpdateComponent } from './components/bulk-stock-update/bulk-stock-update.component';
 import { AddNewBulkStockUpdateComponent } from './components/add-new-bulk-stock-update/add-new-bulk-stock-update.component';
+import { SharedModule } from './Shared/shared.module';
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);
@@ -174,8 +132,6 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     AppComponent,
     InvoicesComponent,
     NewInvoiceComponent,
-    AddRowDirective,
-    SafePipe,
     CustomersComponent,
     ProductsComponent,
     StockComponent,
@@ -194,14 +150,12 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     QuotationInvoiceComponent,
     SaleInvoiceComponent,
     QuotationComponent,
-    LoginComponent,
     PurchaseComponent,
     AddPurchaseComponent,
     VendorsComponent,
     AddNewProductComponent,
     AddNewVendorComponent,
     AddNewCustomerComponent,
-    GirdComponent,
     FileUploadComponent,
     AddNewRecieptVoucherComponent,
     ReceiptVoucherComponent,
@@ -228,14 +182,11 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     PurchaseReturnComponent,
     SaleReturnComponent,
     ReportGirdComponent,
-    SignUpComponent,
     ReportSettingComponent,
     COAComponent,
     AddCoaComponent,
-    ConfirmVerificationComponent,
     LocationsComponent,
     AddLocationComponent,
-    SelectCompanyComponent,
     TaxesComponent,
     AddNewTaxesComponent,
     LowStockComponent,
@@ -246,8 +197,6 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     RoleAuthorizationComponent,
     ScreenComponent,
     AddNewScreenComponent,
-    NotFoundComponent,
-    NotAuthorizeComponent,
     ItemWiseProfitComponent,
     AdvancedSearchReportComponent,
     ProductGroupsComponent,
@@ -258,8 +207,6 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     NotificationAlertComponent,
     AddNotificaitonAlertComponent,
     NotificationComponent,
-    ResetPasswordComponent,
-    RegisterComponent,
     FiscalYearComponent,
     AddNewFiscalYearComponent,
     AddPurchaseReturn2Component,
@@ -282,7 +229,6 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     AddOrderToPurchaseComponent,
     StockShortageComponent,
     AddNewStockShortageComponent,
-    PleaseWaitComponent,
     CreditCardComponent,
     AddNewCreditCardComponent,
     CreditCardReportComponent,
@@ -293,50 +239,21 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
+    SharedModule,
     FormsModule,
     HttpClientModule,
-    DropdownModule,
-    TableModule,
-    AutoCompleteModule,
-    ButtonModule,
     ToastrModule.forRoot(),
-    InputNumberModule,
-    InputTextModule,
-    CalendarModule,
-    AutoFocusModule,
-    ConfirmDialogModule,
-    DialogModule,
-    AnimateModule,
     CommonModule,
     AppLayoutModule,
-    SpeedDialModule,
-    MultiSelectModule,
-    ProgressBarModule,
-    SliderModule,
-    TagModule,
-    ConfirmPopupModule,
-    FileUploadModule,
-    CheckboxModule,
-    OverlayPanelModule,
-    DividerModule,
-    TreeTableModule,
     RecaptchaModule,
-    InputSwitchModule,
-    ChartModule,
     DashboardModule,
-    ToolbarModule,
-    ToastModule,
-    DropdownModule,
-    PasswordModule,
-    InputMaskModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
         useFactory: HttpLoaderFactory,
         deps: [HttpClient],
       },
-    }),
-    TabViewModule
+    })
     ],
     providers: [
       DatePipe,

@@ -26,7 +26,6 @@ import { SaleInvoiceComponent } from './components/sale-invoice/sale-invoice.com
 import { QuotationComponent } from './components/quotation/quotation.component';
 import { PurchaseComponent } from './components/purchase/purchase.component';
 import { AddPurchaseComponent } from './components/add-purchase/add-purchase.component';
-import { LoginComponent } from './components/login/login.component';
 import { VendorsComponent } from './components/vendors/vendors.component';
 import { AddNewRecieptVoucherComponent } from './components/add-new-reciept-voucher/add-new-reciept-voucher.component';
 import { ReceiptVoucherComponent } from './components/receipt-voucher/receipt-voucher.component';
@@ -53,11 +52,8 @@ import { AddSaleReturnComponent } from './components/add-sale-return/add-sale-re
 import { SaleReturnComponent } from './components/sale-return/sale-return.component';
 import { ReportGirdComponent } from './components/reports/report-gird/report-gird.component';
 import { ReportSettingComponent } from './components/reports/report-setting/report-setting.component';
-import { SignUpComponent } from './components/sign-up/sign-up.component';
-import { ConfirmVerificationComponent } from './components/confirm-verification/confirm-verification.component';
 import { COAComponent } from './components/coa/coa.component';
 import { LocationsComponent } from './components/locations/locations.component';
-import { SelectCompanyComponent } from './components/select-company/select-company.component';
 import { TaxesComponent } from './components/taxes/taxes.component';
 import { LowStockComponent } from './components/low-stock/low-stock.component';
 import { AuthGuard } from './guards/auth.guard';
@@ -65,8 +61,6 @@ import { loginGuard } from './guards/login.guard';
 import { BalanceSheetComponent } from './components/reports/balance-sheet/balance-sheet.component';
 import { UsersComponent } from './components/users/users.component';
 import { ScreenComponent } from './components/screen/screen.component';
-import { NotFoundComponent } from './components/not-found/not-found.component';
-import { NotAuthorizeComponent } from './components/not-authorize/not-authorize.component';
 import { PermissionGuard } from './guards/permission.guard';
 import { ItemWiseProfitComponent } from './components/reports/item-wise-profit/item-wise-profit.component';
 import { AdvancedSearchReportComponent } from './components/reports/advanced-search-report/advanced-search-report.component';
@@ -76,7 +70,6 @@ import { GeneralJournalComponent } from './components/reports/general-journal/ge
 import { BankComponent } from './components/bank/bank.component';
 import { NotificationAlertComponent } from './components/notification-alert/notification-alert.component';
 import { NotificationComponent } from './components/notification/notification.component';
-import { RegisterComponent } from './components/register/register.component';
 import { FiscalYearComponent } from './components/fiscal-year/fiscal-year.component';
 import { AddPurchaseReturn2Component } from './components/add-purchase-return2/add-purchase-return2.component';
 import { AddSaleReturn2Component } from './components/add-sale-return2/add-sale-return2.component';
@@ -98,6 +91,13 @@ import { CreditCardComponent } from './components/credit-card/credit-card.compon
 import { CreditCardReportComponent } from './components/reports/credit-card-report/credit-card-report.component';
 import { BulkStockUpdateComponent } from './components/bulk-stock-update/bulk-stock-update.component';
 import { AddNewBulkStockUpdateComponent } from './components/add-new-bulk-stock-update/add-new-bulk-stock-update.component';
+import { ConfirmVerificationComponent } from './Shared/Components/confirm-verification/confirm-verification.component';
+import { LoginComponent } from './Shared/Components/login/login.component';
+import { NotAuthorizeComponent } from './Shared/Components/not-authorize/not-authorize.component';
+import { NotFoundComponent } from './Shared/Components/not-found/not-found.component';
+import { RegisterComponent } from './Shared/Components/register/register.component';
+import { SelectCompanyComponent } from './Shared/Components/select-company/select-company.component';
+import { SignUpComponent } from './Shared/Components/sign-up/sign-up.component';
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   {path: '', component: AppLayoutComponent,

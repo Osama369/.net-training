@@ -1,14 +1,12 @@
-import { TenantService } from './../../services/tenant.service';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
-import { Configuration } from 'src/app/models/configuration';
 import { ToastrService } from 'ngx-toastr';
-import { UserService } from 'src/app/services/user.service';
 import { Router } from '@angular/router';
-import { Tenants } from 'src/app/models/tenants';
 import { environment } from 'src/environments/environment';
+import { AuthService } from '../../Services/auth.service';
 import { PaymentDetail } from 'src/app/models/payment-detail';
+import { Tenants } from 'src/app/models/tenants';
+import { TenantService } from 'src/app/services/tenant.service';
 
 
 @Component({

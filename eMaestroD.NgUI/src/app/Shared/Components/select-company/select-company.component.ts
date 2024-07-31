@@ -1,17 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
-import { Configuration } from 'src/app/models/configuration';
 import { ToastrService } from 'ngx-toastr';
-import { UserService } from 'src/app/services/user.service';
 import { Router } from '@angular/router';
-import { GenericService } from 'src/app/services/generic.service';
+import { TranslateService } from '@ngx-translate/core';
+import { firstValueFrom } from 'rxjs';
+import { AuthService } from '../../Services/auth.service';
+import { GenericService } from '../../Services/generic.service';
+import { LogoService } from '../../Services/logo.service';
+import { ThemeService } from '../../Services/theme.service';
 import { Companies } from 'src/app/models/companies';
 import { Tenants } from 'src/app/models/tenants';
-import { ThemeService } from 'src/app/services/theme.service';
-import { TranslateService } from '@ngx-translate/core';
-import { environment } from 'src/environments/environment';
-import { LogoService } from 'src/app/services/logo.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-select-company',
@@ -40,8 +39,21 @@ export class SelectCompanyComponent implements OnInit {
   AddCompanyVisible : boolean = false;
   NewCompanyList : Companies[] = [];
   check : boolean = false;
+
+  tenantlist: any[] = [];
+  selectedTenant: string;
+
   ngOnInit(): void {
     this.auth.canAuthenticate();
+
+    const storedTenantNames = localStorage.getItem('tenantNames');
+    if (storedTenantNames) {
+      this.tenantlist = JSON.parse(storedTenantNames);
+      const primaryTenant = this.tenantlist.find(tenant => tenant.isPrimary);
+      if (primaryTenant) {
+        this.selectedTenant = primaryTenant.tenantID;
+      }
+    }
     this.NewCompanyList = [{companyName:""}]
     this.List = [
         {
@@ -59,6 +71,30 @@ export class SelectCompanyComponent implements OnInit {
         this.companylist = cmps;
       }
     })
+  }
+
+  async setTenant(tenantId: string) {
+    try {
+      const data: any = await firstValueFrom(this.authService.UpdateConnectionString(tenantId));
+      this.auth.storeToken(data.idToken);
+      const storedTenantNames = localStorage.getItem('tenantNames');
+      if (storedTenantNames) {
+        this.tenantlist = JSON.parse(storedTenantNames);
+
+        // Update isPrimary for the selected tenant
+        this.tenantlist.forEach(tenant => {
+          tenant.isPrimary = tenant.tenantID === tenantId;
+        });
+
+        // Save updated tenant list back to localStorage
+        localStorage.setItem('tenantNames', JSON.stringify(this.tenantlist));
+      }
+
+      const cmps: any = await firstValueFrom(this.genericService.getCompanylist());
+      this.companylist = cmps;
+    } catch (error) {
+      console.error('Error:', error);
+    }
   }
 
   RegisterNewCompany()

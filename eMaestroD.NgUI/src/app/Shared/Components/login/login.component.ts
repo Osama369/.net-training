@@ -1,10 +1,10 @@
-import { Tenants } from 'src/app/models/tenants';
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { SignalrService } from 'src/app/services/signalr.service';
+import { AuthService } from '../../Services/auth.service';
+import { SignalrService } from '../../Services/signalr.service';
+import { Tenants } from 'src/app/models/tenants';
 
 @Component({
   selector: 'app-login',
@@ -64,9 +64,10 @@ export class LoginComponent implements OnInit {
         };
         this.auth.login(this.tenant[0])
         .subscribe({
-            next:data=>{
+            next:(data:any)=>{
               if(data.idToken != "confirmation")
               {
+                localStorage.setItem('tenantNames', JSON.stringify(data.tenantNames));
                 this.auth.storeToken(data.idToken);
                 this.auth.canAuthenticate();
               }

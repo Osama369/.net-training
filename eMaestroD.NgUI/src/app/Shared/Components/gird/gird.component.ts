@@ -1,12 +1,12 @@
 import { getCurrencySymbol } from '@angular/common';
-import {  ColumnTypes } from '../../services/columnstypes';
 import { Component, EventEmitter, Input, Output, Pipe } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as FileSaver from 'file-saver';
-import { GenericService } from 'src/app/services/generic.service';
-import { BookmarkService } from 'src/app/services/bookmark.service';
-import { AuthService } from 'src/app/services/auth.service';
 import { AutoCompleteCompleteEvent } from 'primeng/autocomplete';
+import { ColumnTypes } from '../../Models/columnstypes';
+import { BookmarkService } from '../../Services/bookmark.service';
+import { AuthService } from '../../../Shared/Services/auth.service';
+import { GenericService } from '../../Services/generic.service';
 import { ProductCategoryService } from 'src/app/services/product-category.service';
 
 @Component({

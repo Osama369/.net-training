@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
-import { Configuration } from 'src/app/models/configuration';
 import { ToastrService } from 'ngx-toastr';
-import { UserService } from 'src/app/services/user.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../../Services/auth.service';
 import { Tenants } from 'src/app/models/tenants';
 import { TenantService } from 'src/app/services/tenant.service';
 
