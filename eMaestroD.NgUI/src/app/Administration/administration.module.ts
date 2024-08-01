@@ -19,7 +19,7 @@ import { AddCoaComponent } from './Components/add-coa/add-coa.component';
 import { COAComponent } from './Components/coa/coa.component';
 import { NotificationComponent } from './Components/notification/notification.component';
 import { SharedModule } from '../Shared/shared.module';
-import { PrimeNgModule } from '../prime-ng/prime-ng.module';
+import { AdministrationRoutingModule } from './administration-routing.module';
 
 
 @NgModule({
@@ -45,8 +45,8 @@ import { PrimeNgModule } from '../prime-ng/prime-ng.module';
   ],
   imports: [
     CommonModule,
+    AdministrationRoutingModule,
     SharedModule,
-    PrimeNgModule
   ]
 })
 export class AdministrationModule { }

@@ -1,10 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { COA } from 'src/app/models/COA';
-import { Companies } from 'src/app/models/companies';
-import { Currency } from 'src/app/models/currency';
-import { Dashboard } from 'src/app/models/dashboard';
+import { COA } from 'src/app/Administration/Models/COA';
+import { Companies } from 'src/app/Administration/Models/companies';
+import { Currency } from 'src/app/Administration/Models/currency';
+import { Dashboard } from 'src/app/Dashboard/Models/dashboard';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

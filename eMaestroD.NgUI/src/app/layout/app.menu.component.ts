@@ -1,10 +1,9 @@
-import { ScreenService } from './../services/screen.service';
-import { Screen } from './../models/screen';
 import { OnInit, ViewChild } from '@angular/core';
 import { Component } from '@angular/core';
 import { LayoutService } from './service/app.layout.service';
 import { Router } from '@angular/router';
 import { AutoComplete } from 'primeng/autocomplete';
+import { ScreenService } from '../Administration/Services/screen.service';
 
 @Component({
     selector: 'app-menu',
@@ -49,39 +48,39 @@ export class AppMenuComponent implements OnInit {
             {
                 label: '',
                 items: [
-                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/'] },
+                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/Dashboard'] },
                     { label: 'Manage', icon: 'pi pi-fw pi-pencil',
                         items:[
-                            {label: 'Re-Order Products', routerLink: ['/ReOrder']},
-                            {label: 'Product Category', routerLink: ['/ProductCategory']},
-                            {label: 'Products', routerLink: ['/Products']},
-                            {label: 'Print Barcode', routerLink: ['/ProductBarcode']},
-                            {label: 'Customers', routerLink: ['/Customers']},
-                            {label: 'Suppliers', routerLink: ['/Suppliers']},
-                            {label: 'Bank', routerLink: ['/Bank']},
-                            {label: 'Credit Card', routerLink: ['/CreditCard']},
-                            {label: 'Bulk Stock Update', routerLink: ['/bulkStockUpdate']},
+                            {label: 'Re-Order Products', routerLink: ['/Manage/ReOrder']},
+                            {label: 'Product Category', routerLink: ['/Manage/ProductCategory']},
+                            {label: 'Products', routerLink: ['/Manage/Products']},
+                            {label: 'Print Barcode', routerLink: ['/Manage/ProductBarcode']},
+                            {label: 'Customers', routerLink: ['/Manage/Customers']},
+                            {label: 'Suppliers', routerLink: ['/Manage/Suppliers']},
+                            {label: 'Bank', routerLink: ['/Manage/Bank']},
+                            {label: 'Credit Card', routerLink: ['/Manage/CreditCard']},
+                            {label: 'Bulk Stock Update', routerLink: ['/Manage/bulkStockUpdate']},
                         ]
                     },
                     { label: 'Invoices', icon: 'pi pi-fw pi-shopping-cart',
                         items:[
-                          {label: 'Purchase Order', routerLink: ['/PurchaseOrder']},
-                          {label: 'Purchase', routerLink: ['/Purchase']},
-                          {label: 'Purchase Return', routerLink: ['/PurchaseReturn']},
-                          {label: 'Quotations', routerLink: ['/Quotations']},
-                          {label: 'Sale Invoices', routerLink: ['/SaleInvoices']},
-                          {label: 'Sale Return', routerLink: ['/SaleReturn']},
-                          {label: 'Service Invoices', routerLink: ['/ServiceInvoices']},
+                          {label: 'Purchase Order', routerLink: ['/Invoices/PurchaseOrder']},
+                          {label: 'Purchase', routerLink: ['/Invoices/Purchase']},
+                          {label: 'Purchase Return', routerLink: ['/Invoices/PurchaseReturn']},
+                          {label: 'Quotations', routerLink: ['/Invoices/Quotations']},
+                          {label: 'Sale Invoices', routerLink: ['/Invoices/SaleInvoices']},
+                          {label: 'Sale Return', routerLink: ['/Invoices/SaleReturn']},
+                          {label: 'Service Invoices', routerLink: ['/Invoices/ServiceInvoices']},
                        //   {label: 'Stock Shortage', routerLink: ['/StockShortage']},
                         ]
                     },
                     { label: 'Transactions', icon: 'pi pi-fw pi-money-bill',
                     items:[
-                        {label: 'Receipt Voucher', routerLink: ['/Receipt']},
-                        {label: 'Payment Voucher', routerLink: ['/Payment']},
-                        {label: 'Journal Voucher', routerLink: ['/Journal']},
-                        {label: 'Expense Voucher', routerLink: ['/Expense']},
-                        {label: 'Day Book', routerLink: ['/DayBook']},
+                        {label: 'Receipt Voucher', routerLink: ['/Transactions/Receipt']},
+                        {label: 'Payment Voucher', routerLink: ['/Transactions/Payment']},
+                        {label: 'Journal Voucher', routerLink: ['/Transactions/Journal']},
+                        {label: 'Expense Voucher', routerLink: ['/Transactions/Expense']},
+                        {label: 'Day Book', routerLink: ['/Transactions/DayBook']},
                     ]
                     },
                     { label: 'Reports', icon: 'pi pi-fw pi-file-pdf',
@@ -89,47 +88,47 @@ export class AppMenuComponent implements OnInit {
                         {
                             label: 'Inventory Reports',
                             items: [
-                                { label: 'Daily Sale', routerLink: ['/DailySaleReport']  },
-                                { label: 'Sale History', routerLink: ['/SaleHistoryReport']  },
-                                { label: 'Stock', routerLink: ['/StockReport']  },
-                                { label: 'Stock Valuation', routerLink: ['/StockValuationReport']  },
-                                { label: 'Stock Sale And Return', routerLink: ['/StockSaleAndReturnReport']  },
+                                { label: 'Daily Sale', routerLink: ['/Reports/DailySaleReport']  },
+                                { label: 'Sale History', routerLink: ['/Reports/SaleHistoryReport']  },
+                                { label: 'Stock', routerLink: ['/Reports/StockReport']  },
+                                { label: 'Stock Valuation', routerLink: ['/Reports/StockValuationReport']  },
+                                { label: 'Stock Sale And Return', routerLink: ['/Reports/StockSaleAndReturnReport']  },
                             ],
                         },
                         {
                             label: 'Account Reports',
                             items: [
-                                { label: 'Advanced Search', routerLink: ['/AdvancedSearchReport']  },
-                                { label: 'Account Receivable', routerLink: ['/AccountReceivable']  },
-                                { label: 'Account Payable', routerLink: ['/AccountPayable']  },
-                                { label: 'Bank Book', routerLink: ['/BankBookReport']  },
-                                { label: 'Credit Card', routerLink: ['/CreditCardReport']  },
-                                { label: 'Cash Book', routerLink: ['/CashBookReport']  },
-                                { label: 'Cash Register', routerLink: ['/CashRegisterReport']  },
-                                { label: 'Monthly Sales', routerLink: ['/MonthlySales']  },
+                                { label: 'Advanced Search', routerLink: ['/Reports/AdvancedSearchReport']  },
+                                { label: 'Account Receivable', routerLink: ['/Reports/AccountReceivable']  },
+                                { label: 'Account Payable', routerLink: ['/Reports/AccountPayable']  },
+                                { label: 'Bank Book', routerLink: ['/Reports/BankBookReport']  },
+                                { label: 'Credit Card', routerLink: ['/Reports/CreditCardReport']  },
+                                { label: 'Cash Book', routerLink: ['/Reports/CashBookReport']  },
+                                { label: 'Cash Register', routerLink: ['/Reports/CashRegisterReport']  },
+                                { label: 'Monthly Sales', routerLink: ['/Reports/MonthlySales']  },
                                 { label : 'Tax Reports',
                                 items :[
-                                  { label: 'Tax Report', routerLink: ['/TaxDetail']  },
-                                  { label: 'Sales Tax Report', routerLink: ['/TaxDetailByCustomer']  },
-                                  { label: 'Purchase Tax Report', routerLink: ['/TaxDetailBySupplier']  },
-                                  { label: 'Tax Summary', routerLink: ['/TaxSummary']  },
+                                  { label: 'Tax Report', routerLink: ['/Reports/TaxDetail']  },
+                                  { label: 'Sales Tax Report', routerLink: ['/Reports/TaxDetailByCustomer']  },
+                                  { label: 'Purchase Tax Report', routerLink: ['/Reports/TaxDetailBySupplier']  },
+                                  { label: 'Tax Summary', routerLink: ['/Reports/TaxSummary']  },
                                   ]
                                 },
-                                { label: 'General Journal', routerLink: ['/GeneralJournalReport']  },
+                                { label: 'General Journal', routerLink: ['/Reports/GeneralJournalReport']  },
                                 { label : 'Ledger Reports',
                                 items :[
-                                  { label: 'General Ledger', routerLink: ['/GeneralLedgerReport']  },
-                                  { label: 'Item Ledger', routerLink: ['/ItemLedgerReport']  },
-                                  { label: 'Party ledger', routerLink: ['/PartyLedgerReport']  },
+                                  { label: 'General Ledger', routerLink: ['/Reports/GeneralLedgerReport']  },
+                                  { label: 'Item Ledger', routerLink: ['/Reports/ItemLedgerReport']  },
+                                  { label: 'Party ledger', routerLink: ['/Reports/PartyLedgerReport']  },
                                   ]
                                 },
-                                { label: 'Trial Balance', routerLink: ['/TrialBalanceReport']  },
-                                { label: 'Balance Sheet', routerLink: ['/BalanceSheetReport']  },
+                                { label: 'Trial Balance', routerLink: ['/Reports/TrialBalanceReport']  },
+                                { label: 'Balance Sheet', routerLink: ['/Reports/BalanceSheetReport']  },
                                 { label : 'Profit Reports',
                                 items :[
-                                  { label: 'Item Wise Profit', routerLink: ['/ItemWiseProfitReport']  },
-                                  { label: 'Invoice Wise Profit', routerLink: ['/InvoiceWiseProfit']  },
-                                  { label: 'Profit And Loss', routerLink: ['/ProfitAndLossReport']  },
+                                  { label: 'Item Wise Profit', routerLink: ['/Reports/ItemWiseProfitReport']  },
+                                  { label: 'Invoice Wise Profit', routerLink: ['/Reports/InvoiceWiseProfit']  },
+                                  { label: 'Profit And Loss', routerLink: ['/Reports/ProfitAndLossReport']  },
                                   ]
                                 }
                               ],
@@ -141,15 +140,15 @@ export class AppMenuComponent implements OnInit {
                     },
                     { label: 'Administration', icon: 'pi pi-fw pi-cog',
                       items:[
-                        {label: 'Location', routerLink: ['/Location']},
-                        {label: 'Taxes', routerLink: ['/Taxes']},
-                        {label: 'Chart Of Accounts', routerLink: ['/COA']},
-                        {label: 'Users', routerLink: ['/Users']},
-                        {label: 'Fiscal Year', routerLink: ['/FiscalYear']},
-                        {label: 'Authorization', routerLink: ['/PermissionScreen']},
-                        {label: 'Notification', routerLink: ['/Notification']},
-                        {label: 'Notification Alert', routerLink: ['/NotificationAlert']},
-                        {label: 'Company Setting', routerLink: ['/Configuration']}
+                        {label: 'Location', routerLink: ['/Administration/Location']},
+                        {label: 'Taxes', routerLink: ['/Administration/Taxes']},
+                        {label: 'Chart Of Accounts', routerLink: ['/Administration/COA']},
+                        {label: 'Users', routerLink: ['/Administration/Users']},
+                        {label: 'Fiscal Year', routerLink: ['/Administration/FiscalYear']},
+                        {label: 'Authorization', routerLink: ['/Administration/PermissionScreen']},
+                        {label: 'Notification', routerLink: ['/Administration/Notification']},
+                        {label: 'Notification Alert', routerLink: ['/Administration/NotificationAlert']},
+                        {label: 'Company Setting', routerLink: ['/Administration/Configuration']}
                       ]
                     },
                 ]

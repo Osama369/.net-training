@@ -4,7 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { COA } from '../../Models/COA';
 import { CoaService } from '../../Services/coa.service';
-import { VendorService } from 'src/app/services/vendor.service';
+import { VendorService } from 'src/app/Manage/Services/vendor.service';
 
 @Component({
   selector: 'app-add-coa',

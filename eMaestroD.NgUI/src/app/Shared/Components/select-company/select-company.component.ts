@@ -8,9 +8,9 @@ import { AuthService } from '../../Services/auth.service';
 import { GenericService } from '../../Services/generic.service';
 import { LogoService } from '../../Services/logo.service';
 import { ThemeService } from '../../Services/theme.service';
-import { Companies } from 'src/app/models/companies';
-import { Tenants } from 'src/app/models/tenants';
-import { UserService } from 'src/app/services/user.service';
+import { Companies } from 'src/app/Administration/Models/companies';
+import { Tenants } from 'src/app/Administration/Models/tenants';
+import { UserService } from 'src/app/Administration/Services/user.service';
 
 @Component({
   selector: 'app-select-company',

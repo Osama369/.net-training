@@ -4,8 +4,8 @@ import { ToastrService } from 'ngx-toastr';
 import { environment } from 'src/environments/environment';
 import { Subject } from 'rxjs';
 import { AuthService } from './auth.service';
-import { NotificationMessage } from 'src/app/models/notification';
-import { TenantService } from 'src/app/services/tenant.service';
+import { NotificationMessage } from 'src/app/Administration/Models/notification';
+import { TenantService } from 'src/app/Administration/Services/tenant.service';
 
 @Injectable({
   providedIn: 'root'

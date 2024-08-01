@@ -14,10 +14,7 @@ import { ConfirmVerificationComponent } from './Components/confirm-verification/
 import { TimezoneDatePipe } from './Pipes/timezone-date.pipe';
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
-import { AppRoutingModule } from '../app-routing.module';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { PermissionGuard } from '../guards/permission.guard';
@@ -52,9 +49,6 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   imports: [
     CommonModule,
     PrimeNgModule,
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
     FormsModule,
     HttpClientModule,
     ToastrModule.forRoot(),
@@ -67,10 +61,6 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     })
 ],
   exports: [
-    CommonModule,
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
     FormsModule,
     HttpClientModule,
     GirdComponent,

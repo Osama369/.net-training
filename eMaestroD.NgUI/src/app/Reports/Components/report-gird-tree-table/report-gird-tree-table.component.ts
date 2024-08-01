@@ -1,0 +1,428 @@
+import { filter } from 'rxjs';
+import { DatePipe } from '@angular/common';
+import { Component, OnInit, Input, ViewChild, SimpleChanges } from "@angular/core";
+import * as FileSaver from "file-saver";
+import { Table } from "primeng/table";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable"
+import html2canvas from 'html2canvas';
+import jspdf from 'jspdf';
+import { fontStyle } from 'html2canvas/dist/types/css/property-descriptors/font-style';
+import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
+import { ButtonModule } from 'primeng/button';
+import { FLOAT } from 'html2canvas/dist/types/css/property-descriptors/float';
+import { environment } from 'src/environments/environment';
+import { Router } from '@angular/router';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ToastrService } from 'ngx-toastr';
+import { EmailService } from 'src/app/Administration/Services/email.service';
+import { ProductsService } from 'src/app/Manage/Services/products.service';
+import { ColumnTypes } from 'src/app/Shared/Models/columnstypes';
+import { GenericService } from 'src/app/Shared/Services/generic.service';
+import { ReportSettingService } from '../../Services/report-setting.service';
+import { ReportSettings } from '../../Models/report-settings';
+
+@Component({
+  selector: 'app-report-gird-tree-table',
+  templateUrl: './report-gird-tree-table.component.html',
+  styleUrls: ['./report-gird-tree-table.component.scss'],
+  providers:[ConfirmationService,MessageService]
+})
+
+
+export class ReportGirdTreeTableComponent {
+  constructor(private productService:ProductsService,
+    private genericService:GenericService,
+    private reportSettingService:ReportSettingService,
+    private router:Router,
+    private confirmationService :ConfirmationService,
+    private messageService :MessageService,
+    private emailService :EmailService,
+    private toastrService :ToastrService,
+    private datePipe: DatePipe){}
+
+  @Input() public columns: any[];
+  @Input() public dtFrom: any[];
+  @Input() public dtTo: any[];
+  @Input() public data: any[] = [];
+  @Input() heading : any = "Reports";
+	@Input() AllowHeaderSetting : boolean = false;
+	@Input() AllowSendMail : boolean = true;
+	@Input() AllowGlobalFilter : boolean = false;
+	@Input() AllowPrintButtons : boolean = false;
+  logoPath = environment.logoPath;
+
+  row : any;
+	cols: any[] = [];
+	_selectedColumns: any[];
+  exportColumns : any[] =[];
+  reportHeader : any[] = [];
+  companyName : any;
+  companyAddress : any;
+  companyVat : any;
+  companyContact : any;
+  header : any;
+  date : any;
+  headerlist : ReportSettings[]=[];
+  checked: boolean = false;
+  @ViewChild('dt') table!: Table;
+  reportSettingVisiblity : boolean = false;
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.cols = [];
+    this.exportColumns = [];
+    if(this.columns)
+    {
+      this.row = 0;
+      this.columns.forEach((element: any) => {
+            if(element.isHidden != true)
+            {
+              this.cols.push({
+                field:element.field,
+                header:element.header,
+                controlType:element.controlType,
+              })
+              this.exportColumns.push(new Object({title: element.header,dataKey: element.field}));
+            }
+      });
+      this._selectedColumns = this.cols;
+
+      this.reportSettingService.getReportSettings().subscribe(rpt=>{
+        this.headerlist = rpt;
+      })
+    }
+    else
+    {
+      this.row = 1;
+    }
+  }
+
+
+	ngOnInit() {
+    let today = new Date();
+    this.date = today;
+    this.genericService.getConfiguration().subscribe(confg=>{
+      this.reportHeader = confg;
+      this.companyName = confg[0].companyName;
+      this.companyAddress = confg[0].address;
+      this.companyContact = confg[0].contactNo;
+      this.companyVat = confg[0].productionType;
+    });
+
+    this.reportSettingService.getReportSettings().subscribe(rpt=>{
+      this.headerlist = rpt;
+    })
+
+		this._selectedColumns = this.cols;
+	}
+
+	@Input() get selectedColumns(): any[] {
+		return this._selectedColumns;
+	}
+
+  public get enum_ColTypes() {
+    return ColumnTypes;
+  }
+
+	set selectedColumns(val: any[]) {
+		this._selectedColumns =
+			this.cols.filter((col) => val.includes(col));
+      this.exportColumns.splice(0,this.exportColumns.length);
+      this._selectedColumns.forEach(element => {
+        this.exportColumns.push(new Object({title: element.header,dataKey: element.field}));
+      });
+
+	}
+
+  exportPdf() {
+    let footerLen  = this.headerlist.filter(x=>x.value == true && (x.key == "Footer Date" || x.key == "Page Number")).length;
+    let totalheight = (this.headerlist.filter(x=>x.value == true && x.key != "Company Logo").length)-footerLen;
+    if(totalheight < 3)
+    {
+      totalheight += 3;
+    }
+    var doc = new jsPDF('p','pt');
+    if(this.exportColumns.length >= 8)
+    {
+      doc = new jsPDF('l','pt');
+    }
+    autoTable(doc, {
+      columns: this.exportColumns,
+      body: this.data,
+      styles: { overflow: "linebreak" },
+      bodyStyles: { valign: "middle" },
+      headStyles:{valign:"middle",halign:"center"},
+      theme: "grid",
+      showHead: "everyPage",
+      margin: {top: (totalheight*21)},
+
+    });
+
+    const addHeader = (doc: jsPDF) => {
+      var totalPages = doc.getNumberOfPages();
+      for (var i = 1; i <= totalPages; i++) {
+        let heightMargin = 0;
+        doc.setPage(i);
+        doc.setFontSize(16);
+        let width = doc.internal.pageSize.getWidth()/2;
+        if(this.headerlist.find(x=>x.key == "Company Name")?.value == true)
+        {
+          heightMargin += 20;
+          doc.text(this.companyName,width-(doc.getStringUnitWidth(this.companyName) * doc.getFontSize() / 2),heightMargin);
+        }
+        if(this.headerlist.find(x=>x.key == "Address")?.value == true)
+        {
+          heightMargin += 20;
+          doc.text(this.companyAddress,width-(doc.getStringUnitWidth(this.companyAddress) * doc.getFontSize() / 2),heightMargin);
+        }
+        if(this.headerlist.find(x=>x.key == "Phone")?.value == true)
+        {
+          heightMargin += 20;
+          doc.text(this.companyContact,width-(doc.getStringUnitWidth(this.companyContact) * doc.getFontSize() / 2),heightMargin);
+        }
+        if(this.headerlist.find(x=>x.key == "VAT")?.value == true)
+        {
+          heightMargin += 20;
+          doc.text(this.companyVat,width-(doc.getStringUnitWidth(this.companyVat) * doc.getFontSize() / 2),heightMargin);
+        }
+        if(this.headerlist.find(x=>x.key == "Report Title")?.value == true)
+        {
+          heightMargin += 20;
+          doc.text(this.heading,width-(doc.getStringUnitWidth(this.heading) * doc.getFontSize() / 2),heightMargin);
+        }
+        if(this.headerlist.find(x=>x.key == "Company Logo")?.value == true)
+        {
+          if(heightMargin == 0)
+          {
+            heightMargin += 60;
+          }else if(heightMargin < 41){ heightMargin += 20}
+          doc.addImage(this.logoPath, 'png', 40, 10,80, 60)
+        }
+        if(this.headerlist.find(x=>x.key == "Date From to To")?.value == true)
+        {
+          if(this.dtFrom != undefined && this.dtFrom != null && this.dtTo != undefined)
+          {
+            heightMargin += 20;
+            let d1 = this.datePipe.transform(this.dtFrom.toString(), "dd-MM-yyyy");
+            let d2 = this.datePipe.transform(this.dtTo.toString(), "dd-MM-yyyy");
+            doc.setFontSize(10);
+            doc.text("Date From : "+d1+"   Date To : "+d2,40,heightMargin);
+          }
+        }
+      }
+    }
+
+
+    const addFooters = (doc: jsPDF) => {
+      let height = doc.internal.pageSize.getHeight();
+      let d1 = this.datePipe.transform(this.date, "dd-MM-yyyy");
+      var totalPages = doc.getNumberOfPages();
+      if(d1 != null)
+      {
+        for (var i = 1; i <= totalPages; i++) {
+          doc.setPage(i);
+          doc.setFontSize(10);
+          doc.setTextColor(150);
+          if(this.headerlist.find(x=>x.key == "Footer Date")?.value == true)
+          {
+            doc.text("Printed Date : "+d1,20,height-22);
+          }
+          if(this.headerlist.find(x=>x.key == "Page Number")?.value == true)
+          {
+            doc.text('Page ' + i + ' of ' + totalPages, doc.internal.pageSize.getWidth() - 100,height-22);
+          }
+        }
+      }
+    }
+    addHeader(doc)
+    addFooters(doc)
+    doc.save(this.heading+'.pdf');
+  }
+
+  GeneratePDF()
+  {
+    let footerLen  = this.headerlist.filter(x=>x.value == true && (x.key == "Footer Date" || x.key == "Page Number")).length;
+    let totalheight = (this.headerlist.filter(x=>x.value == true && x.key != "Company Logo").length)-footerLen;
+    if(totalheight < 3)
+    {
+      totalheight += 3;
+    }
+    var doc = new jsPDF('p','pt');
+    if(this.exportColumns.length >= 8)
+    {
+      doc = new jsPDF('l','pt');
+    }
+    autoTable(doc, {
+      columns: this.exportColumns,
+      body: this.data,
+      styles: { overflow: "linebreak" },
+      bodyStyles: { valign: "middle" },
+      headStyles:{valign:"middle",halign:"center"},
+      theme: "grid",
+      showHead: "everyPage",
+      margin: {top: (totalheight*21)},
+
+    });
+
+    const addHeader = (doc: jsPDF) => {
+      var totalPages = doc.getNumberOfPages();
+      for (var i = 1; i <= totalPages; i++) {
+        let heightMargin = 0;
+        doc.setPage(i);
+        doc.setFontSize(16);
+        let width = doc.internal.pageSize.getWidth()/2;
+        if(this.headerlist.find(x=>x.key == "Company Name")?.value == true)
+        {
+          heightMargin += 20;
+          doc.text(this.companyName,width-(doc.getStringUnitWidth(this.companyName) * doc.getFontSize() / 2),heightMargin);
+        }
+        if(this.headerlist.find(x=>x.key == "Address")?.value == true)
+        {
+          heightMargin += 20;
+          doc.text(this.companyAddress,width-(doc.getStringUnitWidth(this.companyAddress) * doc.getFontSize() / 2),heightMargin);
+        }
+        if(this.headerlist.find(x=>x.key == "Phone")?.value == true)
+        {
+          heightMargin += 20;
+          doc.text(this.companyContact,width-(doc.getStringUnitWidth(this.companyContact) * doc.getFontSize() / 2),heightMargin);
+        }
+        if(this.headerlist.find(x=>x.key == "VAT")?.value == true)
+        {
+          heightMargin += 20;
+          doc.text(this.companyVat,width-(doc.getStringUnitWidth(this.companyVat) * doc.getFontSize() / 2),heightMargin);
+        }
+        if(this.headerlist.find(x=>x.key == "Report Title")?.value == true)
+        {
+          heightMargin += 20;
+          doc.text(this.heading,width-(doc.getStringUnitWidth(this.heading) * doc.getFontSize() / 2),heightMargin);
+        }
+        if(this.headerlist.find(x=>x.key == "Company Logo")?.value == true)
+        {
+          if(heightMargin == 0)
+          {
+            heightMargin += 60;
+          }else if(heightMargin < 41){ heightMargin += 20}
+          doc.addImage(this.logoPath, 'png', 40, 10,80, 60)
+        }
+        if(this.headerlist.find(x=>x.key == "Date From to To")?.value == true)
+        {
+          if(this.dtFrom != undefined && this.dtFrom != null && this.dtTo != undefined)
+          {
+            heightMargin += 20;
+            let d1 = this.datePipe.transform(this.dtFrom.toString(), "dd-MM-yyyy");
+            let d2 = this.datePipe.transform(this.dtTo.toString(), "dd-MM-yyyy");
+            doc.setFontSize(10);
+            doc.text("Date From : "+d1+"   Date To : "+d2,40,heightMargin);
+          }
+        }
+      }
+    }
+
+
+    const addFooters = (doc: jsPDF) => {
+      let height = doc.internal.pageSize.getHeight();
+      let d1 = this.datePipe.transform(this.date, "dd-MM-yyyy");
+      var totalPages = doc.getNumberOfPages();
+      if(d1 != null)
+      {
+        for (var i = 1; i <= totalPages; i++) {
+          doc.setPage(i);
+          doc.setFontSize(10);
+          doc.setTextColor(150);
+          if(this.headerlist.find(x=>x.key == "Footer Date")?.value == true)
+          {
+            doc.text("Printed Date : "+d1,20,height-22);
+          }
+          if(this.headerlist.find(x=>x.key == "Page Number")?.value == true)
+          {
+            doc.text('Page ' + i + ' of ' + totalPages, doc.internal.pageSize.getWidth() - 100,height-22);
+          }
+        }
+      }
+    }
+    addHeader(doc)
+    addFooters(doc)
+    return doc.output('blob');
+  }
+
+  applyFilterGlobal($event: any, stringVal: any, table: any) {
+    table.filterGlobal(($event.target as HTMLInputElement).value, stringVal);
+  }
+  handleChildData(data: any) {
+
+    this.reportSettingVisiblity = false;
+    if(typeof(data) != 'boolean')
+    {
+      this.headerlist = data;
+    }
+
+  }
+
+  viewInvoiceDetail(invoiceNo:any)
+  {
+     // this.invoiceNo = invoiceNo;
+     // this.InvoiceDetailvisible = true;
+
+     var prefix = invoiceNo.substring(0, 3);
+
+     if(prefix == "PNV" || prefix == "PRT" || prefix == "POV" ||
+     prefix == "SNV" || prefix == "SRT" || prefix == "SRV" || prefix == "QOV"){
+      const url = this.router.serializeUrl(
+        this.router.createUrlTree([`Detail/`+invoiceNo])
+      );
+      window.open(url, '_blank');
+    }
+    else if (prefix == "RCT" || prefix == "PMT"){
+      const url = this.router.serializeUrl(
+        this.router.createUrlTree([`VoucherDetail/`+invoiceNo])
+      );
+      window.open(url, '_blank');
+    }
+    else if(prefix == "JV-" || prefix == "EXP"){
+      const url = this.router.serializeUrl(
+        this.router.createUrlTree([`JournalVoucherDetail/`+invoiceNo])
+      );
+      window.open(url, '_blank');
+    }
+
+  }
+
+  confirmDailog()
+  {
+    this.confirmationService.confirm({
+      message: 'Are you sure that you want to send this Report To Admin?',
+      header: ' ',
+      icon: 'pi pi-info-circle',
+      accept: () => {
+        let emailData : any[] = [];
+        emailData = [{
+          subject:this.heading
+        }]
+
+        const pdfBlob = this.GeneratePDF();
+        const formData = new FormData();
+        formData.append('pdf', pdfBlob, 'generated-pdf.pdf');
+        formData.append('subject',this.heading);
+        this.emailService.SavePdfAndSend(formData).subscribe(
+          (response) => {
+            this.toastrService.success(response);
+          },
+          (err) => {
+            this.toastrService.error(err.error);
+          }
+        );
+      }
+    });
+  }
+
+
+}
+
+
+
+export interface Tutorials {
+	title: string;
+	category: string;
+	rating?: number;
+}
+

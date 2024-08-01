@@ -7,7 +7,7 @@ import { ColumnTypes } from '../../Models/columnstypes';
 import { BookmarkService } from '../../Services/bookmark.service';
 import { AuthService } from '../../../Shared/Services/auth.service';
 import { GenericService } from '../../Services/generic.service';
-import { ProductCategoryService } from 'src/app/services/product-category.service';
+import { ProductCategoryService } from 'src/app/Manage/Services/product-category.service';
 
 @Component({
   selector: 'app-gird',

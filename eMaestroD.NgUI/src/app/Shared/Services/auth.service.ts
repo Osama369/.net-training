@@ -5,7 +5,7 @@ import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { environment } from 'src/environments/environment';
 import { GenericService } from './generic.service';
 import { ThemeService } from '../Services/theme.service';
-import { ScreenService } from 'src/app/services/screen.service';
+import { ScreenService } from 'src/app/Administration/Services/screen.service';
 
 @Injectable({
   providedIn: 'root'

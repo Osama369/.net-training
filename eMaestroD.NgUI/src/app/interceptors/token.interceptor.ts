@@ -1,5 +1,4 @@
 import { Router } from '@angular/router';
-import { AuthService } from './../services/auth.service';
 import { Injectable } from '@angular/core';
 import * as jwt_decode from 'jwt-decode';
 import {
@@ -11,6 +10,7 @@ import {
 } from '@angular/common/http';
 import { catchError, Observable, switchMap, throwError } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { AuthService } from '../Shared/Services/auth.service';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {

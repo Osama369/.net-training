@@ -1,8 +1,8 @@
-import { ScreenService } from 'src/app/services/screen.service';
-import { AuthService } from './../services/auth.service';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { ScreenService } from '../Administration/Services/screen.service';
+import { AuthService } from '../Shared/Services/auth.service';
 @Injectable({
   providedIn: 'root'
 })

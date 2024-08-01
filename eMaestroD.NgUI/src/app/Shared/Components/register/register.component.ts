@@ -4,9 +4,9 @@ import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../../Services/auth.service';
-import { PaymentDetail } from 'src/app/models/payment-detail';
-import { Tenants } from 'src/app/models/tenants';
-import { TenantService } from 'src/app/services/tenant.service';
+import { PaymentDetail } from 'src/app/Administration/Models/payment-detail';
+import { Tenants } from 'src/app/Administration/Models/tenants';
+import { TenantService } from 'src/app/Administration/Services/tenant.service';
 
 
 @Component({

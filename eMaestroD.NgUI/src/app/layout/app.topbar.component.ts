@@ -1,23 +1,22 @@
-import { Users } from './../models/users';
-import { SignalrService } from 'src/app/services/signalr.service';
 import { filter } from 'rxjs';
 import { ChangeDetectorRef, Component, ElementRef, NgZone, SimpleChanges, ViewChild } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { LayoutService } from "./service/app.layout.service";
-import { AuthService } from '../services/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { ToastrService } from 'ngx-toastr';
-import { UserService } from 'src/app/services/user.service';
-import { GenericService } from 'src/app/services/generic.service';
-import { Companies } from 'src/app/models/companies';
-import { ThemeService } from '../services/theme.service';
 import { TranslateService } from '@ngx-translate/core';
 import jwt_decode, { jwtDecode } from "jwt-decode";
-import { NotificationService } from '../services/notification.service';
-import { NotificationMessage } from '../models/notification';
-import { BookmarkService } from '../services/bookmark.service';
-import { LogoService } from '../services/logo.service';
+import { Companies } from '../Administration/Models/companies';
+import { Users } from '../Administration/Models/users';
+import { NotificationService } from '../Administration/Services/notification.service';
+import { UserService } from '../Administration/Services/user.service';
+import { AuthService } from '../Shared/Services/auth.service';
+import { BookmarkService } from '../Shared/Services/bookmark.service';
+import { GenericService } from '../Shared/Services/generic.service';
+import { LogoService } from '../Shared/Services/logo.service';
+import { SignalrService } from '../Shared/Services/signalr.service';
+import { ThemeService } from '../Shared/Services/theme.service';
 
 @Component({
     selector: 'app-topbar',

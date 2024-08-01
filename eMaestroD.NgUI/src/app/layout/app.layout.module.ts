@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { InputTextModule } from 'primeng/inputtext';
 import { SidebarModule } from 'primeng/sidebar';
 import { BadgeModule } from 'primeng/badge';
@@ -43,10 +41,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
         AppLayoutComponent
     ],
     imports: [
-        BrowserModule,
         FormsModule,
-        HttpClientModule,
-        BrowserAnimationsModule,
         InputTextModule,
         SidebarModule,
         BadgeModule,

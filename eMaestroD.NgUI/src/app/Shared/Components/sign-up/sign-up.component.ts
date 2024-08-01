@@ -9,8 +9,8 @@ import {
 } from "ngx-intl-tel-input";
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../Services/auth.service';
-import { Tenants } from 'src/app/models/tenants';
-import { TenantService } from 'src/app/services/tenant.service';
+import { Tenants } from 'src/app/Administration/Models/tenants';
+import { TenantService } from 'src/app/Administration/Services/tenant.service';
 
 @Component({
   selector: 'app-sign-up',
