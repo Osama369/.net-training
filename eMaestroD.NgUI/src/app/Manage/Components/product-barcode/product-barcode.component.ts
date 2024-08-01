@@ -160,6 +160,7 @@ export class ProductBarcodeComponent implements OnInit {
         this.selectedProducts[0].unitQty = this.quantity;
         this.productService.GenerateBarcode(this.selectedProducts).subscribe(x=>{
         this.printView = true;
+        console.log(x);
         this.url = this.sanitizer.bypassSecurityTrustResourceUrl(x);
         this.selectedProducts = [];
         this.quantity = 1;

@@ -119,7 +119,7 @@ export class ReceiptVoucherComponent implements OnInit {
       // Converts the route into a string that can be used
       // with the window.open() function
       const url = this.router.serializeUrl(
-        this.router.createUrlTree([`./../PartyLedgerReport`])
+        this.router.createUrlTree([`./../Reports/PartyLedgerReport`])
       );
 
       window.open(url, '_blank');

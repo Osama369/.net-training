@@ -206,13 +206,19 @@ export class AppTopBarComponent {
 
     changeCompany()
     {
-      this.genericService.getCompanylist().subscribe({
-        next:(cmps:any)=>{
-          this.companylist = cmps;
-          this.companylist = this.companylist.filter(x=>x.comID != localStorage.getItem('comID'));
-        }
-      })
-      this.changeCompanyVisibility = true;
+
+      localStorage.removeItem("comID");
+      localStorage.removeItem("comName");
+      localStorage.removeItem("timeZone");
+      this.auth.canAuthenticate();
+      // this.genericService.getCompanylist().subscribe({
+      //   next:(cmps:any)=>{
+      //     this.companylist = cmps;
+      //     this.companylist = this.companylist.filter(x=>x.comID != localStorage.getItem('comID'));
+      //   }
+      // })
+      // this.changeCompanyVisibility = true;
+
       // this.router.navigate(['/SelectCompany']);
     }
 
