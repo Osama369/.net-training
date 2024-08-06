@@ -21,6 +21,7 @@ import { ColumnTypes } from 'src/app/Shared/Models/columnstypes';
 import { GenericService } from 'src/app/Shared/Services/generic.service';
 import { ReportSettingService } from '../../Services/report-setting.service';
 import { ReportSettings } from '../../Models/report-settings';
+import { AppConfigService } from 'src/app/Shared/Services/app-config.service';
 
 @Component({
   selector: 'app-report-gird-tree-table',
@@ -39,6 +40,7 @@ export class ReportGirdTreeTableComponent {
     private messageService :MessageService,
     private emailService :EmailService,
     private toastrService :ToastrService,
+    private appConfigService : AppConfigService,
     private datePipe: DatePipe){}
 
   @Input() public columns: any[];
@@ -50,7 +52,7 @@ export class ReportGirdTreeTableComponent {
 	@Input() AllowSendMail : boolean = true;
 	@Input() AllowGlobalFilter : boolean = false;
 	@Input() AllowPrintButtons : boolean = false;
-  logoPath = environment.logoPath;
+  logoPath = this.appConfigService.getConfig().LogoPath;
 
   row : any;
 	cols: any[] = [];

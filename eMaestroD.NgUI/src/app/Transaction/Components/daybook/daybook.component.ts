@@ -11,6 +11,7 @@ import { InvoiceView } from 'src/app/Invoices/Models/invoice-view';
 import { GenericService } from 'src/app/Shared/Services/generic.service';
 import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
+import { AppConfigService } from 'src/app/Shared/Services/app-config.service';
 
 @Component({
   selector: 'app-daybook',
@@ -37,7 +38,7 @@ export class DaybookComponent implements OnInit {
     bookmark : boolean = false;
     SummaryList : any;
 
-    logoPath = environment.logoPath;
+    logoPath = this.appConfigService.getConfig().LogoPath;
     reportHeader : any[] = [];
     companyName : any;
     companyAddress : any;
@@ -50,6 +51,7 @@ export class DaybookComponent implements OnInit {
       private datePipe: DatePipe,
       private authService : AuthService,
       public bookmarkService: BookmarkService,
+      public appConfigService: AppConfigService,
       public route : ActivatedRoute) { }
 
     ngOnInit() {

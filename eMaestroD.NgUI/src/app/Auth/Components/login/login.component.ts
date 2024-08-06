@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { AuthService } from '../../Services/auth.service';
-import { SignalrService } from '../../Services/signalr.service';
+import { AuthService } from '../../../Shared/Services/auth.service';
+import { SignalrService } from '../../../Shared/Services/signalr.service';
 import { Tenants } from 'src/app/Administration/Models/tenants';
 
 @Component({

@@ -7,10 +7,10 @@ import { NotFoundComponent } from './Shared/Components/not-found/not-found.compo
 import { loginGuard } from './guards/login.guard';
 import { AppTopBarComponent } from './layout/app.topbar.component';
 import { ConfirmVerificationComponent } from './Shared/Components/confirm-verification/confirm-verification.component';
-import { LoginComponent } from './Shared/Components/login/login.component';
-import { RegisterComponent } from './Shared/Components/register/register.component';
+import { LoginComponent } from './Auth/Components/login/login.component';
+import { RegisterComponent } from './Auth/Components/register/register.component';
 import { SelectCompanyComponent } from './Shared/Components/select-company/select-company.component';
-import { SignUpComponent } from './Shared/Components/sign-up/sign-up.component';
+import { SignUpComponent } from './Auth/Components/sign-up/sign-up.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },

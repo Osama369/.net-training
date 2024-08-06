@@ -4,12 +4,7 @@
 
 export const environment = {
   production: false,
-  BaseApiUrl:"https://localhost:44387/api",
-  logoPath:"assets/layout/images/logo.png",
-  recaptcha: {
-    siteKey: '6Ld1SyEpAAAAAOzy1PCWDGRk2n8_d9R5B7P0GqRh',
-  },
-  paypalClientId: "AWV3mly8tg3wHLjwXKi8OG-szXhk1iCzFDse28Bv3807vuQ-HQNiBUZ7V_pdvK0vE57vJlSii2awphhs"
+  BaseApiUrl:"https://localhost:44387/api"
 };
 
 /*

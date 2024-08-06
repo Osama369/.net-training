@@ -1,12 +1,13 @@
+import { AppConfigService } from '../../../Shared/Services/app-config.service';
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
-import { AuthService } from '../../Services/auth.service';
 import { PaymentDetail } from 'src/app/Administration/Models/payment-detail';
 import { Tenants } from 'src/app/Administration/Models/tenants';
 import { TenantService } from 'src/app/Administration/Services/tenant.service';
+import { AuthService } from 'src/app/Shared/Services/auth.service';
 
 
 @Component({
@@ -25,7 +26,8 @@ export class RegisterComponent implements OnInit {
     private toastr : ToastrService,
     private tenantService : TenantService,
     private router : Router,
-    private cdr : ChangeDetectorRef
+    private cdr : ChangeDetectorRef,
+    private appConfigService:AppConfigService,
     ) {
     this.layoutService.state.staticMenuDesktopInactive = true;
   }
@@ -259,7 +261,7 @@ export class RegisterComponent implements OnInit {
   private loadPayPalSdk(): Promise<any> {
     return new Promise((resolve, reject) => {
       const scriptElement = document.createElement('script');
-      const clientId = environment.paypalClientId;
+      const clientId = this.appConfigService.getConfig().PaypalClientId;
       scriptElement.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
       scriptElement.src = 'https://www.paypal.com/sdk/js?client-id=ATGaARsSwiWaJ0z7bDm5LhjAwd2MfRp7w5xCOhTDgfso4YG0XEXGUW8c45N8ufeBummDtQl67e38u-CQ';
       scriptElement.onload = resolve;

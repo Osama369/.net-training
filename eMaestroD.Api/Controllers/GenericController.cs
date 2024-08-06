@@ -148,10 +148,9 @@ namespace eMaestroD.Api.Controllers
             {
                 if (comID != 0)
                 {
-                    var companies = _AMDbContext.Companies.Where(x => x.comID == comID).FirstOrDefault();
                     var tenantID = cm.Decrypt(HttpContext.User.FindFirst(ClaimTypes.Upn).Value);
-                    var lowercaseLogoPath = "assets/layout/images/" + tenantID + "/" + companies.companyName + comID + ".png";
-                    var uppercaseLogoPath = "assets/layout/images/" + tenantID + "/" + companies.companyName + comID + ".PNG";
+                    var lowercaseLogoPath = "assets/layout/images/" + tenantID + "/" + comID + ".png";
+                    var uppercaseLogoPath = "assets/layout/images/" + tenantID + "/" + comID + ".PNG";
 
 
                     if (System.IO.File.Exists(Path.Combine(basePath, lowercaseLogoPath)))

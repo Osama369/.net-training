@@ -2,14 +2,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { PrimeNgModule } from '../prime-ng/prime-ng.module';
 import { GirdComponent } from './Components/gird/gird.component';
-import { LoginComponent } from './Components/login/login.component';
 import { NotAuthorizeComponent } from './Components/not-authorize/not-authorize.component';
 import { NotFoundComponent } from './Components/not-found/not-found.component';
 import { PleaseWaitComponent } from './Components/please-wait/please-wait.component';
-import { RegisterComponent } from './Components/register/register.component';
 import { ResetPasswordComponent } from './Components/reset-password/reset-password.component';
 import { SelectCompanyComponent } from './Components/select-company/select-company.component';
-import { SignUpComponent } from './Components/sign-up/sign-up.component';
 import { ConfirmVerificationComponent } from './Components/confirm-verification/confirm-verification.component';
 import { TimezoneDatePipe } from './Pipes/timezone-date.pipe';
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
@@ -22,7 +19,6 @@ import { TokenInterceptor } from '../interceptors/token.interceptor';
 import { InvoicesComponent } from './Components/invoices/invoices.component';
 import { AddRowDirective } from './Directive/add-row.directive';
 import { DateFilterPipe } from './Pipes/date-filter-pipe.pipe';
-import { AdministrationModule } from '../Administration/administration.module';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
@@ -33,14 +29,11 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   declarations: [
     GirdComponent,
     ConfirmVerificationComponent,
-    LoginComponent,
     NotAuthorizeComponent,
     NotFoundComponent,
     PleaseWaitComponent,
-    RegisterComponent,
     ResetPasswordComponent,
     SelectCompanyComponent,
-    SignUpComponent,
     InvoicesComponent,
     TimezoneDatePipe,
     DateFilterPipe,

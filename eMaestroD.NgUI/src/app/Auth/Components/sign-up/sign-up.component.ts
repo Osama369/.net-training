@@ -8,9 +8,10 @@ import {
   CountryISO
 } from "ngx-intl-tel-input";
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../../Services/auth.service';
 import { Tenants } from 'src/app/Administration/Models/tenants';
 import { TenantService } from 'src/app/Administration/Services/tenant.service';
+import { AppConfigService } from '../../../Shared/Services/app-config.service';
+import { AuthService } from 'src/app/Shared/Services/auth.service';
 
 @Component({
   selector: 'app-sign-up',
@@ -27,7 +28,8 @@ export class SignUpComponent implements OnInit {
     private layoutService: LayoutService,
     private toastr : ToastrService,
     private tenantService : TenantService,
-    private router : Router
+    private router : Router,
+    private appConfigService : AppConfigService
     ) {
     this.layoutService.state.staticMenuDesktopInactive = true;
   }
@@ -240,7 +242,8 @@ export class SignUpComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.key = environment.recaptcha.siteKey;
+    this.key = this.appConfigService.getConfig().Recaptcha.SiteKey;
+    console.log(this.key);
     this.auth.canAuthenticate();
     this.List = [
         {

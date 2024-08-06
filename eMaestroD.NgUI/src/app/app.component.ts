@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { LoadingService } from './Shared/Services/loading.service';
 
 @Component({
   selector: 'app-root',
@@ -6,8 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'eMaestro.NgUI';
-
+  title = 'eMaestroD.NgUI';
 }
 
 

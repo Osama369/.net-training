@@ -344,7 +344,7 @@ namespace eMaestroD.Api.Controllers
                 var tenantID = cm.Decrypt(HttpContext.User.FindFirst(ClaimTypes.Upn).Value);
 
                 var basePath = _configuration.GetSection("AppSettings:ImgPath").Value;
-                var relativePath = Path.Combine("assets", "layout", "images", $"{tenantID}", $"{comName + comID}.png");
+                var relativePath = Path.Combine("assets", "layout", "images", $"{tenantID}", $"{comID}.png");
 
                 var filePath = Path.Combine(basePath, relativePath);
                 string directoryPath = Path.GetDirectoryName(filePath);

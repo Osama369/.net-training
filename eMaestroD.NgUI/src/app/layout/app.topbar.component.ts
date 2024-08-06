@@ -17,6 +17,7 @@ import { GenericService } from '../Shared/Services/generic.service';
 import { LogoService } from '../Shared/Services/logo.service';
 import { SignalrService } from '../Shared/Services/signalr.service';
 import { ThemeService } from '../Shared/Services/theme.service';
+import { AppConfigService } from '../Shared/Services/app-config.service';
 
 @Component({
     selector: 'app-topbar',
@@ -39,7 +40,8 @@ export class AppTopBarComponent {
     private notificationService: NotificationService,
     public bookmarkService: BookmarkService,
     private cdr: ChangeDetectorRef,
-    private logoService: LogoService
+    private logoService: LogoService,
+    private appConfigService: AppConfigService
     ) {
       this.user.push(new Users());
       this.signalRService.unsubscribe();
@@ -47,7 +49,8 @@ export class AppTopBarComponent {
     this.signalRService.addMessageListner();
   }
     changeCompanyVisibility:boolean = false;
-    path : any = environment.logoPath;
+    config = this.appConfigService.getConfig();
+    path : any = this.config.LogoPath;
     items!: MenuItem[];
 
     user:Users[]=[];
@@ -139,8 +142,8 @@ export class AppTopBarComponent {
        this.genericService.getLogoPath().subscribe(path=>{
         this.logoService.updateLogoPath(path);
           this.logoService.logoPath$.subscribe(pat => {
-            environment.logoPath = pat;
-            this.path = environment.logoPath;
+            this.config.LogoPath = pat;
+            this.path = pat;
           });
        })
 
@@ -192,8 +195,8 @@ export class AppTopBarComponent {
 
     logout(){
         //remove token
-        environment.logoPath = "assets/layout/images/logo.png";
-        this.path = environment.logoPath;
+        this.config.LogoPath = "assets/layout/images/logo.png";
+        this.path = this.config.LogoPath;
         this.auth.removeToken();
         this.auth.canAccess();
         this.router.navigate(['/login']);
