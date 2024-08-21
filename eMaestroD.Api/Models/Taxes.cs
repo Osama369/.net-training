@@ -7,6 +7,7 @@ namespace eMaestroD.Api.Models
         [Key]
         public int TaxID { get; set; }
         public string? TaxName { get; set; }
+        public int? comID { get; set; }
         public decimal? taxValue { get; set; }
         public bool? isDefault { get; set; }
         public string? crtBy { get; set; }

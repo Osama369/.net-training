@@ -221,8 +221,8 @@ export class AddNewExpenseVoucherComponent implements OnInit{
           this.cdr.detectChanges();
             this.voucherList.forEach(element => {
               i++;
-              element.parentlist = {COAID: element.parentCOAID, acctName : element.parentAccountName}
-              element.childlist = {COAID: element.COAID, acctName : element.ChildAccountName}
+              element.parentlist = {COAID: element.parentCOAID, acctName : element.parentAccountName, acctNo : element.relAcctNo}
+              element.childlist = {COAID: element.COAID, acctName : element.ChildAccountName, acctNo : element.acctNo}
               this.CalcaluteTotal(i);
             });
 
@@ -236,7 +236,7 @@ export class AddNewExpenseVoucherComponent implements OnInit{
               this.genericService.getAllBanks().subscribe({
                 next: (BankList) => {
                   this.BankList = (BankList as { [key: string]: any })["enttityDataSource"];
-                  this.SelectedBank = {COAID : list[0].COAID, acctName: this.BankList.find(x=>x.COAID == list[0].COAID)?.acctName }
+                  this.SelectedBank = {COAID : list[0].COAID, acctName: this.BankList.find(x=>x.COAID == list[0].COAID)?.acctName, acctNo: this.BankList.find(x=>x.COAID == list[0].COAID)?.acctNo  }
                 }
               });
             }
@@ -268,6 +268,7 @@ export class AddNewExpenseVoucherComponent implements OnInit{
       this.voucherList[rownumber].childlist = "";
       this.voucherList[rownumber].debit = 0;
       this.voucherList[rownumber].credit = 0;
+      console.log(parentlist);
       this.genericService.GetAllCoaByParentCOAID(parentlist.COAID).subscribe({
         next: (CoaAccountListChild) => {
           this.CoaAccountListForChild = CoaAccountListChild;
@@ -666,9 +667,12 @@ export class AddNewExpenseVoucherComponent implements OnInit{
       this.voucherList = this.voucherList.filter(x => x.parentlist !== undefined && x.parentlist.COAID != undefined);
       this.voucherList = this.voucherList.filter(x => x.childlist !== undefined && x.childlist.COAID != undefined);
       this.CalcaluteTotal(this.voucherList.length);
+
       this.voucherList.forEach(element => {
         element.COAID = element.childlist.COAID;
         element.parentCOAID = element.parentlist.COAID;
+        element.acctNo = element.childlist.acctNo;
+        element.relAcctNo = element.parentlist.acctNo;
         element.parentAccountName = "";
         element.ChildAccountName = "";
       });
@@ -681,6 +685,7 @@ export class AddNewExpenseVoucherComponent implements OnInit{
         if(this.SelectedBank != undefined)
         {
           this.voucherList[this.voucherList.length-1].COAID = this.SelectedBank.COAID;
+          this.voucherList[this.voucherList.length-1].acctNo = this.SelectedBank.acctNo;
           this.voucherList[this.voucherList.length-1].parentCOAID = 79;
         }
         else
@@ -765,7 +770,7 @@ export class AddNewExpenseVoucherComponent implements OnInit{
 
   close()
   {
-    this.router.navigateByUrl('/Expense');
+    this.router.navigateByUrl('/Transactions/Expense');
   }
   setTime()
   {

@@ -132,8 +132,9 @@ namespace eMaestroD.Api.Models
         public DateTime? crtDate { get; set; }
 
         public string? modBy { get; set; }
-
         public DateTime? modDate { get; set; }
+        public string? acctNo { get; set; }
+        public string? relAcctNo { get; set; }
 
         [NotMapped]
         public string? type { get; set; }

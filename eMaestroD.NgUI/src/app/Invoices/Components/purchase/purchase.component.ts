@@ -103,7 +103,7 @@ export class PurchaseComponent implements OnInit {
 
     editView(invoiceNo:any)
     {
-        this.router.navigateByUrl('/AddNewPurchase/'+invoiceNo);
+        this.router.navigateByUrl('/Invoices/AddNewPurchase/'+invoiceNo);
     }
 
     deleteView(invoiceNo:any)
@@ -144,7 +144,7 @@ export class PurchaseComponent implements OnInit {
      }
      viewInvoiceDetail(invoiceNo:any)
      {
-      this.router.navigateByUrl('/Detail/'+invoiceNo);
+      this.router.navigateByUrl('/Invoices/Detail/'+invoiceNo);
      }
 
      exportExcel() {

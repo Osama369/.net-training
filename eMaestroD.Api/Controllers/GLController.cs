@@ -20,10 +20,12 @@ using ClosedXML.Excel;
 using eMaestroD.Api.Models;
 using eMaestroD.Api.Common;
 using eMaestroD.Api.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace eMaestroD.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/api/[controller]/[action]")]
     public class GLController : Controller
     {
@@ -32,6 +34,7 @@ namespace eMaestroD.Api.Controllers
         public static string vourcherno { get; set; } = "";
         private decimal totalQty = 0, totalDiscount = 0;
         private int taxID = 0;
+        private string taxAcctNo = "";
         private string vouchnerNo = "";
         bool isGuest = false;
         List<invoiceNo> SDL;
@@ -53,14 +56,16 @@ namespace eMaestroD.Api.Controllers
         string username = "";
 
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly NotificationInterceptor _notificationInterceptor;
+        private readonly NotificationInterceptor _notificationInterceptor; 
+        private readonly HelperMethods _helperMethods; 
         private readonly GLService _gLService;
-        public GLController(AMDbContext aMDbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor, GLService gLService)
+        public GLController(AMDbContext aMDbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor, GLService gLService, HelperMethods helperMethods)
         {
             _AMDbContext = aMDbContext;
             _notificationInterceptor = notificationInterceptor;
             _httpContextAccessor = httpContextAccessor;
             _gLService = gLService;
+            _helperMethods = helperMethods;
             username = GetUsername();
 
         }
@@ -73,19 +78,11 @@ namespace eMaestroD.Api.Controllers
             return user.FirstName + " " + user.LastName;
         }
 
-        [NonAction]
-        private async Task<FiscalYear> GetFiscalYear(int? comID, DateTime? dtTX)
-        {
-            var existList = await _AMDbContext.FiscalYear
-                .Where(x => x.comID == comID && x.dtStart <= dtTX && x.dtEnd >= dtTX && x.active)
-                .ToListAsync();
-            return existList.FirstOrDefault();
-        }
 
         [HttpPost]
         public async Task<IActionResult> AddSaleInvoice([FromBody] List<GL> gl)
         {
-            var fy = await GetFiscalYear(gl[0].comID, gl[0].dtTx);
+            var fy = await _helperMethods.GetActiveFiscalYear(gl[0].comID, gl[0].dtTx);
             if (fy == null)
             {
                 return BadRequest("Fiscal year selection is outdated. Please choose a fiscal year that is currently valid.");
@@ -95,27 +92,20 @@ namespace eMaestroD.Api.Controllers
                 fiscalYear = fy.period;
             }
 
+            
             string VNO = gl[0].voucherNo;
+            string newVoucherNo = "";
             if (gl[0].voucherNo == null || gl[0].glComments == "Quotation")
             {
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
-                List<SqlParameter> parms = new List<SqlParameter>
-                {
-                        new SqlParameter { ParameterName = "@txType", Value = gl[0].txTypeID },
-                         new SqlParameter { ParameterName = "@comID", Value = gl[0].comID }
-                };
-                SDL = _AMDbContext.invoiceNo.FromSqlRaw(sql, parms.ToArray()).ToList();
-
-                if (SDL == null)
+                newVoucherNo = await _helperMethods.GenerateVoucherNoAsync(gl[0].txTypeID, gl[0].comID);
+                if (string.IsNullOrEmpty(newVoucherNo))
                 {
                     return NotFound();
                 }
-                else
+
+                foreach (var item in gl)
                 {
-                    foreach (var item in gl)
-                    {
-                        item.voucherNo = SDL[0].voucherNo;
-                    }
+                    item.voucherNo = newVoucherNo;
                 }
             }
             else
@@ -123,11 +113,15 @@ namespace eMaestroD.Api.Controllers
                 isEdit = true;
                 isGuest = true;
             }
-            var coa = _AMDbContext.COA.Where(x => x.acctName == gl[0].taxName).FirstOrDefault();
+            var coa = _AMDbContext.COA.Where(x => x.acctName == gl[0].taxName && x.comID == gl[0].comID).FirstOrDefault();
             if (coa == null)
-            { }
+            {
+            }
             else
-            { taxID = coa.COAID; }
+            { 
+              taxID = coa.COAID;
+              taxAcctNo = coa.acctNo;
+            }
 
             var now = DateTime.Now;
             glSaleDelList = _AMDbContext.gl.Where(x => x.voucherNo == gl[0].voucherNo).ToList();
@@ -137,7 +131,6 @@ namespace eMaestroD.Api.Controllers
             {
 
                 await _gLService.InsertGLEntriesAsync(list, now, username);
-
 
                 foreach (var item in gltxLinksLstSD)
                 {
@@ -151,7 +144,7 @@ namespace eMaestroD.Api.Controllers
                     List<GL> lst = _AMDbContext.gl.Where(x => x.voucherNo == VNO).ToList();
                     foreach (var item in lst)
                     {
-                        item.glComments = "Sale Invoice Created : " + SDL[0].voucherNo;
+                        item.glComments = "Sale Invoice Created : " + newVoucherNo;
                     }
                     _AMDbContext.UpdateRange(lst);
                     await _AMDbContext.SaveChangesAsync();
@@ -191,7 +184,7 @@ namespace eMaestroD.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveStockAdjustment([FromBody] List<GL> gl)
         {
-            var fy = await GetFiscalYear(gl[0].comID, gl[0].dtTx);
+            var fy = await _helperMethods.GetActiveFiscalYear(gl[0].comID, gl[0].dtTx);
             if (fy == null)
             {
                 return BadRequest("Fiscal year selection is outdated. Please choose a fiscal year that is currently valid.");
@@ -205,25 +198,15 @@ namespace eMaestroD.Api.Controllers
             string voucherNo = "";
             if (gl[0].voucherNo == null || gl[0].glComments == "Quotation")
             {
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
-                List<SqlParameter> parms = new List<SqlParameter>
-                {
-                        new SqlParameter { ParameterName = "@txType", Value = gl[0].txTypeID },
-                         new SqlParameter { ParameterName = "@comID", Value = gl[0].comID }
-                };
-                SDL = _AMDbContext.invoiceNo.FromSqlRaw(sql, parms.ToArray()).ToList();
-
-                if (SDL == null)
+                string newVoucherNo = await _helperMethods.GenerateVoucherNoAsync(gl[0].txTypeID, gl[0].comID);
+                if (string.IsNullOrEmpty(newVoucherNo))
                 {
                     return NotFound();
                 }
-                else
+
+                foreach (var item in gl)
                 {
-                    foreach (var item in gl)
-                    {
-                        item.voucherNo = SDL[0].voucherNo;
-                        voucherNo = item.voucherNo;
-                    }
+                    item.voucherNo = newVoucherNo;
                 }
             }
             else
@@ -231,11 +214,15 @@ namespace eMaestroD.Api.Controllers
                 isEdit = true;
                 isGuest = true;
             }
-            var coa = _AMDbContext.COA.Where(x => x.acctName == gl[0].taxName).FirstOrDefault();
+            var coa = _AMDbContext.COA.Where(x => x.acctName == gl[0].taxName && x.comID == gl[0].comID).FirstOrDefault();
             if (coa == null)
-            { }
+            {
+            }
             else
-            { taxID = coa.COAID; }
+            {
+                taxID = coa.COAID;
+                taxAcctNo = coa.acctNo;
+            }
 
             var now = DateTime.Now;
 
@@ -287,7 +274,7 @@ namespace eMaestroD.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> AddSaleReturn([FromBody] List<GL> gl)
         {
-            var fy = await GetFiscalYear(gl[0].comID, gl[0].dtTx);
+            var fy = await _helperMethods.GetActiveFiscalYear(gl[0].comID, gl[0].dtTx);
             if (fy == null)
             {
                 return BadRequest("Fiscal year selection is outdated. Please choose a fiscal year that is currently valid.");
@@ -299,24 +286,15 @@ namespace eMaestroD.Api.Controllers
             string VNO = gl[0].voucherNo;
             if (gl[0].voucherNo == null)
             {
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
-                List<SqlParameter> parms = new List<SqlParameter>
-                {
-                        new SqlParameter { ParameterName = "@txType", Value = gl[0].txTypeID },
-                        new SqlParameter { ParameterName = "@comID", Value = gl[0].comID }
-                };
-                SDL = _AMDbContext.invoiceNo.FromSqlRaw(sql, parms.ToArray()).ToList();
-
-                if (SDL == null)
+                string newVoucherNo = await _helperMethods.GenerateVoucherNoAsync(gl[0].txTypeID, gl[0].comID);
+                if (string.IsNullOrEmpty(newVoucherNo))
                 {
                     return NotFound();
                 }
-                else
+
+                foreach (var item in gl)
                 {
-                    foreach (var item in gl)
-                    {
-                        item.voucherNo = SDL[0].voucherNo;
-                    }
+                    item.voucherNo = newVoucherNo;
                 }
             }
             else
@@ -324,11 +302,15 @@ namespace eMaestroD.Api.Controllers
                 isEdit = true;
                 isGuest = true;
             }
-            var coa = _AMDbContext.COA.Where(x => x.acctName == gl[0].taxName).FirstOrDefault();
+            var coa = _AMDbContext.COA.Where(x => x.acctName == gl[0].taxName && x.comID == gl[0].comID).FirstOrDefault();
             if (coa == null)
-            { }
+            {
+            }
             else
-            { taxID = coa.COAID; }
+            {
+                taxID = coa.COAID;
+                taxAcctNo = coa.acctNo;
+            }
 
             var now = DateTime.Now;
             string saleVoucherNo = gl[0].checkName;
@@ -518,7 +500,7 @@ namespace eMaestroD.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> AddServiceInvoice([FromBody] List<GL> gl)
         {
-            var fy = await GetFiscalYear(gl[0].comID, gl[0].dtTx);
+            var fy = await _helperMethods.GetActiveFiscalYear(gl[0].comID, gl[0].dtTx);
             if (fy == null)
             {
                 return BadRequest("Fiscal year selection is outdated. Please choose a fiscal year that is currently valid.");
@@ -530,24 +512,15 @@ namespace eMaestroD.Api.Controllers
             string VNO = gl[0].voucherNo;
             if (gl[0].voucherNo == null)
             {
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
-                List<SqlParameter> parms = new List<SqlParameter>
-                {
-                        new SqlParameter { ParameterName = "@txType", Value = gl[0].txTypeID },
-                        new SqlParameter { ParameterName = "@comID", Value = gl[0].comID }
-                };
-                SDL = _AMDbContext.invoiceNo.FromSqlRaw(sql, parms.ToArray()).ToList();
-
-                if (SDL == null)
+                string newVoucherNo = await _helperMethods.GenerateVoucherNoAsync(gl[0].txTypeID, gl[0].comID);
+                if (string.IsNullOrEmpty(newVoucherNo))
                 {
                     return NotFound();
                 }
-                else
+
+                foreach (var item in gl)
                 {
-                    foreach (var item in gl)
-                    {
-                        item.voucherNo = SDL[0].voucherNo;
-                    }
+                    item.voucherNo = newVoucherNo;
                 }
             }
             else
@@ -555,11 +528,15 @@ namespace eMaestroD.Api.Controllers
                 isEdit = true;
                 isGuest = true;
             }
-            var coa = _AMDbContext.COA.Where(x => x.acctName == gl[0].taxName).FirstOrDefault();
+            var coa = _AMDbContext.COA.Where(x => x.acctName == gl[0].taxName && x.comID == gl[0].comID).FirstOrDefault();
             if (coa == null)
-            { }
+            {
+            }
             else
-            { taxID = coa.COAID; }
+            {
+                taxID = coa.COAID;
+                taxAcctNo = coa.acctNo;
+            }
 
             var now = DateTime.Now;
             glSaleDelList = _AMDbContext.gl.Where(x => x.voucherNo == gl[0].voucherNo).ToList();
@@ -604,7 +581,7 @@ namespace eMaestroD.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> AddPurchaseInvoice([FromBody] List<GL> gl)
         {
-            var fy = await GetFiscalYear(gl[0].comID, gl[0].dtTx);
+            var fy = await _helperMethods.GetActiveFiscalYear(gl[0].comID, gl[0].dtTx);
             if (fy == null)
             {
                 return BadRequest("Fiscal year selection is outdated. Please choose a fiscal year that is currently valid.");
@@ -614,26 +591,18 @@ namespace eMaestroD.Api.Controllers
                 fiscalYear = fy.period;
             }
             string VNO = gl[0].voucherNo;
+            string newVoucherNo = "";
             if (gl[0].voucherNo == null || gl[0].glComments == "Purchase Order")
             {
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
-                List<SqlParameter> parms = new List<SqlParameter>
-                {
-                        new SqlParameter { ParameterName = "@txType", Value = gl[0].txTypeID },
-                        new SqlParameter { ParameterName = "@comID", Value = gl[0].comID }
-                };
-                SDL = _AMDbContext.invoiceNo.FromSqlRaw(sql, parms.ToArray()).ToList();
-
-                if (SDL == null)
+                newVoucherNo = await _helperMethods.GenerateVoucherNoAsync(gl[0].txTypeID, gl[0].comID);
+                if (string.IsNullOrEmpty(newVoucherNo))
                 {
                     return NotFound();
                 }
-                else
+
+                foreach (var item in gl)
                 {
-                    foreach (var item in gl)
-                    {
-                        item.voucherNo = SDL[0].voucherNo;
-                    }
+                    item.voucherNo = newVoucherNo;
                 }
             }
             else
@@ -641,11 +610,15 @@ namespace eMaestroD.Api.Controllers
                 isEdit = true;
                 isGuest = true;
             }
-            var coa = _AMDbContext.COA.Where(x => x.acctName == gl[0].taxName).FirstOrDefault();
+            var coa = _AMDbContext.COA.Where(x => x.acctName == gl[0].taxName && x.comID == gl[0].comID).FirstOrDefault();
             if (coa == null)
-            { }
+            {
+            }
             else
-            { taxID = coa.COAID; }
+            {
+                taxID = coa.COAID;
+                taxAcctNo = coa.acctNo;
+            }
 
             var now = DateTime.Now;
             glSaleDelList = _AMDbContext.gl.Where(x => x.voucherNo == gl[0].voucherNo).ToList();
@@ -661,7 +634,7 @@ namespace eMaestroD.Api.Controllers
                     List<GL> lst = _AMDbContext.gl.Where(x => x.voucherNo == VNO).ToList();
                     foreach (var item in lst)
                     {
-                        item.glComments = "Purchase Created : " + SDL[0].voucherNo;
+                        item.glComments = "Purchase Created : " + newVoucherNo;
                     }
                     _AMDbContext.UpdateRange(lst);
                     await _AMDbContext.SaveChangesAsync();
@@ -703,7 +676,7 @@ namespace eMaestroD.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> AddPurchaseReturn([FromBody] List<GL> gl)
         {
-            var fy = await GetFiscalYear(gl[0].comID, gl[0].dtTx);
+            var fy = await _helperMethods.GetActiveFiscalYear(gl[0].comID, gl[0].dtTx);
             if (fy == null)
             {
                 return BadRequest("Fiscal year selection is outdated. Please choose a fiscal year that is currently valid.");
@@ -715,24 +688,17 @@ namespace eMaestroD.Api.Controllers
             string VNO = gl[0].voucherNo;
             if (gl[0].voucherNo == null)
             {
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
-                List<SqlParameter> parms = new List<SqlParameter>
-                {
-                        new SqlParameter { ParameterName = "@txType", Value = gl[0].txTypeID },
-                        new SqlParameter { ParameterName = "@comID", Value = gl[0].comID }
-                };
-                SDL = _AMDbContext.invoiceNo.FromSqlRaw(sql, parms.ToArray()).ToList();
 
-                if (SDL == null)
+
+                var newVoucherNo = await _helperMethods.GenerateVoucherNoAsync(gl[0].txTypeID, gl[0].comID);
+                if (string.IsNullOrEmpty(newVoucherNo))
                 {
                     return NotFound();
                 }
-                else
+
+                foreach (var item in gl)
                 {
-                    foreach (var item in gl)
-                    {
-                        item.voucherNo = SDL[0].voucherNo;
-                    }
+                    item.voucherNo = newVoucherNo;
                 }
             }
             else
@@ -740,11 +706,15 @@ namespace eMaestroD.Api.Controllers
                 isEdit = true;
                 isGuest = true;
             }
-            var coa = _AMDbContext.COA.Where(x => x.acctName == gl[0].taxName).FirstOrDefault();
+            var coa = _AMDbContext.COA.Where(x => x.acctName == gl[0].taxName && x.comID == gl[0].comID).FirstOrDefault();
             if (coa == null)
-            { }
+            {
+            }
             else
-            { taxID = coa.COAID; }
+            {
+                taxID = coa.COAID;
+                taxAcctNo = coa.acctNo;
+            }
 
             var now = DateTime.Now;
             string purchaseVoucherNo = gl[0].checkName;
@@ -934,7 +904,7 @@ namespace eMaestroD.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> AddQuotationInvoice([FromBody] List<GL> gl)
         {
-            var fy = await GetFiscalYear(gl[0].comID, gl[0].dtTx);
+            var fy = await _helperMethods.GetActiveFiscalYear(gl[0].comID, gl[0].dtTx);
             if (fy == null)
             {
                 return BadRequest("Fiscal year selection is outdated. Please choose a fiscal year that is currently valid.");
@@ -945,24 +915,15 @@ namespace eMaestroD.Api.Controllers
             }
             if (gl[0].voucherNo == null)
             {
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
-                List<SqlParameter> parms = new List<SqlParameter>
-                {
-                        new SqlParameter { ParameterName = "@txType", Value = gl[0].txTypeID },
-                        new SqlParameter { ParameterName = "@comID", Value = gl[0].comID }
-                };
-                SDL = _AMDbContext.invoiceNo.FromSqlRaw(sql, parms.ToArray()).ToList();
-
-                if (SDL == null)
+                string newVoucherNo = await _helperMethods.GenerateVoucherNoAsync(gl[0].txTypeID, gl[0].comID);
+                if (string.IsNullOrEmpty(newVoucherNo))
                 {
                     return NotFound();
                 }
-                else
+
+                foreach (var item in gl)
                 {
-                    foreach (var item in gl)
-                    {
-                        item.voucherNo = SDL[0].voucherNo;
-                    }
+                    item.voucherNo = newVoucherNo;
                 }
             }
             else
@@ -970,11 +931,15 @@ namespace eMaestroD.Api.Controllers
                 isEdit = true;
                 isGuest = true;
             }
-            var coa = _AMDbContext.COA.Where(x => x.acctName == gl[0].taxName).FirstOrDefault();
+            var coa = _AMDbContext.COA.Where(x => x.acctName == gl[0].taxName && x.comID == gl[0].comID).FirstOrDefault();
             if (coa == null)
-            { }
+            {
+            }
             else
-            { taxID = coa.COAID; }
+            {
+                taxID = coa.COAID;
+                taxAcctNo = coa.acctNo;
+            }
 
             var now = DateTime.Now;
             //var date = new DateTime(now.Year, now.Month, now.Day,
@@ -1025,7 +990,7 @@ namespace eMaestroD.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> AddPurchaseOrder([FromBody] List<GL> gl)
         {
-            var fy = await GetFiscalYear(gl[0].comID, gl[0].dtTx);
+            var fy = await _helperMethods.GetActiveFiscalYear(gl[0].comID, gl[0].dtTx);
             if (fy == null)
             {
                 return BadRequest("Fiscal year selection is outdated. Please choose a fiscal year that is currently valid.");
@@ -1036,24 +1001,15 @@ namespace eMaestroD.Api.Controllers
             }
             if (gl[0].voucherNo == null)
             {
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
-                List<SqlParameter> parms = new List<SqlParameter>
-                {
-                        new SqlParameter { ParameterName = "@txType", Value = gl[0].txTypeID },
-                        new SqlParameter { ParameterName = "@comID", Value = gl[0].comID }
-                };
-                SDL = _AMDbContext.invoiceNo.FromSqlRaw(sql, parms.ToArray()).ToList();
-
-                if (SDL == null)
+                string newVoucherNo = await _helperMethods.GenerateVoucherNoAsync(gl[0].txTypeID, gl[0].comID);
+                if (string.IsNullOrEmpty(newVoucherNo))
                 {
                     return NotFound();
                 }
-                else
+
+                foreach (var item in gl)
                 {
-                    foreach (var item in gl)
-                    {
-                        item.voucherNo = SDL[0].voucherNo;
-                    }
+                    item.voucherNo = newVoucherNo;
                 }
             }
             else
@@ -1061,11 +1017,15 @@ namespace eMaestroD.Api.Controllers
                 isEdit = true;
                 isGuest = true;
             }
-            var coa = _AMDbContext.COA.Where(x => x.acctName == gl[0].taxName).FirstOrDefault();
+            var coa = _AMDbContext.COA.Where(x => x.acctName == gl[0].taxName && x.comID == gl[0].comID).FirstOrDefault();
             if (coa == null)
-            { }
+            {
+            }
             else
-            { taxID = coa.COAID; }
+            {
+                taxID = coa.COAID;
+                taxAcctNo = coa.acctNo;
+            }
 
             var now = DateTime.Now;
             //var date = new DateTime(now.Year, now.Month, now.Day,
@@ -1118,7 +1078,7 @@ namespace eMaestroD.Api.Controllers
         {
 
 
-            var fy = await GetFiscalYear(gl[0].comID, gl[0].dtTx);
+            var fy = await _helperMethods.GetActiveFiscalYear(gl[0].comID, gl[0].dtTx);
             if (fy == null)
             {
                 return BadRequest("Fiscal year selection is outdated. Please choose a fiscal year that is currently valid.");
@@ -1128,6 +1088,15 @@ namespace eMaestroD.Api.Controllers
                 fiscalYear = fy.period;
             }
             var COAID = gl[0].COAID;
+            
+            var acctNo = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeDebtors);
+            var relAcctNo = gl[0].acctNo;
+            if (COAID == 80)
+            {
+                var cashInHandAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CashInHand);
+                relAcctNo = cashInHandAccCode;
+            }
+            
             var cstID = gl[0].cstID;
             var comID = gl[0].comID;
             var glid = gl[0].GLID;
@@ -1191,7 +1160,10 @@ namespace eMaestroD.Api.Controllers
                     modDate = now,
                     creditSum = total,
                     glComments = glComments,
-                    comID = comID
+                    comID = comID,
+                    acctNo = acctNo,
+                    relAcctNo = relAcctNo
+
                 };
 
                 gllist.Add(glEntry);
@@ -1247,19 +1219,12 @@ namespace eMaestroD.Api.Controllers
                     glComments = glComments,
                     comID = comID,
                     acctBal = glist[0].creditSum,
-                    GLID = glist[0].GLID
+                    GLID = glist[0].GLID,
+                    acctNo = acctNo,
+                    relAcctNo = relAcctNo
                 };
 
                 gllist.Add(glEntry);
-
-                List<COA> coaList = _AMDbContext.COA.Where(x => x.COANo == cstID && x.parentCOAID == 40).ToList();
-                if (coaList.Any())
-                {
-                    COA firstCOA = coaList.First();
-                    firstCOA.bal = firstCOA.bal + oldtotal - total; // Subtract 'total' from the 'bal' property of the first COA
-                    _AMDbContext.Update(firstCOA);
-                    await _AMDbContext.SaveChangesAsync(); // Save changes to the database
-                }
 
 
                 isEdit = true;
@@ -1309,7 +1274,7 @@ namespace eMaestroD.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> saveJournalVoucher([FromBody] List<journalVoucher> gl)
         {
-            var fy = await GetFiscalYear(gl[0].comID, gl[0].dtTx);
+            var fy = await _helperMethods.GetActiveFiscalYear(gl[0].comID, gl[0].dtTx);
             if (fy == null)
             {
                 return BadRequest("Fiscal year selection is outdated. Please choose a fiscal year that is currently valid.");
@@ -1354,7 +1319,9 @@ namespace eMaestroD.Api.Controllers
                         creditSum = item.credit,
                         debitSum = item.debit,
                         glComments = glComments,
-                        comID = comID
+                        comID = comID,
+                        acctNo = item.acctNo,
+                        relAcctNo = item.relAcctNo
                     });
                 }
 
@@ -1383,7 +1350,9 @@ namespace eMaestroD.Api.Controllers
                         creditSum = item.credit,
                         debitSum = item.debit,
                         glComments = glComments,
-                        comID = comID
+                        comID = comID,
+                        acctNo = item.acctNo,
+                        relAcctNo = item.relAcctNo
                     });
                 }
 
@@ -1433,7 +1402,7 @@ namespace eMaestroD.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveExpenseVoucher([FromBody] List<journalVoucher> gl)
         {
-            var fy = await GetFiscalYear(gl[0].comID, gl[0].dtTx);
+            var fy = await _helperMethods.GetActiveFiscalYear(gl[0].comID, gl[0].dtTx);
             if (fy == null)
             {
                 return BadRequest("Fiscal year selection is outdated. Please choose a fiscal year that is currently valid.");
@@ -1478,7 +1447,10 @@ namespace eMaestroD.Api.Controllers
                         creditSum = item.credit,
                         debitSum = item.debit,
                         glComments = item.glComments,
-                        comID = comID
+                        comID = comID,
+                        acctNo = item.acctNo,
+                        relAcctNo = item.relAcctNo
+
                     });
                 }
 
@@ -1507,30 +1479,12 @@ namespace eMaestroD.Api.Controllers
                         creditSum = item.credit,
                         debitSum = item.debit,
                         glComments = item.glComments,
-                        comID = comID
+                        comID = comID,
+                        acctNo = item.acctNo,
+                        relAcctNo = item.relAcctNo
+
                     });
                 }
-
-
-                foreach (var item in glOldList)
-                {
-                    var coalist = _AMDbContext.COA.Where(x => x.COAID == item.relCOAID).ToList();
-                    if (coalist.Count > 0)
-                    {
-                        if (item.debitSum > 0)
-                        {
-                            coalist[0].bal -= item.debitSum;
-                        }
-                        else if (item.creditSum > 0)
-                        {
-                            coalist[0].bal += item.creditSum;
-                        }
-
-                        // _AMDbContext.COA.Update(coalist.FirstOrDefault());
-                        await _AMDbContext.SaveChangesAsync();
-                    }
-                }
-
 
 
 
@@ -1578,7 +1532,7 @@ namespace eMaestroD.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> savePaymentVoucher([FromBody] List<invoices> gl)
         {
-            var fy = await GetFiscalYear(gl[0].comID, gl[0].dtTx);
+            var fy = await _helperMethods.GetActiveFiscalYear(gl[0].comID, gl[0].dtTx);
             if (fy == null)
             {
                 return BadRequest("Fiscal year selection is outdated. Please choose a fiscal year that is currently valid.");
@@ -1588,6 +1542,12 @@ namespace eMaestroD.Api.Controllers
                 fiscalYear = fy.period;
             }
             var COAID = gl[0].COAID;
+            var acctNo = gl[0].acctNo;
+            if(COAID == 80)
+            {
+                var cashInHandAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CashInHand);
+                acctNo = cashInHandAccCode;
+            }
             var vendID = gl[0].cstID;
             var comID = gl[0].comID;
             string glComments = gl[0].glComments;
@@ -1597,6 +1557,7 @@ namespace eMaestroD.Api.Controllers
             List<GL> gllist = new List<GL>();
             var now = DateTime.Now;
 
+            
             if (gl[0].GLID == 0)
             {
                 gl.RemoveAll(x => x.enterAmount == 0);
@@ -1652,18 +1613,10 @@ namespace eMaestroD.Api.Controllers
                     modDate = now,
                     creditSum = total,
                     glComments = glComments,
-                    comID = comID
+                    comID = comID,
+                    acctNo = acctNo
                 };
                 gllist.Add(glEntry);
-
-                List<COA> coaList = _AMDbContext.COA.Where(x => x.COANo == vendID && x.parentCOAID == 83).ToList();
-                if (coaList.Any())
-                {
-                    COA firstCOA = coaList.First();
-                    firstCOA.bal -= total; // Subtract 'total' from the 'bal' property of the first COA
-                    _AMDbContext.Update(firstCOA);
-                    await _AMDbContext.SaveChangesAsync(); // Save changes to the database
-                }
             }
             else
             {
@@ -1706,20 +1659,12 @@ namespace eMaestroD.Api.Controllers
                     glComments = glComments,
                     comID = comID,
                     acctBal = glist[0].creditSum,
-                    GLID = glist[0].GLID
+                    GLID = glist[0].GLID,
+                    acctNo = acctNo
 
                 };
 
                 gllist.Add(glEntry);
-
-                List<COA> coaList = _AMDbContext.COA.Where(x => x.COANo == vendID && x.parentCOAID == 83).ToList();
-                if (coaList.Any())
-                {
-                    COA firstCOA = coaList.First();
-                    firstCOA.bal = firstCOA.bal + oldtotal - total; // Subtract 'total' from the 'bal' property of the first COA
-                    _AMDbContext.Update(firstCOA);
-                    await _AMDbContext.SaveChangesAsync(); // Save changes to the database
-                }
 
                 isEdit = true;
             }
@@ -1850,7 +1795,7 @@ namespace eMaestroD.Api.Controllers
         [Route("{invoiceNo}/{comID}")]
         public async Task<IActionResult> deleteInvoice(string invoiceNo, int comID)
         {
-            var fy = await GetFiscalYear(comID, DateTime.Today);
+            var fy = await _helperMethods.GetActiveFiscalYear(comID, DateTime.Today);
             if (fy == null)
             {
                 return BadRequest("Fiscal year selection is outdated. Please choose a fiscal year that is currently valid.");
@@ -1959,7 +1904,7 @@ namespace eMaestroD.Api.Controllers
         [Route("{ReceiptNo}/{comID}")]
         public async Task<IActionResult> deleteReceipt(string ReceiptNo, int comID)
         {
-            var fy = await GetFiscalYear(comID, DateTime.Today);
+            var fy = await _helperMethods.GetActiveFiscalYear(comID, DateTime.Today);
             if (fy == null)
             {
                 return BadRequest("Fiscal year selection is outdated. Please choose a fiscal year that is currently valid.");
@@ -2037,7 +1982,7 @@ namespace eMaestroD.Api.Controllers
         [Route("{voucherNo}/{comID}")]
         public async Task<IActionResult> deletePayment(string voucherNo, int comID)
         {
-            var fy = await GetFiscalYear(comID, DateTime.Today);
+            var fy = await _helperMethods.GetActiveFiscalYear(comID, DateTime.Today);
             if (fy == null)
             {
                 return BadRequest("Fiscal year selection is outdated. Please choose a fiscal year that is currently valid.");
@@ -2113,7 +2058,7 @@ namespace eMaestroD.Api.Controllers
         [Route("{voucherNo}/{comID}")]
         public async Task<IActionResult> deleteJournal(string voucherNo, int comID)
         {
-            var fy = await GetFiscalYear(comID, DateTime.Today);
+            var fy = await _helperMethods.GetActiveFiscalYear(comID, DateTime.Today);
             if (fy == null)
             {
                 return BadRequest("Fiscal year selection is outdated. Please choose a fiscal year that is currently valid.");
@@ -2571,7 +2516,9 @@ namespace eMaestroD.Api.Controllers
                     parentCOAID = item.relCOAID,
                     COAID = item.COAID,
                     glComments = item.glComments,
-                    masterEntryComment = comment
+                    masterEntryComment = comment,
+                    acctNo = item.acctNo,
+                    relAcctNo = item.relAcctNo
                 });
             }
             if (list.Count > 0)
@@ -2755,6 +2702,12 @@ namespace eMaestroD.Api.Controllers
             gltxLnks = new GLTxLinks();
             gltxLinksUpdated = new List<GLTxLinks>();
             gltxLinksDelete = new List<GLTxLinks>();
+            //98
+            var stockInTradeAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.StockInTrade);
+            //81
+            var costOfGoodsAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CostOfGoodsSold);
+
+
             int accountID = 81;
 
             if (!isEdit) { gltxLinksLstSD = new List<GLTxLinks>(); }
@@ -2790,7 +2743,9 @@ namespace eMaestroD.Api.Controllers
                 checkName = obj1[0].checkName,
                 locID = obj1[0].locID,
                 comID = obj1[0].comID,
-                balSum = 0
+                balSum = 0,
+                acctNo = "",
+                relAcctNo = ""
             };
             if (isGuest) { glMasterEntry.isDeposited = true; }
             if (isEdit)
@@ -2840,6 +2795,8 @@ namespace eMaestroD.Api.Controllers
                     pro1.salesManID = obj.salesManID;
                     pro1.COAID = 98;
                     pro1.relCOAID = accountID;
+                    pro1.acctNo = stockInTradeAccCode;
+                    pro1.relAcctNo = costOfGoodsAccCode;
                     pro1.creditSum = obj.qty * obj.unitPrice; //obj.creditSum;
                     pro1.qtyBal = pro1.qty;
                     pro1.txTypeID = obj1[0].txTypeID;
@@ -2877,13 +2834,7 @@ namespace eMaestroD.Api.Controllers
                 }
             }
 
-
             #endregion
-
-            //#region ----- Paid from Manual applied Credit -----
-            //if (glAdvanceRecord != null && applyCredit == true && gLDataGridView.Rows.Count > 0 && !autoCreditPayment)
-            //{ glLt.Add(glAdvanceRecord); }
-            //#endregion
 
             #region -------- GL Product Ledger Record ---------
             g2 = new GL();
@@ -2894,14 +2845,16 @@ namespace eMaestroD.Api.Controllers
             g2.depositID = fiscalYear;
             g2.txTypeID = obj1[0].txTypeID;
             g2.creditSum = 0;
+            g2.COAID = accountID;
             g2.relCOAID = 98;
+            g2.acctNo = costOfGoodsAccCode;
+            g2.relAcctNo = stockInTradeAccCode;
             g2.voucherNo = glMasterEntry.voucherNo;
             g2.salesManID = obj1[0].salesManID;
             g2.glComments = obj1[0].glComments;
             g2.instituteOffer = 0;
             g2.debitSum = sumTotal;
             g2.taxSum = 0;
-            g2.COAID = accountID;
             g2.cstID = obj1[0].cstID;
             g2.dtTx = obj1[0].dtTx;
             g2.paidSum = 0;
@@ -2917,206 +2870,8 @@ namespace eMaestroD.Api.Controllers
             g2.locID = obj1[0].locID;
             g2.comID = obj1[0].comID;
             glLt.Add(g2);
-            //if (txtPayment.Text.ToDecimal() > 0)
-            //{
-            //    GL glPayment = new GL();
-            //    if (!isEdit)
-            //    {
-            //        g2.Clone(glPayment);
-            //        glPayment.COAID = 80;
-            //        glPayment.relCOAID = 141;
-            //    }
-            //    else
-            //    {
-            //        glPayment = glSaleDelList.Find(x => x.voucherNo == txtVoucherNo.Text && x.COAID == 80 && x.relCOAID == 141 && x.balSum == 0);
-            //        if (glPayment == null)
-            //        {
-            //            glPayment = new GL();
-            //            g2.Clone(glPayment);
-            //            glPayment.GLID = 0;
-            //            glPayment.COAID = 80;
-            //            glPayment.relCOAID = 141;
-            //        }
-            //    }
-            //    glPayment.instituteOffer = txtFreightCharges.Text.ToDecimal();
-            //    glPayment.txTypeID = 4;
-            //    glPayment.depositID = objFiscalYr.period;
-            //    glPayment.voucherNo = glLt.Find(x => x.voucherNo != "").voucherNo;
-            //    glPayment.isCleared = glPayment.isDeposited = glPayment.isPaid = false;
-            //    glPayment.crtBy = glPayment.modBy = Extensions.userName;
-            //    glPayment.crtDate = glPayment.modDate = DateTime.Now;
-            //    glPayment.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //    glPayment.isVoided = false;
-            //    glPayment.dtTx = dtDate.Value;
-            //    glPayment.qtyBal = glPayment.qty = 0;
-            //    glPayment.discountSum = txtDiscount.Text.ToDecimal();
-            //    glPayment.paidSum = txtPayment.Text.ToDecimal();
-            //    glPayment.balSum = glPayment.debitSum = glPayment.qtyBal = 0;
-            //    glPayment.debitSum = txtPayment.Text.ToDecimal();
-            //    glPayment.glComments = txtRemarks.Text;
-            //    //txtBalance.Text.ToDecimal() > 0 &&
-            //    if (txtBalance.Text.StartsWith("("))
-            //    {
-            //        decimal unUsd = Math.Abs(txtBalance.Text.Replace("(", "").Replace(")", "").ToDecimal());
-            //        glPayment.unusedSum = unUsd;
-            //    }
-            //    glLt.Add(glPayment);
-
-            //    if (txtBalance.Text.ToDecimal() < 0.1M)
-            //    {
-            //        GL gltrade = glSaleDelList.Find(x => x.relCOAID == 141 && x.COAID == 40 && x.voucherNo == txtVoucherNo.Text);
-            //        if (gltrade != null)
-            //        {
-            //            gltrade.isVoided = true;
-            //            gltrade.debitSum = gltrade.balSum = gltrade.paidSum = 0;
-            //            gltrade.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //            glLt.Add(gltrade);
-            //        }
-            //    }
-            //    #endregion
-            //}
-
-            //#region ---- Update Sale Delivery Ledger Entry ----
-            //if (isEdit)
-            //{
-            //    var voucherRecord = glSaleDelList.FindAll(x => x.voucherNo == txtVoucherNo.Text);
-            //    Collabo.FE.Models.GL glParent = voucherRecord.Find(x => x.txID == 0);
-            //    // Sale  Delivery parent entry...
-            //    GL glP = new GL();
-            //    glParent.Clone(glP);
-            //    glP.dtTx = dtDate.Value;
-            //    glP.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //    glP.balSum = txtBalance.Text.ToDecimal();
-            //    glP.discountSum = txtDiscount.Text.ToDecimal();
-            //    glP.creditSum = txtNetAmount.Text.ToDecimal();
-            //    glP.taxSum = txtTaxes.Text.ToDecimal();
-            //    glP.paidSum = txtPayment.Text.ToDecimal();
-            //    glP.glComments = txtRemarks.Text;
-            //    glP.instituteOffer = txtFreightCharges.Text.ToDecimal();
-            //    glP.depositID = fiscalYear;
-            //    glP.checkAdd = txtGPassNo.Text;
-            //    glP.modBy = Extensions.userName;
-            //    if (isGuest) { glP.isDeposited = true; } else { glP.isDeposited = false; }
-            //    glLt.Add(glP);
-            //}
-            #endregion
-
-            #region ------- Shipment Expenses --------
-            //if (!isEdit && txtFreightCharges.Text.ToDecimal() > 0)
-            //{
-            //    GL glexpense = new GL();
-            //    glMasterEntry.Clone(glexpense);
-            //    glexpense.COAID = 52;
-            //    glexpense.instituteOffer = 0;
-            //    glexpense.isDeposited = false;
-            //    glexpense.relCOAID = 141;
-            //    glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //    glexpense.creditSum = glexpense.taxSum = glexpense.paidSum = glexpense.discountSum = glexpense.balSum = 0;
-            //    glexpense.glComments = glexpense.checkName = string.Empty;
-            //    glLt.Add(glexpense);
-            //}
-            //else if (isEdit && txtFreightCharges.Text.ToDecimal() > 0)
-            //{
-            //    var voucherRecord = glSaleDelList.FindAll(x => x.voucherNo == txtVoucherNo.Text);
-            //    Collabo.FE.Models.GL glexpense = voucherRecord.Find(x => x.COAID == 52);
-            //    if (glexpense != null)
-            //    {
-            //        glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //    }
-            //    else
-            //    {
-            //        glexpense = new GL();
-            //        glMasterEntry.Clone(glexpense);
-            //        glexpense.COAID = 52;
-            //        glexpense.instituteOffer = 0;
-            //        glexpense.isDeposited = false;
-            //        glexpense.depositID = fiscalYear;
-            //        glexpense.voucherNo = glSaleDelList[0].voucherNo;
-            //        glexpense.txTypeID = 4;
-            //        glexpense.txID = glSaleDelList.Find(x => x.txID == 0).GLID;
-            //        glexpense.relCOAID = 141;
-            //        glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //        glexpense.creditSum = glexpense.taxSum = glexpense.paidSum = glexpense.discountSum = glexpense.balSum = 0;
-            //        glexpense.glComments = glexpense.checkName = string.Empty;
-            //    }
-            //    glLt.Add(glexpense);
-            //}
-            //else if (isEdit && txtFreightCharges.Text.ToDecimal() < 0.1m && glSaleDelList.Find(x => x.COAID == 52) != null)
-            //{
-            //    Collabo.FE.Models.GL glexpense = glSaleDelList.Find(x => x.COAID == 52);
-            //    glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //    glLt.Add(glexpense);
-            //}
-            #endregion
-
-            #region ---------- Call Service, Save Request -----
-
-            //if (isEdit)
-            //{
-            //    var delLstTxLinks = gltxLinksLstSD.Find(x => x.GLTxLinkID != 0 && x.qty > 0);
-            //    Decimal balQtyPurchaseInv = delLstTxLinks.qty - pro1.qty;
-
-            //    //glPurchasedInvoicesLst.Find(x => x.prodID == pro1.prodID && x.batchNo == pro1.batchNo && x.qtyBal>0);//.qty+ balQtyPurchaseInv;
-            //    //for (int i = 0; i < glPurchasedInvoicesLst.Count; i++)
-            //    //{
-            //    //    glPurchasedInvoicesLst[i].qtyBal += balQtyPurchaseInv;
-            //    //}
-
-            //    gltxLinksLstSD.Remove(delLstTxLinks);
-            //    //GetPurchaseInvoices.balQuantity;
-            //    //glPurchasedInvoicesLst.qtyBal;
-
-            //}
-
-            // GlTxLinks Update On Edit Existing Item On Grid
-            //if (isEdit)
-            //{
-            //    GLTxLinksList gltxentries = new GLTxLinksList();
-            //    gltxentries.AddRange(new GLTxLinks { GLID = batchNoTest.First().txID }.Select());
-            //    GLTxLinks gltxLnk = new GLTxLinks();
-            //    gltxLinksUpdated = new GLTxLinksList();
-
-            //    foreach (GL glDataInGrid in (List<GL>)gLBindingSource.DataSource)
-            //    {
-
-            //        foreach (var glTx in gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID))
-            //        {
-
-
-            //            gltxLnk = gltxentries.Find(x => x.GLID == glDataInGrid.txID && x.txTypeID == 4 && x.prodID == glDataInGrid.prodID);
-            //            gltxLnk.qty = (glDataInGrid.qty + glDataInGrid.bonusQty);
-
-            //            gltxLinksUpdated.Add(gltxLnk);
-            //        }
-
-            //    }
-            //}
-
-
 
             return glLt;
-
-            //if (glPurchaseInvUpdLst.Count > 0) { glPurchaseInvUpdLst.Update(); }
-            #region ----Update Entries of Sale Delivery,After Delete ----
-
-            //if (isEdit && productLst.Count > 0 && productList.Count > 0)
-            //{
-            //    UpdateSaleEntries();
-            //}
-
-            //if (isEdit && removeSaleInvoiceItemOnEdit != null && removeSaleInvoiceItemOnEdit.Count > 0)
-            //{
-            //   DelSaleItems(removeSaleInvoiceItemOnEdit);
-            // }
-            #endregion
-
-            //Paid From Auto Applied Credit
-            // if (autoCreditPayment && glListAdvances != null && glListAdvances.Count > 0) { glListAdvances.Update(); glListAdvances.Clear(); }
-
-            //if (gltxLinksUpdated != null && gltxLinksUpdated.Count > 0) { gltxLinksUpdated.Update(); gltxLinksUpdated.Clear(); }
-
-            // GenerateVoucher();
-            // GetVoucherRecord(lastVoucher);
 
             #endregion
         }
@@ -3136,28 +2891,23 @@ namespace eMaestroD.Api.Controllers
             gltxLnks = new GLTxLinks();
             gltxLinksUpdated = new List<GLTxLinks>();
             gltxLinksDelete = new List<GLTxLinks>();
+            //141
+            var saleLocalAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.SaleLocal);
+            //80
+            var cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeDebtors);
+            //98
+            var stockInTradeAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.StockInTrade);
+            //81
+            var costOfGoodsAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CostOfGoodsSold);
+
             int accountID = 40;
             if (obj1[0].type == "Cash")
             {
                 accountID = 80;
-            }
-            else if (obj1[0].type == "Bank")
-            {
-                accountID = obj1[0].relCOAID;
+                cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CashInHand);
             }
 
             if (!isEdit) { gltxLinksLstSD = new List<GLTxLinks>(); }
-
-            //if (removeSaleInvoiceItemOnEdit != null && removeSaleInvoiceItemOnEdit.Count > 0)
-            //{
-            //    foreach (var item1 in removeSaleInvoiceItemOnEdit)
-            //    {
-            //        _AMDbContext.Remove(_AMDbContext.gl.Where(a => a.GLID == item1.GLID));
-            //        _AMDbContext.Remove(_AMDbContext.gl.Where(a => a.GLID == item1.GLID + 1));
-            //        _AMDbContext.Remove(_AMDbContext.gl.Where(a => a.GLID == item1.GLID + 2));
-            //        _AMDbContext.SaveChanges();
-            //    }
-            //}
 
             #endregion
 
@@ -3189,7 +2939,9 @@ namespace eMaestroD.Api.Controllers
                 modDate = obj1[0].modDate,
                 checkName = obj1[0].checkName,
                 locID = obj1[0].locID,
-                comID = obj1[0].comID
+                comID = obj1[0].comID,
+                acctNo = "",
+                relAcctNo = ""
             };
             if (isGuest) { glMasterEntry.isDeposited = true; }
             if (accountID == 40)
@@ -3212,73 +2964,11 @@ namespace eMaestroD.Api.Controllers
             glLt.Add(glMasterEntry);
             #endregion
 
-
-            #region ------- GltxLinksAgainst Sale Invoices -------
-            if (!isEdit)
-                //{
-                //    gltxLnks = new GLTxLinks()
-                //    {
-                //        relGLID = 0,
-                //        fiscalYear = fiscalYear,
-                //        againstID = cmboxCustomer.SelectedValue.ToInt32(),
-                //        COAID = 98,
-                //        relCOAID = 81,
-                //        txTypeID = 4
-                //    };
-                //    if (!isGuest) { gltxLnks.relGLID = GLListVnoSO.Find(x => x.checkNo == cmboxCheckNos.Text).GLID; }
-                //    gltxLinksLstSD.Add(gltxLnks);
-                //}
-                //else if (isEdit)
-                //{
-                //    GLTxLinksList gltxentries = new GLTxLinksList();
-                //    gltxentries.AddRange(new GLTxLinks { GLID = batchNoTest.First().txID }.Select());
-                //    GLTxLinks gltxLnk = new GLTxLinks();
-                //    gltxLinksUpdated = new GLTxLinksList();
-
-                //    foreach (GL glDataInGrid in (List<GL>)gLBindingSource.DataSource)
-                //    {
-
-                //        foreach (var glTx in gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID))
-                //        {
+            #region -------- Add Sale  products Entries -------
 
 
-                //            gltxLnk = gltxentries.Find(x => x.GLID == glDataInGrid.txID && x.txTypeID == 4 && x.prodID == glDataInGrid.prodID);
-                //            gltxLnk.qty = (glDataInGrid.qty + glDataInGrid.bonusQty);
+          
 
-                //            gltxLinksUpdated.Add(gltxLnk);
-                //        }
-
-                //        //if(gltxentries != null && gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID).Count == 0)
-                //        //{
-
-                //        //    gltxLnks = new GLTxLinks()
-                //        //    {
-                //        //        relGLID = 0,
-                //        //        fiscalYear = fiscalYear,
-                //        //        againstID = cmboxCustomer.SelectedValue.ToInt32(),
-                //        //        COAID = 98,
-                //        //        relCOAID = 81,
-                //        //        txTypeID = 4,
-                //        //        qty = glDataInGrid.qty + glDataInGrid.bonusQty
-                //        //    };
-                //        //    gltxLinksLstSD.Add(gltxLnks);
-                //  }
-
-                //   }
-
-                #endregion
-
-                #region -------- Add Sale  products Entries -------
-
-                if (isEdit == true)
-                {
-                    //getdelveryLst = new GLList();
-                    //getdelveryLst.AddRange(core.GetAllVoucherData(4, fiscalYear, "", "", "Find", txtVoucherNo.Text));
-
-                    //gLBindingSource.Clear(); gLBindingSource.DataSource = getdelveryLst.Where(x => x.COAID == 141).ToList();
-
-
-                }
             List<GL> GLDetails = new List<GL>();
             foreach (GL obj in obj1.FindAll(x => x.prodID != 0))
             {
@@ -3294,17 +2984,9 @@ namespace eMaestroD.Api.Controllers
                     pro1.journalID = obj.journalID;
                     pro1.glComments = obj.glComments;
                     pro1.taxSum = 0;
-                    //ProductBarCodes prodbarcode = new ProductBarCodes();
-                    //if (obj.prodCode != null && obj.prodCode.Length > 0)
-                    //{
-                    //    prodbarcode = prodbarcodesLst.Find(x => x.BarCode.ToLower().Trim() == obj.prodCode.ToLower().Trim());
-                    //}
 
-                    //if (prodbarcode == null || prodbarcode.ProdBCID < 1) { continue; }
                     if (pro1.prodID > 0 && pro1.qty > 0)
                     {
-
-
                         #region ------ Sale Delivery Product 1 Entry -------
                         if (!isEdit)
                         {
@@ -3321,6 +3003,8 @@ namespace eMaestroD.Api.Controllers
                         pro1.cstID = obj.cstID;
                         pro1.salesManID = obj.salesManID;
                         pro1.COAID = 141;
+                        pro1.acctNo = saleLocalAccCode;
+                        pro1.relAcctNo = cashOrCreditAccCode;
                         pro1.relCOAID = accountID;
                         pro1.creditSum = obj.qty * obj.unitPrice; //obj.creditSum;
                         pro1.qtyBal = pro1.qty;
@@ -3372,6 +3056,8 @@ namespace eMaestroD.Api.Controllers
                         pro2.COAID = 98;
                         pro2.qtyBal = 0;
                         pro2.relCOAID = 81;
+                        pro2.acctNo = stockInTradeAccCode;
+                        pro2.relAcctNo = costOfGoodsAccCode;
                         pro2.txTypeID = obj.txTypeID;
                         pro2.depositID = fiscalYear;
                         pro2.cstID = obj.cstID;
@@ -3408,10 +3094,12 @@ namespace eMaestroD.Api.Controllers
                         }
                         pro3.empID = 0;
                         pro3.locID = obj.locID;
-                        pro3.COAID = 81;
+                        pro3.COAID = pro2.relCOAID;
+                        pro3.relCOAID = pro2.COAID;
+                        pro3.acctNo = pro2.relAcctNo;
+                        pro3.relAcctNo = pro2.acctNo;
                         pro3.prodID = obj.prodID;
                         pro3.dtTx = obj.dtTx;
-                        pro3.relCOAID = pro2.COAID;
                         pro3.checkNo = string.Empty;
                         pro3.txTypeID = obj.txTypeID;
                         pro3.depositID = fiscalYear;
@@ -3433,42 +3121,12 @@ namespace eMaestroD.Api.Controllers
                         pro3.comID = obj.comID;
                         glLt.Add(pro3);
                         #endregion
-
-
-
-                        #region ------ TAX Entry -------
-
-                        #endregion
-                        #region ---- Update Sale Order Balance Quantity ----
-
-                        GL glOrders = new GL();
-                        //if (!isEdit && !isGuest)
-                        //{
-                        //    var glOrder = GLDetails.Find(x => x.GLID == obj.GLID); //row.Cells[16].Value.ToInt32()
-                        //                                                           //Get SaleOrder CreditSum...
-                        //    glOrders = Extensions.GetOrderCreditAmount(glOrder.GLID, 41, glOrder.depositID);
-                        //    if (glOrders.txTypeID == 41 && glOrders.qtyBal > 0)
-                        //    { glOrders.qtyBal -= pro1.qty * prodbarcode.Qty; glOrders.modDate = DateTime.Now.ToShortDateString().ToDateTime(); glLt.Add(glOrders); }
-                        //}
-                        //else if (isEdit && !isGuest)
-                        //{
-                        //    glOrders = GLListVnoSO.Find(x => x.checkNo == cmboxCheckNos.Text && x.prodID == pro1.prodID);
-                        //    glOrders.qtyBal = obj.qtyBal - obj.acctBal;// row.Cells[3].Value.ToDecimal() - row.Cells[4].Value.ToDecimal();
-                        //    glOrders.modDate = DateTime.Now.ToShortDateString().ToDateTime();
-                        //    glLt.Add(glOrders);
-                        //}
-                        #endregion
                     }
                 }
             }
 
 
             #endregion
-
-            //#region ----- Paid from Manual applied Credit -----
-            //if (glAdvanceRecord != null && applyCredit == true && gLDataGridView.Rows.Count > 0 && !autoCreditPayment)
-            //{ glLt.Add(glAdvanceRecord); }
-            //#endregion
 
             #region -------- GL Product Ledger Record ---------
 
@@ -3482,14 +3140,16 @@ namespace eMaestroD.Api.Controllers
                 g2.depositID = fiscalYear;
                 g2.txTypeID = obj1[0].txTypeID;
                 g2.creditSum = 0;
+                g2.COAID = accountID;
                 g2.relCOAID = 141;
+                g2.acctNo = cashOrCreditAccCode;
+                g2.relAcctNo = saleLocalAccCode;
                 g2.voucherNo = glMasterEntry.voucherNo;
                 g2.salesManID = obj1[0].salesManID;
                 g2.glComments = obj1[0].glComments;
                 g2.instituteOffer = 0;
                 g2.debitSum = obj1[0].creditSum + obj1[0].taxSum;
                 g2.taxSum = 0;
-                g2.COAID = accountID;
                 g2.cstID = obj1[0].cstID;
                 g2.dtTx = obj1[0].dtTx;
                 g2.paidSum = 0;
@@ -3520,7 +3180,10 @@ namespace eMaestroD.Api.Controllers
                         g2.depositID = fiscalYear;
                         g2.txTypeID = obj1[0].txTypeID;
                         g2.creditSum = 0;
+                        g2.COAID = item.COAID;
                         g2.relCOAID = 141;
+                        g2.acctNo = item.COAID == 80 ? cashOrCreditAccCode : item.acctNo;
+                        g2.relAcctNo = saleLocalAccCode;
                         g2.voucherNo = glMasterEntry.voucherNo;
                         g2.salesManID = obj1[0].salesManID;
                         g2.glComments = obj1[0].glComments;
@@ -3528,7 +3191,6 @@ namespace eMaestroD.Api.Controllers
                         g2.balSum = 0;
                         g2.debitSum = item.creditSum + (item.COAID == 80 ? obj1[0].discountSum : 0);
                         g2.taxSum = 0;
-                        g2.COAID = item.COAID;
                         g2.cstID = obj1[0].cstID;
                         g2.dtTx = obj1[0].dtTx;
                         g2.paidSum = 0;
@@ -3556,14 +3218,16 @@ namespace eMaestroD.Api.Controllers
                     g2.depositID = fiscalYear;
                     g2.txTypeID = obj1[0].txTypeID;
                     g2.creditSum = 0;
+                    g2.COAID = accountID;
                     g2.relCOAID = 141;
+                    g2.acctNo = cashOrCreditAccCode;
+                    g2.relAcctNo = saleLocalAccCode;
                     g2.voucherNo = glMasterEntry.voucherNo;
                     g2.salesManID = obj1[0].salesManID;
                     g2.glComments = obj1[0].glComments;
                     g2.instituteOffer = 0;
                     g2.debitSum = obj1[0].creditSum + obj1[0].taxSum;
                     g2.taxSum = 0;
-                    g2.COAID = accountID;
                     g2.cstID = obj1[0].cstID;
                     g2.dtTx = obj1[0].dtTx;
                     g2.paidSum = 0;
@@ -3600,6 +3264,8 @@ namespace eMaestroD.Api.Controllers
             tax.salesManID = obj1[0].salesManID;
             tax.COAID = taxID;
             tax.relCOAID = accountID;
+            tax.acctNo = taxAcctNo;
+            tax.relAcctNo = cashOrCreditAccCode;
             tax.creditSum = obj1[0].taxSum; //obj1[0].creditSum;
             tax.qtyBal = 0;
             tax.txTypeID = obj1[0].txTypeID;
@@ -3630,208 +3296,9 @@ namespace eMaestroD.Api.Controllers
 
             glLt.Add(tax);
 
-            //if (txtPayment.Text.ToDecimal() > 0)
-            //{
-            //    GL glPayment = new GL();
-            //    if (!isEdit)
-            //    {
-            //        g2.Clone(glPayment);
-            //        glPayment.COAID = 80;
-            //        glPayment.relCOAID = 141;
-            //    }
-            //    else
-            //    {
-            //        glPayment = glSaleDelList.Find(x => x.voucherNo == txtVoucherNo.Text && x.COAID == 80 && x.relCOAID == 141 && x.balSum == 0);
-            //        if (glPayment == null)
-            //        {
-            //            glPayment = new GL();
-            //            g2.Clone(glPayment);
-            //            glPayment.GLID = 0;
-            //            glPayment.COAID = 80;
-            //            glPayment.relCOAID = 141;
-            //        }
-            //    }
-            //    glPayment.instituteOffer = txtFreightCharges.Text.ToDecimal();
-            //    glPayment.txTypeID = 4;
-            //    glPayment.depositID = objFiscalYr.period;
-            //    glPayment.voucherNo = glLt.Find(x => x.voucherNo != "").voucherNo;
-            //    glPayment.isCleared = glPayment.isDeposited = glPayment.isPaid = false;
-            //    glPayment.crtBy = glPayment.modBy = Extensions.userName;
-            //    glPayment.crtDate = glPayment.modDate = DateTime.Now;
-            //    glPayment.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //    glPayment.isVoided = false;
-            //    glPayment.dtTx = dtDate.Value;
-            //    glPayment.qtyBal = glPayment.qty = 0;
-            //    glPayment.discountSum = txtDiscount.Text.ToDecimal();
-            //    glPayment.paidSum = txtPayment.Text.ToDecimal();
-            //    glPayment.balSum = glPayment.debitSum = glPayment.qtyBal = 0;
-            //    glPayment.debitSum = txtPayment.Text.ToDecimal();
-            //    glPayment.glComments = txtRemarks.Text;
-            //    //txtBalance.Text.ToDecimal() > 0 &&
-            //    if (txtBalance.Text.StartsWith("("))
-            //    {
-            //        decimal unUsd = Math.Abs(txtBalance.Text.Replace("(", "").Replace(")", "").ToDecimal());
-            //        glPayment.unusedSum = unUsd;
-            //    }
-            //    glLt.Add(glPayment);
-
-            //    if (txtBalance.Text.ToDecimal() < 0.1M)
-            //    {
-            //        GL gltrade = glSaleDelList.Find(x => x.relCOAID == 141 && x.COAID == 40 && x.voucherNo == txtVoucherNo.Text);
-            //        if (gltrade != null)
-            //        {
-            //            gltrade.isVoided = true;
-            //            gltrade.debitSum = gltrade.balSum = gltrade.paidSum = 0;
-            //            gltrade.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //            glLt.Add(gltrade);
-            //        }
-            //    }
-            //    #endregion
-            //}
-
-            //#region ---- Update Sale Delivery Ledger Entry ----
-            //if (isEdit)
-            //{
-            //    var voucherRecord = glSaleDelList.FindAll(x => x.voucherNo == txtVoucherNo.Text);
-            //    Collabo.FE.Models.GL glParent = voucherRecord.Find(x => x.txID == 0);
-            //    // Sale  Delivery parent entry...
-            //    GL glP = new GL();
-            //    glParent.Clone(glP);
-            //    glP.dtTx = dtDate.Value;
-            //    glP.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //    glP.balSum = txtBalance.Text.ToDecimal();
-            //    glP.discountSum = txtDiscount.Text.ToDecimal();
-            //    glP.creditSum = txtNetAmount.Text.ToDecimal();
-            //    glP.taxSum = txtTaxes.Text.ToDecimal();
-            //    glP.paidSum = txtPayment.Text.ToDecimal();
-            //    glP.glComments = txtRemarks.Text;
-            //    glP.instituteOffer = txtFreightCharges.Text.ToDecimal();
-            //    glP.depositID = fiscalYear;
-            //    glP.checkAdd = txtGPassNo.Text;
-            //    glP.modBy = Extensions.userName;
-            //    if (isGuest) { glP.isDeposited = true; } else { glP.isDeposited = false; }
-            //    glLt.Add(glP);
-            //}
-            #endregion
-
-            #region ------- Shipment Expenses --------
-            //if (!isEdit && txtFreightCharges.Text.ToDecimal() > 0)
-            //{
-            //    GL glexpense = new GL();
-            //    glMasterEntry.Clone(glexpense);
-            //    glexpense.COAID = 52;
-            //    glexpense.instituteOffer = 0;
-            //    glexpense.isDeposited = false;
-            //    glexpense.relCOAID = 141;
-            //    glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //    glexpense.creditSum = glexpense.taxSum = glexpense.paidSum = glexpense.discountSum = glexpense.balSum = 0;
-            //    glexpense.glComments = glexpense.checkName = string.Empty;
-            //    glLt.Add(glexpense);
-            //}
-            //else if (isEdit && txtFreightCharges.Text.ToDecimal() > 0)
-            //{
-            //    var voucherRecord = glSaleDelList.FindAll(x => x.voucherNo == txtVoucherNo.Text);
-            //    Collabo.FE.Models.GL glexpense = voucherRecord.Find(x => x.COAID == 52);
-            //    if (glexpense != null)
-            //    {
-            //        glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //    }
-            //    else
-            //    {
-            //        glexpense = new GL();
-            //        glMasterEntry.Clone(glexpense);
-            //        glexpense.COAID = 52;
-            //        glexpense.instituteOffer = 0;
-            //        glexpense.isDeposited = false;
-            //        glexpense.depositID = fiscalYear;
-            //        glexpense.voucherNo = glSaleDelList[0].voucherNo;
-            //        glexpense.txTypeID = 4;
-            //        glexpense.txID = glSaleDelList.Find(x => x.txID == 0).GLID;
-            //        glexpense.relCOAID = 141;
-            //        glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //        glexpense.creditSum = glexpense.taxSum = glexpense.paidSum = glexpense.discountSum = glexpense.balSum = 0;
-            //        glexpense.glComments = glexpense.checkName = string.Empty;
-            //    }
-            //    glLt.Add(glexpense);
-            //}
-            //else if (isEdit && txtFreightCharges.Text.ToDecimal() < 0.1m && glSaleDelList.Find(x => x.COAID == 52) != null)
-            //{
-            //    Collabo.FE.Models.GL glexpense = glSaleDelList.Find(x => x.COAID == 52);
-            //    glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //    glLt.Add(glexpense);
-            //}
-            #endregion
-
-            #region ---------- Call Service, Save Request -----
-
-            //if (isEdit)
-            //{
-            //    var delLstTxLinks = gltxLinksLstSD.Find(x => x.GLTxLinkID != 0 && x.qty > 0);
-            //    Decimal balQtyPurchaseInv = delLstTxLinks.qty - pro1.qty;
-
-            //    //glPurchasedInvoicesLst.Find(x => x.prodID == pro1.prodID && x.batchNo == pro1.batchNo && x.qtyBal>0);//.qty+ balQtyPurchaseInv;
-            //    //for (int i = 0; i < glPurchasedInvoicesLst.Count; i++)
-            //    //{
-            //    //    glPurchasedInvoicesLst[i].qtyBal += balQtyPurchaseInv;
-            //    //}
-
-            //    gltxLinksLstSD.Remove(delLstTxLinks);
-            //    //GetPurchaseInvoices.balQuantity;
-            //    //glPurchasedInvoicesLst.qtyBal;
-
-            //}
-
-            // GlTxLinks Update On Edit Existing Item On Grid
-            //if (isEdit)
-            //{
-            //    GLTxLinksList gltxentries = new GLTxLinksList();
-            //    gltxentries.AddRange(new GLTxLinks { GLID = batchNoTest.First().txID }.Select());
-            //    GLTxLinks gltxLnk = new GLTxLinks();
-            //    gltxLinksUpdated = new GLTxLinksList();
-
-            //    foreach (GL glDataInGrid in (List<GL>)gLBindingSource.DataSource)
-            //    {
-
-            //        foreach (var glTx in gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID))
-            //        {
-
-
-            //            gltxLnk = gltxentries.Find(x => x.GLID == glDataInGrid.txID && x.txTypeID == 4 && x.prodID == glDataInGrid.prodID);
-            //            gltxLnk.qty = (glDataInGrid.qty + glDataInGrid.bonusQty);
-
-            //            gltxLinksUpdated.Add(gltxLnk);
-            //        }
-
-            //    }
-            //}
-
-
-
             return glLt;
-
-            //if (glPurchaseInvUpdLst.Count > 0) { glPurchaseInvUpdLst.Update(); }
-            #region ----Update Entries of Sale Delivery,After Delete ----
-
-            //if (isEdit && productLst.Count > 0 && productList.Count > 0)
-            //{
-            //    UpdateSaleEntries();
-            //}
-
-            //if (isEdit && removeSaleInvoiceItemOnEdit != null && removeSaleInvoiceItemOnEdit.Count > 0)
-            //{
-            //   DelSaleItems(removeSaleInvoiceItemOnEdit);
-            // }
             #endregion
 
-            //Paid From Auto Applied Credit
-            // if (autoCreditPayment && glListAdvances != null && glListAdvances.Count > 0) { glListAdvances.Update(); glListAdvances.Clear(); }
-
-            //if (gltxLinksUpdated != null && gltxLinksUpdated.Count > 0) { gltxLinksUpdated.Update(); gltxLinksUpdated.Clear(); }
-
-            // GenerateVoucher();
-            // GetVoucherRecord(lastVoucher);
-
-            #endregion
         }
 
         [NonAction]
@@ -3849,27 +3316,23 @@ namespace eMaestroD.Api.Controllers
             gltxLnks = new GLTxLinks();
             gltxLinksUpdated = new List<GLTxLinks>();
             gltxLinksDelete = new List<GLTxLinks>();
+            //137
+            var saleReturnAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.SaleReturn);
+            //80
+            var cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeDebtors);
+            //98
+            var stockInTradeAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.StockInTrade);
+            //81
+            var costOfGoodsAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CostOfGoodsSold);
             int accountID = 40;
             if (obj1[0].type == "Cash")
             {
                 accountID = 80;
+                cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CashInHand);
             }
 
             if (!isEdit) { gltxLinksLstSD = new List<GLTxLinks>(); }
 
-
-
-
-            //if (removeSaleInvoiceItemOnEdit != null && removeSaleInvoiceItemOnEdit.Count > 0)
-            //{
-            //    foreach (var item1 in removeSaleInvoiceItemOnEdit)
-            //    {
-            //        _AMDbContext.Remove(_AMDbContext.gl.Where(a => a.GLID == item1.GLID));
-            //        _AMDbContext.Remove(_AMDbContext.gl.Where(a => a.GLID == item1.GLID + 1));
-            //        _AMDbContext.Remove(_AMDbContext.gl.Where(a => a.GLID == item1.GLID + 2));
-            //      _AMDbContext.SaveChanges();
-            //    }
-            //}
 
             #endregion
 
@@ -3903,7 +3366,9 @@ namespace eMaestroD.Api.Controllers
                 modDate = obj1[0].modDate,
                 checkName = obj1[0].checkName,
                 locID = obj1[0].locID,
-                comID = obj1[0].comID
+                comID = obj1[0].comID,
+                acctNo = "",
+                relAcctNo = ""
             };
             if (isGuest) { glMasterEntry.isDeposited = true; }
             if (accountID == 40)
@@ -3921,72 +3386,8 @@ namespace eMaestroD.Api.Controllers
             glLt.Add(glMasterEntry);
             #endregion
 
-            #region ------- GltxLinksAgainst Sale Invoices -------
-            if (!isEdit)
-                //{
-                //    gltxLnks = new GLTxLinks()
-                //    {
-                //        relGLID = 0,
-                //        fiscalYear = fiscalYear,
-                //        againstID = cmboxCustomer.SelectedValue.ToInt32(),
-                //        COAID = 98,
-                //        relCOAID = 81,
-                //        txTypeID = 4
-                //    };
-                //    if (!isGuest) { gltxLnks.relGLID = GLListVnoSO.Find(x => x.checkNo == cmboxCheckNos.Text).GLID; }
-                //    gltxLinksLstSD.Add(gltxLnks);
-                //}
-                //else if (isEdit)
-                //{
-                //    GLTxLinksList gltxentries = new GLTxLinksList();
-                //    gltxentries.AddRange(new GLTxLinks { GLID = batchNoTest.First().txID }.Select());
-                //    GLTxLinks gltxLnk = new GLTxLinks();
-                //    gltxLinksUpdated = new GLTxLinksList();
+            #region -------- Add Sale  products Entries -------
 
-                //    foreach (GL glDataInGrid in (List<GL>)gLBindingSource.DataSource)
-                //    {
-
-                //        foreach (var glTx in gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID))
-                //        {
-
-
-                //            gltxLnk = gltxentries.Find(x => x.GLID == glDataInGrid.txID && x.txTypeID == 4 && x.prodID == glDataInGrid.prodID);
-                //            gltxLnk.qty = (glDataInGrid.qty + glDataInGrid.bonusQty);
-
-                //            gltxLinksUpdated.Add(gltxLnk);
-                //        }
-
-                //        //if(gltxentries != null && gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID).Count == 0)
-                //        //{
-
-                //        //    gltxLnks = new GLTxLinks()
-                //        //    {
-                //        //        relGLID = 0,
-                //        //        fiscalYear = fiscalYear,
-                //        //        againstID = cmboxCustomer.SelectedValue.ToInt32(),
-                //        //        COAID = 98,
-                //        //        relCOAID = 81,
-                //        //        txTypeID = 4,
-                //        //        qty = glDataInGrid.qty + glDataInGrid.bonusQty
-                //        //    };
-                //        //    gltxLinksLstSD.Add(gltxLnks);
-                //  }
-
-                //   }
-
-                #endregion
-
-                #region -------- Add Sale  products Entries -------
-
-                if (isEdit == true)
-                {
-                    //getdelveryLst = new GLList();
-                    //getdelveryLst.AddRange(core.GetAllVoucherData(4, fiscalYear, "", "", "Find", txtVoucherNo.Text));
-
-                    //gLBindingSource.Clear(); gLBindingSource.DataSource = getdelveryLst.Where(x => x.COAID == 141).ToList();
-
-
-                }
             List<GL> GLDetails = new List<GL>();
             foreach (GL obj in obj1)
             {
@@ -4011,8 +3412,6 @@ namespace eMaestroD.Api.Controllers
                     //if (prodbarcode == null || prodbarcode.ProdBCID < 1) { continue; }
                     if (pro1.prodID > 0 && pro1.qty > 0)
                     {
-
-
                         #region ------ Sale Delivery Product 1 Entry -------
                         if (!isEdit)
                         {
@@ -4030,6 +3429,8 @@ namespace eMaestroD.Api.Controllers
                         pro1.salesManID = obj.salesManID;
                         pro1.COAID = 137;
                         pro1.relCOAID = accountID;
+                        pro1.acctNo = saleReturnAccCode;
+                        pro1.relAcctNo = cashOrCreditAccCode;
                         pro1.creditSum = 0; //obj.creditSum;
                         pro1.debitSum = obj.qty * obj.unitPrice; //obj.creditSum;
                         pro1.qtyBal = pro1.qty + pro1.bonusQty;
@@ -4063,41 +3464,12 @@ namespace eMaestroD.Api.Controllers
                         totalDiscount += pro1.discountSum;
                         glLt.Add(pro1);
                         #endregion
-
-
-                        #region ------ TAX Entry -------
-
-                        #endregion
-                        #region ---- Update Sale Order Balance Quantity ----
-
-                        GL glOrders = new GL();
-                        //if (!isEdit && !isGuest)
-                        //{
-                        //    var glOrder = GLDetails.Find(x => x.GLID == obj.GLID); //row.Cells[16].Value.ToInt32()
-                        //                                                           //Get SaleOrder CreditSum...
-                        //    glOrders = Extensions.GetOrderCreditAmount(glOrder.GLID, 41, glOrder.depositID);
-                        //    if (glOrders.txTypeID == 41 && glOrders.qtyBal > 0)
-                        //    { glOrders.qtyBal -= pro1.qty * prodbarcode.Qty; glOrders.modDate = DateTime.Now.ToShortDateString().ToDateTime(); glLt.Add(glOrders); }
-                        //}
-                        //else if (isEdit && !isGuest)
-                        //{
-                        //    glOrders = GLListVnoSO.Find(x => x.checkNo == cmboxCheckNos.Text && x.prodID == pro1.prodID);
-                        //    glOrders.qtyBal = obj.qtyBal - obj.acctBal;// row.Cells[3].Value.ToDecimal() - row.Cells[4].Value.ToDecimal();
-                        //    glOrders.modDate = DateTime.Now.ToShortDateString().ToDateTime();
-                        //    glLt.Add(glOrders);
-                        //}
-                        #endregion
                     }
                 }
             }
 
 
             #endregion
-
-            //#region ----- Paid from Manual applied Credit -----
-            //if (glAdvanceRecord != null && applyCredit == true && gLDataGridView.Rows.Count > 0 && !autoCreditPayment)
-            //{ glLt.Add(glAdvanceRecord); }
-            //#endregion
 
             #region -------- GL Product Ledger Record ---------
             g2 = new GL();
@@ -4109,8 +3481,10 @@ namespace eMaestroD.Api.Controllers
                 g2.depositID = fiscalYear;
                 g2.txTypeID = obj1[0].txTypeID;
                 g2.COAID = accountID;
-                g2.creditSum = 0;
                 g2.relCOAID = 98;
+                g2.acctNo = cashOrCreditAccCode;
+                g2.relAcctNo = stockInTradeAccCode;
+                g2.creditSum = 0;
                 g2.voucherNo = glMasterEntry.voucherNo;
                 g2.salesManID = obj1[0].salesManID;
                 g2.glComments = obj1[0].glComments;
@@ -4119,16 +3493,18 @@ namespace eMaestroD.Api.Controllers
             }
             else
             {
-                g2 = glSaleDelList.Find(x => x.voucherNo == obj1[0].voucherNo && x.COAID == 40);
+                g2 = glSaleDelList.Find(x => x.voucherNo == obj1[0].voucherNo && x.acctNo == cashOrCreditAccCode);
 
                 if (g2 == null)
                 {
                     g2 = new GL();
                     g2.depositID = fiscalYear;
                     g2.txTypeID = obj1[0].txTypeID;
-                    g2.COAID = accountID;
                     g2.creditSum = 0;
+                    g2.COAID = accountID;
                     g2.relCOAID = 98;
+                    g2.acctNo = cashOrCreditAccCode;
+                    g2.relAcctNo = stockInTradeAccCode;
                     g2.voucherNo = obj1[0].voucherNo;
                     g2.salesManID = obj1[0].salesManID;
                     g2.isPaid = g2.isCleared = g2.isDeposited = g2.isVoided = false;
@@ -4146,32 +3522,13 @@ namespace eMaestroD.Api.Controllers
                 {
                     var balAmount = g2.balSum;
                     g2.balSum = obj1[0].creditSum + obj1[0].taxSum - obj1[0].discountSum; //g2.balSum = txtBalance.Text.ToDecimal();
-                    var cstList = _AMDbContext.Customers.Where(x => x.cstID == obj1[0].cstID).ToList();
-                    var coalist = _AMDbContext.COA.Where(x => x.COANo == obj1[0].cstID && x.acctName == cstList[0].cstName).ToList();
-                    if (coalist.Count > 0)
-                    {
-                        coalist[0].bal -= balAmount;
-                        coalist[0].bal += g2.balSum;
-                        //_AMDbContext.COA.UpdateRange(coalist);
-                        _AMDbContext.SaveChanges();
-                    }
                 }
                 else
                 {
-                    var balAmount = g2.balSum;
-                    var coalist = _AMDbContext.COA.Where(x => x.COAID == 80).ToList();
-                    if (coalist.Count > 0)
-                    {
-                        coalist[0].bal += balAmount;
-                        coalist[0].bal -= obj1[0].creditSum + obj1[0].taxSum;
-                        //_AMDbContext.COA.UpdateRange(coalist);
-                        _AMDbContext.SaveChanges();
-                    }
                     g2.balSum = 0;
                 }
                 g2.creditSum = obj1[0].creditSum + obj1[0].taxSum;
                 g2.taxSum = 0;
-                g2.COAID = accountID;
                 g2.cstID = obj1[0].cstID;
                 g2.dtTx = obj1[0].dtTx;
                 g2.paidSum = 0;
@@ -4186,20 +3543,7 @@ namespace eMaestroD.Api.Controllers
                 g2.isCleared = false;
                 g2.locID = obj1[0].locID;
                 g2.comID = obj1[0].comID;
-                //if (g2.balSum < 0.1M) { g2.isVoided = true; } else { g2.isVoided = false; }
-                //if (g2.COAID == 80) { g2.creditSum = g2.paidSum = txtPayment.Text.ToDecimal(); }
             }
-            //if (txtPayment.Text.ToDecimal() < 0.1M)
-            //{
-            //    GL glcash = glSaleDelList.Find(x => x.relCOAID == 141 && x.COAID == 80 || x.COAID == 40 && x.voucherNo == txtVoucherNo.Text);
-            //    if (glcash != null)
-            //    {
-            //        glcash.isVoided = true;
-            //        glcash.debitSum = glcash.balSum = glcash.paidSum = 0;
-            //        glcash.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //        glLt.Add(glcash);
-            //    }
-            //}
             glLt.Add(g2);
 
 
@@ -4220,6 +3564,8 @@ namespace eMaestroD.Api.Controllers
             tax.salesManID = obj1[0].salesManID;
             tax.COAID = taxID;
             tax.relCOAID = accountID;
+            tax.acctNo = taxAcctNo;
+            tax.relAcctNo = cashOrCreditAccCode;
             tax.debitSum = obj1[0].taxSum; //obj1[0].creditSum;
             tax.qtyBal = 0;
             tax.txTypeID = obj1[0].txTypeID;
@@ -4249,211 +3595,7 @@ namespace eMaestroD.Api.Controllers
 
             glLt.Add(tax);
 
-            var taxlist = _AMDbContext.COA.Where(x => x.COAID == taxID).ToList();
-            taxlist[0].bal += obj1[0].taxSum;
-            // _AMDbContext.COA.UpdateRange(taxlist);
-            _AMDbContext.SaveChanges();
-
-            //if (txtPayment.Text.ToDecimal() > 0)
-            //{
-            //    GL glPayment = new GL();
-            //    if (!isEdit)
-            //    {
-            //        g2.Clone(glPayment);
-            //        glPayment.COAID = 80;
-            //        glPayment.relCOAID = 141;
-            //    }
-            //    else
-            //    {
-            //        glPayment = glSaleDelList.Find(x => x.voucherNo == txtVoucherNo.Text && x.COAID == 80 && x.relCOAID == 141 && x.balSum == 0);
-            //        if (glPayment == null)
-            //        {
-            //            glPayment = new GL();
-            //            g2.Clone(glPayment);
-            //            glPayment.GLID = 0;
-            //            glPayment.COAID = 80;
-            //            glPayment.relCOAID = 141;
-            //        }
-            //    }
-            //    glPayment.instituteOffer = txtFreightCharges.Text.ToDecimal();
-            //    glPayment.txTypeID = 4;
-            //    glPayment.depositID = objFiscalYr.period;
-            //    glPayment.voucherNo = glLt.Find(x => x.voucherNo != "").voucherNo;
-            //    glPayment.isCleared = glPayment.isDeposited = glPayment.isPaid = false;
-            //    glPayment.crtBy = glPayment.modBy = Extensions.userName;
-            //    glPayment.crtDate = glPayment.modDate = DateTime.Now;
-            //    glPayment.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //    glPayment.isVoided = false;
-            //    glPayment.dtTx = dtDate.Value;
-            //    glPayment.qtyBal = glPayment.qty = 0;
-            //    glPayment.discountSum = txtDiscount.Text.ToDecimal();
-            //    glPayment.paidSum = txtPayment.Text.ToDecimal();
-            //    glPayment.balSum = glPayment.debitSum = glPayment.qtyBal = 0;
-            //    glPayment.debitSum = txtPayment.Text.ToDecimal();
-            //    glPayment.glComments = txtRemarks.Text;
-            //    //txtBalance.Text.ToDecimal() > 0 &&
-            //    if (txtBalance.Text.StartsWith("("))
-            //    {
-            //        decimal unUsd = Math.Abs(txtBalance.Text.Replace("(", "").Replace(")", "").ToDecimal());
-            //        glPayment.unusedSum = unUsd;
-            //    }
-            //    glLt.Add(glPayment);
-
-            //    if (txtBalance.Text.ToDecimal() < 0.1M)
-            //    {
-            //        GL gltrade = glSaleDelList.Find(x => x.relCOAID == 141 && x.COAID == 40 && x.voucherNo == txtVoucherNo.Text);
-            //        if (gltrade != null)
-            //        {
-            //            gltrade.isVoided = true;
-            //            gltrade.debitSum = gltrade.balSum = gltrade.paidSum = 0;
-            //            gltrade.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //            glLt.Add(gltrade);
-            //        }
-            //    }
-            //    #endregion
-            //}
-
-            //#region ---- Update Sale Delivery Ledger Entry ----
-            //if (isEdit)
-            //{
-            //    var voucherRecord = glSaleDelList.FindAll(x => x.voucherNo == txtVoucherNo.Text);
-            //    Collabo.FE.Models.GL glParent = voucherRecord.Find(x => x.txID == 0);
-            //    // Sale  Delivery parent entry...
-            //    GL glP = new GL();
-            //    glParent.Clone(glP);
-            //    glP.dtTx = dtDate.Value;
-            //    glP.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //    glP.balSum = txtBalance.Text.ToDecimal();
-            //    glP.discountSum = txtDiscount.Text.ToDecimal();
-            //    glP.creditSum = txtNetAmount.Text.ToDecimal();
-            //    glP.taxSum = txtTaxes.Text.ToDecimal();
-            //    glP.paidSum = txtPayment.Text.ToDecimal();
-            //    glP.glComments = txtRemarks.Text;
-            //    glP.instituteOffer = txtFreightCharges.Text.ToDecimal();
-            //    glP.depositID = fiscalYear;
-            //    glP.checkAdd = txtGPassNo.Text;
-            //    glP.modBy = Extensions.userName;
-            //    if (isGuest) { glP.isDeposited = true; } else { glP.isDeposited = false; }
-            //    glLt.Add(glP);
-            //}
-            #endregion
-
-            #region ------- Shipment Expenses --------
-            //if (!isEdit && txtFreightCharges.Text.ToDecimal() > 0)
-            //{
-            //    GL glexpense = new GL();
-            //    glMasterEntry.Clone(glexpense);
-            //    glexpense.COAID = 52;
-            //    glexpense.instituteOffer = 0;
-            //    glexpense.isDeposited = false;
-            //    glexpense.relCOAID = 141;
-            //    glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //    glexpense.creditSum = glexpense.taxSum = glexpense.paidSum = glexpense.discountSum = glexpense.balSum = 0;
-            //    glexpense.glComments = glexpense.checkName = string.Empty;
-            //    glLt.Add(glexpense);
-            //}
-            //else if (isEdit && txtFreightCharges.Text.ToDecimal() > 0)
-            //{
-            //    var voucherRecord = glSaleDelList.FindAll(x => x.voucherNo == txtVoucherNo.Text);
-            //    Collabo.FE.Models.GL glexpense = voucherRecord.Find(x => x.COAID == 52);
-            //    if (glexpense != null)
-            //    {
-            //        glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //    }
-            //    else
-            //    {
-            //        glexpense = new GL();
-            //        glMasterEntry.Clone(glexpense);
-            //        glexpense.COAID = 52;
-            //        glexpense.instituteOffer = 0;
-            //        glexpense.isDeposited = false;
-            //        glexpense.depositID = fiscalYear;
-            //        glexpense.voucherNo = glSaleDelList[0].voucherNo;
-            //        glexpense.txTypeID = 4;
-            //        glexpense.txID = glSaleDelList.Find(x => x.txID == 0).GLID;
-            //        glexpense.relCOAID = 141;
-            //        glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //        glexpense.creditSum = glexpense.taxSum = glexpense.paidSum = glexpense.discountSum = glexpense.balSum = 0;
-            //        glexpense.glComments = glexpense.checkName = string.Empty;
-            //    }
-            //    glLt.Add(glexpense);
-            //}
-            //else if (isEdit && txtFreightCharges.Text.ToDecimal() < 0.1m && glSaleDelList.Find(x => x.COAID == 52) != null)
-            //{
-            //    Collabo.FE.Models.GL glexpense = glSaleDelList.Find(x => x.COAID == 52);
-            //    glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //    glLt.Add(glexpense);
-            //}
-            #endregion
-
-            #region ---------- Call Service, Save Request -----
-
-            //if (isEdit)
-            //{
-            //    var delLstTxLinks = gltxLinksLstSD.Find(x => x.GLTxLinkID != 0 && x.qty > 0);
-            //    Decimal balQtyPurchaseInv = delLstTxLinks.qty - pro1.qty;
-
-            //    //glPurchasedInvoicesLst.Find(x => x.prodID == pro1.prodID && x.batchNo == pro1.batchNo && x.qtyBal>0);//.qty+ balQtyPurchaseInv;
-            //    //for (int i = 0; i < glPurchasedInvoicesLst.Count; i++)
-            //    //{
-            //    //    glPurchasedInvoicesLst[i].qtyBal += balQtyPurchaseInv;
-            //    //}
-
-            //    gltxLinksLstSD.Remove(delLstTxLinks);
-            //    //GetPurchaseInvoices.balQuantity;
-            //    //glPurchasedInvoicesLst.qtyBal;
-
-            //}
-
-            // GlTxLinks Update On Edit Existing Item On Grid
-            //if (isEdit)
-            //{
-            //    GLTxLinksList gltxentries = new GLTxLinksList();
-            //    gltxentries.AddRange(new GLTxLinks { GLID = batchNoTest.First().txID }.Select());
-            //    GLTxLinks gltxLnk = new GLTxLinks();
-            //    gltxLinksUpdated = new GLTxLinksList();
-
-            //    foreach (GL glDataInGrid in (List<GL>)gLBindingSource.DataSource)
-            //    {
-
-            //        foreach (var glTx in gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID))
-            //        {
-
-
-            //            gltxLnk = gltxentries.Find(x => x.GLID == glDataInGrid.txID && x.txTypeID == 4 && x.prodID == glDataInGrid.prodID);
-            //            gltxLnk.qty = (glDataInGrid.qty + glDataInGrid.bonusQty);
-
-            //            gltxLinksUpdated.Add(gltxLnk);
-            //        }
-
-            //    }
-            //}
-
-
-
             return glLt;
-
-            //if (glPurchaseInvUpdLst.Count > 0) { glPurchaseInvUpdLst.Update(); }
-            #region ----Update Entries of Sale Delivery,After Delete ----
-
-            //if (isEdit && productLst.Count > 0 && productList.Count > 0)
-            //{
-            //    UpdateSaleEntries();
-            //}
-
-            //if (isEdit && removeSaleInvoiceItemOnEdit != null && removeSaleInvoiceItemOnEdit.Count > 0)
-            //{
-            //   DelSaleItems(removeSaleInvoiceItemOnEdit);
-            // }
-            #endregion
-
-            //Paid From Auto Applied Credit
-            // if (autoCreditPayment && glListAdvances != null && glListAdvances.Count > 0) { glListAdvances.Update(); glListAdvances.Clear(); }
-
-            //if (gltxLinksUpdated != null && gltxLinksUpdated.Count > 0) { gltxLinksUpdated.Update(); gltxLinksUpdated.Clear(); }
-
-            // GenerateVoucher();
-            // GetVoucherRecord(lastVoucher);
 
             #endregion
         }
@@ -4473,27 +3615,22 @@ namespace eMaestroD.Api.Controllers
             gltxLnks = new GLTxLinks();
             gltxLinksUpdated = new List<GLTxLinks>();
             gltxLinksDelete = new List<GLTxLinks>();
+            //141
+            var saleLocalAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.SaleLocal);
+            //80
+            var cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeDebtors);
+            //98
+            var stockInTradeAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.StockInTrade);
+            //81
+            var costOfGoodsAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CostOfGoodsSold);
             int accountID = 40;
             if (obj1[0].type == "Cash")
             {
                 accountID = 80;
+                cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CashInHand);
             }
 
             if (!isEdit) { gltxLinksLstSD = new List<GLTxLinks>(); }
-
-
-
-
-            //if (removeSaleInvoiceItemOnEdit != null && removeSaleInvoiceItemOnEdit.Count > 0)
-            //{
-            //    foreach (var item1 in removeSaleInvoiceItemOnEdit)
-            //    {
-            //        _AMDbContext.Remove(_AMDbContext.gl.Where(a => a.GLID == item1.GLID));
-            //        _AMDbContext.Remove(_AMDbContext.gl.Where(a => a.GLID == item1.GLID + 1));
-            //        _AMDbContext.Remove(_AMDbContext.gl.Where(a => a.GLID == item1.GLID + 2));
-            //      _AMDbContext.SaveChanges();
-            //    }
-            //}
 
             #endregion
 
@@ -4528,7 +3665,9 @@ namespace eMaestroD.Api.Controllers
                 modDate = obj1[0].modDate,
                 checkName = obj1[0].checkName,
                 locID = obj1[0].locID,
-                comID = obj1[0].comID
+                comID = obj1[0].comID,
+                acctNo = "",
+                relAcctNo = ""
             };
             if (isGuest) { glMasterEntry.isDeposited = true; }
             if (accountID == 40)
@@ -4585,6 +3724,8 @@ namespace eMaestroD.Api.Controllers
                         pro1.salesManID = obj.salesManID;
                         pro1.COAID = 141;
                         pro1.relCOAID = accountID;
+                        pro1.acctNo = saleLocalAccCode;
+                        pro1.relAcctNo = cashOrCreditAccCode;
                         pro1.creditSum = obj.qty * obj.unitPrice; //obj.creditSum;
                         pro1.qtyBal = pro1.qty + pro1.bonusQty;
                         pro1.txTypeID = obj1[0].txTypeID;
@@ -4626,11 +3767,6 @@ namespace eMaestroD.Api.Controllers
 
             #endregion
 
-            //#region ----- Paid from Manual applied Credit -----
-            //if (glAdvanceRecord != null && applyCredit == true && gLDataGridView.Rows.Count > 0 && !autoCreditPayment)
-            //{ glLt.Add(glAdvanceRecord); }
-            //#endregion
-
             #region -------- GL Product Ledger Record ---------
             g2 = new GL();
             if (!isEdit)
@@ -4641,8 +3777,10 @@ namespace eMaestroD.Api.Controllers
                 g2.depositID = fiscalYear;
                 g2.txTypeID = obj1[0].txTypeID;
                 g2.COAID = accountID;
-                g2.creditSum = 0;
                 g2.relCOAID = 141;
+                g2.acctNo = cashOrCreditAccCode;
+                g2.relAcctNo = saleLocalAccCode;
+                g2.creditSum = 0;
                 g2.voucherNo = glMasterEntry.voucherNo;
                 g2.salesManID = obj1[0].salesManID;
                 g2.glComments = obj1[0].glComments;
@@ -4658,8 +3796,10 @@ namespace eMaestroD.Api.Controllers
                     g2.depositID = fiscalYear;
                     g2.txTypeID = obj1[0].txTypeID;
                     g2.COAID = accountID;
-                    g2.creditSum = 0;
                     g2.relCOAID = 141;
+                    g2.acctNo = cashOrCreditAccCode;
+                    g2.relAcctNo = saleLocalAccCode;
+                    g2.creditSum = 0;
                     g2.voucherNo = obj1[0].voucherNo;
                     g2.salesManID = obj1[0].salesManID;
                     g2.isPaid = g2.isCleared = g2.isDeposited = g2.isVoided = false;
@@ -4677,27 +3817,9 @@ namespace eMaestroD.Api.Controllers
                 {
                     var balAmount = g2.balSum;
                     g2.balSum = obj1[0].creditSum + obj1[0].taxSum - obj1[0].discountSum; //g2.balSum = txtBalance.Text.ToDecimal();
-                    var cstList = _AMDbContext.Customers.Where(x => x.cstID == obj1[0].cstID).ToList();
-                    var coalist = _AMDbContext.COA.Where(x => x.COANo == obj1[0].cstID && x.acctName == cstList[0].cstName).ToList();
-                    if (coalist.Count > 0)
-                    {
-                        coalist[0].bal += balAmount;
-                        coalist[0].bal -= g2.balSum;
-                        //  _AMDbContext.COA.UpdateRange(coalist);
-                        _AMDbContext.SaveChanges();
-                    }
                 }
                 else
                 {
-                    var balAmount = g2.balSum;
-                    var coalist = _AMDbContext.COA.Where(x => x.COAID == 80).ToList();
-                    if (coalist.Count > 0)
-                    {
-                        coalist[0].bal -= balAmount;
-                        coalist[0].bal += obj1[0].creditSum + obj1[0].taxSum;
-                        // _AMDbContext.COA.UpdateRange(coalist);
-                        _AMDbContext.SaveChanges();
-                    }
                     g2.balSum = 0;
                 }
                 g2.debitSum = obj1[0].creditSum + obj1[0].taxSum;
@@ -4716,20 +3838,8 @@ namespace eMaestroD.Api.Controllers
                 g2.isCleared = false;
                 g2.locID = obj1[0].locID;
                 g2.comID = obj1[0].comID;
-                //if (g2.balSum < 0.1M) { g2.isVoided = true; } else { g2.isVoided = false; }
-                //if (g2.COAID == 80) { g2.creditSum = g2.paidSum = txtPayment.Text.ToDecimal(); }
             }
-            //if (txtPayment.Text.ToDecimal() < 0.1M)
-            //{
-            //    GL glcash = glSaleDelList.Find(x => x.relCOAID == 141 && x.COAID == 80 || x.COAID == 40 && x.voucherNo == txtVoucherNo.Text);
-            //    if (glcash != null)
-            //    {
-            //        glcash.isVoided = true;
-            //        glcash.debitSum = glcash.balSum = glcash.paidSum = 0;
-            //        glcash.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //        glLt.Add(glcash);
-            //    }
-            //}
+          
             glLt.Add(g2);
 
 
@@ -4750,6 +3860,8 @@ namespace eMaestroD.Api.Controllers
             tax.salesManID = obj1[0].salesManID;
             tax.COAID = taxID;
             tax.relCOAID = accountID;
+            tax.acctNo = taxAcctNo;
+            tax.relAcctNo = cashOrCreditAccCode;
             tax.creditSum = obj1[0].taxSum; //obj1[0].creditSum;
             tax.qtyBal = 0;
             tax.txTypeID = obj1[0].txTypeID;
@@ -4779,18 +3891,9 @@ namespace eMaestroD.Api.Controllers
 
             glLt.Add(tax);
 
-            var taxlist = _AMDbContext.COA.Where(x => x.COAID == taxID).ToList();
-            taxlist[0].bal -= obj1[0].taxSum;
-            //  _AMDbContext.COA.UpdateRange(taxlist);
-            _AMDbContext.SaveChanges();
-
-
-            #endregion
-
 
             return glLt;
-
-
+            #endregion
         }
 
         [NonAction]
@@ -4808,10 +3911,16 @@ namespace eMaestroD.Api.Controllers
             gltxLnks = new GLTxLinks();
             gltxLinksUpdated = new List<GLTxLinks>();
             gltxLinksDelete = new List<GLTxLinks>();
+            //80 OR 83
+            var cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeCreditors);
+            //98
+            var stockInTradeAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.StockInTrade);
+            
             int accountID = 83;
             if (obj1[0].type == "Cash")
             {
                 accountID = 80;
+                cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CashInHand);
             }
 
             if (!isEdit) { gltxLinksLstSD = new List<GLTxLinks>(); }
@@ -4849,7 +3958,9 @@ namespace eMaestroD.Api.Controllers
                 modDate = obj1[0].modDate,
                 checkName = obj1[0].checkName,
                 locID = obj1[0].locID,
-                comID = obj1[0].comID
+                comID = obj1[0].comID,
+                acctNo = "",
+                relAcctNo = ""
             };
             if (isGuest) { glMasterEntry.isDeposited = true; }
             if (accountID == 83)
@@ -4868,72 +3979,9 @@ namespace eMaestroD.Api.Controllers
             #endregion
 
 
-            #region ------- GltxLinksAgainst Sale Invoices -------
-            if (!isEdit)
-                //{
-                //    gltxLnks = new GLTxLinks()
-                //    {
-                //        relGLID = 0,
-                //        fiscalYear = fiscalYear,
-                //        againstID = cmboxCustomer.SelectedValue.ToInt32(),
-                //        COAID = 98,
-                //        relCOAID = 81,
-                //        txTypeID = 4
-                //    };
-                //    if (!isGuest) { gltxLnks.relGLID = GLListVnoSO.Find(x => x.checkNo == cmboxCheckNos.Text).GLID; }
-                //    gltxLinksLstSD.Add(gltxLnks);
-                //}
-                //else if (isEdit)
-                //{
-                //    GLTxLinksList gltxentries = new GLTxLinksList();
-                //    gltxentries.AddRange(new GLTxLinks { GLID = batchNoTest.First().txID }.Select());
-                //    GLTxLinks gltxLnk = new GLTxLinks();
-                //    gltxLinksUpdated = new GLTxLinksList();
+            #region -------- Add Sale  products Entries -------
 
-                //    foreach (GL glDataInGrid in (List<GL>)gLBindingSource.DataSource)
-                //    {
-
-                //        foreach (var glTx in gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID))
-                //        {
-
-
-                //            gltxLnk = gltxentries.Find(x => x.GLID == glDataInGrid.txID && x.txTypeID == 4 && x.prodID == glDataInGrid.prodID);
-                //            gltxLnk.qty = (glDataInGrid.qty + glDataInGrid.bonusQty);
-
-                //            gltxLinksUpdated.Add(gltxLnk);
-                //        }
-
-                //        //if(gltxentries != null && gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID).Count == 0)
-                //        //{
-
-                //        //    gltxLnks = new GLTxLinks()
-                //        //    {
-                //        //        relGLID = 0,
-                //        //        fiscalYear = fiscalYear,
-                //        //        againstID = cmboxCustomer.SelectedValue.ToInt32(),
-                //        //        COAID = 98,
-                //        //        relCOAID = 81,
-                //        //        txTypeID = 4,
-                //        //        qty = glDataInGrid.qty + glDataInGrid.bonusQty
-                //        //    };
-                //        //    gltxLinksLstSD.Add(gltxLnks);
-                //  }
-
-                //   }
-
-                #endregion
-
-                #region -------- Add Sale  products Entries -------
-
-                if (isEdit == true)
-                {
-                    //getdelveryLst = new GLList();
-                    //getdelveryLst.AddRange(core.GetAllVoucherData(4, fiscalYear, "", "", "Find", txtVoucherNo.Text));
-
-                    //gLBindingSource.Clear(); gLBindingSource.DataSource = getdelveryLst.Where(x => x.COAID == 141).ToList();
-
-
-                }
+               
             List<GL> GLDetails = new List<GL>();
             foreach (GL obj in obj1)
             {
@@ -4950,17 +3998,8 @@ namespace eMaestroD.Api.Controllers
                     pro1.journalID = obj.journalID;
                     pro1.glComments = obj.glComments;
                     pro1.taxSum = 0;
-                    //ProductBarCodes prodbarcode = new ProductBarCodes();
-                    //if (obj.prodCode != null && obj.prodCode.Length > 0)
-                    //{
-                    //    prodbarcode = prodbarcodesLst.Find(x => x.BarCode.ToLower().Trim() == obj.prodCode.ToLower().Trim());
-                    //}
-
-                    //if (prodbarcode == null || prodbarcode.ProdBCID < 1) { continue; }
                     if (pro1.prodID > 0 && pro1.qty > 0)
                     {
-
-
                         #region ------ Sale Delivery Product 1 Entry -------
                         if (!isEdit)
                         {
@@ -4986,6 +4025,8 @@ namespace eMaestroD.Api.Controllers
                         pro1.salesManID = obj.salesManID;
                         pro1.COAID = 98;
                         pro1.relCOAID = accountID;
+                        pro1.acctNo = stockInTradeAccCode;
+                        pro1.relAcctNo = cashOrCreditAccCode;
                         pro1.acctBal = obj.qty * obj.unitPrice; //obj.creditSum;
                         pro1.debitSum = obj.qty * obj.unitPrice; //obj.creditSum;
                         pro1.qtyBal = pro1.qty;
@@ -5020,40 +4061,12 @@ namespace eMaestroD.Api.Controllers
                         glLt.Add(pro1);
                         #endregion
 
-
-                        #region ------ TAX Entry -------
-
-                        #endregion
-                        #region ---- Update Sale Order Balance Quantity ----
-
-                        GL glOrders = new GL();
-                        //if (!isEdit && !isGuest)
-                        //{
-                        //    var glOrder = GLDetails.Find(x => x.GLID == obj.GLID); //row.Cells[16].Value.ToInt32()
-                        //                                                           //Get SaleOrder CreditSum...
-                        //    glOrders = Extensions.GetOrderCreditAmount(glOrder.GLID, 41, glOrder.depositID);
-                        //    if (glOrders.txTypeID == 41 && glOrders.qtyBal > 0)
-                        //    { glOrders.qtyBal -= pro1.qty * prodbarcode.Qty; glOrders.modDate = DateTime.Now.ToShortDateString().ToDateTime(); glLt.Add(glOrders); }
-                        //}
-                        //else if (isEdit && !isGuest)
-                        //{
-                        //    glOrders = GLListVnoSO.Find(x => x.checkNo == cmboxCheckNos.Text && x.prodID == pro1.prodID);
-                        //    glOrders.qtyBal = obj.qtyBal - obj.acctBal;// row.Cells[3].Value.ToDecimal() - row.Cells[4].Value.ToDecimal();
-                        //    glOrders.modDate = DateTime.Now.ToShortDateString().ToDateTime();
-                        //    glLt.Add(glOrders);
-                        //}
-                        #endregion
                     }
                 }
             }
 
 
             #endregion
-
-            //#region ----- Paid from Manual applied Credit -----
-            //if (glAdvanceRecord != null && applyCredit == true && gLDataGridView.Rows.Count > 0 && !autoCreditPayment)
-            //{ glLt.Add(glAdvanceRecord); }
-            //#endregion
 
             #region -------- GL Product Ledger Record ---------
             g2 = new GL();
@@ -5064,9 +4077,11 @@ namespace eMaestroD.Api.Controllers
                 g2.GLID = 0;
                 g2.depositID = fiscalYear;
                 g2.txTypeID = obj1[0].txTypeID;
-                g2.COAID = accountID;
                 g2.creditSum = 0;
+                g2.COAID = accountID;
                 g2.relCOAID = 98;
+                g2.acctNo = cashOrCreditAccCode;
+                g2.relAcctNo = stockInTradeAccCode;
                 g2.voucherNo = glMasterEntry.voucherNo;
                 g2.salesManID = obj1[0].salesManID;
                 g2.glComments = obj1[0].glComments;
@@ -5083,8 +4098,10 @@ namespace eMaestroD.Api.Controllers
                     g2.depositID = fiscalYear;
                     g2.txTypeID = obj1[0].txTypeID;
                     g2.COAID = accountID;
-                    g2.creditSum = 0;
                     g2.relCOAID = 98;
+                    g2.acctNo = cashOrCreditAccCode;
+                    g2.relAcctNo = stockInTradeAccCode;
+                    g2.creditSum = 0;
                     g2.voucherNo = obj1[0].voucherNo;
                     g2.salesManID = obj1[0].salesManID;
                     g2.isPaid = g2.isCleared = g2.isDeposited = g2.isVoided = false;
@@ -5102,27 +4119,10 @@ namespace eMaestroD.Api.Controllers
                 {
                     var balAmount = g2.balSum;
                     g2.balSum = obj1[0].creditSum + obj1[0].taxSum - obj1[0].discountSum; //g2.balSum = txtBalance.Text.ToDecimal();
-                    var venlist = _AMDbContext.Vendors.Where(x => x.vendID == obj1[0].vendID).ToList();
-                    var coalist = _AMDbContext.COA.Where(x => x.COANo == obj1[0].vendID && x.acctName == venlist[0].vendName).ToList();
-                    if (coalist.Count > 0)
-                    {
-                        coalist[0].bal -= balAmount;
-                        coalist[0].bal += g2.balSum;
-                        //  _AMDbContext.COA.UpdateRange(coalist);
-                        _AMDbContext.SaveChanges();
-                    }
                 }
                 else
                 {
                     var balAmount = g2.balSum;
-                    var coalist = _AMDbContext.COA.Where(x => x.COAID == 80).ToList();
-                    if (coalist.Count > 0)
-                    {
-                        coalist[0].bal += balAmount;
-                        coalist[0].bal -= obj1[0].creditSum + obj1[0].taxSum;
-                        //  _AMDbContext.COA.UpdateRange(coalist);
-                        _AMDbContext.SaveChanges();
-                    }
                     g2.balSum = 0;
                 }
                 g2.creditSum = obj1[0].creditSum + obj1[0].taxSum;
@@ -5141,20 +4141,7 @@ namespace eMaestroD.Api.Controllers
                 g2.isCleared = false;
                 g2.locID = obj1[0].locID;
                 g2.comID = obj1[0].comID;
-                //if (g2.balSum < 0.1M) { g2.isVoided = true; } else { g2.isVoided = false; }
-                //if (g2.COAID == 80) { g2.creditSum = g2.paidSum = txtPayment.Text.ToDecimal(); }
             }
-            //if (txtPayment.Text.ToDecimal() < 0.1M)
-            //{
-            //    GL glcash = glSaleDelList.Find(x => x.relCOAID == 141 && x.COAID == 80 || x.COAID == 40 && x.voucherNo == txtVoucherNo.Text);
-            //    if (glcash != null)
-            //    {
-            //        glcash.isVoided = true;
-            //        glcash.debitSum = glcash.balSum = glcash.paidSum = 0;
-            //        glcash.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //        glLt.Add(glcash);
-            //    }
-            //}
             glLt.Add(g2);
 
 
@@ -5175,6 +4162,8 @@ namespace eMaestroD.Api.Controllers
             tax.salesManID = obj1[0].salesManID;
             tax.COAID = taxID;
             tax.relCOAID = accountID;
+            tax.acctNo = taxAcctNo;
+            tax.relAcctNo = cashOrCreditAccCode;
             tax.creditSum = 0; //obj1[0].creditSum;
             tax.debitSum = obj1[0].taxSum; //obj1[0].creditSum;
             tax.qtyBal = 0;
@@ -5205,211 +4194,7 @@ namespace eMaestroD.Api.Controllers
 
             glLt.Add(tax);
 
-            var taxlist = _AMDbContext.COA.Where(x => x.COAID == taxID).ToList();
-            taxlist[0].bal += obj1[0].taxSum;
-            //_AMDbContext.COA.UpdateRange(taxlist);
-            _AMDbContext.SaveChanges();
-
-            //if (txtPayment.Text.ToDecimal() > 0)
-            //{
-            //    GL glPayment = new GL();
-            //    if (!isEdit)
-            //    {
-            //        g2.Clone(glPayment);
-            //        glPayment.COAID = 80;
-            //        glPayment.relCOAID = 141;
-            //    }
-            //    else
-            //    {
-            //        glPayment = glSaleDelList.Find(x => x.voucherNo == txtVoucherNo.Text && x.COAID == 80 && x.relCOAID == 141 && x.balSum == 0);
-            //        if (glPayment == null)
-            //        {
-            //            glPayment = new GL();
-            //            g2.Clone(glPayment);
-            //            glPayment.GLID = 0;
-            //            glPayment.COAID = 80;
-            //            glPayment.relCOAID = 141;
-            //        }
-            //    }
-            //    glPayment.instituteOffer = txtFreightCharges.Text.ToDecimal();
-            //    glPayment.txTypeID = 4;
-            //    glPayment.depositID = objFiscalYr.period;
-            //    glPayment.voucherNo = glLt.Find(x => x.voucherNo != "").voucherNo;
-            //    glPayment.isCleared = glPayment.isDeposited = glPayment.isPaid = false;
-            //    glPayment.crtBy = glPayment.modBy = Extensions.userName;
-            //    glPayment.crtDate = glPayment.modDate = DateTime.Now;
-            //    glPayment.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //    glPayment.isVoided = false;
-            //    glPayment.dtTx = dtDate.Value;
-            //    glPayment.qtyBal = glPayment.qty = 0;
-            //    glPayment.discountSum = txtDiscount.Text.ToDecimal();
-            //    glPayment.paidSum = txtPayment.Text.ToDecimal();
-            //    glPayment.balSum = glPayment.debitSum = glPayment.qtyBal = 0;
-            //    glPayment.debitSum = txtPayment.Text.ToDecimal();
-            //    glPayment.glComments = txtRemarks.Text;
-            //    //txtBalance.Text.ToDecimal() > 0 &&
-            //    if (txtBalance.Text.StartsWith("("))
-            //    {
-            //        decimal unUsd = Math.Abs(txtBalance.Text.Replace("(", "").Replace(")", "").ToDecimal());
-            //        glPayment.unusedSum = unUsd;
-            //    }
-            //    glLt.Add(glPayment);
-
-            //    if (txtBalance.Text.ToDecimal() < 0.1M)
-            //    {
-            //        GL gltrade = glSaleDelList.Find(x => x.relCOAID == 141 && x.COAID == 40 && x.voucherNo == txtVoucherNo.Text);
-            //        if (gltrade != null)
-            //        {
-            //            gltrade.isVoided = true;
-            //            gltrade.debitSum = gltrade.balSum = gltrade.paidSum = 0;
-            //            gltrade.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //            glLt.Add(gltrade);
-            //        }
-            //    }
-            //    #endregion
-            //}
-
-            //#region ---- Update Sale Delivery Ledger Entry ----
-            //if (isEdit)
-            //{
-            //    var voucherRecord = glSaleDelList.FindAll(x => x.voucherNo == txtVoucherNo.Text);
-            //    Collabo.FE.Models.GL glParent = voucherRecord.Find(x => x.txID == 0);
-            //    // Sale  Delivery parent entry...
-            //    GL glP = new GL();
-            //    glParent.Clone(glP);
-            //    glP.dtTx = dtDate.Value;
-            //    glP.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //    glP.balSum = txtBalance.Text.ToDecimal();
-            //    glP.discountSum = txtDiscount.Text.ToDecimal();
-            //    glP.creditSum = txtNetAmount.Text.ToDecimal();
-            //    glP.taxSum = txtTaxes.Text.ToDecimal();
-            //    glP.paidSum = txtPayment.Text.ToDecimal();
-            //    glP.glComments = txtRemarks.Text;
-            //    glP.instituteOffer = txtFreightCharges.Text.ToDecimal();
-            //    glP.depositID = fiscalYear;
-            //    glP.checkAdd = txtGPassNo.Text;
-            //    glP.modBy = Extensions.userName;
-            //    if (isGuest) { glP.isDeposited = true; } else { glP.isDeposited = false; }
-            //    glLt.Add(glP);
-            //}
-            #endregion
-
-            #region ------- Shipment Expenses --------
-            //if (!isEdit && txtFreightCharges.Text.ToDecimal() > 0)
-            //{
-            //    GL glexpense = new GL();
-            //    glMasterEntry.Clone(glexpense);
-            //    glexpense.COAID = 52;
-            //    glexpense.instituteOffer = 0;
-            //    glexpense.isDeposited = false;
-            //    glexpense.relCOAID = 141;
-            //    glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //    glexpense.creditSum = glexpense.taxSum = glexpense.paidSum = glexpense.discountSum = glexpense.balSum = 0;
-            //    glexpense.glComments = glexpense.checkName = string.Empty;
-            //    glLt.Add(glexpense);
-            //}
-            //else if (isEdit && txtFreightCharges.Text.ToDecimal() > 0)
-            //{
-            //    var voucherRecord = glSaleDelList.FindAll(x => x.voucherNo == txtVoucherNo.Text);
-            //    Collabo.FE.Models.GL glexpense = voucherRecord.Find(x => x.COAID == 52);
-            //    if (glexpense != null)
-            //    {
-            //        glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //    }
-            //    else
-            //    {
-            //        glexpense = new GL();
-            //        glMasterEntry.Clone(glexpense);
-            //        glexpense.COAID = 52;
-            //        glexpense.instituteOffer = 0;
-            //        glexpense.isDeposited = false;
-            //        glexpense.depositID = fiscalYear;
-            //        glexpense.voucherNo = glSaleDelList[0].voucherNo;
-            //        glexpense.txTypeID = 4;
-            //        glexpense.txID = glSaleDelList.Find(x => x.txID == 0).GLID;
-            //        glexpense.relCOAID = 141;
-            //        glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //        glexpense.creditSum = glexpense.taxSum = glexpense.paidSum = glexpense.discountSum = glexpense.balSum = 0;
-            //        glexpense.glComments = glexpense.checkName = string.Empty;
-            //    }
-            //    glLt.Add(glexpense);
-            //}
-            //else if (isEdit && txtFreightCharges.Text.ToDecimal() < 0.1m && glSaleDelList.Find(x => x.COAID == 52) != null)
-            //{
-            //    Collabo.FE.Models.GL glexpense = glSaleDelList.Find(x => x.COAID == 52);
-            //    glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //    glLt.Add(glexpense);
-            //}
-            #endregion
-
-            #region ---------- Call Service, Save Request -----
-
-            //if (isEdit)
-            //{
-            //    var delLstTxLinks = gltxLinksLstSD.Find(x => x.GLTxLinkID != 0 && x.qty > 0);
-            //    Decimal balQtyPurchaseInv = delLstTxLinks.qty - pro1.qty;
-
-            //    //glPurchasedInvoicesLst.Find(x => x.prodID == pro1.prodID && x.batchNo == pro1.batchNo && x.qtyBal>0);//.qty+ balQtyPurchaseInv;
-            //    //for (int i = 0; i < glPurchasedInvoicesLst.Count; i++)
-            //    //{
-            //    //    glPurchasedInvoicesLst[i].qtyBal += balQtyPurchaseInv;
-            //    //}
-
-            //    gltxLinksLstSD.Remove(delLstTxLinks);
-            //    //GetPurchaseInvoices.balQuantity;
-            //    //glPurchasedInvoicesLst.qtyBal;
-
-            //}
-
-            // GlTxLinks Update On Edit Existing Item On Grid
-            //if (isEdit)
-            //{
-            //    GLTxLinksList gltxentries = new GLTxLinksList();
-            //    gltxentries.AddRange(new GLTxLinks { GLID = batchNoTest.First().txID }.Select());
-            //    GLTxLinks gltxLnk = new GLTxLinks();
-            //    gltxLinksUpdated = new GLTxLinksList();
-
-            //    foreach (GL glDataInGrid in (List<GL>)gLBindingSource.DataSource)
-            //    {
-
-            //        foreach (var glTx in gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID))
-            //        {
-
-
-            //            gltxLnk = gltxentries.Find(x => x.GLID == glDataInGrid.txID && x.txTypeID == 4 && x.prodID == glDataInGrid.prodID);
-            //            gltxLnk.qty = (glDataInGrid.qty + glDataInGrid.bonusQty);
-
-            //            gltxLinksUpdated.Add(gltxLnk);
-            //        }
-
-            //    }
-            //}
-
-
-
             return glLt;
-
-            //if (glPurchaseInvUpdLst.Count > 0) { glPurchaseInvUpdLst.Update(); }
-            #region ----Update Entries of Sale Delivery,After Delete ----
-
-            //if (isEdit && productLst.Count > 0 && productList.Count > 0)
-            //{
-            //    UpdateSaleEntries();
-            //}
-
-            //if (isEdit && removeSaleInvoiceItemOnEdit != null && removeSaleInvoiceItemOnEdit.Count > 0)
-            //{
-            //   DelSaleItems(removeSaleInvoiceItemOnEdit);
-            // }
-            #endregion
-
-            //Paid From Auto Applied Credit
-            // if (autoCreditPayment && glListAdvances != null && glListAdvances.Count > 0) { glListAdvances.Update(); glListAdvances.Clear(); }
-
-            //if (gltxLinksUpdated != null && gltxLinksUpdated.Count > 0) { gltxLinksUpdated.Update(); gltxLinksUpdated.Clear(); }
-
-            // GenerateVoucher();
-            // GetVoucherRecord(lastVoucher);
 
             #endregion
         }
@@ -5429,10 +4214,19 @@ namespace eMaestroD.Api.Controllers
             gltxLnks = new GLTxLinks();
             gltxLinksUpdated = new List<GLTxLinks>();
             gltxLinksDelete = new List<GLTxLinks>();
+            //141
+            var saleLocalAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.SaleLocal);
+            //80 OR 83
+            var cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeCreditors);
+            //98
+            var stockInTradeAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.StockInTrade);
+            //81
+            var costOfGoodsAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CostOfGoodsSold);
             int accountID = 83;
             if (obj1[0].type == "Cash")
             {
                 accountID = 80;
+                cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CashInHand);
             }
 
             if (!isEdit) { gltxLinksLstSD = new List<GLTxLinks>(); }
@@ -5470,7 +4264,10 @@ namespace eMaestroD.Api.Controllers
                 modDate = obj1[0].modDate,
                 checkName = obj1[0].checkName,
                 locID = obj1[0].locID,
-                comID = obj1[0].comID
+                comID = obj1[0].comID,
+                acctNo = "",
+                relAcctNo = ""
+
             };
             if (isGuest) { glMasterEntry.isDeposited = true; }
             if (accountID == 83)
@@ -5489,72 +4286,9 @@ namespace eMaestroD.Api.Controllers
             #endregion
 
 
-            #region ------- GltxLinksAgainst Sale Invoices -------
-            if (!isEdit)
-                //{
-                //    gltxLnks = new GLTxLinks()
-                //    {
-                //        relGLID = 0,
-                //        fiscalYear = fiscalYear,
-                //        againstID = cmboxCustomer.SelectedValue.ToInt32(),
-                //        COAID = 98,
-                //        relCOAID = 81,
-                //        txTypeID = 4
-                //    };
-                //    if (!isGuest) { gltxLnks.relGLID = GLListVnoSO.Find(x => x.checkNo == cmboxCheckNos.Text).GLID; }
-                //    gltxLinksLstSD.Add(gltxLnks);
-                //}
-                //else if (isEdit)
-                //{
-                //    GLTxLinksList gltxentries = new GLTxLinksList();
-                //    gltxentries.AddRange(new GLTxLinks { GLID = batchNoTest.First().txID }.Select());
-                //    GLTxLinks gltxLnk = new GLTxLinks();
-                //    gltxLinksUpdated = new GLTxLinksList();
+           
 
-                //    foreach (GL glDataInGrid in (List<GL>)gLBindingSource.DataSource)
-                //    {
-
-                //        foreach (var glTx in gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID))
-                //        {
-
-
-                //            gltxLnk = gltxentries.Find(x => x.GLID == glDataInGrid.txID && x.txTypeID == 4 && x.prodID == glDataInGrid.prodID);
-                //            gltxLnk.qty = (glDataInGrid.qty + glDataInGrid.bonusQty);
-
-                //            gltxLinksUpdated.Add(gltxLnk);
-                //        }
-
-                //        //if(gltxentries != null && gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID).Count == 0)
-                //        //{
-
-                //        //    gltxLnks = new GLTxLinks()
-                //        //    {
-                //        //        relGLID = 0,
-                //        //        fiscalYear = fiscalYear,
-                //        //        againstID = cmboxCustomer.SelectedValue.ToInt32(),
-                //        //        COAID = 98,
-                //        //        relCOAID = 81,
-                //        //        txTypeID = 4,
-                //        //        qty = glDataInGrid.qty + glDataInGrid.bonusQty
-                //        //    };
-                //        //    gltxLinksLstSD.Add(gltxLnks);
-                //  }
-
-                //   }
-
-                #endregion
-
-                #region -------- Add Sale  products Entries -------
-
-                if (isEdit == true)
-                {
-                    //getdelveryLst = new GLList();
-                    //getdelveryLst.AddRange(core.GetAllVoucherData(4, fiscalYear, "", "", "Find", txtVoucherNo.Text));
-
-                    //gLBindingSource.Clear(); gLBindingSource.DataSource = getdelveryLst.Where(x => x.COAID == 141).ToList();
-
-
-                }
+            #region -------- Add Sale  products Entries -------
             List<GL> GLDetails = new List<GL>();
             foreach (GL obj in obj1)
             {
@@ -5571,17 +4305,8 @@ namespace eMaestroD.Api.Controllers
                     pro1.journalID = obj.journalID;
                     pro1.glComments = obj.glComments;
                     pro1.taxSum = 0;
-                    //ProductBarCodes prodbarcode = new ProductBarCodes();
-                    //if (obj.prodCode != null && obj.prodCode.Length > 0)
-                    //{
-                    //    prodbarcode = prodbarcodesLst.Find(x => x.BarCode.ToLower().Trim() == obj.prodCode.ToLower().Trim());
-                    //}
-
-                    //if (prodbarcode == null || prodbarcode.ProdBCID < 1) { continue; }
                     if (pro1.prodID > 0 && pro1.qty > 0)
                     {
-
-
                         #region ------ Sale Delivery Product 1 Entry -------
                         if (!isEdit)
                         {
@@ -5599,6 +4324,8 @@ namespace eMaestroD.Api.Controllers
                         pro1.salesManID = obj.salesManID;
                         pro1.COAID = 98;
                         pro1.relCOAID = accountID;
+                        pro1.acctNo = stockInTradeAccCode;
+                        pro1.relAcctNo = cashOrCreditAccCode;
                         pro1.acctBal = obj.qty * obj.unitPrice; //obj.creditSum;
                         pro1.creditSum = obj.qty * obj.unitPrice; //obj.creditSum;
                         pro1.txTypeID = obj1[0].txTypeID;
@@ -5634,42 +4361,12 @@ namespace eMaestroD.Api.Controllers
                         totalDiscount += pro1.discountSum;
                         glLt.Add(pro1);
                         #endregion
-
-
-                        #region ------ TAX Entry -------
-
-                        #endregion
-                        #region ---- Update Sale Order Balance Quantity ----
-
-                        GL glOrders = new GL();
-                        //if (!isEdit && !isGuest)
-                        //{
-                        //    var glOrder = GLDetails.Find(x => x.GLID == obj.GLID); //row.Cells[16].Value.ToInt32()
-                        //                                                           //Get SaleOrder CreditSum...
-                        //    glOrders = Extensions.GetOrderCreditAmount(glOrder.GLID, 41, glOrder.depositID);
-                        //    if (glOrders.txTypeID == 41 && glOrders.qtyBal > 0)
-                        //    { glOrders.qtyBal -= pro1.qty * prodbarcode.Qty; glOrders.modDate = DateTime.Now.ToShortDateString().ToDateTime(); glLt.Add(glOrders); }
-                        //}
-                        //else if (isEdit && !isGuest)
-                        //{
-                        //    glOrders = GLListVnoSO.Find(x => x.checkNo == cmboxCheckNos.Text && x.prodID == pro1.prodID);
-                        //    glOrders.qtyBal = obj.qtyBal - obj.acctBal;// row.Cells[3].Value.ToDecimal() - row.Cells[4].Value.ToDecimal();
-                        //    glOrders.modDate = DateTime.Now.ToShortDateString().ToDateTime();
-                        //    glLt.Add(glOrders);
-                        //}
-                        #endregion
                     }
                 }
             }
 
 
             #endregion
-
-            //#region ----- Paid from Manual applied Credit -----
-            //if (glAdvanceRecord != null && applyCredit == true && gLDataGridView.Rows.Count > 0 && !autoCreditPayment)
-            //{ glLt.Add(glAdvanceRecord); }
-            //#endregion
-
             #region -------- GL Product Ledger Record ---------
             g2 = new GL();
             if (!isEdit)
@@ -5680,8 +4377,10 @@ namespace eMaestroD.Api.Controllers
                 g2.depositID = fiscalYear;
                 g2.txTypeID = obj1[0].txTypeID;
                 g2.COAID = accountID;
-                g2.creditSum = 0;
                 g2.relCOAID = 98;
+                g2.acctNo = cashOrCreditAccCode;
+                g2.relAcctNo = stockInTradeAccCode;
+                g2.creditSum = 0;
                 g2.voucherNo = glMasterEntry.voucherNo;
                 g2.salesManID = obj1[0].salesManID;
                 g2.glComments = obj1[0].glComments;
@@ -5698,8 +4397,10 @@ namespace eMaestroD.Api.Controllers
                     g2.depositID = fiscalYear;
                     g2.txTypeID = obj1[0].txTypeID;
                     g2.COAID = accountID;
-                    g2.creditSum = 0;
                     g2.relCOAID = 98;
+                    g2.acctNo = cashOrCreditAccCode;
+                    g2.relAcctNo = stockInTradeAccCode;
+                    g2.creditSum = 0;
                     g2.voucherNo = obj1[0].voucherNo;
                     g2.salesManID = obj1[0].salesManID;
                     g2.isPaid = g2.isCleared = g2.isDeposited = g2.isVoided = false;
@@ -5717,25 +4418,9 @@ namespace eMaestroD.Api.Controllers
                 {
                     var balAmount = g2.balSum;
                     g2.balSum = obj1[0].creditSum + obj1[0].taxSum - obj1[0].discountSum; //g2.balSum = txtBalance.Text.ToDecimal();
-                    var venlist = _AMDbContext.Vendors.Where(x => x.vendID == obj1[0].vendID).ToList();
-                    var coalist = _AMDbContext.COA.Where(x => x.COANo == obj1[0].vendID && x.acctName == venlist[0].vendName).ToList();
-                    if (coalist.Count > 0)
-                    {
-                        coalist[0].bal += balAmount;
-                        coalist[0].bal -= g2.balSum;
-                        //  _AMDbContext.COA.UpdateRange(coalist);
-                        _AMDbContext.SaveChanges();
-                    }
                 }
                 else
                 {
-                    var balAmount = g2.balSum;
-                    var coalist = _AMDbContext.COA.Where(x => x.COAID == 80).ToList();
-                    coalist[0].bal -= balAmount;
-                    coalist[0].bal += obj1[0].creditSum + obj1[0].taxSum;
-                    //   _AMDbContext.COA.UpdateRange(coalist);
-                    _AMDbContext.SaveChanges();
-
                     g2.balSum = 0;
                 }
                 g2.debitSum = obj1[0].creditSum + obj1[0].taxSum;
@@ -5754,20 +4439,8 @@ namespace eMaestroD.Api.Controllers
                 g2.isCleared = false;
                 g2.locID = obj1[0].locID;
                 g2.comID = obj1[0].comID;
-                //if (g2.balSum < 0.1M) { g2.isVoided = true; } else { g2.isVoided = false; }
-                //if (g2.COAID == 80) { g2.creditSum = g2.paidSum = txtPayment.Text.ToDecimal(); }
             }
-            //if (txtPayment.Text.ToDecimal() < 0.1M)
-            //{
-            //    GL glcash = glSaleDelList.Find(x => x.relCOAID == 141 && x.COAID == 80 || x.COAID == 40 && x.voucherNo == txtVoucherNo.Text);
-            //    if (glcash != null)
-            //    {
-            //        glcash.isVoided = true;
-            //        glcash.debitSum = glcash.balSum = glcash.paidSum = 0;
-            //        glcash.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //        glLt.Add(glcash);
-            //    }
-            //}
+         
             glLt.Add(g2);
 
 
@@ -5788,6 +4461,8 @@ namespace eMaestroD.Api.Controllers
             tax.salesManID = obj1[0].salesManID;
             tax.COAID = taxID;
             tax.relCOAID = accountID;
+            tax.acctNo = taxAcctNo;
+            tax.relAcctNo = cashOrCreditAccCode;
             tax.creditSum = obj1[0].taxSum; //obj1[0].creditSum;
             tax.debitSum = 0; //obj1[0].creditSum;
             tax.qtyBal = 0;
@@ -5817,212 +4492,7 @@ namespace eMaestroD.Api.Controllers
 
             glLt.Add(tax);
 
-            var taxlist = _AMDbContext.COA.Where(x => x.COAID == taxID).ToList();
-            taxlist[0].bal -= obj1[0].taxSum;
-            // _AMDbContext.COA.UpdateRange(taxlist);
-            _AMDbContext.SaveChanges();
-
-            //if (txtPayment.Text.ToDecimal() > 0)
-            //{
-            //    GL glPayment = new GL();
-            //    if (!isEdit)
-            //    {
-            //        g2.Clone(glPayment);
-            //        glPayment.COAID = 80;
-            //        glPayment.relCOAID = 141;
-            //    }
-            //    else
-            //    {
-            //        glPayment = glSaleDelList.Find(x => x.voucherNo == txtVoucherNo.Text && x.COAID == 80 && x.relCOAID == 141 && x.balSum == 0);
-            //        if (glPayment == null)
-            //        {
-            //            glPayment = new GL();
-            //            g2.Clone(glPayment);
-            //            glPayment.GLID = 0;
-            //            glPayment.COAID = 80;
-            //            glPayment.relCOAID = 141;
-            //        }
-            //    }
-            //    glPayment.instituteOffer = txtFreightCharges.Text.ToDecimal();
-            //    glPayment.txTypeID = 4;
-            //    glPayment.depositID = objFiscalYr.period;
-            //    glPayment.voucherNo = glLt.Find(x => x.voucherNo != "").voucherNo;
-            //    glPayment.isCleared = glPayment.isDeposited = glPayment.isPaid = false;
-            //    glPayment.crtBy = glPayment.modBy = Extensions.userName;
-            //    glPayment.crtDate = glPayment.modDate = DateTime.Now;
-            //    glPayment.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //    glPayment.isVoided = false;
-            //    glPayment.dtTx = dtDate.Value;
-            //    glPayment.qtyBal = glPayment.qty = 0;
-            //    glPayment.discountSum = txtDiscount.Text.ToDecimal();
-            //    glPayment.paidSum = txtPayment.Text.ToDecimal();
-            //    glPayment.balSum = glPayment.debitSum = glPayment.qtyBal = 0;
-            //    glPayment.debitSum = txtPayment.Text.ToDecimal();
-            //    glPayment.glComments = txtRemarks.Text;
-            //    //txtBalance.Text.ToDecimal() > 0 &&
-            //    if (txtBalance.Text.StartsWith("("))
-            //    {
-            //        decimal unUsd = Math.Abs(txtBalance.Text.Replace("(", "").Replace(")", "").ToDecimal());
-            //        glPayment.unusedSum = unUsd;
-            //    }
-            //    glLt.Add(glPayment);
-
-            //    if (txtBalance.Text.ToDecimal() < 0.1M)
-            //    {
-            //        GL gltrade = glSaleDelList.Find(x => x.relCOAID == 141 && x.COAID == 40 && x.voucherNo == txtVoucherNo.Text);
-            //        if (gltrade != null)
-            //        {
-            //            gltrade.isVoided = true;
-            //            gltrade.debitSum = gltrade.balSum = gltrade.paidSum = 0;
-            //            gltrade.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //            glLt.Add(gltrade);
-            //        }
-            //    }
-            //    #endregion
-            //}
-
-            //#region ---- Update Sale Delivery Ledger Entry ----
-            //if (isEdit)
-            //{
-            //    var voucherRecord = glSaleDelList.FindAll(x => x.voucherNo == txtVoucherNo.Text);
-            //    Collabo.FE.Models.GL glParent = voucherRecord.Find(x => x.txID == 0);
-            //    // Sale  Delivery parent entry...
-            //    GL glP = new GL();
-            //    glParent.Clone(glP);
-            //    glP.dtTx = dtDate.Value;
-            //    glP.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //    glP.balSum = txtBalance.Text.ToDecimal();
-            //    glP.discountSum = txtDiscount.Text.ToDecimal();
-            //    glP.creditSum = txtNetAmount.Text.ToDecimal();
-            //    glP.taxSum = txtTaxes.Text.ToDecimal();
-            //    glP.paidSum = txtPayment.Text.ToDecimal();
-            //    glP.glComments = txtRemarks.Text;
-            //    glP.instituteOffer = txtFreightCharges.Text.ToDecimal();
-            //    glP.depositID = fiscalYear;
-            //    glP.checkAdd = txtGPassNo.Text;
-            //    glP.modBy = Extensions.userName;
-            //    if (isGuest) { glP.isDeposited = true; } else { glP.isDeposited = false; }
-            //    glLt.Add(glP);
-            //}
-            #endregion
-
-            #region ------- Shipment Expenses --------
-            //if (!isEdit && txtFreightCharges.Text.ToDecimal() > 0)
-            //{
-            //    GL glexpense = new GL();
-            //    glMasterEntry.Clone(glexpense);
-            //    glexpense.COAID = 52;
-            //    glexpense.instituteOffer = 0;
-            //    glexpense.isDeposited = false;
-            //    glexpense.relCOAID = 141;
-            //    glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //    glexpense.creditSum = glexpense.taxSum = glexpense.paidSum = glexpense.discountSum = glexpense.balSum = 0;
-            //    glexpense.glComments = glexpense.checkName = string.Empty;
-            //    glLt.Add(glexpense);
-            //}
-            //else if (isEdit && txtFreightCharges.Text.ToDecimal() > 0)
-            //{
-            //    var voucherRecord = glSaleDelList.FindAll(x => x.voucherNo == txtVoucherNo.Text);
-            //    Collabo.FE.Models.GL glexpense = voucherRecord.Find(x => x.COAID == 52);
-            //    if (glexpense != null)
-            //    {
-            //        glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //    }
-            //    else
-            //    {
-            //        glexpense = new GL();
-            //        glMasterEntry.Clone(glexpense);
-            //        glexpense.COAID = 52;
-            //        glexpense.instituteOffer = 0;
-            //        glexpense.isDeposited = false;
-            //        glexpense.depositID = fiscalYear;
-            //        glexpense.voucherNo = glSaleDelList[0].voucherNo;
-            //        glexpense.txTypeID = 4;
-            //        glexpense.txID = glSaleDelList.Find(x => x.txID == 0).GLID;
-            //        glexpense.relCOAID = 141;
-            //        glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //        glexpense.creditSum = glexpense.taxSum = glexpense.paidSum = glexpense.discountSum = glexpense.balSum = 0;
-            //        glexpense.glComments = glexpense.checkName = string.Empty;
-            //    }
-            //    glLt.Add(glexpense);
-            //}
-            //else if (isEdit && txtFreightCharges.Text.ToDecimal() < 0.1m && glSaleDelList.Find(x => x.COAID == 52) != null)
-            //{
-            //    Collabo.FE.Models.GL glexpense = glSaleDelList.Find(x => x.COAID == 52);
-            //    glexpense.debitSum = txtFreightCharges.Text.ToDecimal();
-            //    glLt.Add(glexpense);
-            //}
-            #endregion
-
-            #region ---------- Call Service, Save Request -----
-
-            //if (isEdit)
-            //{
-            //    var delLstTxLinks = gltxLinksLstSD.Find(x => x.GLTxLinkID != 0 && x.qty > 0);
-            //    Decimal balQtyPurchaseInv = delLstTxLinks.qty - pro1.qty;
-
-            //    //glPurchasedInvoicesLst.Find(x => x.prodID == pro1.prodID && x.batchNo == pro1.batchNo && x.qtyBal>0);//.qty+ balQtyPurchaseInv;
-            //    //for (int i = 0; i < glPurchasedInvoicesLst.Count; i++)
-            //    //{
-            //    //    glPurchasedInvoicesLst[i].qtyBal += balQtyPurchaseInv;
-            //    //}
-
-            //    gltxLinksLstSD.Remove(delLstTxLinks);
-            //    //GetPurchaseInvoices.balQuantity;
-            //    //glPurchasedInvoicesLst.qtyBal;
-
-            //}
-
-            // GlTxLinks Update On Edit Existing Item On Grid
-            //if (isEdit)
-            //{
-            //    GLTxLinksList gltxentries = new GLTxLinksList();
-            //    gltxentries.AddRange(new GLTxLinks { GLID = batchNoTest.First().txID }.Select());
-            //    GLTxLinks gltxLnk = new GLTxLinks();
-            //    gltxLinksUpdated = new GLTxLinksList();
-
-            //    foreach (GL glDataInGrid in (List<GL>)gLBindingSource.DataSource)
-            //    {
-
-            //        foreach (var glTx in gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID))
-            //        {
-
-
-            //            gltxLnk = gltxentries.Find(x => x.GLID == glDataInGrid.txID && x.txTypeID == 4 && x.prodID == glDataInGrid.prodID);
-            //            gltxLnk.qty = (glDataInGrid.qty + glDataInGrid.bonusQty);
-
-            //            gltxLinksUpdated.Add(gltxLnk);
-            //        }
-
-            //    }
-            //}
-
-
-
             return glLt;
-
-            //if (glPurchaseInvUpdLst.Count > 0) { glPurchaseInvUpdLst.Update(); }
-            #region ----Update Entries of Sale Delivery,After Delete ----
-
-            //if (isEdit && productLst.Count > 0 && productList.Count > 0)
-            //{
-            //    UpdateSaleEntries();
-            //}
-
-            //if (isEdit && removeSaleInvoiceItemOnEdit != null && removeSaleInvoiceItemOnEdit.Count > 0)
-            //{
-            //   DelSaleItems(removeSaleInvoiceItemOnEdit);
-            // }
-            #endregion
-
-            //Paid From Auto Applied Credit
-            // if (autoCreditPayment && glListAdvances != null && glListAdvances.Count > 0) { glListAdvances.Update(); glListAdvances.Clear(); }
-
-            //if (gltxLinksUpdated != null && gltxLinksUpdated.Count > 0) { gltxLinksUpdated.Update(); gltxLinksUpdated.Clear(); }
-
-            // GenerateVoucher();
-            // GetVoucherRecord(lastVoucher);
-
             #endregion
         }
 
@@ -6037,20 +4507,20 @@ namespace eMaestroD.Api.Controllers
             GL g2 = new GL();
             GL glMasterEntry = new GL();
             List<GL> glLt = new List<GL>();
+            //141
+            var saleLocalAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.SaleLocal);
+            //80 OR 40
+            var cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeDebtors);
+            //93
+            var goodsPayableAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.GoodsPayable);
+            //81
+            var costOfGoodsAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CostOfGoodsSold);
             int accountID = 40;
             if (obj1[0].type == "Cash")
             {
                 accountID = 80;
+                cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CashInHand);
             }
-
-
-            //if (cmboxControlAccount.SelectedValue.ToInt32() == 2195) { accountID = 2195; }
-            //else
-            //{
-            //    if (txtBalance.Text.ToDecimal() > 0) { accountID = 40; } else { accountID = 80; }
-            //}
-
-
             #endregion
 
             #region ------- GL Master Sale Invoice Entry ------
@@ -6083,7 +4553,9 @@ namespace eMaestroD.Api.Controllers
                 modDate = obj1[0].modDate,
                 checkName = obj1[0].checkName,
                 locID = obj1[0].locID,
-                comID = obj1[0].comID
+                comID = obj1[0].comID,
+                acctNo = "",
+                relAcctNo = ""
             };
             if (isGuest) { glMasterEntry.isDeposited = true; }
             if (!isEdit)
@@ -6105,72 +4577,9 @@ namespace eMaestroD.Api.Controllers
             glLt.Add(glMasterEntry);
             #endregion
 
-            #region ------- GltxLinksAgainst Sale Invoices -------
-            if (!isEdit)
-                //{
-                //    gltxLnks = new GLTxLinks()
-                //    {
-                //        relGLID = 0,
-                //        fiscalYear = fiscalYear,
-                //        againstID = cmboxCustomer.SelectedValue.ToInt32(),
-                //        COAID = 98,
-                //        relCOAID = 81,
-                //        txTypeID = 4
-                //    };
-                //    if (!isGuest) { gltxLnks.relGLID = GLListVnoSO.Find(x => x.checkNo == cmboxCheckNos.Text).GLID; }
-                //    gltxLinksLstSD.Add(gltxLnks);
-                //}
-                //else if (isEdit)
-                //{
-                //    GLTxLinksList gltxentries = new GLTxLinksList();
-                //    gltxentries.AddRange(new GLTxLinks { GLID = batchNoTest.First().txID }.Select());
-                //    GLTxLinks gltxLnk = new GLTxLinks();
-                //    gltxLinksUpdated = new GLTxLinksList();
 
-                //    foreach (GL glDataInGrid in (List<GL>)gLBindingSource.DataSource)
-                //    {
-
-                //        foreach (var glTx in gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID))
-                //        {
-
-
-                //            gltxLnk = gltxentries.Find(x => x.GLID == glDataInGrid.txID && x.txTypeID == 4 && x.prodID == glDataInGrid.prodID);
-                //            gltxLnk.qty = (glDataInGrid.qty + glDataInGrid.bonusQty);
-
-                //            gltxLinksUpdated.Add(gltxLnk);
-                //        }
-
-                //        //if(gltxentries != null && gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID).Count == 0)
-                //        //{
-
-                //        //    gltxLnks = new GLTxLinks()
-                //        //    {
-                //        //        relGLID = 0,
-                //        //        fiscalYear = fiscalYear,
-                //        //        againstID = cmboxCustomer.SelectedValue.ToInt32(),
-                //        //        COAID = 98,
-                //        //        relCOAID = 81,
-                //        //        txTypeID = 4,
-                //        //        qty = glDataInGrid.qty + glDataInGrid.bonusQty
-                //        //    };
-                //        //    gltxLinksLstSD.Add(gltxLnks);
-                //  }
-
-                //   }
-
-                #endregion
-
-                #region -------- Add Sale  products Entries -------
-
-                if (isEdit == true)
-                {
-                    //getdelveryLst = new GLList();
-                    //getdelveryLst.AddRange(core.GetAllVoucherData(4, fiscalYear, "", "", "Find", txtVoucherNo.Text));
-
-                    //gLBindingSource.Clear(); gLBindingSource.DataSource = getdelveryLst.Where(x => x.COAID == 141).ToList();
-
-
-                }
+            #region -------- Add Sale  products Entries -------
+               
             List<GL> GLDetails = new List<GL>();
             foreach (GL obj in obj1)
             {
@@ -6186,17 +4595,8 @@ namespace eMaestroD.Api.Controllers
                     pro1.journalID = obj.journalID;
                     pro1.glComments = obj.glComments;
                     pro1.taxSum = 0;
-                    //ProductBarCodes prodbarcode = new ProductBarCodes();
-                    //if (obj.prodCode != null && obj.prodCode.Length > 0)
-                    //{
-                    //    prodbarcode = prodbarcodesLst.Find(x => x.BarCode.ToLower().Trim() == obj.prodCode.ToLower().Trim());
-                    //}
-
-                    //if (prodbarcode == null || prodbarcode.ProdBCID < 1) { continue; }
                     if (pro1.prodID > 0 && pro1.qty > 0)
                     {
-
-
                         #region ------ Sale Delivery Product 1 Entry -------
                         if (!isEdit)
                         {
@@ -6213,6 +4613,8 @@ namespace eMaestroD.Api.Controllers
                         pro1.salesManID = obj.salesManID;
                         pro1.COAID = 93;
                         pro1.relCOAID = 141;
+                        pro1.acctNo = goodsPayableAccCode;
+                        pro1.relAcctNo = saleLocalAccCode;
                         pro1.creditSum = obj.qty * obj.unitPrice; //obj.creditSum;
                         pro1.qtyBal = pro1.qty + pro1.bonusQty;
                         pro1.txTypeID = obj1[0].txTypeID;
@@ -6243,30 +4645,6 @@ namespace eMaestroD.Api.Controllers
                         totalDiscount += pro1.discountSum;
                         glLt.Add(pro1);
                         #endregion
-
-
-                        #region ------ TAX Entry -------
-
-                        #endregion
-                        #region ---- Update Sale Order Balance Quantity ----
-
-                        GL glOrders = new GL();
-                        //if (!isEdit && !isGuest)
-                        //{
-                        //    var glOrder = GLDetails.Find(x => x.GLID == obj.GLID); //row.Cells[16].Value.ToInt32()
-                        //                                                           //Get SaleOrder CreditSum...
-                        //    glOrders = Extensions.GetOrderCreditAmount(glOrder.GLID, 41, glOrder.depositID);
-                        //    if (glOrders.txTypeID == 41 && glOrders.qtyBal > 0)
-                        //    { glOrders.qtyBal -= pro1.qty * prodbarcode.Qty; glOrders.modDate = DateTime.Now.ToShortDateString().ToDateTime(); glLt.Add(glOrders); }
-                        //}
-                        //else if (isEdit && !isGuest)
-                        //{
-                        //    glOrders = GLListVnoSO.Find(x => x.checkNo == cmboxCheckNos.Text && x.prodID == pro1.prodID);
-                        //    glOrders.qtyBal = obj.qtyBal - obj.acctBal;// row.Cells[3].Value.ToDecimal() - row.Cells[4].Value.ToDecimal();
-                        //    glOrders.modDate = DateTime.Now.ToShortDateString().ToDateTime();
-                        //    glLt.Add(glOrders);
-                        //}
-                        #endregion
                     }
                 }
             }
@@ -6274,10 +4652,6 @@ namespace eMaestroD.Api.Controllers
 
             #endregion
 
-            //#region ----- Paid from Manual applied Credit -----
-            //if (glAdvanceRecord != null && applyCredit == true && gLDataGridView.Rows.Count > 0 && !autoCreditPayment)
-            //{ glLt.Add(glAdvanceRecord); }
-            //#endregion
 
             #region -------- GL Product Ledger Record ---------
             g2 = new GL();
@@ -6289,8 +4663,10 @@ namespace eMaestroD.Api.Controllers
                 g2.depositID = fiscalYear;
                 g2.txTypeID = obj1[0].txTypeID;
                 g2.COAID = 141;
-                g2.creditSum = 0;
                 g2.relCOAID = 93;
+                g2.acctNo = saleLocalAccCode;
+                g2.relAcctNo = goodsPayableAccCode;
+                g2.creditSum = 0;
                 g2.voucherNo = glMasterEntry.voucherNo;
                 g2.salesManID = obj1[0].salesManID;
                 g2.glComments = obj1[0].glComments;
@@ -6307,8 +4683,10 @@ namespace eMaestroD.Api.Controllers
                     g2.depositID = fiscalYear;
                     g2.txTypeID = obj1[0].txTypeID;
                     g2.COAID = 141;
-                    g2.creditSum = 0;
                     g2.relCOAID = 93;
+                    g2.acctNo = saleLocalAccCode;
+                    g2.relAcctNo = goodsPayableAccCode;
+                    g2.creditSum = 0;
                     g2.voucherNo = obj1[0].voucherNo;
                     g2.salesManID = obj1[0].salesManID;
                     g2.isPaid = g2.isCleared = g2.isDeposited = g2.isVoided = false;
@@ -6348,20 +4726,8 @@ namespace eMaestroD.Api.Controllers
                 g2.isCleared = false;
                 g2.locID = obj1[0].locID;
                 g2.comID = obj1[0].comID;
-                //if (g2.balSum < 0.1M) { g2.isVoided = true; } else { g2.isVoided = false; }
-                //if (g2.COAID == 80) { g2.creditSum = g2.paidSum = txtPayment.Text.ToDecimal(); }
             }
-            //if (txtPayment.Text.ToDecimal() < 0.1M)
-            //{
-            //    GL glcash = glSaleDelList.Find(x => x.relCOAID == 141 && x.COAID == 80 || x.COAID == 40 && x.voucherNo == txtVoucherNo.Text);
-            //    if (glcash != null)
-            //    {
-            //        glcash.isVoided = true;
-            //        glcash.debitSum = glcash.balSum = glcash.paidSum = 0;
-            //        glcash.cstID = cmboxCustomer.SelectedValue.ToInt32();
-            //        glLt.Add(glcash);
-            //    }
-            //}
+          
             glLt.Add(g2);
 
 
@@ -6382,6 +4748,8 @@ namespace eMaestroD.Api.Controllers
             tax.salesManID = obj1[0].salesManID;
             tax.COAID = taxID;
             tax.relCOAID = accountID;
+            tax.acctNo = taxAcctNo;
+            tax.relAcctNo = cashOrCreditAccCode;
             tax.creditSum = obj1[0].taxSum; //obj1[0].creditSum;
             tax.qtyBal = 0;
             tax.txTypeID = obj1[0].txTypeID;
@@ -6428,18 +4796,19 @@ namespace eMaestroD.Api.Controllers
             GL g2 = new GL();
             GL glMasterEntry = new GL();
             List<GL> glLt = new List<GL>();
+            //80 OR 83
+            var cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeCreditors);
+            //98
+            var stockInTradeAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.StockInTrade);
+            //128
+            var goodsReceivableAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.GoodsReceivable);
+
             int accountID = 83;
             if (obj1[0].type == "Cash")
             {
                 accountID = 80;
+                cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CashInHand);
             }
-
-
-            //if (cmboxControlAccount.SelectedValue.ToInt32() == 2195) { accountID = 2195; }
-            //else
-            //{
-            //    if (txtBalance.Text.ToDecimal() > 0) { accountID = 40; } else { accountID = 80; }
-            //}
 
 
             #endregion
@@ -6475,7 +4844,9 @@ namespace eMaestroD.Api.Controllers
                 modDate = obj1[0].modDate,
                 checkName = obj1[0].checkName,
                 locID = obj1[0].locID,
-                comID = obj1[0].comID
+                comID = obj1[0].comID,
+                acctNo = "",
+                relAcctNo = ""
             };
             if (isGuest) { glMasterEntry.isDeposited = true; }
             if (accountID == 83)
@@ -6494,72 +4865,8 @@ namespace eMaestroD.Api.Controllers
             #endregion
 
 
-            #region ------- GltxLinksAgainst Sale Invoices -------
-            if (!isEdit)
-                //{
-                //    gltxLnks = new GLTxLinks()
-                //    {
-                //        relGLID = 0,
-                //        fiscalYear = fiscalYear,
-                //        againstID = cmboxCustomer.SelectedValue.ToInt32(),
-                //        COAID = 98,
-                //        relCOAID = 81,
-                //        txTypeID = 4
-                //    };
-                //    if (!isGuest) { gltxLnks.relGLID = GLListVnoSO.Find(x => x.checkNo == cmboxCheckNos.Text).GLID; }
-                //    gltxLinksLstSD.Add(gltxLnks);
-                //}
-                //else if (isEdit)
-                //{
-                //    GLTxLinksList gltxentries = new GLTxLinksList();
-                //    gltxentries.AddRange(new GLTxLinks { GLID = batchNoTest.First().txID }.Select());
-                //    GLTxLinks gltxLnk = new GLTxLinks();
-                //    gltxLinksUpdated = new GLTxLinksList();
-
-                //    foreach (GL glDataInGrid in (List<GL>)gLBindingSource.DataSource)
-                //    {
-
-                //        foreach (var glTx in gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID))
-                //        {
-
-
-                //            gltxLnk = gltxentries.Find(x => x.GLID == glDataInGrid.txID && x.txTypeID == 4 && x.prodID == glDataInGrid.prodID);
-                //            gltxLnk.qty = (glDataInGrid.qty + glDataInGrid.bonusQty);
-
-                //            gltxLinksUpdated.Add(gltxLnk);
-                //        }
-
-                //        //if(gltxentries != null && gltxentries.FindAll(x => x.prodID == glDataInGrid.prodID && x.txTypeID == glDataInGrid.txTypeID).Count == 0)
-                //        //{
-
-                //        //    gltxLnks = new GLTxLinks()
-                //        //    {
-                //        //        relGLID = 0,
-                //        //        fiscalYear = fiscalYear,
-                //        //        againstID = cmboxCustomer.SelectedValue.ToInt32(),
-                //        //        COAID = 98,
-                //        //        relCOAID = 81,
-                //        //        txTypeID = 4,
-                //        //        qty = glDataInGrid.qty + glDataInGrid.bonusQty
-                //        //    };
-                //        //    gltxLinksLstSD.Add(gltxLnks);
-                //  }
-
-                //   }
-
-                #endregion
-
-                #region -------- Add Sale  products Entries -------
-
-                if (isEdit == true)
-                {
-                    //getdelveryLst = new GLList();
-                    //getdelveryLst.AddRange(core.GetAllVoucherData(4, fiscalYear, "", "", "Find", txtVoucherNo.Text));
-
-                    //gLBindingSource.Clear(); gLBindingSource.DataSource = getdelveryLst.Where(x => x.COAID == 141).ToList();
-
-
-                }
+            #region -------- Add Sale  products Entries -------
+               
             List<GL> GLDetails = new List<GL>();
             foreach (GL obj in obj1)
             {
@@ -6575,17 +4882,8 @@ namespace eMaestroD.Api.Controllers
                     pro1.journalID = obj.journalID;
                     pro1.glComments = obj.glComments;
                     pro1.taxSum = 0;
-                    //ProductBarCodes prodbarcode = new ProductBarCodes();
-                    //if (obj.prodCode != null && obj.prodCode.Length > 0)
-                    //{
-                    //    prodbarcode = prodbarcodesLst.Find(x => x.BarCode.ToLower().Trim() == obj.prodCode.ToLower().Trim());
-                    //}
-
-                    //if (prodbarcode == null || prodbarcode.ProdBCID < 1) { continue; }
                     if (pro1.prodID > 0 && pro1.qty > 0)
                     {
-
-
                         #region ------ Sale Delivery Product 1 Entry -------
                         if (!isEdit)
                         {
@@ -6602,7 +4900,9 @@ namespace eMaestroD.Api.Controllers
                         pro1.vendID = obj.vendID;
                         pro1.salesManID = obj.salesManID;
                         pro1.COAID = 128;
-                        pro1.relCOAID = 83;
+                        pro1.relCOAID = accountID;
+                        pro1.acctNo = goodsReceivableAccCode;
+                        pro1.relAcctNo = cashOrCreditAccCode;
                         pro1.debitSum = obj.qty * obj.unitPrice; //obj.creditSum;
                         pro1.qtyBal = pro1.qty + pro1.bonusQty;
                         pro1.txTypeID = obj1[0].txTypeID;
@@ -6633,41 +4933,12 @@ namespace eMaestroD.Api.Controllers
                         totalDiscount += pro1.discountSum;
                         glLt.Add(pro1);
                         #endregion
-
-
-                        #region ------ TAX Entry -------
-
-                        #endregion
-                        #region ---- Update Sale Order Balance Quantity ----
-
-                        //if (!isEdit && !isGuest)
-                        //{
-                        //    var glOrder = GLDetails.Find(x => x.GLID == obj.GLID); //row.Cells[16].Value.ToInt32()
-                        //                                                           //Get SaleOrder CreditSum...
-                        //    glOrders = Extensions.GetOrderCreditAmount(glOrder.GLID, 41, glOrder.depositID);
-                        //    if (glOrders.txTypeID == 41 && glOrders.qtyBal > 0)
-                        //    { glOrders.qtyBal -= pro1.qty * prodbarcode.Qty; glOrders.modDate = DateTime.Now.ToShortDateString().ToDateTime(); glLt.Add(glOrders); }
-                        //}
-                        //else if (isEdit && !isGuest)
-                        //{
-                        //    glOrders = GLListVnoSO.Find(x => x.checkNo == cmboxCheckNos.Text && x.prodID == pro1.prodID);
-                        //    glOrders.qtyBal = obj.qtyBal - obj.acctBal;// row.Cells[3].Value.ToDecimal() - row.Cells[4].Value.ToDecimal();
-                        //    glOrders.modDate = DateTime.Now.ToShortDateString().ToDateTime();
-                        //    glLt.Add(glOrders);
-                        //}
-                        #endregion
                     }
                 }
             }
 
 
             #endregion
-
-            //#region ----- Paid from Manual applied Credit -----
-            //if (glAdvanceRecord != null && applyCredit == true && gLDataGridView.Rows.Count > 0 && !autoCreditPayment)
-            //{ glLt.Add(glAdvanceRecord); }
-            //#endregion
-
 
             tax = new GL();
             if (!isEdit)
@@ -6686,6 +4957,8 @@ namespace eMaestroD.Api.Controllers
             tax.salesManID = obj1[0].salesManID;
             tax.COAID = taxID;
             tax.relCOAID = accountID;
+            tax.acctNo = taxAcctNo;
+            tax.relAcctNo = cashOrCreditAccCode;
             tax.debitSum = obj1[0].taxSum; //obj1[0].creditSum;
             tax.qtyBal = 0;
             tax.txTypeID = obj1[0].txTypeID;
@@ -6719,7 +4992,6 @@ namespace eMaestroD.Api.Controllers
             return glLt;
 
         }
-
         [NonAction]
         public List<GL> SavePayment(List<GL> obj1)
         {
@@ -6731,14 +5003,10 @@ namespace eMaestroD.Api.Controllers
             GL g2 = new GL();
             GL glMasterEntry = new GL();
             List<GL> glLt = new List<GL>();
-
-            //if (cmboxControlAccount.SelectedValue.ToInt32() == 2195) { accountID = 2195; }
-            //else
-            //{
-            //    if (txtBalance.Text.ToDecimal() > 0) { accountID = 40; } else { accountID = 80; }
-            //}
-
-
+            
+            var tradeCreditorsAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeCreditors);
+            
+            
             #endregion
 
 
@@ -6746,8 +5014,8 @@ namespace eMaestroD.Api.Controllers
             glMasterEntry = new GL
             {
                 GLID = 0,
-                COAID = obj1[0].COAID,
-                relCOAID = obj1[0].relCOAID,
+                COAID = 0,
+                relCOAID = 0,
                 txTypeID = obj1[0].txTypeID,
                 cstID = 0,
                 vendID = obj1[0].vendID,
@@ -6774,7 +5042,9 @@ namespace eMaestroD.Api.Controllers
                 modBy = obj1[0].modBy,
                 modDate = obj1[0].modDate,
                 checkName = obj1[0].checkName,
-                comID = obj1[0].comID
+                comID = obj1[0].comID,
+                acctNo = "",
+                relAcctNo = ""
             };
             if (isEdit)
             {
@@ -6782,8 +5052,6 @@ namespace eMaestroD.Api.Controllers
             }
             glLt.Add(glMasterEntry);
             #endregion
-
-
 
             #region -------- Add Sale  products Entries -------
 
@@ -6802,15 +5070,6 @@ namespace eMaestroD.Api.Controllers
                     pro1.journalID = obj.journalID;
                     pro1.taxSum = 0;
                     pro1.comID = obj.comID;
-                    //ProductBarCodes prodbarcode = new ProductBarCodes();
-                    //if (obj.prodCode != null && obj.prodCode.Length > 0)
-                    //{
-                    //    prodbarcode = prodbarcodesLst.Find(x => x.BarCode.ToLower().Trim() == obj.prodCode.ToLower().Trim());
-                    //}
-
-                    //if (prodbarcode == null || prodbarcode.ProdBCID < 1) { continue; }
-
-
                     #region ------ Sale Delivery Product 1 Entry -------
                     if (!isEdit)
                     {
@@ -6828,6 +5087,8 @@ namespace eMaestroD.Api.Controllers
                     pro1.salesManID = obj.salesManID;
                     pro1.COAID = obj.relCOAID;
                     pro1.relCOAID = obj.COAID;
+                    pro1.acctNo = obj.acctNo;
+                    pro1.relAcctNo = tradeCreditorsAccCode;
                     pro1.creditSum = obj.creditSum; //obj.creditSum;
                     pro1.debitSum = 0; //obj.creditSum;
                     pro1.qtyBal = 0;
@@ -6885,6 +5146,8 @@ namespace eMaestroD.Api.Controllers
                     pro2.salesManID = obj.salesManID;
                     pro2.COAID = obj.COAID;
                     pro2.relCOAID = obj.relCOAID;
+                    pro2.acctNo = tradeCreditorsAccCode;
+                    pro2.relAcctNo = obj.acctNo;
                     pro2.balSum = -obj.creditSum; //obj.creditSum;
                     pro2.creditSum = 0; //obj.creditSum;
                     pro2.debitSum = obj.creditSum; //obj.creditSum;
@@ -6913,37 +5176,6 @@ namespace eMaestroD.Api.Controllers
                     glLt.Add(pro2);
                     #endregion
 
-                    var venlist = _AMDbContext.Vendors.Where(x => x.vendID == obj.vendID).ToList();
-                    var coalist = _AMDbContext.COA.Where(x => x.COANo == obj.vendID && x.acctName == venlist[0].vendName).ToList();
-                    if (coalist.Count > 0)
-                    {
-                        if (!isEdit)
-                        {
-                            coalist[0].bal -= obj.creditSum;
-                        }
-                        else
-                        {
-                            coalist[0].bal = coalist[0].bal + obj.acctBal - obj.creditSum;
-                        }
-
-                        //  _AMDbContext.COA.UpdateRange(coalist);
-                    }
-
-                    var coalist1 = _AMDbContext.COA.Where(x => x.COAID == obj.relCOAID).ToList();
-                    if (coalist1.Count > 0)
-                    {
-                        if (!isEdit)
-                        {
-                            coalist1[0].bal -= obj.creditSum;
-                        }
-                        else
-                        {
-                            coalist1[0].bal = coalist1[0].bal + obj.acctBal - obj.creditSum;
-                        }
-                        // _AMDbContext.COA.UpdateRange(coalist1);
-                    }
-                    _AMDbContext.SaveChanges();
-
                 }
             }
 
@@ -6965,14 +5197,7 @@ namespace eMaestroD.Api.Controllers
             GL g2 = new GL();
             GL glMasterEntry = new GL();
             List<GL> glLt = new List<GL>();
-
-            //if (cmboxControlAccount.SelectedValue.ToInt32() == 2195) { accountID = 2195; }
-            //else
-            //{
-            //    if (txtBalance.Text.ToDecimal() > 0) { accountID = 40; } else { accountID = 80; }
-            //}
-
-
+        
             #endregion
 
             #region ------- GL Master Sale Invoice Entry ------
@@ -7006,7 +5231,9 @@ namespace eMaestroD.Api.Controllers
                 modBy = obj1[0].modBy,
                 modDate = obj1[0].modDate,
                 checkName = obj1[0].checkName,
-                comID = obj1[0].comID
+                comID = obj1[0].comID,
+                acctNo = "",
+                relAcctNo = ""
             };
             glLt.Add(glMasterEntry);
             #endregion
@@ -7048,6 +5275,8 @@ namespace eMaestroD.Api.Controllers
                     pro1.salesManID = obj.salesManID;
                     pro1.COAID = obj.COAID;
                     pro1.relCOAID = obj.relCOAID;
+                    pro1.acctNo = obj.acctNo;
+                    pro1.relAcctNo = obj.relAcctNo;
                     pro1.creditSum = obj.creditSum; //obj.creditSum;
                     pro1.debitSum = obj.debitSum; //obj.creditSum;
                     pro1.qtyBal = 0;
@@ -7074,18 +5303,6 @@ namespace eMaestroD.Api.Controllers
                     glLt.Add(pro1);
                     #endregion
 
-                    var coalist = _AMDbContext.COA.Where(x => x.COAID == pro1.relCOAID).ToList();
-                    if (obj.debitSum > 0)
-                    {
-                        coalist[0].bal += obj.debitSum;
-                    }
-                    else if (obj.creditSum > 0)
-                    {
-                        coalist[0].bal -= obj.creditSum;
-                    }
-
-                    //_AMDbContext.COA.Update(coalist.FirstOrDefault());
-                    _AMDbContext.SaveChanges();
                 }
             }
 
@@ -7108,14 +5325,9 @@ namespace eMaestroD.Api.Controllers
             GL g2 = new GL();
             GL glMasterEntry = new GL();
             List<GL> glLt = new List<GL>();
-
-            //if (cmboxControlAccount.SelectedValue.ToInt32() == 2195) { accountID = 2195; }
-            //else
-            //{
-            //    if (txtBalance.Text.ToDecimal() > 0) { accountID = 40; } else { accountID = 80; }
-            //}
-
-
+            var cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CashInHand);
+            var CashAndBanksAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CashAndBanks);
+            
             #endregion
 
             #region ------- GL Master Sale Invoice Entry ------
@@ -7149,7 +5361,9 @@ namespace eMaestroD.Api.Controllers
                 modBy = obj1[0].modBy,
                 modDate = obj1[0].modDate,
                 checkName = obj1[0].checkName,
-                comID = obj1[0].comID
+                comID = obj1[0].comID,
+                acctNo = "",
+                relAcctNo = ""
             };
             glLt.Add(glMasterEntry);
             #endregion
@@ -7174,15 +5388,6 @@ namespace eMaestroD.Api.Controllers
                     pro1.journalID = obj.journalID;
                     pro1.taxSum = 0;
                     pro1.comID = obj.comID;
-                    //ProductBarCodes prodbarcode = new ProductBarCodes();
-                    //if (obj.prodCode != null && obj.prodCode.Length > 0)
-                    //{
-                    //    prodbarcode = prodbarcodesLst.Find(x => x.BarCode.ToLower().Trim() == obj.prodCode.ToLower().Trim());
-                    //}
-
-                    //if (prodbarcode == null || prodbarcode.ProdBCID < 1) { continue; }
-
-
                     #region ------ Sale Delivery Product 1 Entry -------
                     pro1.GLID = 0;
                     pro1.dtTx = obj.dtTx;
@@ -7191,6 +5396,8 @@ namespace eMaestroD.Api.Controllers
                     pro1.salesManID = obj.salesManID;
                     pro1.COAID = obj.COAID;
                     pro1.relCOAID = obj.relCOAID;
+                    pro1.acctNo = obj.COAID == 80 ? cashOrCreditAccCode : obj.acctNo;
+                    pro1.relAcctNo = obj.COAID == 80? CashAndBanksAccCode : obj.relAcctNo;
                     pro1.creditSum = obj.creditSum; //obj.creditSum;
                     pro1.debitSum = obj.debitSum; //obj.creditSum;
                     pro1.qtyBal = 0;
@@ -7216,19 +5423,6 @@ namespace eMaestroD.Api.Controllers
                     pro1.voucherNo = obj.voucherNo;
                     glLt.Add(pro1);
                     #endregion
-
-                    var coalist = _AMDbContext.COA.Where(x => x.COAID == pro1.relCOAID).ToList();
-                    if (obj.debitSum > 0)
-                    {
-                        coalist[0].bal += obj.debitSum;
-                    }
-                    else if (obj.creditSum > 0)
-                    {
-                        coalist[0].bal -= obj.creditSum;
-                    }
-
-                    //_AMDbContext.COA.Update(coalist.FirstOrDefault());
-                    _AMDbContext.SaveChanges();
                 }
             }
 
@@ -7251,13 +5445,6 @@ namespace eMaestroD.Api.Controllers
             GL g2 = new GL();
             GL glMasterEntry = new GL();
             List<GL> glLt = new List<GL>();
-
-            //if (cmboxControlAccount.SelectedValue.ToInt32() == 2195) { accountID = 2195; }
-            //else
-            //{
-            //    if (txtBalance.Text.ToDecimal() > 0) { accountID = 40; } else { accountID = 80; }
-            //}
-
 
             #endregion
 
@@ -7292,7 +5479,9 @@ namespace eMaestroD.Api.Controllers
                 modBy = obj1[0].modBy,
                 modDate = obj1[0].modDate,
                 checkName = obj1[0].checkName,
-                comID = obj1[0].comID
+                comID = obj1[0].comID,
+                acctNo = "",
+                relAcctNo = ""
             };
             if (isEdit)
             {
@@ -7318,15 +5507,6 @@ namespace eMaestroD.Api.Controllers
                     pro1.taxSum = 0;
                     pro1.comID = obj.comID;
 
-                    //ProductBarCodes prodbarcode = new ProductBarCodes();
-                    //if (obj.prodCode != null && obj.prodCode.Length > 0)
-                    //{
-                    //    prodbarcode = prodbarcodesLst.Find(x => x.BarCode.ToLower().Trim() == obj.prodCode.ToLower().Trim());
-                    //}
-
-                    //if (prodbarcode == null || prodbarcode.ProdBCID < 1) { continue; }
-
-
                     #region ------ Sale Delivery Product 1 Entry -------
                     if (!isEdit)
                         pro1.GLID = 0;
@@ -7341,6 +5521,8 @@ namespace eMaestroD.Api.Controllers
                     pro1.salesManID = obj.salesManID;
                     pro1.COAID = obj.relCOAID;
                     pro1.relCOAID = obj.COAID;
+                    pro1.acctNo = obj.relAcctNo;
+                    pro1.relAcctNo = obj.acctNo;
                     pro1.creditSum = 0; //obj.creditSum;
                     pro1.debitSum = obj.creditSum; //obj.creditSum;
                     pro1.qtyBal = 0;
@@ -7395,6 +5577,8 @@ namespace eMaestroD.Api.Controllers
                     pro2.salesManID = obj.salesManID;
                     pro2.COAID = obj.COAID;
                     pro2.relCOAID = obj.relCOAID;
+                    pro2.acctNo = obj.acctNo;
+                    pro2.relAcctNo = obj.relAcctNo;
                     pro2.balSum = -obj.creditSum; //obj.creditSum;
                     pro2.creditSum = obj.creditSum; //obj.creditSum;
                     pro2.debitSum = 0; //obj.creditSum;
@@ -7421,37 +5605,6 @@ namespace eMaestroD.Api.Controllers
                     pro2.glComments = obj.glComments;
                     pro2.voucherNo = obj.voucherNo;
                     glLt.Add(pro2);
-
-
-                    var cstList = _AMDbContext.Customers.Where(x => x.cstID == obj.cstID).ToList();
-                    var coalist = _AMDbContext.COA.Where(x => x.COANo == obj.cstID && x.acctName == cstList[0].cstName).ToList();
-                    if (coalist.Count > 0)
-                    {
-                        if (!isEdit)
-                        {
-                            coalist[0].bal += obj.creditSum;
-                        }
-                        else
-                        {
-                            coalist[0].bal = coalist[0].bal - obj.acctBal + obj.creditSum;
-                        }
-                        //_AMDbContext.COA.UpdateRange(coalist);
-                    }
-
-                    var coalist1 = _AMDbContext.COA.Where(x => x.COAID == obj.relCOAID).ToList();
-                    if (coalist1.Count > 0)
-                    {
-                        if (!isEdit)
-                        {
-                            coalist1[0].bal += obj.creditSum;
-                        }
-                        else
-                        {
-                            coalist1[0].bal = coalist1[0].bal - obj.acctBal + obj.creditSum;
-                        }
-                        //_AMDbContext.COA.UpdateRange(coalist1);
-                    }
-                    _AMDbContext.SaveChanges();
 
                     #endregion
 

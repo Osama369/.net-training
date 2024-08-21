@@ -86,7 +86,8 @@ namespace eMaestroD.Api.Data
         public DbSet<InvoiceView> InvoiceView { get; set; }
         public DbSet<SalesSummary> SalesSummary { get; set; }
         public DbSet<TenantUser> TenantUsers { get; set; }
-
+        public DbSet<VendorCompany> VendorCompanies { get; set; }
+        public DbSet<COAConfig> COAConfig { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

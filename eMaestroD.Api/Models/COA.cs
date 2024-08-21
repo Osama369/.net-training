@@ -14,6 +14,8 @@ namespace eMaestroD.Api.Models
         [HiddenOnRender]
         public int COAID { get; set; }
         [HiddenOnRender]
+        public int? comID { get; set; }
+        [HiddenOnRender]
         public int parentCOAID { get; set; }
         [HiddenOnRender]
         public int? COANo { get; set; }

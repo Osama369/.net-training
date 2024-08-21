@@ -3,200 +3,170 @@ using eMaestroD.Api.Data;
 using eMaestroD.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace eMaestroD.Api.Controllers
 {
-    [ApiController]
-    [Route("/api/[controller]/[action]")]
-    public class BankController : Controller
+    public class BankController : BaseController
     {
-        private readonly AMDbContext _AMDbContext;
         private readonly NotificationInterceptor _notificationInterceptor;
-        private readonly IHttpContextAccessor _httpContextAccessor;
-        string activeUser = "";
-        public BankController(AMDbContext aMDbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor)
+        private readonly HelperMethods _helperMethods;
+        public BankController(AMDbContext dbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor, HelperMethods helperMethods)
+            : base(dbContext, httpContextAccessor)
         {
-            _AMDbContext = aMDbContext;
             _notificationInterceptor = notificationInterceptor;
-            _httpContextAccessor = httpContextAccessor;
-            activeUser = GetUsername();
+            _helperMethods = helperMethods;
         }
 
-        [HttpGet]
-        [Route("{comID}")]
+        [HttpGet("{comID}")]
         public async Task<IActionResult> GetAllBank(int comID)
         {
-            var banks = await _AMDbContext.Banks.Where(x => x.active == true && x.comID == comID).ToListAsync();
-
-            ResponsedGroupListVM vM = new ResponsedGroupListVM();
-            vM.enttityDataSource = banks;
-            vM.entityModel = banks?.GetEntity_MetaData();
-            return Ok(vM);
+            var banks = await _dbContext.Banks.Where(x => x.active && x.comID == comID).ToListAsync();
+            var response = new ResponsedGroupListVM
+            {
+                enttityDataSource = banks,
+                entityModel = banks?.GetEntity_MetaData()
+            };
+            return Ok(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveBank([FromBody] Bank bk)
+        public async Task<IActionResult> SaveBank([FromBody] Bank bank)
         {
             var comID = int.Parse(Request.Headers["comID"].ToString());
-            if (bk.bankID != 0)
+
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
             {
-
-                var existingBank = _AMDbContext.Banks.FirstOrDefault(x => x.bankName.Trim().ToLower() == bk.bankName.Trim().ToLower() &&
-                                                           x.accountNo.Trim() == bk.accountNo.Trim() &&
-                                                           x.comID == comID &&
-                                                           x.bankID != bk.bankID);
-                if (existingBank != null)
-                {
-                    return BadRequest("A bank with the same bank name and account number already exists.");
-                }
-
-                bk.modDate = DateTime.Now;
-                bk.modBy = activeUser;
-                bk.comID = comID;
-                _AMDbContext.Banks.Update(bk);
-                await _AMDbContext.SaveChangesAsync();
-
-                var cstCOA = _AMDbContext.COA.Where(x => x.COANo == bk.bankID && x.parentCOAID == 79).FirstOrDefault();
-                COA coa = new COA()
-                {
-                    COAID = cstCOA.COAID == null ? 0 : cstCOA.COAID,
-                    acctNo = bk.branchCode,
-                    acctName = bk.bankName,
-                    isSys = true,
-                    parentCOAID = 79,
-                    COANo = bk.bankID,
-                    nextChkNo = bk.branchCode,
-                    COAlevel = 4,
-                    active = true,
-                    treeName = bk.bankName,
-                    acctType = "Bank",
-                    parentAcctType = "Assets",
-                    parentAcctName = "Bank Accounts",
-                    path = @"Assets\Current Assets\Cash And Banks\Bank Accounts\" + bk.bankName + @"\",
-                    modDate = DateTime.Now,
-                    modBy = activeUser,
-                    openBal = cstCOA.openBal,
-                    bal = cstCOA.bal,
-                    closingBal = cstCOA.closingBal
-                };
-                _AMDbContext.COA.Update(coa);
-                await _AMDbContext.SaveChangesAsync();
-
-
-                _notificationInterceptor.SaveNotification("BankEdit", comID, "");
-            }
-            else
-            {
-                var existingBank = _AMDbContext.Banks.FirstOrDefault(x => x.bankName.Trim().ToLower() == bk.bankName.Trim().ToLower() && x.accountNo.Trim() == bk.accountNo.Trim() && x.comID == comID);
+                var existingBank = _dbContext.Banks
+                    .FirstOrDefault(x => x.bankName.Trim().ToLower() == bank.bankName.Trim().ToLower() &&
+                                         x.accountNo.Trim() == bank.accountNo.Trim() &&
+                                         x.comID == comID &&
+                                         x.bankID != bank.bankID);
 
                 if (existingBank != null)
                 {
                     return BadRequest("A bank with the same bank name and account number already exists.");
                 }
 
-                bk.active = true;
-                bk.crtBy = activeUser;
-                bk.crtDate = DateTime.Now;
-                bk.modBy = activeUser;
-                bk.modDate = DateTime.Now;
-                bk.comID = comID;
-                var list = _AMDbContext.Banks.Where(x => x.comID == comID).ToList();
-                if (list.Count() == 0) { bk.isDefault = true; }
-                _AMDbContext.Banks.Add(bk);
-                await _AMDbContext.SaveChangesAsync();
+                bank.modDate = DateTime.Now;
+                bank.modBy = ActiveUser;
+                bank.comID = comID;
 
-                var cstCOA = _AMDbContext.COA.Where(x => x.COANo == bk.bankID && x.parentCOAID == 79).FirstOrDefault();
-                if (cstCOA == null)
+                if (bank.bankID != 0)
                 {
-                    cstCOA = _AMDbContext.COA.Where(x => x.parentCOAID == 79 && x.acctName == bk.bankName).FirstOrDefault();
+                    _dbContext.Banks.Update(bank);
                 }
-                COA coa = new COA()
+                else
                 {
-                    COAID = cstCOA == null ? 0 : cstCOA.COAID,
-                    acctNo = bk.branchCode,
-                    acctName = bk.bankName,
-                    isSys = true,
-                    parentCOAID = 79,
-                    COANo = bk.bankID,
-                    nextChkNo = bk.branchCode,
-                    COAlevel = 4,
-                    active = true,
-                    treeName = bk.bankName,
-                    acctType = "Bank",
-                    parentAcctType = "Assets",
-                    parentAcctName = "Bank Accounts",
-                    path = @"Assets\Current Assets\Cash And Banks\Bank Accounts\" + bk.bankName + @"\",
-                    openBal = cstCOA == null ? 0 : cstCOA.openBal,
-                    bal = cstCOA == null ? 0 : cstCOA.bal,
-                    closingBal = cstCOA == null ? 0 : cstCOA.closingBal,
-                    crtBy = cstCOA == null ? activeUser : cstCOA.crtBy,
-                    crtDate = cstCOA == null ? DateTime.Now : cstCOA.crtDate,
-                    modBy = activeUser,
-                    modDate = DateTime.Now,
-                };
-                _AMDbContext.COA.Update(coa);
-                await _AMDbContext.SaveChangesAsync();
+                    bank.active = true;
+                    bank.crtBy = ActiveUser;
+                    bank.crtDate = DateTime.Now;
+                    
+                    var list = await _dbContext.Banks.Where(x => x.comID == comID).ToListAsync();
+                    if (list.Count == 0)
+                    {
+                        bank.isDefault = true;
+                    }
+                    _dbContext.Banks.Add(bank);
+                }
 
-                _notificationInterceptor.SaveNotification("BankCreate", comID, "");
+                await _dbContext.SaveChangesAsync();
+
+                var coa = CreateOrUpdateCOA(bank);
+                _dbContext.COA.Update(coa);
+                await _dbContext.SaveChangesAsync();
+
+                var notificationType = bank.bankID != 0 ? "BankEdit" : "BankCreate";
+                _notificationInterceptor.SaveNotification(notificationType, comID, "");
+
+                await transaction.CommitAsync();
+
+                return Ok(bank);
             }
-
-            return Ok(bk);
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
-
 
         [HttpPost]
         public async Task<IActionResult> UpdateIsDefault([FromBody] Bank bank)
         {
             var comID = int.Parse(Request.Headers["comID"].ToString());
-            List<Bank> lst = _AMDbContext.Banks.Where(x => x.comID == comID).ToList();
-            foreach (var item in lst)
+            var banks = await _dbContext.Banks.Where(x => x.comID == comID).ToListAsync();
+
+            foreach (var item in banks)
             {
-                if (item.bankID == bank.bankID)
+                item.isDefault = item.bankID == bank.bankID;
+                if (item.isDefault)
                 {
-                    item.modBy = activeUser;
+                    item.modBy = ActiveUser;
                     item.modDate = DateTime.Now;
-                    item.isDefault = true;
-                }
-                else
-                {
-                    item.isDefault = false;
                 }
             }
-            _AMDbContext.Banks.UpdateRange(lst);
-            await _AMDbContext.SaveChangesAsync();
-            _notificationInterceptor.SaveNotification("BankEdit", comID, "");
-            return Ok(lst);
 
+            _dbContext.Banks.UpdateRange(banks);
+            await _dbContext.SaveChangesAsync();
+
+            _notificationInterceptor.SaveNotification("BankEdit", comID, "");
+            return Ok(banks);
         }
 
-        [HttpDelete]
-        [Route("{bankID}")]
+        [HttpDelete("{bankID}")]
         public async Task<IActionResult> DeleteBank(int bankID)
         {
-            var lst = _AMDbContext.Banks.Where(a => a.bankID == bankID).ToList();
-            var bank = _AMDbContext.COA.Where(a => a.COANo == bankID && a.acctName == lst[0].bankName && a.parentCOAID == 79).FirstOrDefault();
-            var existlist = _AMDbContext.gl.Where(x => x.COAID == bank.COAID || x.relCOAID == bank.COAID).ToList();
-            if (existlist.Count() > 0)
+            var banks = _dbContext.Banks.Where(a => a.bankID == bankID).ToList();
+            var bankCOA = _dbContext.COA.FirstOrDefault(a => a.COANo == bankID && a.acctName == banks.First().bankName && a.parentCOAID == 79);
+            var existlist = _dbContext.gl.Where(x => x.COAID == bankCOA.COAID || x.relCOAID == bankCOA.COAID).ToList();
+
+            if (existlist.Any())
             {
                 return NotFound("Some Invoices Depend on this Bank. Please Delete Invoice First");
             }
-            _AMDbContext.Remove(bank);
-            _AMDbContext.RemoveRange(lst);
-            await _AMDbContext.SaveChangesAsync();
 
-            var comID = Request.Headers["comID"].ToString();
-            _notificationInterceptor.SaveNotification("BankDelete", int.Parse(comID), "");
+            _dbContext.Remove(bankCOA);
+            _dbContext.RemoveRange(banks);
+            await _dbContext.SaveChangesAsync();
 
-            return Ok(lst);
+            var comID = int.Parse(Request.Headers["comID"].ToString());
+            _notificationInterceptor.SaveNotification("BankDelete", comID, "");
+
+            return Ok(banks);
         }
 
-        [NonAction]
-        public string GetUsername()
+        private COA CreateOrUpdateCOA(Bank bank)
         {
-            var email = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email);
-            var user = _AMDbContext.Users.Where(x => x.Email == email).FirstOrDefault();
-            return user.FirstName + " " + user.LastName;
+            var cstCOA = _dbContext.COA.FirstOrDefault(x => x.COANo == bank.bankID && x.parentCOAID == 79) ??
+                         _dbContext.COA.FirstOrDefault(x => x.parentCOAID == 79 && x.acctName == bank.bankName);
+            var parentAccCode = _dbContext.COA.FirstOrDefault(x => x.COAID == 79).acctNo;
+            var newAcctNo = _helperMethods.GenerateAcctNo(parentAccCode, bank.comID);
+            
+            return new COA
+            {
+                COAID = cstCOA?.COAID ?? 0,
+                acctNo = cstCOA?.acctNo ?? newAcctNo,
+                acctName = bank.bankName,
+                isSys = false,
+                parentCOAID = 79,
+                COANo = bank.bankID,
+                nextChkNo = bank.branchCode,
+                COAlevel = 4,
+                active = true,
+                treeName = bank.bankName,
+                acctType = "Bank",
+                parentAcctType = "Assets",
+                parentAcctName = "Bank Accounts",
+                path = @$"Assets\Current Assets\Cash And Banks\Bank Accounts\{bank.bankName}\",
+                openBal = cstCOA?.openBal ?? 0,
+                bal = cstCOA?.bal ?? 0,
+                closingBal = cstCOA?.closingBal ?? 0,
+                crtBy = cstCOA?.crtBy ?? ActiveUser,
+                crtDate = cstCOA?.crtDate ?? DateTime.Now,
+                modBy = ActiveUser,
+                modDate = DateTime.Now,
+                comID = bank.comID
+            };
         }
     }
 }

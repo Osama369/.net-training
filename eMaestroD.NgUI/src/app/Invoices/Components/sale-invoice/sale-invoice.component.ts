@@ -109,7 +109,7 @@ export class SaleInvoiceComponent implements OnInit {
 
     editView(invoiceNo:any)
     {
-        this.router.navigateByUrl('/AddNewSale/'+invoiceNo);
+        this.router.navigateByUrl('/Invoices/AddNewSale/'+invoiceNo);
     }
 
     deleteView(invoiceNo:any)
@@ -150,7 +150,7 @@ export class SaleInvoiceComponent implements OnInit {
      }
      viewInvoiceDetail(invoiceNo:any)
      {
-      this.router.navigateByUrl('/Detail/'+invoiceNo);
+      this.router.navigateByUrl('/Invoices/Detail/'+invoiceNo);
     //     this.invoiceNo = invoiceNo;
     //     this.InvoiceDetailvisible = true;
       }

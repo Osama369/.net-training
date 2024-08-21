@@ -666,7 +666,7 @@ showReportDialog() {
   {
     if(this.EditVoucherNo != undefined)
     {
-      this.router.navigateByUrl('/ServiceInvoices')
+      this.router.navigateByUrl('/Invoices/ServiceInvoices')
     }
     else
     {
@@ -901,13 +901,13 @@ showReportDialog() {
               {
                 this.invoicesService.deleteInvoiceRow(this.RemoveItemGLID2).subscribe({
                   next: (invoices) => {
-                    this.router.navigateByUrl('/ServiceInvoices')
+                    this.router.navigateByUrl('/Invoices/ServiceInvoices')
                   }
                 });
               }
               else
               {
-                this.router.navigateByUrl('/ServiceInvoices')
+                this.router.navigateByUrl('/Invoices/ServiceInvoices')
               }
 
             }
@@ -1020,7 +1020,7 @@ showReportDialog() {
 
   close()
   {
-    this.router.navigateByUrl('/ServiceInvoices');
+    this.router.navigateByUrl('/Invoices/ServiceInvoices');
   }
   focusing()
   {

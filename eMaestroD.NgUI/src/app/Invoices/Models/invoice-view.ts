@@ -16,5 +16,6 @@ export interface InvoiceView {
     relCOAID?:any,
     GLID?:any,
     invoiceDate?:any
-    checkName?:any
+    checkName?:any,
+    acctNo?:any
 }

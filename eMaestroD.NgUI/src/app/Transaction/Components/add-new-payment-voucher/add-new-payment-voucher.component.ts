@@ -339,12 +339,12 @@ FilterCreditCardlist: any[];
           if(this.CreditCardList.find(x=>x.COAID == invoices[0].relCOAID)){
             this.CreditCardVisible = true;
             this.SelectedType[0] = {name:"Credit Card"};
-            this.SelectedCreditCard = {COAID : invoices[0].relCOAID, acctName: this.CreditCardList.find(x=>x.COAID == invoices[0].relCOAID)?.acctName }
+            this.SelectedCreditCard = {COAID : invoices[0].relCOAID, acctName: this.CreditCardList.find(x=>x.COAID == invoices[0].relCOAID)?.acctName,  acctNo: this.CreditCardList.find(x=>x.COAID == invoices[0].relCOAID)?.acctNo }
           }
            else if(this.BankList.find(x=>x.COAID == invoices[0].relCOAID)){
               this.BankVisible = true;
               this.SelectedType[0] = {name:"Bank"};
-              this.SelectedBank = {COAID : invoices[0].relCOAID, acctName: this.BankList.find(x=>x.COAID == invoices[0].relCOAID)?.acctName }
+              this.SelectedBank = {COAID : invoices[0].relCOAID, acctName: this.BankList.find(x=>x.COAID == invoices[0].relCOAID)?.acctName, acctNo: this.BankList.find(x=>x.COAID == invoices[0].relCOAID)?.acctNo  }
             }
         }
           this.Amount = 0;
@@ -378,6 +378,7 @@ FilterCreditCardlist: any[];
       this.SelectedBank = {
         COAID: defaultBank?.COAID,
         acctName: defaultBank?.acctName,
+        acctNo: defaultBank?.acctNo,
       };
 
       const creditCardData = await lastValueFrom(this.genericService.GetAllCreditCards());
@@ -389,6 +390,7 @@ FilterCreditCardlist: any[];
       this.SelectedCreditCard = {
         COAID: defaultCreditCard?.COAID,
         acctName: defaultCreditCard?.acctName,
+        acctNo: defaultCreditCard?.acctNo,
       };
     } catch (error) {
     }
@@ -635,10 +637,12 @@ FilterCreditCardlist: any[];
         if(this.BankVisible)
         {
           this.voucherList[0].COAID = this.SelectedBank.COAID;
+          this.voucherList[0].acctNo = this.SelectedBank.acctNo;
         }
         else if(this.CreditCardVisible)
         {
           this.voucherList[0].COAID = this.SelectedCreditCard.COAID;
+          this.voucherList[0].acctNo = this.SelectedCreditCard.acctNo;
         }
         else
         {
@@ -660,7 +664,6 @@ FilterCreditCardlist: any[];
           },
         });
     }
-
   }
 
   onPrinterClick()
@@ -715,7 +718,7 @@ FilterCreditCardlist: any[];
 
   close()
   {
-    this.router.navigateByUrl('/Payment');
+    this.router.navigateByUrl('/Transactions/Payment');
   }
   focusing()
   {

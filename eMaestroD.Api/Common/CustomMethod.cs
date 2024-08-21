@@ -9,7 +9,7 @@ namespace eMaestroD.Api.Common
         private const string LowercaseChars = "abcdefghijklmnopqrstuvwxyz";
         private const string NumericChars = "0123456789";
         private const string SpecialChars = "@_";
-
+      
         public string GenerateStrongPassword(int length)
         {
             if (length < 4)

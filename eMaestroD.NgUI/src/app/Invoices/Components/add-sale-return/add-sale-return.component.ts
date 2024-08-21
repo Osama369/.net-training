@@ -713,7 +713,7 @@ export class AddSaleReturnComponent implements OnInit{
   {
     if(this.EditVoucherNo != undefined)
     {
-      this.router.navigateByUrl('/CreditNote')
+      this.router.navigateByUrl('/Invoices/CreditNote')
     }
     else
     {
@@ -988,13 +988,13 @@ export class AddSaleReturnComponent implements OnInit{
               {
                 this.invoicesService.deleteInvoiceRow(this.RemoveItemGLID2).subscribe({
                   next: (invoices) => {
-                    this.router.navigateByUrl('/CreditNote')
+                    this.router.navigateByUrl('/Invoices/CreditNote')
                   }
                 });
               }
               else
               {
-                this.router.navigateByUrl('/CreditNote')
+                this.router.navigateByUrl('/Invoices/CreditNote')
               }
 
             }
@@ -1123,7 +1123,7 @@ export class AddSaleReturnComponent implements OnInit{
 
   close()
   {
-    this.router.navigateByUrl('/CreditNote');
+    this.router.navigateByUrl('/Invoices/CreditNote');
   }
   focusing()
   {

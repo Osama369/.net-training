@@ -90,7 +90,7 @@ export class ExpenseVoucherComponent implements OnInit {
 
     editView(invoiceNo:any)
     {
-        this.router.navigateByUrl('/AddNewExpense/'+invoiceNo);
+        this.router.navigateByUrl('/Transactions/AddNewExpense/'+invoiceNo);
     }
 
     deleteView(invoiceNo:any)
@@ -131,7 +131,7 @@ export class ExpenseVoucherComponent implements OnInit {
      }
      viewInvoiceDetail(invoiceNo:any)
      {
-        this.router.navigateByUrl('/JournalVoucherDetail/'+invoiceNo);
+        this.router.navigateByUrl('/Transactions/JournalVoucherDetail'+invoiceNo);
      }
 
 

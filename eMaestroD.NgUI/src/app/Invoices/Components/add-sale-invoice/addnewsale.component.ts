@@ -1010,7 +1010,7 @@ export class NewInvoiceComponent implements OnInit{
   {
     if(this.EditVoucherNo != undefined)
     {
-      this.router.navigateByUrl('/SaleInvoices')
+      this.router.navigateByUrl('/Invoices/SaleInvoices')
     }
     else
     {
@@ -1301,10 +1301,10 @@ export class NewInvoiceComponent implements OnInit{
 
 
       if(this.SelectedType[0].name == "Cash" && this.isMultiPayment){
-        this.url ="/AddNewServiceInvoice";
+        this.url ="/Invoices/AddNewServiceInvoice";
         this.paymentMethodVisiblity = true;
       }else{
-        this.SaveData('/AddNewServiceInvoice');
+        this.SaveData('/Invoices/AddNewServiceInvoice');
       }
     }
   }
@@ -1411,10 +1411,10 @@ export class NewInvoiceComponent implements OnInit{
         }
 
         if(this.SelectedType[0].name == "Cash" && this.isMultiPayment){
-          this.url ="/SaleInvoices";
+          this.url ="/Invoices/SaleInvoices";
           this.paymentMethodVisiblity = true;
         }else{
-          this.SaveData('/SaleInvoices');
+          this.SaveData('/Invoices/SaleInvoices');
         }
     }
 
@@ -1565,7 +1565,7 @@ export class NewInvoiceComponent implements OnInit{
 
   close()
   {
-    this.router.navigateByUrl('/SaleInvoices');
+    this.router.navigateByUrl('/Invoices/SaleInvoices');
   }
   focusing()
   {
@@ -2004,6 +2004,7 @@ export class NewInvoiceComponent implements OnInit{
           this.gl.push(this.createNewGLList());
           index = this.gl.length-1;
           this.gl[index].COAID = this.SelectedCreditCard.COAID;
+          this.gl[index].acctNo = this.SelectedCreditCard.acctNo;
           this.gl[index].relCOAID = 141;
           this.gl[index].creditSum =  parseFloat(this.creditCardAmount==null?0:this.creditCardAmount);
         }
@@ -2012,6 +2013,7 @@ export class NewInvoiceComponent implements OnInit{
           this.gl.push(this.createNewGLList());
           index = this.gl.length-1;
           this.gl[index].COAID = this.SelectedBank.COAID;
+          this.gl[index].acctNo = this.SelectedBank.acctNo;
           this.gl[index].relCOAID = 141;
           this.gl[index].creditSum =  parseFloat(this.bankAmount==null?0:this.bankAmount);
         }

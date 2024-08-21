@@ -3,23 +3,27 @@ using eMaestroD.Api.Data;
 using eMaestroD.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace eMaestroD.Api.Controllers
 {
 
     [ApiController]
+    [Authorize]
     [Route("/api/[controller]")]
     public class TaxesController : Controller
     {
         private readonly AMDbContext _AMDbContext;
         private readonly NotificationInterceptor _notificationInterceptor;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor; 
+        private readonly HelperMethods _helperMethods;
         string username = "";
-        public TaxesController(AMDbContext aMDbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor)
+        public TaxesController(AMDbContext aMDbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor, HelperMethods helperMethods)
         {
             _AMDbContext = aMDbContext;
             _notificationInterceptor = notificationInterceptor;
             _httpContextAccessor = httpContextAccessor;
+            _helperMethods = helperMethods;
             username = GetUsername();
         }
 
@@ -32,9 +36,10 @@ namespace eMaestroD.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> getTaxesList()
+        [Route("{comID}")]
+        public async Task<IActionResult> getTaxesList(int comID)
         {
-            List<Taxes> SDL = _AMDbContext.Taxes.ToList();
+            List<Taxes> SDL = _AMDbContext.Taxes.Where(x=>x.comID == comID).ToList();
             return Ok(SDL);
         }
 
@@ -42,11 +47,11 @@ namespace eMaestroD.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> saveTaxes([FromBody] Taxes taxes)
         {
-            var comID = Request.Headers["comID"].ToString();
+            var comID = int.Parse(Request.Headers["comID"].ToString());
             taxes.TaxName = taxes.TaxName.Trim();
             if (taxes.TaxID != 0)
             {
-                var existList = _AMDbContext.Taxes.Where(x => x.TaxID != taxes.TaxID && x.TaxName == taxes.TaxName).ToList();
+                var existList = _AMDbContext.Taxes.Where(x => x.TaxID != taxes.TaxID && x.TaxName == taxes.TaxName && x.comID == taxes.comID).ToList();
                 if (existList.Count() == 0)
                 {
                     taxes.modby = username;
@@ -55,10 +60,12 @@ namespace eMaestroD.Api.Controllers
                     await _AMDbContext.SaveChangesAsync();
 
 
+                    var coaAccount = _AMDbContext.COA.Where(x => x.COANo == taxes.TaxID && x.parentCOAID == 25).FirstOrDefault();
+
                     COA coa = new COA()
                     {
-                        COAID = _AMDbContext.COA.Where(x => x.COANo == taxes.TaxID && x.parentCOAID == 25).FirstOrDefault().COAID,
-                        acctNo = taxes.TaxID.ToString(),
+                        COAID = coaAccount.COAID,
+                        acctNo = coaAccount.acctNo,
                         acctName = taxes.TaxName,
                         isSys = false,
                         parentCOAID = 25,
@@ -71,12 +78,13 @@ namespace eMaestroD.Api.Controllers
                         parentAcctName = "Current Liability",
                         path = @"Liability\Current Liability\Current Liability\" + taxes.TaxName + @"\",
                         modDate = DateTime.Now,
-                        modBy = username
+                        modBy = username,
+                        comID = comID
                     };
                     _AMDbContext.COA.Update(coa);
                     await _AMDbContext.SaveChangesAsync();
 
-                    _notificationInterceptor.SaveNotification("TaxesEdit", int.Parse(comID), "");
+                    _notificationInterceptor.SaveNotification("TaxesEdit", comID, "");
                 }
                 else
                 {
@@ -85,20 +93,25 @@ namespace eMaestroD.Api.Controllers
             }
             else
             {
-                var existList = _AMDbContext.Taxes.Where(x => x.TaxName == taxes.TaxName).ToList();
+                var existList = _AMDbContext.Taxes.Where(x => x.TaxName == taxes.TaxName && x.comID == comID).ToList();
                 if (existList.Count() == 0)
                 {
                     taxes.crtBy = username;
                     taxes.crtDate = DateTime.Now;
                     taxes.modby = username;
                     taxes.modDate = DateTime.Now;
+                    taxes.comID = comID;
                     await _AMDbContext.Taxes.AddAsync(taxes);
                     await _AMDbContext.SaveChangesAsync();
 
 
+                    var ParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 25).acctNo;
+                    var NewAcctNo = _helperMethods.GenerateAcctNo(ParentAccCode, comID);
+
+
                     COA coa = new COA()
                     {
-                        acctNo = taxes.TaxID.ToString(),
+                        acctNo = NewAcctNo,
                         acctName = taxes.TaxName,
                         openBal = 0,
                         bal = 0,
@@ -115,12 +128,13 @@ namespace eMaestroD.Api.Controllers
                         crtDate = DateTime.Now,
                         modDate = DateTime.Now,
                         crtBy = username,
-                        modBy = username
+                        modBy = username,
+                        comID = comID
                     };
                     await _AMDbContext.COA.AddAsync(coa);
                     await _AMDbContext.SaveChangesAsync();
 
-                    _notificationInterceptor.SaveNotification("TaxesCreate", int.Parse(comID), "");
+                    _notificationInterceptor.SaveNotification("TaxesCreate", comID, "");
                 }
                 else
                 {

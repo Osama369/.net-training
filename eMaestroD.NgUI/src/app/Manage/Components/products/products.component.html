@@ -14,7 +14,7 @@
   </app-gird>
 
 
-<p-dialog #cstDailog [modal]="true" [(visible)]="ProductVisible" [style]="{width: '50vw'}">
+<p-dialog #cstDailog [modal]="true" [(visible)]="ProductVisible" [style]="{width: '70vw'}">
     <app-add-new-product [prodData]="prdList" [prodGroupData]="productgrouplist" [title]="title" (dataEvent)="handleChildData($event)"></app-add-new-product>
 </p-dialog>
 
@@ -26,4 +26,7 @@
 <p-dialog [modal]="true" [(visible)]="UploadToolVisibility" [style]="{width: '40vw'}">
   <app-file-upload [uploadHeading]="'Products'" [confirmCategory]="catBool" [data]="exportData" [serviceName]="serviceName" [methodName]="methodName" (dataEvent)="getInsertedRows($event)"></app-file-upload>
 </p-dialog>
+
+
+
 

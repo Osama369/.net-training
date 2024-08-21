@@ -191,19 +191,19 @@ export class DaybookComponent implements OnInit {
         if(prefix == "PNV" || prefix == "PRT" || prefix == "POV" ||
         prefix == "SNV" || prefix == "SRT" || prefix == "SRV" || prefix == "QOV"){
          const url = this.router.serializeUrl(
-           this.router.createUrlTree([`Detail/`+invoiceNo])
+           this.router.createUrlTree([`Invoices/Detail/`+invoiceNo])
          );
          window.open(url, '_blank');
        }
        else if (prefix == "RCT" || prefix == "PMT"){
          const url = this.router.serializeUrl(
-           this.router.createUrlTree([`VoucherDetail/`+invoiceNo])
+           this.router.createUrlTree([`Invoices/VoucherDetail/`+invoiceNo])
          );
          window.open(url, '_blank');
        }
        else if(prefix == "JV" || prefix == "EXP"){
          const url = this.router.serializeUrl(
-           this.router.createUrlTree([`JournalVoucherDetail/`+invoiceNo])
+           this.router.createUrlTree([`Transactions/JournalVoucherDetail/`+invoiceNo])
          );
          window.open(url, '_blank');
        }

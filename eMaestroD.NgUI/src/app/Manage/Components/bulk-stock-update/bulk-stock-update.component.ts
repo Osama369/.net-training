@@ -206,7 +206,7 @@ export class BulkStockUpdateComponent implements OnInit {
      }
      viewInvoiceDetail(invoiceNo:any)
      {
-      this.router.navigateByUrl('/Detail/'+invoiceNo);
+      this.router.navigateByUrl('/Invoices/Detail/'+invoiceNo);
       }
 
 

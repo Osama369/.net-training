@@ -90,7 +90,7 @@ export class JournalVoucherComponent implements OnInit {
 
     editView(invoiceNo:any)
     {
-        this.router.navigateByUrl('/AddNewJournal/'+invoiceNo);
+        this.router.navigateByUrl('/Transactions/AddNewJournal/'+invoiceNo);
     }
 
     deleteView(invoiceNo:any)
@@ -142,7 +142,7 @@ export class JournalVoucherComponent implements OnInit {
      }
      viewInvoiceDetail(invoiceNo:any)
      {
-        this.router.navigateByUrl('/JournalVoucherDetail/'+invoiceNo);
+        this.router.navigateByUrl('/Transactions/JournalVoucherDetail/'+invoiceNo);
         // this.invoiceNo = invoiceNo;
         // this.InvoiceDetailvisible = true;
      }

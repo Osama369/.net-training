@@ -119,7 +119,7 @@ export class SaleReturn2Component implements OnInit {
 
     editView(invoiceNo:any)
     {
-        this.router.navigateByUrl('/AddNewSaleReturn/'+invoiceNo);
+        this.router.navigateByUrl('/Invoices/AddNewSaleReturn/'+invoiceNo);
     }
 
     deleteView(invoiceNo:any)
@@ -163,7 +163,7 @@ export class SaleReturn2Component implements OnInit {
      }
      viewInvoiceDetail(invoiceNo:any)
      {
-      this.router.navigateByUrl('/Detail/'+invoiceNo);
+      this.router.navigateByUrl('/Invoices/Detail/'+invoiceNo);
     }
 
 

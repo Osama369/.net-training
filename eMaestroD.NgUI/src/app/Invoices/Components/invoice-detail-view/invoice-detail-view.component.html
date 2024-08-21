@@ -85,7 +85,7 @@
           <label class="col-form-label col-2 required" style="text-align: right;" translate>Amount</label>
         </div>
         <div class="col-12" *ngFor="let list of returnList" style="padding:6px">
-          <label class="col-form-label col-2 required"><a [href]="'/Detail/'+list.prodGrpName" target="_blank">{{list.prodGrpName}}</a></label>
+          <label class="col-form-label col-2 required"><a [href]="'/Invoices/Detail/'+list.prodGrpName" target="_blank">{{list.prodGrpName}}</a></label>
           <label class="col-form-label col-2 required">{{list.prodCode}}</label>
           <label class="col-form-label col-2 required">{{list.prodName}}</label>
           <label class="col-form-label col-1 required" style="text-align: right;">{{list.qty | number : '1.2-2'}}</label>

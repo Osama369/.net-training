@@ -26,6 +26,10 @@ namespace eMaestroD.Api.Models
 
         [HiddenOnRender]
         [NotMapped]
+        public string? acctNo { get; set; }
+
+        [HiddenOnRender]
+        [NotMapped]
         public decimal enterAmount { get; set; }
 
         [HiddenOnRender]

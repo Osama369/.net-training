@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 namespace eMaestroD.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/api/[controller]/[Action]")]
     public class CompanyController : Controller
     {
@@ -27,8 +28,9 @@ namespace eMaestroD.Api.Controllers
         private readonly NotificationInterceptor _notificationInterceptor;
         private CustomMethod cm = new CustomMethod();
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly HelperMethods _helperMethods;
         string username = "";
-        public CompanyController(IConfiguration configuration, AMDbContext aMDbContext, Context Context, IWebHostEnvironment _environment, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor)
+        public CompanyController(IConfiguration configuration, AMDbContext aMDbContext, Context Context, IWebHostEnvironment _environment, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor, HelperMethods helperMethods)
         {
             _AMDbContext = aMDbContext;
             _Context = Context;
@@ -36,6 +38,7 @@ namespace eMaestroD.Api.Controllers
             _configuration = configuration;
             _notificationInterceptor = notificationInterceptor;
             _httpContextAccessor = httpContextAccessor;
+            _helperMethods = helperMethods;
             username = GetUsername();
         }
 
@@ -255,15 +258,20 @@ namespace eMaestroD.Api.Controllers
                                 _AMDbContext.FiscalYear.Add(FY);
                                 await _AMDbContext.SaveChangesAsync();
 
+                                var vendParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 83).acctNo;
+                                var vendNewAcctNo = _helperMethods.GenerateAcctNo(vendParentAccCode, company.comID);
+                                
+                                var cstParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 40).acctNo;
+                                var cstNewAcctNo = _helperMethods.GenerateAcctNo(cstParentAccCode, company.comID);
 
                                 COA coa = new COA()
                                 {
-                                    acctNo = cst.cstCode,
+                                    acctNo = cstNewAcctNo,
                                     acctName = cst.cstName,
                                     openBal = 0,
                                     bal = 0,
                                     closingBal = 0,
-                                    isSys = true,
+                                    isSys = false,
                                     parentCOAID = 40,
                                     COANo = cst.cstID,
                                     nextChkNo = cst.cstCode,
@@ -278,6 +286,7 @@ namespace eMaestroD.Api.Controllers
                                     crtDate = DateTime.Now,
                                     modBy = username,
                                     modDate = DateTime.Now,
+                                    comID = cst.comID
                                 };
                                 await _AMDbContext.COA.AddAsync(coa);
                                 await _AMDbContext.SaveChangesAsync();
@@ -285,12 +294,12 @@ namespace eMaestroD.Api.Controllers
 
                                 COA coa1 = new COA()
                                 {
-                                    acctNo = vendor.vendCode,
+                                    acctNo = vendNewAcctNo,
                                     acctName = vendor.vendName,
                                     openBal = 0,
                                     bal = 0,
                                     closingBal = 0,
-                                    isSys = true,
+                                    isSys = false,
                                     parentCOAID = 83,
                                     COANo = vendor.vendID,
                                     nextChkNo = vendor.vendCode,
@@ -305,6 +314,7 @@ namespace eMaestroD.Api.Controllers
                                     crtDate = DateTime.Now,
                                     modBy = username,
                                     modDate = DateTime.Now,
+                                    comID = cst.comID
                                 };
                                 await _AMDbContext.COA.AddAsync(coa1);
                                 await _AMDbContext.SaveChangesAsync();

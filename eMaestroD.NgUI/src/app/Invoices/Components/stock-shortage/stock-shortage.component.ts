@@ -104,7 +104,7 @@ export class StockShortageComponent implements OnInit {
 
     editView(invoiceNo:any)
     {
-        this.router.navigateByUrl('/AddNewStockShortage/'+invoiceNo);
+        this.router.navigateByUrl('/Invoices/AddNewStockShortage/'+invoiceNo);
     }
 
     deleteView(invoiceNo:any)
@@ -145,7 +145,7 @@ export class StockShortageComponent implements OnInit {
      }
      viewInvoiceDetail(invoiceNo:any)
      {
-      this.router.navigateByUrl('/Detail/'+invoiceNo);
+      this.router.navigateByUrl('/Invoices/Detail/'+invoiceNo);
     //     this.invoiceNo = invoiceNo;
     //     this.InvoiceDetailvisible = true;
       }

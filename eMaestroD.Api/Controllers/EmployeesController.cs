@@ -16,8 +16,8 @@ namespace eMaestroD.Api.Controllers
 {
 
     [ApiController]
+    [Authorize]
     [Route("/api/[controller]/[action]")]
-
     public class EmployeesController : Controller
     {
         private readonly AMDbContext _AMDbContext;

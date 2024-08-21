@@ -20,10 +20,12 @@ using ClosedXML.Excel;
 using eMaestroD.Api.Models;
 using eMaestroD.Api.Common;
 using eMaestroD.Api.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace eMaestroD.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/api/[controller]")]
     public class ProductsController : Controller
     {

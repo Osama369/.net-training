@@ -127,11 +127,6 @@ export class AddCoaComponent {
       this.toastr.error("Please select parent account");
       this.onEnterTableInputCst(0);
     }
-    else if(this.COAList[0].acctNo == undefined || this.COAList[0].acctNo == "")
-    {
-      this.toastr.error("Please write account code");
-      this.onEnterTableInputCst(0);
-    }
     else if(this.COAList[0].acctName == undefined || this.COAList[0].acctName == "")
     {
       this.toastr.error("Please write account name");
@@ -155,7 +150,9 @@ export class AddCoaComponent {
         this.COAList[0].parentAcctName = this.SelectedParentAccount.acctName;
         this.COAList[0].treeName = this.COAList[0].acctName;
         this.COAList[0].path = this.SelectedParentAccount.path+this.COAList[0].acctName+'\\';
+        this.COAList[0].acctNo = this.SelectedParentAccount.acctNo;
       }
+
       this.coaService.saveCOA(this.COAList[0]).subscribe({
         next: (coa) => {
           this.clear();

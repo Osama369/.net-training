@@ -4,11 +4,13 @@ using eMaestroD.Api.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace eMaestroD.Api.Controllers
 {
 
     [ApiController]
+    [Authorize]
     [Route("/api/[controller]")]
     public class LocationController : Controller
     {

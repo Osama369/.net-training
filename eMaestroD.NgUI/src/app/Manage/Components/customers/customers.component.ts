@@ -35,6 +35,7 @@ export class CustomersComponent implements OnInit {
         this.customerService.getAllCustomers().subscribe(cst => {
             this.customers = (cst as { [key: string]: any })["enttityDataSource"];
             this.cols = (cst as { [key: string]: any })["entityModel"];
+            console.log(this.customers);
             this.customers.filter(x=>x.cstName.toLowerCase() == "walk in")[0].isActionBtn  = true;
             this.loading = false;
         });

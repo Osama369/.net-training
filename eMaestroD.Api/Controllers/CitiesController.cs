@@ -1,4 +1,5 @@
 ﻿using eMaestroD.Api.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ namespace eMaestroD.Api.Controllers
 {
 
     [ApiController]
+    [Authorize]
     [Route("/api/[controller]")]
     public class CitiesController : Controller
     {

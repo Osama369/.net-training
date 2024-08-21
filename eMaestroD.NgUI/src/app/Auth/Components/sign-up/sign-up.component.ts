@@ -242,7 +242,7 @@ export class SignUpComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.key = this.appConfigService.getConfig().Recaptcha.SiteKey;
+    this.key = this.appConfigService.getConfig().RecaptchaKey;
     console.log(this.key);
     this.auth.canAuthenticate();
     this.List = [

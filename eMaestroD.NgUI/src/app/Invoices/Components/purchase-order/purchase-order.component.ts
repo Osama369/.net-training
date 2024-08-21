@@ -105,13 +105,13 @@ export class PurchaseOrderComponent implements OnInit {
 
     editView(invoiceNo:any)
     {
-        this.router.navigateByUrl('/AddNewPurchaseOrder/'+invoiceNo);
+        this.router.navigateByUrl('/Invoices/AddNewPurchaseOrder/'+invoiceNo);
     }
     ConvertToSale(invoiceNo:any,comment:any)
     {
         if(comment == "Convert To Purchase")
         {
-            this.router.navigateByUrl('/AddNewPurchases/'+invoiceNo);
+            this.router.navigateByUrl('/Invoices/AddNewPurchases/'+invoiceNo);
         }
     }
 
@@ -153,7 +153,7 @@ export class PurchaseOrderComponent implements OnInit {
      }
      viewInvoiceDetail(invoiceNo:any)
      {
-      this.router.navigateByUrl('/Detail/'+invoiceNo);
+      this.router.navigateByUrl('/Invoices/Detail/'+invoiceNo);
         // this.invoiceNo = invoiceNo;
         // this.InvoiceDetailvisible = true;
      }

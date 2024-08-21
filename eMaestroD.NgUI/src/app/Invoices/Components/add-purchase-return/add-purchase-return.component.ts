@@ -490,7 +490,7 @@ export class AddPurchaseReturnComponent implements OnInit{
   {
     if(this.EditVoucherNo != undefined)
     {
-      this.router.navigateByUrl('/DebitNote')
+      this.router.navigateByUrl('/Invoices/DebitNote')
     }
     else
     {
@@ -631,13 +631,13 @@ export class AddPurchaseReturnComponent implements OnInit{
               {
                 this.invoicesService.deleteInvoiceRow(this.RemoveItemGLID2).subscribe({
                   next: (invoices) => {
-                    this.router.navigateByUrl('/DebitNote')
+                    this.router.navigateByUrl('/Invoices/DebitNote')
                   }
                 });
               }
               else
               {
-                this.router.navigateByUrl('/DebitNote')
+                this.router.navigateByUrl('/Invoices/DebitNote')
               }
             }
             else
@@ -716,7 +716,7 @@ export class AddPurchaseReturnComponent implements OnInit{
 
   close()
   {
-    this.router.navigateByUrl('/DebitNote');
+    this.router.navigateByUrl('/Invoices/DebitNote');
   }
   focusing()
   {

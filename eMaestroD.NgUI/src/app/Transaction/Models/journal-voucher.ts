@@ -13,4 +13,6 @@ export interface JournalVoucher {
   comID?:any;
   GLID?:any;
   masterEntryComment?:any;
+  acctNo?:any;
+  relAcctNo?:any;
 }

@@ -1,6 +1,7 @@
 ﻿using eMaestroD.Api.Common;
 using eMaestroD.Api.Data;
 using eMaestroD.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 namespace eMaestroD.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/api/[controller]/[Action]")]
     public class COAController : Controller
     {
@@ -20,12 +22,14 @@ namespace eMaestroD.Api.Controllers
         List<COA> coalst = new List<COA>();
         List<COA> treeNode = new List<COA>();
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly HelperMethods _helperMethods;
         string username = "";
-        public COAController(AMDbContext aMDbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor)
+        public COAController(AMDbContext aMDbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor, HelperMethods helperMethods)
         {
             _AMDbContext = aMDbContext;
             _notificationInterceptor = notificationInterceptor;
             _httpContextAccessor = httpContextAccessor;
+            _helperMethods = helperMethods;
             username = GetUsername();
 
         }
@@ -58,24 +62,29 @@ namespace eMaestroD.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> saveCOA([FromBody] COA coa)
         {
-            var comID = Request.Headers["comID"].ToString();
+            var comID = int.Parse(Request.Headers["comID"].ToString());
             if (coa.COAID != 0)
             {
                 coa.modDate = DateTime.Now;
                 coa.modBy = username;
+                coa.comID = comID;
                 _AMDbContext.COA.Update(coa);
                 await _AMDbContext.SaveChangesAsync();
 
-                _notificationInterceptor.SaveNotification("ChartOfAccountsEdit", int.Parse(comID), "");
+                _notificationInterceptor.SaveNotification("ChartOfAccountsEdit", comID, "");
             }
             else
             {
+                var newAcctNo = _helperMethods.GenerateAcctNo(coa.acctNo, comID);
+
                 coa.bal = 0;
                 coa.closingBal = 0;
                 coa.crtDate = DateTime.Now;
                 coa.crtBy = username;
                 coa.modDate = DateTime.Now;
                 coa.modBy = username;
+                coa.comID = comID;
+                coa.acctNo = newAcctNo;
                 await _AMDbContext.COA.AddAsync(coa);
                 await _AMDbContext.SaveChangesAsync();
 
@@ -83,7 +92,7 @@ namespace eMaestroD.Api.Controllers
                 _AMDbContext.COA.Update(coa);
                 await _AMDbContext.SaveChangesAsync();
 
-                _notificationInterceptor.SaveNotification("ChartOfAccountsCreate", int.Parse(comID), "");
+                _notificationInterceptor.SaveNotification("ChartOfAccountsCreate", comID, "");
             }
 
             return Ok(coa);

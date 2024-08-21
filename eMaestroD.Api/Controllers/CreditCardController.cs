@@ -1,6 +1,7 @@
 ﻿using eMaestroD.Api.Common;
 using eMaestroD.Api.Data;
 using eMaestroD.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -8,18 +9,21 @@ using System.Security.Claims;
 namespace eMaestroD.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/api/[controller]/[action]")]
     public class CreditCardController : Controller
     {
         private readonly AMDbContext _AMDbContext;
         private readonly NotificationInterceptor _notificationInterceptor;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly HelperMethods _helperMethods;
         string activeUser = "";
-        public CreditCardController(AMDbContext aMDbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor)
+        public CreditCardController(AMDbContext aMDbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor, HelperMethods helperMethods)
         {
             _AMDbContext = aMDbContext;
             _notificationInterceptor = notificationInterceptor;
             _httpContextAccessor = httpContextAccessor;
+            _helperMethods = helperMethods; 
             activeUser = GetUsername();
         }
 
@@ -56,13 +60,16 @@ namespace eMaestroD.Api.Controllers
                 _AMDbContext.CreditCards.Update(CC);
                 await _AMDbContext.SaveChangesAsync();
 
+                var ParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 200).acctNo;
+                var NewAcctNo = _helperMethods.GenerateAcctNo(ParentAccCode, comID);
+
                 var cstCOA = _AMDbContext.COA.Where(x => x.COANo == CC.cardID && x.parentCOAID == 200).FirstOrDefault();
                 COA coa = new COA()
                 {
                     COAID = cstCOA.COAID == null ? 0 : cstCOA.COAID,
-                    acctNo = "",
+                    acctNo = cstCOA.acctNo == null ? NewAcctNo : cstCOA.acctNo,
                     acctName = CC.bankName,
-                    isSys = true,
+                    isSys = false,
                     parentCOAID = 200,
                     COANo = CC.cardID,
                     nextChkNo = "",
@@ -79,7 +86,8 @@ namespace eMaestroD.Api.Controllers
                     modBy = activeUser,
                     openBal = cstCOA.openBal,
                     bal = cstCOA.bal,
-                    closingBal = cstCOA.closingBal
+                    closingBal = cstCOA.closingBal,
+                    comID = comID
                 };
                 _AMDbContext.COA.Update(coa);
                 await _AMDbContext.SaveChangesAsync();
@@ -107,11 +115,15 @@ namespace eMaestroD.Api.Controllers
                 _AMDbContext.CreditCards.Add(CC);
                 await _AMDbContext.SaveChangesAsync();
 
+                var ParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 200).acctNo;
+                var NewAcctNo = _helperMethods.GenerateAcctNo(ParentAccCode, comID);
+
+
                 COA coa = new COA()
                 {
-                    acctNo = "",
+                    acctNo = NewAcctNo,
                     acctName = CC.bankName,
-                    isSys = true,
+                    isSys = false,
                     parentCOAID = 200,
                     COANo = CC.cardID,
                     nextChkNo = "",
@@ -129,6 +141,7 @@ namespace eMaestroD.Api.Controllers
                     crtDate = DateTime.Now,
                     modBy = activeUser,
                     modDate = DateTime.Now,
+                    comID = comID
                 };
                 _AMDbContext.COA.Add(coa);
                 await _AMDbContext.SaveChangesAsync();

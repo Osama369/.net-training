@@ -30,7 +30,8 @@ builder.Services.AddDbContext<Context>(options =>
 builder.Services.AddSingleton<EmailService>(); 
  builder.Services.AddScoped<IEmailService, EmailService>();
 
-builder.Services.AddScoped<GLService>(); 
+builder.Services.AddScoped<GLService>();
+builder.Services.AddScoped<HelperMethods>();
 builder.Services.AddScoped<NotificationInterceptor>();
 
 builder.Services.AddSingleton<ConnectionStringsDictionary>();

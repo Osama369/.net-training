@@ -76,7 +76,7 @@ export class ReceiptVoucherComponent implements OnInit {
 
     editView(invoiceNo:any)
     {
-        this.router.navigateByUrl('/AddNewReceipt/'+invoiceNo);
+        this.router.navigateByUrl('/Transactions/AddNewReceipt/'+invoiceNo);
     }
 
     deleteView(invoiceNo:any)
@@ -138,7 +138,7 @@ export class ReceiptVoucherComponent implements OnInit {
      {
         // this.invoiceNo = invoiceNo;
         // this.InvoiceDetailvisible = true;
-        this.router.navigateByUrl('/VoucherDetail/'+invoiceNo);
+        this.router.navigateByUrl('/Invoices/VoucherDetail/'+invoiceNo);
      }
 
 

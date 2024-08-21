@@ -1,82 +1,167 @@
 <div class="container">
-    <h4 translate>{{title}}</h4>
-    <div style="border-Top: 3px solid #eee;" class="row">
-        <div class="col-12">
-            <div class="col-12">
-            <label class="col-form-label date-label col-12 required" translate>Category&nbsp;</label>
-            <p-autoComplete styleClass="myclass col-10" [(ngModel)]="SelectedproductGrouplist" [suggestions]="FilterProductGrouplist" (completeMethod)="filterProduct($event)"
-            field="prodGrpName" value="prodGrpID" [minLength]="1" (keyup.enter)="onEnterTableInput(0)" [dropdown]="true" class="col-form-label col-10" [style]="{'width':'50% !important','min-width':'50%'}" #autoComplete (onFocus)="autoComplete.show()" ></p-autoComplete>
+  <h4 translate>{{title}}</h4>
+  <div style="border-top: 3px solid #eee;" class="row">
+      <div class="col-12">
+          <!-- Main Information Section -->
+          <div class="row">
+              <div class="col-12">
+                  <label class="col-form-label date-label col-12 required" translate>Category&nbsp;</label>
+                  <p-autoComplete styleClass="myclass col-11" [(ngModel)]="SelectedproductGrouplist"
+                      [suggestions]="FilterProductGrouplist" (completeMethod)="filterProduct($event)"
+                      field="prodGrpName" value="prodGrpID" [minLength]="1" (keyup.enter)="onEnterTableInput(0)"
+                      [dropdown]="true" class="col-form-label col-11"
+                      [style]="{'width':'50% !important','min-width':'50%'}"
+                      #autoComplete (onFocus)="autoComplete.show()">
+                  </p-autoComplete>
+                  <p-button *ngIf="showGroupBtn" icon="pi pi-plus" title="Add New Category"
+                      styleClass="p-button col-1" (onClick)="OpenAddGroupByParent('openGroup',undefined)">
+                  </p-button>
+              </div>
 
-            <p-button *ngIf="showGroupBtn" icon="pi pi-plus" title="Add New Category" styleClass="p-button col-1" (onClick)="OpenAddGroupByParent('openGroup',undefined)"></p-button>
-            </div>
+              <div class="col-6">
+                  <label class="col-form-label date-label required" translate>Type&nbsp;</label>
+                  <p-autoComplete #inputFieldTableCst styleClass="myclass col-12" [(ngModel)]="selectedType"
+                      [suggestions]="filterType" (completeMethod)="filtersType($event)"
+                      [minLength]="1" (keyup.enter)="onEnterTableInput(0)" (ngModelChange)="hideFields()"
+                      [dropdown]="true" class="col-form-label" #autoComplete1 (onFocus)="autoComplete1.show()">
+                  </p-autoComplete>
+              </div>
 
-              <label class="col-form-label date-label col-6 required" translate>Type  &nbsp;</label>
-              <label class="col-form-label date-label col-6 required" translate>Supplier Name  &nbsp;</label>
+              <div class="col-6">
+                  <label class="col-form-label date-label required" translate>Supplier Name&nbsp;</label>
+                  <p-dropdown #inputField (keyup.enter)="onEnterTableInput(0)"  styleClass="myclass col-11" [style]="{'border-radius':'6px 0px 0px 6px'}" [(ngModel)]="SelectedSupplier"
+                      placeholder="Select a Supplier" [options]="Supplierlist"
+                      optionLabel="vendName" [filter]="true" [filterBy]="'vendName'"
+                      [showClear]="true">
+                    </p-dropdown>
+                      <p-button *ngIf="showGroupBtn" icon="pi pi-plus" title="Add New Supplier"
+                      styleClass="p-button col-1" (onClick)="openAddSupplier()">
+                    </p-button>
+              </div>
 
-              <p-autoComplete #inputFieldTableCst styleClass="myclass col-5" [(ngModel)]="selectedType" [suggestions]="filterType" (completeMethod)="filtersType($event)"
-              [minLength]="1" (keyup.enter)="onEnterTableInput(0)" (ngModelChange)="hideFields()" [dropdown]="true" class="col-form-label" #autoComplete1 (onFocus)="autoComplete1.show()"></p-autoComplete>
-              <label class="col-1"></label>
-              <p-dropdown
-              #inputField
-              styleClass="myclass col-5"
-              [(ngModel)]="SelectedSupplier"
-              [options]="Supplierlist"
-              optionLabel="vendName"
-              [filter]="true"
-              [filterBy]="'vendName'"
-              [showClear]="true"
-              />
+              <div class="col-6">
+                  <label class="col-form-label date-label required" translate>Product Code&nbsp;</label>
+                  <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInput(1)" maxlength="25"
+                      id="code" class="col-form-label col-12" name="code" [(ngModel)]="productlist[0].prodCode" autofocus />
+              </div>
 
-              <label class="col-form-label date-label col-6 required" translate>Product Code </label>
-              <label class="col-form-label date-label col-6 required" translate>Name </label>
-              <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInput(1)" maxlength="25" id="code" class="col-form-label col-5" name="code"  [(ngModel)]="productlist[0].prodCode" autofocus/>
-              <label class="col-1"></label>
-              <input pInputText id="name" #inputFieldTableCst (keyup.enter)="onEnterTableInput(2)" maxlength="95" class="col-form-label col-5" name="name"  [(ngModel)]="productlist[0].prodName">
-
-              <!-- <label class="col-form-label date-label col-6 required" translate>Product Unit </label> -->
-              <!-- <label class="col-1"></label> -->
-              <!-- <input pInputText id="prodUnit" #inputFieldTableCst (keyup.enter)="onEnterTableInput(3)" class="col-form-label col-5" name="shortName"  [(ngModel)]="productlist[0].prodUnit"/> -->
-
-            <div class="col-12" *ngIf="hiddenField">
-                <label class="col-form-label date-label col-6 required" translate>Purchase Rate </label>
-                <label class="col-form-label date-label col-6 required" translate>&nbsp; Sell Rate </label>
-                <input pInputText id="purchRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" #inputFieldTableCst (keyup.enter)="onEnterTableInput(4)" class="col-form-label col-5" name="purchRate"  [(ngModel)]="productlist[0].purchRate" />
-                <label class="col-1"></label>
-                <input pInputText id="sellRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" #inputFieldTableCst (keyup.enter)="onEnterTableInput(5)" class="col-form-label col-5" name="sellRate"  [(ngModel)]="productlist[0].sellRate" />
-            </div>
-            <div class="col-12" *ngIf="!hiddenField">
-                <label class="col-form-label date-label col-12 required" translate>&nbsp; Sell Rate </label>
-                <input pInputText id="sellRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" #inputFieldTableCst (keyup.enter)="onEnterTableInput(5)" class="col-form-label col-11" name="sellRate"  [(ngModel)]="productlist[0].sellRate" />
-            </div>
-            <div class="col-12" *ngIf="hiddenField">
-              <label class="col-form-label date-label col-6 required" translate>Min Qty </label>
-              <label class="col-form-label date-label col-6 required" translate>&nbsp; Max Qty </label>
-              <input pInputText id="minqty" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" #inputFieldTableCst (keyup.enter)="onEnterTableInput(6)" class="col-form-label col-5" name="minQty"  [(ngModel)]="productlist[0].minQty" />
-              <label class="col-1"></label>
-              <input pInputText id="maxqty" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" #inputFieldTableCst (keyup.enter)="onEnterTableInput(7)" class="col-form-label col-5" name="maxQty"  [(ngModel)]="productlist[0].maxQty" />
+              <div class="col-6">
+                  <label class="col-form-label date-label required" translate>Name&nbsp;</label>
+                  <input pInputText id="name" #inputFieldTableCst (keyup.enter)="onEnterTableInput(2)"
+                      maxlength="95" class="col-form-label col-12" name="name" [(ngModel)]="productlist[0].prodName">
+              </div>
           </div>
-          <div class="col-12" *ngIf="hiddenField">
-            <label class="col-form-label date-label col-12 required" translate>
-                Allow Item Serial No In Sales?
-            </label>
-            <select
-                class="col-form-label col-5"
-                [(ngModel)]="productlist[0].isStore"
-                (keyup.enter)="OnSaveFocus()"
-            >
-                <option [value]="true">Yes</option>
-                <option [value]="false">No</option>
-            </select>
-        </div>  <br>
-            <!-- <div class="col-12">
-                <label class="col-form-label col-4 required">Opening Stock :</label>
-                <input pInputText id="openStock" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" #inputFieldTableCst (keyup.enter)="onEnterTableInput(6)" class="col-form-label col-10" name="opnStock"  [(ngModel)]="productlist[0].qty"/>
-            </div>
-            <br> -->
-            <div class="col-11" style="text-align: right;">
-                    <button #savebtn (click)="saveProduct()" translate class="btn btn-primary col-3"><i class="fa fa-save"></i>  Save</button>&nbsp;
-                    <button #cancelbtn (click)="sendDataToParent()" translate class="btn btn-danger col-3"><i class="fa fa-undo"></i> Cancel</button>
-            </div>
+
+          <br>
+          <!-- Tabs Section -->
+          <p-tabView>
+              <!-- Additional Information Tab -->
+              <p-tabPanel header="Additional Information">
+                  <div class="row" *ngIf="hiddenField">
+                      <div class="col-6">
+                          <label class="col-form-label date-label required" translate>Purchase Rate&nbsp;</label>
+                          <input pInputText id="purchRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"
+                              #inputFieldTableCst (keyup.enter)="onEnterTableInput(4)" class="col-form-label col-12"
+                              name="purchRate" [(ngModel)]="productlist[0].purchRate" />
+                      </div>
+
+                      <div class="col-6">
+                          <label class="col-form-label date-label required" translate>Sell Rate&nbsp;</label>
+                          <input pInputText id="sellRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"
+                              #inputFieldTableCst (keyup.enter)="onEnterTableInput(5)" class="col-form-label col-12"
+                              name="sellRate" [(ngModel)]="productlist[0].sellRate" />
+                      </div>
+
+                      <div class="col-6">
+                          <label class="col-form-label date-label required" translate>Min Qty&nbsp;</label>
+                          <input pInputText id="minqty" (keypress)="($event.charCode >= 48 && $event.charCode < 58)"
+                              #inputFieldTableCst (keyup.enter)="onEnterTableInput(6)" class="col-form-label col-12"
+                              name="minQty" [(ngModel)]="productlist[0].minQty" />
+                      </div>
+
+                      <div class="col-6">
+                          <label class="col-form-label date-label required" translate>Max Qty&nbsp;</label>
+                          <input pInputText id="maxqty" (keypress)="($event.charCode >= 48 && $event.charCode < 58)"
+                              #inputFieldTableCst (keyup.enter)="onEnterTableInput(7)" class="col-form-label col-12"
+                              name="maxQty" [(ngModel)]="productlist[0].maxQty" />
+                      </div>
+
+                      <div class="col-6">
+                        <label class="col-form-label date-label required" translate>Allow Item Serial No In Sales?</label>
+                        <p-inputSwitch [(ngModel)]="productlist[0].isStore" [style]="{'vertical-align': 'middle'}" styleClass="offset-1"></p-inputSwitch>
+                    </div>
+                    <div class="col-6">
+                      <label class="col-form-label date-label required" translate>Is Taxable?</label>
+                      <p-inputSwitch [(ngModel)]="productlist[0].isTaxable" [style]="{'vertical-align': 'middle'}" styleClass="offset-1"></p-inputSwitch>
+                  </div>
+
+
+                  </div>
+
+                  <div class="row" *ngIf="!hiddenField">
+                      <div class="col-12">
+                          <label class="col-form-label date-label required" translate>Sell Rate&nbsp;</label>
+                          <input pInputText id="sellRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"
+                              #inputFieldTableCst (keyup.enter)="onEnterTableInput(5)" class="col-form-label col-11"
+                              name="sellRate" [(ngModel)]="productlist[0].sellRate" />
+                      </div>
+                  </div>
+              </p-tabPanel>
+
+              <!-- Barcode Tab -->
+              <p-tabPanel header="Barcode">
+                  <div class="row">
+                    <div class="col-12 mt-3">
+                      <p-table [value]="productlist[0]?.productBarCodes || []" editMode="row" dataKey="prodBCID" styleClass="fixed-table-height">
+                          <ng-template pTemplate="header">
+                              <tr>
+                                  <th>Barcode</th>
+                                  <th>Unit</th>
+                                  <th>Base Qty</th>
+                              </tr>
+                          </ng-template>
+                          <ng-template pTemplate="body" let-product let-editing="editing">
+                              <tr [pEditableRow]="product">
+                                  <td>
+                                      <input pInputText [(ngModel)]="product.BarCode">
+                                  </td>
+                                  <td>
+                                      <input pInputText [(ngModel)]="product.Unit">
+                                  </td>
+                                  <td>
+                                      <input pInputText type="number" [(ngModel)]="product.Qty">
+                                  </td>
+                              </tr>
+                          </ng-template>
+                          <ng-template pTemplate="footer">
+                              <tr>
+                                  <td colspan="3">
+                                      <button pButton type="button" icon="pi pi-plus" label="Add New Row" (click)="addNewRow()"></button>
+                                  </td>
+                              </tr>
+                          </ng-template>
+                      </p-table>
+                  </div>
+                  </div>
+              </p-tabPanel>
+
+
+          </p-tabView>
+
+          <!-- Save and Cancel Buttons -->
+          <div class="col-11" style="text-align: right;">
+              <button #savebtn (click)="saveProduct()" translate class="btn btn-primary col-3">
+                  <i class="fa fa-save"></i> Save
+              </button>&nbsp;
+              <button #cancelbtn (click)="sendDataToParent()" translate class="btn btn-danger col-3">
+                  <i class="fa fa-undo"></i> Cancel
+              </button>
+          </div>
       </div>
-    </div>
+  </div>
 </div>
+
+
+<p-dialog #cstDailog [(visible)]="SupplierVisible" [style]="{width: '40vw'}">
+  <app-add-new-vendor [title]="'Supplier Registration'" (dataEvent)="handleChildData($event)"></app-add-new-vendor>
+</p-dialog>

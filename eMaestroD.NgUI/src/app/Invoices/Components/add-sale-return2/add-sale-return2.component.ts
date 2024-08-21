@@ -685,7 +685,7 @@ export class AddSaleReturn2Component implements OnInit{
   {
     if(this.EditVoucherNo != undefined)
     {
-      this.router.navigateByUrl('/SaleReturn')
+      this.router.navigateByUrl('/Invoices/SaleReturn')
     }
     else
     {
@@ -952,13 +952,13 @@ export class AddSaleReturn2Component implements OnInit{
               {
                 this.invoicesService.deleteInvoiceRow(this.RemoveItemGLID2).subscribe({
                   next: (invoices) => {
-                    this.router.navigateByUrl('/SaleReturn')
+                    this.router.navigateByUrl('/Invoices/SaleReturn')
                   }
                 });
               }
               else
               {
-                this.router.navigateByUrl('/SaleReturn')
+                this.router.navigateByUrl('/Invoices/SaleReturn')
               }
 
             }
@@ -1150,7 +1150,7 @@ export class AddSaleReturn2Component implements OnInit{
 
   close()
   {
-    this.router.navigateByUrl('/SaleReturn');
+    this.router.navigateByUrl('/Invoices/SaleReturn');
   }
   focusing()
   {

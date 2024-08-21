@@ -94,7 +94,7 @@ export class PaymentVoucherComponent implements OnInit {
 
     editView(invoiceNo:any)
     {
-      this.router.navigateByUrl('/AddNewPayment/'+invoiceNo);
+      this.router.navigateByUrl('/Transactions/AddNewPayment/'+invoiceNo);
         //this.router.navigateByUrl('/AddNewSale/'+invoiceNo);
     }
 
@@ -146,7 +146,7 @@ export class PaymentVoucherComponent implements OnInit {
      }
      viewInvoiceDetail(invoiceNo:any)
      {
-        this.router.navigateByUrl('/VoucherDetail/'+invoiceNo);
+        this.router.navigateByUrl('/Invoices/VoucherDetail/'+invoiceNo);
         // this.invoiceNo = invoiceNo;
         // this.InvoiceDetailvisible = true;
      }

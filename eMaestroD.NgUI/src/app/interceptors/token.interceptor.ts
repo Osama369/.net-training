@@ -22,8 +22,8 @@ export class TokenInterceptor implements HttpInterceptor {
 
     // this.start.load();
     if(myToken){
-        const decodedToken: any = jwt_decode.jwtDecode(myToken);
-          // 'exp' claim contains the expiration time in seconds
+    const decodedToken: any = jwt_decode.jwtDecode(myToken);
+      // 'exp' claim contains the expiration time in seconds
     const expirationTimeInSeconds = decodedToken.exp;
 
     // Convert expiration time from seconds to milliseconds

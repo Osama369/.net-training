@@ -12,32 +12,46 @@ using System.Text.RegularExpressions;
 using eMaestroD.Api.Models;
 using eMaestroD.Api.Common;
 using eMaestroD.Api.Data;
+using Microsoft.AspNetCore.Authorization;
 
 namespace eMaestroD.Api.Controllers
 {
 
     [ApiController]
+    [Authorize]
     [Route("/api/[controller]")]
     public class VendorController : Controller
     {
         private readonly AMDbContext _AMDbContext;
         private readonly NotificationInterceptor _notificationInterceptor;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpContextAccessor _httpContextAccessor; 
+        private readonly HelperMethods _helperMethods; 
         string username = "";
-        public VendorController(AMDbContext aMDbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor)
+        public VendorController(AMDbContext aMDbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor,HelperMethods helperMethods)
         {
             _AMDbContext = aMDbContext;
             _notificationInterceptor = notificationInterceptor;
             _httpContextAccessor = httpContextAccessor;
+            _helperMethods = helperMethods;
             username = GetUsername();
         }
 
         [NonAction]
-        public string GetUsername()
+         public string GetUsername()
         {
             var email = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email);
-            var user = _AMDbContext.Users.Where(x => x.Email == email).FirstOrDefault();
-            return user.FirstName + " " + user.LastName;
+            if (!string.IsNullOrEmpty(email))
+            {
+                if (_AMDbContext.Users != null)
+                {
+                    var user = _AMDbContext.Users.FirstOrDefault(x => x.Email == email);
+                    if (user != null)
+                    {
+                        return user.FirstName + " " + user.LastName;
+                    }
+                }
+            }
+            return "";
         }
 
         [HttpGet]
@@ -168,9 +182,9 @@ namespace eMaestroD.Api.Controllers
                     COA coa = new COA()
                     {
                         COAID = cstCOA.COAID,
-                        acctNo = vendor.vendCode,
+                        acctNo = cstCOA.acctNo,
                         acctName = vendor.vendName,
-                        isSys = true,
+                        isSys = false,
                         parentCOAID = 83,
                         COANo = vendor.vendID,
                         nextChkNo = vendor.vendCode,
@@ -187,7 +201,8 @@ namespace eMaestroD.Api.Controllers
                         modDate = DateTime.Now,
                         openBal = vendor.opnBal,
                         bal = cstCOA.bal - cstCOA.openBal + vendor.opnBal,
-                        closingBal = cstCOA.closingBal
+                        closingBal = cstCOA.closingBal,
+                        comID = vendor.comID
                     };
                     _AMDbContext.COA.Update(coa);
                     await _AMDbContext.SaveChangesAsync();
@@ -392,13 +407,17 @@ namespace eMaestroD.Api.Controllers
                     await _AMDbContext.Vendors.AddAsync(vendor);
                     await _AMDbContext.SaveChangesAsync();
 
+                    var vendParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 83).acctNo;
+                    var vendNewAcctNo = _helperMethods.GenerateAcctNo(vendParentAccCode, (int)vendor.comID);
+
+
                     COA coa = new COA()
                     {
-                        acctNo = vendor.vendCode,
+                        acctNo = vendNewAcctNo,
                         acctName = vendor.vendName,
                         openBal = vendor.opnBal,
                         closingBal = 0,
-                        isSys = true,
+                        isSys = false,
                         parentCOAID = 83,
                         COANo = vendor.vendID,
                         nextChkNo = vendor.vendCode,
@@ -414,6 +433,7 @@ namespace eMaestroD.Api.Controllers
                         crtDate = DateTime.Now,
                         modBy = username,
                         modDate = DateTime.Now,
+                        comID = vendor.comID
                     };
                     await _AMDbContext.COA.AddAsync(coa);
                     await _AMDbContext.SaveChangesAsync();
@@ -541,6 +561,7 @@ namespace eMaestroD.Api.Controllers
                 new SqlParameter { ParameterName = "@comID", Value = comID }
                 };
                 var voucherNo = _AMDbContext.invoiceNo.FromSqlRaw(sql, parms.ToArray()).ToList()[0].voucherNo;
+                var vendParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 83).acctNo;
 
                 foreach (var file in form.Files)
                 {
@@ -593,14 +614,17 @@ namespace eMaestroD.Api.Controllers
                                                 await _AMDbContext.Vendors.AddAsync(v);
                                                 await _AMDbContext.SaveChangesAsync();
                                                 list.Add(v);
+
+                                                var vendNewAcctNo = _helperMethods.GenerateAcctNo(vendParentAccCode, comID);
+
                                                 COA coa = new COA()
                                                 {
-                                                    acctNo = v.vendCode,
+                                                    acctNo = vendNewAcctNo,
                                                     acctName = v.vendName,
                                                     openBal = bal,
                                                     bal = bal,
                                                     closingBal = 0,
-                                                    isSys = true,
+                                                    isSys = false,
                                                     parentCOAID = 83,
                                                     COANo = v.vendID,
                                                     nextChkNo = v.vendCode,
@@ -615,6 +639,7 @@ namespace eMaestroD.Api.Controllers
                                                     crtDate = DateTime.Now,
                                                     modBy = username,
                                                     modDate = DateTime.Now,
+                                                    comID = v.comID
                                                 };
                                                 await _AMDbContext.COA.AddAsync(coa);
                                                 await _AMDbContext.SaveChangesAsync();

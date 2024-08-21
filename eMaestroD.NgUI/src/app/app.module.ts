@@ -11,10 +11,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppConfigService } from './Shared/Services/app-config.service';
 import { AuthModule } from './Auth/auth.module';
 
-export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
-  return new TranslateHttpLoader(http);
-}
-
 export function initializeApp(appConfigService: AppConfigService) {
   return () => {
     return appConfigService.loadAppConfig().then(() => {
@@ -25,7 +21,6 @@ export function initializeApp(appConfigService: AppConfigService) {
     });
   };
 }
-
 
 @NgModule({
   declarations: [

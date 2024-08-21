@@ -13,7 +13,8 @@ export class TaxesService {
   constructor(private http: HttpClient) { }
 
   getAllTaxes(): Observable<Taxes[]> {
-    return this.http.get<Taxes[]>(this.baseApiUrl);
+    let comID = localStorage.getItem('comID');
+    return this.http.get<Taxes[]>(this.baseApiUrl+comID);
   }
 
   saveTaxes(taxlist: Taxes): Observable<Taxes[]> {

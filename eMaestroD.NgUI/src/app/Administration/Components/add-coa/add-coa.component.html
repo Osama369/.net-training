@@ -15,7 +15,7 @@
 
           <div class="col-12">
               <label class="col-form-label date-label col-12 required" translate>Code</label>
-              <input pInputText #inputFieldTableCOA (keyup.enter)="onEnterTableInputCst(1)" translate id="code" class="col-form-label col-12" name="code"  [(ngModel)]="COAList[0].acctNo" autofocus/>
+              <input pInputText #inputFieldTableCOA [disabled]="enabled" (keyup.enter)="onEnterTableInputCst(1)" translate id="code" class="col-form-label col-12" name="code"  [(ngModel)]="COAList[0].acctNo" autofocus/>
           </div>
           <div class="col-12">
               <label class="col-form-label date-label col-12 required" translate>Name</label>

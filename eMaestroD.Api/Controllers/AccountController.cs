@@ -54,11 +54,10 @@ namespace eMaestroD.Api.Controllers
 
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> getAllTenants()
         {
-
             var list = _AMDbContext.Tenants.ToList();
-
             if (list.Count > 0)
             {
                 return Ok(list);
@@ -115,7 +114,6 @@ namespace eMaestroD.Api.Controllers
 
                     // Create the user
                     var result = await _customUserManager.CreateAsync(user, tenants.password);
-
                     if (result.Succeeded)
                     {
                         tenants.password = "";
@@ -215,6 +213,7 @@ namespace eMaestroD.Api.Controllers
 
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> sendEmailToTenant([FromBody] List<Tenants> tenants)
         {
 
@@ -291,6 +290,7 @@ namespace eMaestroD.Api.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         [Route("{tenantID}")]
         public async Task<IActionResult> deleteTenant(int tenantID)
         {
@@ -488,6 +488,7 @@ namespace eMaestroD.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> SuspendTenant(Tenants tenant)
         {
             _AMDbContext.Tenants.Update(tenant);

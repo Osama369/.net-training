@@ -22,19 +22,7 @@ namespace eMaestroD.Api.Controllers
 
             foreach (var section in _configuration.GetSection("Settings").GetChildren())
             {
-                if (section.GetChildren().ToList().Count == 0)
-                {
-                    appSettings.Add(section.Key, section.Value);
-                }
-                else
-                {
-                    var subSectionDict = new Dictionary<string, string>();
-                    foreach (var subSection in section.GetChildren())
-                    {
-                        subSectionDict.Add(subSection.Key, subSection.Value);
-                    }
-                    appSettings.Add(section.Key, subSectionDict);
-                }
+                 appSettings.Add(section.Key, section.Value);
             }
 
             return Ok(appSettings);

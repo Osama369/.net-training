@@ -148,7 +148,6 @@ export class VendorsComponent implements OnInit {
                   "VAT NO": "000000",
                   'VAT %': "0",
                   "OPENING BALANCE":0
-              // companyName: localStorage.getItem('comName')
               }]
           this.serviceName = "VendorService";
           this.methodName = "uploadVendors";

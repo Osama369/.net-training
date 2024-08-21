@@ -487,7 +487,7 @@ export class AddPurchaseReturn2Component implements OnInit{
   {
     if(this.EditVoucherNo != undefined)
     {
-      this.router.navigateByUrl('/PurchaseReturn')
+      this.router.navigateByUrl('/Invoices/PurchaseReturn')
     }
     else
     {
@@ -631,13 +631,13 @@ export class AddPurchaseReturn2Component implements OnInit{
               {
                 this.invoicesService.deleteInvoiceRow(this.RemoveItemGLID2).subscribe({
                   next: (invoices) => {
-                    this.router.navigateByUrl('/PurchaseReturn')
+                    this.router.navigateByUrl('/Invoices/PurchaseReturn')
                   }
                 });
               }
               else
               {
-                this.router.navigateByUrl('/PurchaseReturn')
+                this.router.navigateByUrl('/Invoices/PurchaseReturn')
               }
             }
             else
@@ -719,7 +719,7 @@ export class AddPurchaseReturn2Component implements OnInit{
 
   close()
   {
-    this.router.navigateByUrl('/PurchaseReturn');
+    this.router.navigateByUrl('/Invoices/PurchaseReturn');
   }
   focusing()
   {

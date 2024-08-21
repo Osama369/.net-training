@@ -119,6 +119,7 @@ export interface Gl {
     balSum?:any;
     checkNo?:any;
     checkAdd?:any;
+    acctNo?:any;
 }
 
 export interface type{

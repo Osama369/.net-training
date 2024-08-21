@@ -2,6 +2,7 @@
 using eMaestroD.Api.Common;
 using eMaestroD.Api.Data;
 using eMaestroD.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -18,19 +19,22 @@ using System.Threading.Tasks;
 namespace eMaestroD.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/api/[controller]")]
     public class CustomersController : Controller
     {
         private readonly AMDbContext _AMDbContext;
         private readonly NotificationInterceptor _notificationInterceptor;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient _httpClient; 
+        private readonly HelperMethods _helperMethods; 
         string username = "";
-        public CustomersController(AMDbContext aMDbContext, HttpClient httpClient, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor)
+        public CustomersController(AMDbContext aMDbContext, HttpClient httpClient, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor, HelperMethods helperMethods)
         {
             _AMDbContext = aMDbContext;
             _notificationInterceptor = notificationInterceptor;
             _httpContextAccessor = httpContextAccessor;
+            _helperMethods = helperMethods;
             _httpClient = httpClient;
 
             username = GetUsername();
@@ -40,7 +44,6 @@ namespace eMaestroD.Api.Controllers
         [Route("{comID}")]
         public async Task<IActionResult> GetAllCustomer(int comID)
         {
-
             var result = await (from cst in _AMDbContext.Customers
                                 join coa in _AMDbContext.COA
                                 on cst.cstID equals coa.COANo
@@ -202,9 +205,9 @@ namespace eMaestroD.Api.Controllers
                         COA coa = new COA()
                         {
                             COAID = cstCOA.COAID,
-                            acctNo = customer.cstCode,
+                            acctNo = cstCOA.acctNo,
                             acctName = customer.cstName,
-                            isSys = true,
+                            isSys = false,
                             parentCOAID = 40,
                             COANo = customer.cstID,
                             nextChkNo = customer.cstCode,
@@ -220,6 +223,7 @@ namespace eMaestroD.Api.Controllers
                             closingBal = cstCOA.closingBal,
                             modBy = username,
                             modDate = DateTime.Now,
+                            comID = customer.comID
                         };
                         _AMDbContext.COA.Update(coa);
                         await _AMDbContext.SaveChangesAsync();
@@ -425,14 +429,17 @@ namespace eMaestroD.Api.Controllers
                         await _AMDbContext.Customers.AddAsync(customer);
                         await _AMDbContext.SaveChangesAsync();
 
+                        var cstParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 40).acctNo;
+                        var cstNewAcctNo = _helperMethods.GenerateAcctNo(cstParentAccCode, (int)customer.comID);
+
                         COA coa = new COA()
                         {
-                            acctNo = customer.cstCode,
+                            acctNo = cstNewAcctNo,
                             acctName = customer.cstName,
                             openBal = customer.opnBal,
                             bal = customer.opnBal,
                             closingBal = 0,
-                            isSys = true,
+                            isSys = false,
                             parentCOAID = 40,
                             COANo = customer.cstID,
                             nextChkNo = customer.cstCode,
@@ -447,6 +454,7 @@ namespace eMaestroD.Api.Controllers
                             crtDate = DateTime.Now,
                             modBy = username,
                             modDate = DateTime.Now,
+                            comID = customer.comID
                         };
                         await _AMDbContext.COA.AddAsync(coa);
                         await _AMDbContext.SaveChangesAsync();
@@ -604,6 +612,7 @@ namespace eMaestroD.Api.Controllers
                     new SqlParameter { ParameterName = "@comID", Value = comID },
                 };
                 var voucherNo = _AMDbContext.invoiceNo.FromSqlRaw(sql, parms.ToArray()).ToList()[0].voucherNo;
+                var cstParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 40).acctNo;
 
                 foreach (var file in form.Files)
                 {
@@ -660,14 +669,17 @@ namespace eMaestroD.Api.Controllers
                                                 await _AMDbContext.Customers.AddAsync(v);
                                                 await _AMDbContext.SaveChangesAsync();
                                                 list.Add(v);
+
+                                                var cstNewAcctNo = _helperMethods.GenerateAcctNo(cstParentAccCode, comID);
+                                                
                                                 COA coa = new COA()
                                                 {
-                                                    acctNo = v.cstCode,
+                                                    acctNo = cstNewAcctNo,
                                                     acctName = v.cstName,
                                                     openBal = bal,
                                                     bal = bal,
                                                     closingBal = 0,
-                                                    isSys = true,
+                                                    isSys = false,
                                                     parentCOAID = 40,
                                                     COANo = v.cstID,
                                                     nextChkNo = v.cstCode,
@@ -682,6 +694,7 @@ namespace eMaestroD.Api.Controllers
                                                     crtDate = DateTime.Now,
                                                     modBy = username,
                                                     modDate = DateTime.Now,
+                                                    comID = v.comID
                                                 };
                                                 await _AMDbContext.COA.AddAsync(coa);
                                                 await _AMDbContext.SaveChangesAsync();

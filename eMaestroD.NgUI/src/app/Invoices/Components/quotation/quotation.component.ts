@@ -101,13 +101,13 @@ export class QuotationComponent implements OnInit {
 
     editView(invoiceNo:any)
     {
-        this.router.navigateByUrl('/AddNewQuotation/'+invoiceNo);
+        this.router.navigateByUrl('/Invoices/AddNewQuotation/'+invoiceNo);
     }
     ConvertToSale(invoiceNo:any,comment:any)
     {
         if(comment == "Convert To Sale")
         {
-            this.router.navigateByUrl('/AddNewSales/'+invoiceNo);
+            this.router.navigateByUrl('/Invoices/AddNewSales/'+invoiceNo);
         }
     }
 
@@ -149,7 +149,7 @@ export class QuotationComponent implements OnInit {
      }
      viewInvoiceDetail(invoiceNo:any)
      {
-      this.router.navigateByUrl('/Detail/'+invoiceNo);
+      this.router.navigateByUrl('/Invoices/Detail/'+invoiceNo);
         // this.invoiceNo = invoiceNo;
         // this.InvoiceDetailvisible = true;
      }

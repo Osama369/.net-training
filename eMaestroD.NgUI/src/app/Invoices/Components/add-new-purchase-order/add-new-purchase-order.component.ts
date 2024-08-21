@@ -734,7 +734,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
   {
     if(this.EditVoucherNo != undefined)
     {
-      this.router.navigateByUrl('/PurchaseOrder')
+      this.router.navigateByUrl('/Invoices/PurchaseOrder')
     }
     else
     {
@@ -1090,13 +1090,13 @@ export class AddNewPurchaseOrderComponent implements OnInit{
               {
                 this.invoicesService.deleteInvoiceRow(this.RemoveItemGLID2).subscribe({
                   next: (invoices) => {
-                    this.router.navigateByUrl('/PurchaseOrder')
+                    this.router.navigateByUrl('/Invoices/PurchaseOrder')
                   }
                 });
               }
               else
               {
-                this.router.navigateByUrl('/PurchaseOrder')
+                this.router.navigateByUrl('/Invoices/PurchaseOrder')
               }
             }
             else
@@ -1179,7 +1179,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
 
   close()
   {
-    this.router.navigateByUrl('/PurchaseOrder');
+    this.router.navigateByUrl('/Invoices/PurchaseOrder');
   }
   focusing()
   {

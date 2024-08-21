@@ -1009,7 +1009,7 @@ export class AddQuotationToSaleComponent implements OnInit{
   {
     if(this.EditVoucherNo != undefined)
     {
-      this.router.navigateByUrl('/SaleInvoices')
+      this.router.navigateByUrl('/Invoices/SaleInvoices')
     }
     else
     {
@@ -1300,10 +1300,10 @@ export class AddQuotationToSaleComponent implements OnInit{
 
 
       if(this.SelectedType[0].name == "Cash" && this.isMultiPayment){
-        this.url ="/AddNewServiceInvoice";
+        this.url ="/Invoices/AddNewServiceInvoice";
         this.paymentMethodVisiblity = true;
       }else{
-        this.SaveData('/AddNewServiceInvoice');
+        this.SaveData('/Invoices/AddNewServiceInvoice');
       }
     }
   }
@@ -1410,10 +1410,10 @@ export class AddQuotationToSaleComponent implements OnInit{
         }
 
         if(this.SelectedType[0].name == "Cash" && this.isMultiPayment){
-          this.url ="/SaleInvoices";
+          this.url ="/Invoices/SaleInvoices";
           this.paymentMethodVisiblity = true;
         }else{
-          this.SaveData('/SaleInvoices');
+          this.SaveData('/Invoices/SaleInvoices');
         }
     }
 
@@ -1564,7 +1564,7 @@ export class AddQuotationToSaleComponent implements OnInit{
 
   close()
   {
-    this.router.navigateByUrl('/SaleInvoices');
+    this.router.navigateByUrl('/Invoices/SaleInvoices');
   }
   focusing()
   {

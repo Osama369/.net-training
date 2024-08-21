@@ -828,7 +828,7 @@ export class QuotationInvoiceComponent implements OnInit{
   {
     if(this.EditVoucherNo != undefined)
     {
-      this.router.navigateByUrl('/Quotations')
+      this.router.navigateByUrl('/Invoices/Quotations')
     }
     else
     {
@@ -1200,13 +1200,13 @@ export class QuotationInvoiceComponent implements OnInit{
               {
                 this.invoicesService.deleteInvoiceRow(this.RemoveItemGLID2).subscribe({
                   next: (invoices) => {
-                    this.router.navigateByUrl('/Quotations')
+                    this.router.navigateByUrl('/Invoices/Quotations')
                   }
                 });
               }
               else
               {
-                this.router.navigateByUrl('/Quotations')
+                this.router.navigateByUrl('/Invoices/Quotations')
               }
 
             }
@@ -1292,7 +1292,7 @@ export class QuotationInvoiceComponent implements OnInit{
 
   close()
   {
-    this.router.navigateByUrl('/Quotations');
+    this.router.navigateByUrl('/Invoices/Quotations');
   }
   focusing()
   {

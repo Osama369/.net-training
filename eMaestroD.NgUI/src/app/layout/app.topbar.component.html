@@ -89,7 +89,7 @@
               <i class="pi pi-user"></i>
               <span>Profile</span>
           </button> -->
-          <button class="btn btn-success" title="Company Setting" style="width: 40px;height: 40px;  margin-right: 8px;" [routerLink]="'/Configuration'">
+          <button class="btn btn-success" title="Company Setting" style="width: 40px;height: 40px;  margin-right: 8px;" [routerLink]="'/Administration/Configuration'">
               <i class="pi pi-cog"></i>
               <!-- <span>Settings</span> -->
           </button>
@@ -200,7 +200,7 @@
         </div>
       </div>
     <div *ngIf="notificationList$.length > 0">
-      <p style="float:right"><a routerLink="/Notification">Show More</a></p>
+      <p style="float:right"><a routerLink="/Administration/Notification">Show More</a></p>
     </div>
       <div *ngIf="notificationList$.length == 0">
       <p class="notification-message">No Notification</p>

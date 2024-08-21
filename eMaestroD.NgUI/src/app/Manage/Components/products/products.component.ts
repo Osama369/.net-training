@@ -56,6 +56,7 @@ export class ProductsComponent implements OnInit {
     }
 
     handleChildData(data: any) {
+      console.log(data)
         if(data.type == 'add')
         {
         this.authService.checkPermission('ProductsCreate').subscribe(x=>{

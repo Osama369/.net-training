@@ -8,6 +8,7 @@ import { ProductsService } from 'src/app/Manage/Services/products.service';
 import { VendorService } from 'src/app/Manage/Services/vendor.service';
 import { prodGroups } from 'src/app/Manage/Models/prodGroups';
 import { Vendor } from 'src/app/Manage/Models/vendor';
+import { AuthService } from 'src/app/Shared/Services/auth.service';
 
 @Component({
   selector: 'app-add-new-product',
@@ -28,10 +29,12 @@ export class AddNewProductComponent {
   @Input() title : any;
   @Input() prodGroupData : any;
   @Input() showGroupBtn : boolean = true;
+  SupplierVisible : boolean = false;
   selectedType : any;
   filterType : any;
   hiddenField : boolean = true;
   type :any[] = [ 'Goods','Service'];
+autoComplete: any;
 
   constructor(
     private router: Router,
@@ -40,7 +43,8 @@ export class AddNewProductComponent {
     private el: ElementRef,
     private cdr: ChangeDetectorRef,
     private productCategoryService: ProductCategoryService,
-    private vendorService : VendorService
+    private vendorService : VendorService,
+    private AuthService : AuthService,
   ) {}
 
 
@@ -101,7 +105,7 @@ export class AddNewProductComponent {
         unitPrice:undefined,
         vendID:undefined,
         productBarCodes: [
-
+          {BarCode: '', Unit: 'pcs', Qty: 1}
         ]
       },
     ];
@@ -120,14 +124,13 @@ export class AddNewProductComponent {
 
     this.vendorService.getAllVendor().subscribe({
       next: (data) => {
-        this.Supplierlist =(data as { [key: string]: any })["enttityDataSource"];;
+        this.Supplierlist =(data as { [key: string]: any })["enttityDataSource"];
+        this.cdr.detectChanges(); // Trigger change detection
       },
       error: (response) => {
       },
     });
 
-    console.log('SelectedSupplier on init:', this.SelectedSupplier);
-    this.cdr.detectChanges();
   }
 
   hideFields()
@@ -211,6 +214,7 @@ onRowEditCancel(product:any, editing:any) {
 
   clear()
   {
+    this.SelectedSupplier = null;
     this.productlist = [
       {
         prodID : undefined,
@@ -253,7 +257,9 @@ onRowEditCancel(product:any, editing:any) {
         TxID:undefined,
         unitPrice:undefined,
         vendID:undefined,
-        productBarCodes: []
+        productBarCodes: [
+          {BarCode: '', Unit: 'pcs', Qty: 1}
+        ]
       },
     ];
   }
@@ -387,5 +393,28 @@ onRowEditCancel(product:any, editing:any) {
     // this.purchaseCom.ProductsVisible = false;
     // this.saleCom.ProductsVisible = false;
     // this.quotationCom.ProductsVisible = false;
+  }
+
+  openAddSupplier()
+  {
+    this.AuthService.checkPermission('SuppliersCreate').subscribe(x=>{
+      if(x)
+      {
+       this.SupplierVisible  = true;
+      }
+      else{
+        this.toastr.error("Unauthorized Access! You don't have permission to access.");
+      }
+    });
+  }
+
+  handleChildData(data:any)
+  {
+    if(data.type == 'added')
+      {
+          this.Supplierlist.push(data.value);
+          this.SelectedSupplier = data.value;
+        }
+        this.SupplierVisible = false;
   }
 }

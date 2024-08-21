@@ -1,6 +1,7 @@
 ﻿using eMaestroD.Api.Common;
 using eMaestroD.Api.Data;
 using eMaestroD.Api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using System.Security.Claims;
 namespace eMaestroD.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/api/[controller]/[action]")]
     public class GenericController : Controller
     {

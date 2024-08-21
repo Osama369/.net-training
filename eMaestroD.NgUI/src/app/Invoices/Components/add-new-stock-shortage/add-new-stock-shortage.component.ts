@@ -501,7 +501,7 @@ showReportDialog() {
   {
     if(this.EditVoucherNo != undefined)
     {
-      this.router.navigateByUrl('/Purchase')
+      this.router.navigateByUrl('/Invoices/Purchase')
     }
     else
     {
@@ -636,12 +636,12 @@ showReportDialog() {
               if(this.RemoveItemGLID2.length > 0)
               {
                 this.invoicesService.deleteInvoiceRow(this.RemoveItemGLID2).subscribe(inv=>{
-                    this.router.navigateByUrl('/Purchase')
+                    this.router.navigateByUrl('/Invoices/Purchase')
                 });
               }
               else
               {
-                this.router.navigateByUrl('/Purchase')
+                this.router.navigateByUrl('/Invoices/Purchase')
               }
             }
             else
@@ -755,7 +755,7 @@ showReportDialog() {
 
   close()
   {
-    this.router.navigateByUrl('/Purchase');
+    this.router.navigateByUrl('/Invoices/Purchase');
   }
   focusing(){
     this.cdr.detectChanges();

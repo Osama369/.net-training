@@ -18,6 +18,7 @@ using eMaestroD.Api.Data;
 namespace eMaestroD.Api.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/api/[controller]/[action]")]
     public class UserController : Controller
     {

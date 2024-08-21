@@ -32,6 +32,14 @@ namespace eMaestroD.Api.Models
         [HiddenOnRender]
         [NotMapped]
         public int parentCOAID { get; set; }
+        
+        [HiddenOnRender]
+        [NotMapped]
+        public string? acctNo { get; set; }
+
+        [HiddenOnRender]
+        [NotMapped]
+        public string? relAcctNo { get; set; }
 
 
         [HiddenOnRender]

@@ -215,8 +215,8 @@ export class AddNewJournalVoucherComponent implements OnInit{
           this.cdr.detectChanges();
             this.voucherList.forEach(element => {
               i++;
-              element.parentlist = {COAID: element.parentCOAID, acctName : element.parentAccountName}
-              element.childlist = {COAID: element.COAID, acctName : element.ChildAccountName}
+              element.parentlist = {COAID: element.parentCOAID, acctName : element.parentAccountName, acctNo : element.relAcctNo}
+              element.childlist = {COAID: element.COAID, acctName : element.ChildAccountName , acctNo : element.acctNo }
               this.CalcaluteTotal(i);
             });
             this.glComments = invoices[0].glComments;
@@ -692,6 +692,8 @@ export class AddNewJournalVoucherComponent implements OnInit{
       this.voucherList.forEach(element => {
         element.COAID = element.childlist.COAID;
         element.parentCOAID = element.parentlist.COAID;
+        element.acctNo = element.childlist.acctNo;
+        element.relAcctNo = element.parentlist.acctNo;
         element.parentAccountName = "";
         element.ChildAccountName = "";
       });
@@ -766,7 +768,7 @@ export class AddNewJournalVoucherComponent implements OnInit{
 
   close()
   {
-    this.router.navigateByUrl('/Journal');
+    this.router.navigateByUrl('/Transactions/Journal');
   }
   setTime()
   {

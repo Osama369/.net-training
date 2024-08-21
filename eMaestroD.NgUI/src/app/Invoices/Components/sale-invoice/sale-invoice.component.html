@@ -83,7 +83,7 @@
                   {{invoices.type}}
               </td>
                 <td>
-                  <a *ngIf="invoices.type.toLowerCase() == 'credit'" href="/PartyLedgerReport/{{invoices.cstID}}" target="_blank">{{invoices.cstName}} </a>
+                  <a *ngIf="invoices.type.toLowerCase() == 'credit'" href="/Reports/PartyLedgerReport/{{invoices.cstID}}" target="_blank">{{invoices.cstName}} </a>
                   <span *ngIf="invoices.type.toLowerCase() != 'credit'">{{invoices.cstName}} </span>
                 </td>
                 <td>
