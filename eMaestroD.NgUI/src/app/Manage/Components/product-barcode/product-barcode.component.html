@@ -6,9 +6,19 @@
             <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark"><i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i></a>
           </h4>
       </div>
+      <div class="col-12">
+        <label class="col-form-label date-label required" translate>INVOICE NO : &nbsp;</label>
+        <input pInputText class="col-form-label col-2" [(ngModel)]="purchaseInvoiceNo" />
+        <p-button icon="fa-solid fa-search" styleClass="p-button p-button-sm p-button-info btns" (onClick)="loadPurchaseInvoice()" [style]="{'margin-left': '8px', 'height': '35px'}"  title="Search By Invoice No"></p-button>
+
+        <p-button styleClass="p-button p-button-sm p-button-info btns float-end" (onClick)="LoadAllProducts()" [style]="{'margin-left': '8px', 'height': '35px'}"  label="Load All Products" title="Load All Products"></p-button>
+
+      </div>
       <!-- <div class="col-6" style="text-align: right;">
-      <button pButton type="button" icon="pi pi-plus" [routerLink]="'./../AddNewSale'" style="padding: 0.5rem !important;">Add New</button>
+        <button pButton type="button" icon="pi pi-plus" [routerLink]="'./../AddNewSale'" style="padding: 0.5rem !important;">Add New</button>
       </div> -->
+      <br>
+      <br>
   </div>
   <p-table #dt1 [value]="products" dataKey="prodID" styleClass="p-datatable-striped" [(selection)]="selectedProducts"
       [rows]="100" [showCurrentPageReport]="true" [rowsPerPageOptions]="[100,500,1000]" [loading]="loading"
@@ -23,18 +33,16 @@
                   <input pInputText type="text" (input)="dt1.filterGlobal($any($event.target).value, 'contains')" [placeholder]="'Search keyword'|translate" />
                 </span>
                 &nbsp;
-                <label class="col-form-label date-label required" translate>Category<span>:</span>&nbsp;</label>
+                <label class="col-form-label date-label required" translate>Brand <span>:</span>&nbsp;</label>
                 <p-autoComplete #inputField [(ngModel)]="SelectedproductGrouplist" [suggestions]="FilterProductGrouplist" (completeMethod)="filterCategory($event)"
                 field="prodGrpName" value="prodGrpID" [minLength]="1" class="ReportDropDown" [dropdown]="true" (ngModelChange)="ChangeProducts()"></p-autoComplete>
                 &nbsp;
+
               </div>
               <div class="col-md-6" style="text-align:right !important;">
                 <span class="p-buttonset">
-                  <label class="col-form-label">Enter Qty <span>:</span></label>
-                  &nbsp;
-                  <input pInputText type="text" [(ngModel)]="quantity" maxlength="3" (change)="CheckQty()" (keypress)="($event.charCode >= 46 && $event.charCode < 58)">
-                  &nbsp;
-                  <p-button icon="fa-solid fa-print" styleClass="p-button p-button-sm p-button-info btns" (onClick)="showPageSetting()" [style]="{'margin-right': '8px'}" label="Print Barcode" title="Print"></p-button>
+                  <p-button icon="fa-solid fa-print" styleClass="p-button p-button-sm p-button-info btns" (onClick)="ShowPrintView()" [style]="{'margin-right': '8px'}" label="Print Barcode" title="Print"></p-button>
+                  <p-button icon="fa-solid fa-cog" styleClass="p-button p-button-sm p-button-secondary btns" (onClick)="pageSettingView = true" [style]="{'margin-right': '8px'}" title="Setting"></p-button>
                   <!-- <p-button icon="pi pi-file-excel" styleClass="p-button p-button-sm p-button-success btns" (onClick)="exportExcel()" [style]="{'margin-right': '8px'}" title="Export Excel"></p-button> -->
                   <!-- <p-button icon="pi pi-file-pdf" styleClass="p-button p-button-sm p-button-danger btns" (onClick)="exportPdf()" title="Export PDF"></p-button> -->
                 </span>
@@ -55,6 +63,15 @@
             <th style="width:11rem" translate>
                 Product Name
             </th>
+            <th style="width:11rem" translate>
+              Sale Price
+            </th>
+            <th style="width:11rem" translate>
+              Quantity
+            </th>
+            <th style="width:11rem" translate>
+              Expiry
+            </th>
       </ng-template>
       <ng-template pTemplate="body" let-alert>
           <tr>
@@ -62,13 +79,22 @@
               <p-tableCheckbox  [value]="alert"></p-tableCheckbox>
             </th>
             <td>
-              {{alert.prodCode}}
+              {{alert.ProductBarCodes[0]?.BarCode ?? alert.prodCode }}
             </td>
             <td>
               {{alert.prodGrpName}}
             </td>
             <td>
               {{alert.prodName}}
+            </td>
+            <td>
+              <input pInputText type="number" [(ngModel)]="alert.sellRate" />
+            </td>
+            <td>
+              <input pInputText type="number" [(ngModel)]="alert.unitQty" />
+            </td>
+            <td>
+              <input pInputText type="date" [(ngModel)]="alert.crtDate" />
             </td>
           </tr>
       </ng-template>
@@ -111,7 +137,7 @@
       <input pInputText type="text" #inputFieldTable class="col-form-label col-12" min="1" max="2" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" name="height" title="Only Accept 1 or 2" (change)="checkNoOfBarcode()"  [(ngModel)]="noOfBarcode"/>
       <div class="col-12" style="text-align: right">
         <br>
-        <button #savebtn (click)="ShowPrintView()" class="btn btn-primary col-3" translate><i class="fa fa-save"></i> Submit</button>&nbsp;
+        <button #savebtn (click)="SaveConfigSetting()" class="btn btn-primary col-3" translate><i class="fa fa-save"></i> Save </button>&nbsp;
         <button #cancelbtn (click)="pageSettingView=false" class="btn btn-danger col-3" translate><i class="fa fa-undo"></i> Close</button>
     </div>
     </div>

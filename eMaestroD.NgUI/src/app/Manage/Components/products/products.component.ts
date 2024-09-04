@@ -62,9 +62,10 @@ export class ProductsComponent implements OnInit {
         this.authService.checkPermission('ProductsCreate').subscribe(x=>{
             if(x)
             {
-              this.title = "Product Registration";
-              this.prdList = [];
-              this.ProductVisible = true;
+              //this.title = "Product Registration";
+              //this.prdList = [];
+              //this.ProductVisible = true;
+              this.router.navigateByUrl('/Manage/AddProduct');
             }
             else{
               this.ToastrService.error("Unauthorized Access! You don't have permission to access.");
@@ -77,9 +78,10 @@ export class ProductsComponent implements OnInit {
         this.authService.checkPermission('ProductsEdit').subscribe(x=>{
             if(x)
             {
-              this.title = "Product Edit";
-              this.prdList = data.value;
-              this.ProductVisible = true;
+              // this.title = "Product Edit";
+              // this.prdList = data.value;
+              // this.ProductVisible = true;
+              this.router.navigateByUrl('/Manage/AddProduct/'+data.value.prodID);
             }
             else{
               this.ToastrService.error("Unauthorized Access! You don't have permission to access.");

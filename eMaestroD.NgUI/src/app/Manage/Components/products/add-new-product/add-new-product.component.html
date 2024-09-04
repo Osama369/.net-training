@@ -1,19 +1,25 @@
-<div class="container">
-  <h4 translate>{{title}}</h4>
+<div class="card container">
+  <div class="row">
+    <div class="col-6">
+        <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Product Registration
+        </h4>
+    </div>
+  </div>
   <div style="border-top: 3px solid #eee;" class="row">
       <div class="col-12">
           <!-- Main Information Section -->
           <div class="row">
-              <div class="col-12">
+<!--
+            <div class="col-12">
                   <label class="col-form-label date-label col-12 required" translate>Category&nbsp;</label>
                   <p-autoComplete styleClass="myclass col-11" [(ngModel)]="SelectedproductGrouplist"
                       [suggestions]="FilterProductGrouplist" (completeMethod)="filterProduct($event)"
                       field="prodGrpName" value="prodGrpID" [minLength]="1" (keyup.enter)="onEnterTableInput(0)"
-                      [dropdown]="true" class="col-form-label col-11"
+                      [dropdown]="true"
                       [style]="{'width':'50% !important','min-width':'50%'}"
                       #autoComplete (onFocus)="autoComplete.show()">
                   </p-autoComplete>
-                  <p-button *ngIf="showGroupBtn" icon="pi pi-plus" title="Add New Category"
+                  <p-button icon="pi pi-plus" title="Add New Category"
                       styleClass="p-button col-1" (onClick)="OpenAddGroupByParent('openGroup',undefined)">
                   </p-button>
               </div>
@@ -34,44 +40,113 @@
                       optionLabel="vendName" [filter]="true" [filterBy]="'vendName'"
                       [showClear]="true">
                     </p-dropdown>
-                      <p-button *ngIf="showGroupBtn" icon="pi pi-plus" title="Add New Supplier"
+                      <p-button  icon="pi pi-plus" title="Add New Supplier"
                       styleClass="p-button col-1" (onClick)="openAddSupplier()">
                     </p-button>
-              </div>
+              </div> -->
+<!--
+              <div class="col-3">
+                <label class="col-form-label date-label required" translate>Supplier Name&nbsp;</label>
+                <p-dropdown #inputField (keyup.enter)="onEnterTableInput(0)"  styleClass="myclass col-11" [style]="{'border-radius':'6px 0px 0px 6px'}" [(ngModel)]="productlist[0].vendID"
+                    placeholder="Select a Supplier" [options]="Supplierlist"
+                    optionLabel="vendName" optionValue="vendID" [filter]="true" [filterBy]="'vendName'"
+                    [showClear]="true">
+                  </p-dropdown>
+                  <p-button  icon="pi pi-plus" title="Add New Supplier"
+                    styleClass="p-button col-1" (onClick)="openAddSupplier()">
+                  </p-button>
+            </div> -->
 
-              <div class="col-6">
+              <div class="col-3">
                   <label class="col-form-label date-label required" translate>Product Code&nbsp;</label>
-                  <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInput(1)" maxlength="25"
+                  <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInput(0)" maxlength="25"
                       id="code" class="col-form-label col-12" name="code" [(ngModel)]="productlist[0].prodCode" autofocus />
               </div>
 
-              <div class="col-6">
+              <div class="col-3">
                   <label class="col-form-label date-label required" translate>Name&nbsp;</label>
-                  <input pInputText id="name" #inputFieldTableCst (keyup.enter)="onEnterTableInput(2)"
+                  <input pInputText id="name" #inputFieldTableCst (keyup.enter)="onEnterTableInput(1)"
                       maxlength="95" class="col-form-label col-12" name="name" [(ngModel)]="productlist[0].prodName">
               </div>
+
+              <div class="col-3">
+                <label class="col-form-label date-label required" translate>Short Name&nbsp;</label>
+                <input pInputText id="shortName" #inputFieldTableCst (keyup.enter)="onEnterTableInput(2)"
+                    maxlength="95" class="col-form-label col-12" name="shortName" [(ngModel)]="productlist[0].shortName">
+            </div>
+
           </div>
 
           <br>
           <!-- Tabs Section -->
           <p-tabView>
               <!-- Additional Information Tab -->
-              <p-tabPanel header="Additional Information">
+              <p-tabPanel header="MAIN">
+                <div class="row">
+                  <div class="col-4">
+                    <div class="col-12">
+                      <label class="col-4 col-form-label date-label required" translate>Department&nbsp;</label>
+                      <p-dropdown [options]="departmentList" styleClass="col-8" [(ngModel)]="productlist[0].depID"
+                        optionLabel="depName" optionValue="depID" placeholder="Select a Department" class="col-form-label col-12" [filter]="true" [filterBy]="'depName'"
+                        [showClear]="true" (onChange)="onDepartmentChange($event.value, 0)"></p-dropdown>
+                    </div>
+
+                    <div class="col-12 mt-2">
+                      <label class="col-4 col-form-label date-label required" translate>Category&nbsp;</label>
+                        <p-treeSelect
+                        class="select-tree-custom-style"
+                        [options]="categoryListByDepartment"
+                        [(ngModel)]="SelectedCategory"
+                        placeholder="Select a Category"
+                        [filter]="true"
+                        >
+                      </p-treeSelect>
+
+                    </div>
+
+                    <div class="col-12 mt-2">
+                      <label class="col-4 col-form-label date-label required" translate>Brand&nbsp;</label>
+                      <p-dropdown [options]="productGrouplist" styleClass="col-8"  [(ngModel)]="productlist[0].prodGrpID"
+                        optionLabel="prodGrpName" optionValue="prodGrpID" placeholder="Select a Brand" class="col-form-label col-12" [filter]="true" [filterBy]="'prodGrpName'"
+                        [showClear]="true"></p-dropdown>
+                    </div>
+
+                    <div class="col-12 mt-2">
+                      <label class="col-4 col-form-label date-label required" translate>Manufacturer&nbsp;</label>
+                      <p-dropdown [options]="prodManufactureList"  styleClass="col-8"   [(ngModel)]="productlist[0].prodManuID"
+                        optionLabel="prodManuName" optionValue="prodManuID" placeholder="Select a Manufacturer" class="col-form-label col-12" [filter]="true" [filterBy]="'prodManuName'"
+                        [showClear]="true"></p-dropdown>
+                    </div>
+                </div>
+
+                <div class="col-4">
                   <div class="row" *ngIf="hiddenField">
                       <div class="col-6">
-                          <label class="col-form-label date-label required" translate>Purchase Rate&nbsp;</label>
+                          <label class="col-form-label date-label required" translate>Cost&nbsp;</label>
                           <input pInputText id="purchRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"
                               #inputFieldTableCst (keyup.enter)="onEnterTableInput(4)" class="col-form-label col-12"
                               name="purchRate" [(ngModel)]="productlist[0].purchRate" />
                       </div>
 
                       <div class="col-6">
-                          <label class="col-form-label date-label required" translate>Sell Rate&nbsp;</label>
+                          <label class="col-form-label date-label required" translate>Trade&nbsp;</label>
                           <input pInputText id="sellRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"
                               #inputFieldTableCst (keyup.enter)="onEnterTableInput(5)" class="col-form-label col-12"
                               name="sellRate" [(ngModel)]="productlist[0].sellRate" />
                       </div>
+                      <div class="col-6">
+                        <label class="col-form-label date-label required" translate>MRP&nbsp;</label>
+                        <input pInputText id="purchRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"
+                            #inputFieldTableCst (keyup.enter)="onEnterTableInput(4)" class="col-form-label col-12"
+                            name="purchRate" [(ngModel)]="productlist[0].retailprice" />
+                    </div>
 
+                    <div class="col-6">
+                        <label class="col-form-label date-label required" translate>F.O.B&nbsp;</label>
+                        <input pInputText id="sellRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"
+                            #inputFieldTableCst (keyup.enter)="onEnterTableInput(5)" class="col-form-label col-12"
+                            name="sellRate" [(ngModel)]="productlist[0].tP" />
+                    </div>
                       <div class="col-6">
                           <label class="col-form-label date-label required" translate>Min Qty&nbsp;</label>
                           <input pInputText id="minqty" (keypress)="($event.charCode >= 48 && $event.charCode < 58)"
@@ -85,75 +160,104 @@
                               #inputFieldTableCst (keyup.enter)="onEnterTableInput(7)" class="col-form-label col-12"
                               name="maxQty" [(ngModel)]="productlist[0].maxQty" />
                       </div>
-
+                  </div>
+                </div>
+                  <div class="col-4">
+                    <div class="row" *ngIf="hiddenField">
                       <div class="col-6">
-                        <label class="col-form-label date-label required" translate>Allow Item Serial No In Sales?</label>
-                        <p-inputSwitch [(ngModel)]="productlist[0].isStore" [style]="{'vertical-align': 'middle'}" styleClass="offset-1"></p-inputSwitch>
-                    </div>
-                    <div class="col-6">
-                      <label class="col-form-label date-label required" translate>Is Taxable?</label>
-                      <p-inputSwitch [(ngModel)]="productlist[0].isTaxable" [style]="{'vertical-align': 'middle'}" styleClass="offset-1"></p-inputSwitch>
-                  </div>
-
-
-                  </div>
-
-                  <div class="row" *ngIf="!hiddenField">
-                      <div class="col-12">
-                          <label class="col-form-label date-label required" translate>Sell Rate&nbsp;</label>
-                          <input pInputText id="sellRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"
-                              #inputFieldTableCst (keyup.enter)="onEnterTableInput(5)" class="col-form-label col-11"
-                              name="sellRate" [(ngModel)]="productlist[0].sellRate" />
+                        <label class="col-form-label date-label required" translate>Size&nbsp;</label>
+                        <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInput(4)" maxlength="25"
+                            id="code" class="col-form-label col-12" name="code" [(ngModel)]="productlist[0].prodSize" />
                       </div>
-                  </div>
-              </p-tabPanel>
+                      <div class="col-6">
+                        <label class="col-form-label date-label required" translate>Color&nbsp;</label>
+                        <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInput(5)" maxlength="25"
+                            id="code" class="col-form-label col-12" name="code" [(ngModel)]="productlist[0].prodColor" />
+                      </div>
+                      <div class="col-6">
+                        <label class="col-form-label date-label required" translate>Is Imported?</label>
+                        <p-inputSwitch [(ngModel)]="productlist[0].isImported" [style]="{'vertical-align': 'middle'}" styleClass="offset-1"></p-inputSwitch>
+                      </div>
+                      <div class="col-6">
+                        <label class="col-form-label date-label required" translate>Is Taxable?</label>
+                        <p-inputSwitch [(ngModel)]="productlist[0].isTaxable" [style]="{'vertical-align': 'middle'}" styleClass="offset-1"></p-inputSwitch>
+                      </div>
+                      <div class="col-6">
+                        <label class="col-form-label date-label required" translate>Has Discount?</label>
+                        <p-inputSwitch [(ngModel)]="productlist[0].isDiscount" [style]="{'vertical-align': 'middle'}" styleClass="offset-1"></p-inputSwitch>
+                      </div>
+
+
+                    </div>
+                </div>
+              </div>
+            </p-tabPanel>
 
               <!-- Barcode Tab -->
               <p-tabPanel header="Barcode">
-                  <div class="row">
-                    <div class="col-12 mt-3">
-                      <p-table [value]="productlist[0]?.productBarCodes || []" editMode="row" dataKey="prodBCID" styleClass="fixed-table-height">
-                          <ng-template pTemplate="header">
-                              <tr>
-                                  <th>Barcode</th>
-                                  <th>Unit</th>
-                                  <th>Base Qty</th>
-                              </tr>
-                          </ng-template>
-                          <ng-template pTemplate="body" let-product let-editing="editing">
-                              <tr [pEditableRow]="product">
-                                  <td>
-                                      <input pInputText [(ngModel)]="product.BarCode">
-                                  </td>
-                                  <td>
-                                      <input pInputText [(ngModel)]="product.Unit">
-                                  </td>
-                                  <td>
-                                      <input pInputText type="number" [(ngModel)]="product.Qty">
-                                  </td>
-                              </tr>
-                          </ng-template>
-                          <ng-template pTemplate="footer">
-                              <tr>
-                                  <td colspan="3">
-                                      <button pButton type="button" icon="pi pi-plus" label="Add New Row" (click)="addNewRow()"></button>
-                                  </td>
-                              </tr>
-                          </ng-template>
-                      </p-table>
+                <div class="row">
+                  <div class="col-12 mt-3">
+                    <p-table [value]="productlist[0]?.ProductBarCodes || []" editMode="row" dataKey="prodBCID" styleClass="fixed-table-height">
+                      <ng-template pTemplate="header">
+                        <tr>
+                          <th>Barcode</th>
+                          <th>Unit</th>
+                          <th>Base Qty</th>
+                          <th>Cost Price</th>
+                          <th>Sale Price</th>
+                          <th>Trade Price</th>
+                          <th>FOB Price</th>
+                          <th>Active</th>
+                        </tr>
+                      </ng-template>
+                      <ng-template pTemplate="body" let-product let-editing="editing">
+                        <tr [pEditableRow]="product">
+                          <td>
+                            <input  [style]="{'width':'100% !important','min-width':'100%'}" pInputText [(ngModel)]="product.BarCode">
+                          </td>
+                          <td>
+                            <p-dropdown  [appendTo]="'body'"  [style]="{'width':'50px !important','min-width':'100%'}" [(ngModel)]="product.Unit" [options]="unitOptions"></p-dropdown>
+                          </td>
+                          <td>
+                            <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.Qty">
+                          </td>
+                          <td>
+                            <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.CostPrice">
+                          </td>
+                          <td>
+                            <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.SalePrice">
+                          </td>
+                          <td>
+                            <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.TradePrice">
+                          </td>
+                          <td>
+                            <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.FOBPrice">
+                          </td>
+                          <td>
+                            <p-inputSwitch [(ngModel)]="product.Active"></p-inputSwitch>
+                          </td>
+                        </tr>
+                      </ng-template>
+                      <ng-template pTemplate="footer">
+                        <tr>
+                          <td colspan="8">
+                            <button pButton type="button" icon="pi pi-plus" (click)="addNewRow()"></button>
+                          </td>
+                        </tr>
+                      </ng-template>
+                    </p-table>
                   </div>
-                  </div>
+                </div>
               </p-tabPanel>
-
 
           </p-tabView>
 
           <!-- Save and Cancel Buttons -->
-          <div class="col-11" style="text-align: right;">
-              <button #savebtn (click)="saveProduct()" translate class="btn btn-primary col-3">
+          <div class="col-12" style="text-align: right;">
+              <button #savebtn (click)="saveProduct()" translate class="btn btn-primary col-2">
                   <i class="fa fa-save"></i> Save
               </button>&nbsp;
-              <button #cancelbtn (click)="sendDataToParent()" translate class="btn btn-danger col-3">
+              <button #cancelbtn (click)="sendDataToParent()" translate class="btn btn-danger col-2">
                   <i class="fa fa-undo"></i> Cancel
               </button>
           </div>

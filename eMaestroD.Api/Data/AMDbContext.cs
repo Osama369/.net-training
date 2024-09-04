@@ -88,6 +88,14 @@ namespace eMaestroD.Api.Data
         public DbSet<TenantUser> TenantUsers { get; set; }
         public DbSet<VendorCompany> VendorCompanies { get; set; }
         public DbSet<COAConfig> COAConfig { get; set; }
+        public DbSet<Department> Departments { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<ProdManufacture> ProdManufactures { get; set; }
+        public DbSet<Offer> Offers { get; set; }
+        public DbSet<ProdDiscount> ProdDiscounts { get; set; }
+        public DbSet<BarcodeConfigSetting> BarcodeConfigSettings { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -10,6 +10,9 @@ import { SignalrService } from 'src/app/Shared/Services/signalr.service';
 import { ProductCategoryService } from '../../Services/product-category.service';
 import { ProductsService } from '../../Services/products.service';
 import { prodGroups } from '../../Models/prodGroups';
+import { GenericService } from 'src/app/Shared/Services/generic.service';
+import { lastValueFrom } from 'rxjs';
+import { InvoicesService } from 'src/app/Invoices/Services/invoices.service';
 
 
 @Component({
@@ -34,15 +37,18 @@ export class ProductBarcodeComponent implements OnInit {
     FilterProductGrouplist: prodGroups[];
     SelectedproductGrouplist: any;
     quantity : any = 1;
+    purchaseInvoiceNo : any;
     bookmark : boolean = false;
 
-    width:any = "80";
-    height:any = "28";
+    width:any = "0";
+    height:any = "0";
     marginLeft:any = "2";
     marginRight:any = "2";
     marginTop:any = "2";
     marginBottom:any = "0";
     noOfBarcode:any = "2";
+
+    configSettingList : any[];
 
     constructor(private productService: ProductsService,
       private toastr: ToastrService,
@@ -52,14 +58,31 @@ export class ProductBarcodeComponent implements OnInit {
       private sanitizer: DomSanitizer,
       private productCategoryService : ProductCategoryService,
       public bookmarkService: BookmarkService,
-      public route : ActivatedRoute
+      public route : ActivatedRoute,
+      public genericService : GenericService,
+      public invoiceService : InvoicesService
       ) { }
 
-    ngOnInit() {
+    async ngOnInit() {
+
+      const pageSetting = await lastValueFrom(this.genericService.GetBarcodeConfigSetting());
+      this.configSettingList = pageSetting;
+      this.width = pageSetting.find(x=>x.key == "pageWidth").value;
+      this.height = pageSetting.find(x=>x.key == "pageHeight").value;
+      this.marginLeft = pageSetting.find(x=>x.key == "marginLeft").value;
+      this.marginRight = pageSetting.find(x=>x.key == "marginRight").value;
+      this.marginTop = pageSetting.find(x=>x.key == "marginTop").value;
+      this.marginBottom = pageSetting.find(x=>x.key == "marginBottom").value;
+      this.noOfBarcode = pageSetting.find(x=>x.key == "noOfBarcode").value;
+
 
       this.productService.getAllProductsWithCategory().subscribe(prd => {
-        this.products = (prd as { [key: string]: any })["enttityDataSource"];
         this.productsForFilter = (prd as { [key: string]: any })["enttityDataSource"];
+        this.productsForFilter.forEach(product => {
+          product.crtDate = null;
+        });
+
+        this.products = this.productsForFilter;
         if(this.products[0].prodID == 0)
         {
           this.products = [];
@@ -139,25 +162,11 @@ export class ProductBarcodeComponent implements OnInit {
         table.clear();
     }
 
-    showPageSetting()
-    {
-      if(this.selectedProducts.length > 0)
-      {
-        this.pageSettingView = true;
-      }
-      else
-      {
-        this.toastr.error("please select alteast one product.");
-      }
-    }
 
     ShowPrintView()
     {
       if(this.selectedProducts.length > 0)
       {
-        this.pageSettingView = false;
-        this.selectedProducts[0].comment = this.width + "/"+this.height+ "/"+this.marginTop+ "/"+this.marginLeft+ "/"+this.marginRight+ "/"+this.marginBottom+'/'+this.noOfBarcode;
-        this.selectedProducts[0].unitQty = this.quantity;
         this.productService.GenerateBarcode(this.selectedProducts).subscribe(x=>{
         this.printView = true;
         console.log(x);
@@ -170,6 +179,22 @@ export class ProductBarcodeComponent implements OnInit {
       {
         this.toastr.error("please select alteast one product.");
       }
+    }
+
+    SaveConfigSetting(){
+
+      this.configSettingList.find(x=>x.key == "pageWidth").value = this.width;
+      this.configSettingList.find(x=>x.key == "pageHeight").value = this.height;
+      this.configSettingList.find(x=>x.key == "marginLeft").value = this.marginLeft;
+      this.configSettingList.find(x=>x.key == "marginRight").value = this.marginRight;
+      this.configSettingList.find(x=>x.key == "marginTop").value = this.marginTop;
+      this.configSettingList.find(x=>x.key == "marginBottom").value = this.marginBottom;
+      this.configSettingList.find(x=>x.key == "noOfBarcode").value = this.noOfBarcode;
+
+      this.genericService.SaveBarcodeConfigSetting(this.configSettingList).subscribe(asd=>{
+        this.toastr.success("Page Settings Successfully Updated");
+        this.pageSettingView = false;
+      })
     }
 
   exportExcel() {
@@ -215,5 +240,43 @@ export class ProductBarcodeComponent implements OnInit {
 
       });
     });
+  }
+
+  loadPurchaseInvoice(){
+    if(this.purchaseInvoiceNo){
+      this.invoiceService.getOneInvoiceDetail(this.purchaseInvoiceNo).subscribe(
+        result=>{
+          if(result.length > 0){
+            var data = result.filter(x=>x.prodID > 0)
+            this.products = [];
+            data.forEach(elem => {
+              const product = this.productsForFilter.find(x => x.prodID == elem.prodID);
+              if (product) {
+                  this.products.push({
+                      ...product,
+                      unitQty: elem.qty,
+                      sellRate: elem.unitPrice,
+                      crtDate : null
+                    });
+                  }
+              });
+
+          }else{
+            this.toastr.error("No Invoice Found.");
+          }
+        },
+        error=>{
+            this.toastr.error("No Invoice Found.");
+        }
+    )
+    }else{
+      this.toastr.error("Please Write Invoice No");
+    }
+  }
+
+  LoadAllProducts()
+  {
+    this.products = this.productsForFilter;
+    this.SelectedproductGrouplist = {prodGrpID:0,prodGrpName:"---ALL---"};
   }
 }

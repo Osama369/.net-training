@@ -104,4 +104,16 @@ export class GenericService {
     return this.http.get<any[]>(this.baseApiUrl+'/Generic/GetTimeZone/');
   }
 
+
+  getAllDropdownData(): Observable<any> {
+    let comID = localStorage.getItem('comID');
+    return this.http.get<any>(`${this.baseApiUrl}/Generic/getAllDropdownData/${comID}`);
+  }
+
+  GetBarcodeConfigSetting(): Observable<any> {
+    return this.http.get<any>(`${this.baseApiUrl}/Generic/GetBarcodeConfigSetting/`);
+  }
+  SaveBarcodeConfigSetting(list : any): Observable<void> {
+    return this.http.post<void>(`${this.baseApiUrl}/Generic/SaveBarcodeConfigSetting/`, list);
+  }
 }

@@ -53,7 +53,7 @@ export class ProductGroupsComponent {
     this.authService.checkPermission('ProductCategoryCreate').subscribe(x=>{
         if(x)
         {
-          this.grouptitle = "Product Category Registration";
+          this.grouptitle = "Brand Registration";
           this.productgrouplist = [];
           this.ProductGroupVisible = true;
         }
@@ -68,7 +68,7 @@ export class ProductGroupsComponent {
     this.authService.checkPermission('ProductCategoryEdit').subscribe(x=>{
         if(x)
         {
-          this.grouptitle = "Product Category Edit";
+          this.grouptitle = "Brand Edit";
           this.productgrouplist = data.value;
           this.ProductGroupVisible = true;
         }
@@ -106,11 +106,11 @@ export class ProductGroupsComponent {
 deleteView(id:any)
 {
   console.log(id);
-    if (confirm("Are you sure you want to delete this Category?") == true) {
+    if (confirm("Are you sure you want to delete this Brand?") == true) {
         this.loading = true;
        this.productCategoryService.deleteGroup(id).subscribe({
         next : (value:any) => {
-          this.ToastrService.success("Product Category has been successfully deleted!");
+          this.ToastrService.success("Brand has been successfully deleted!");
           this.productsGroup = this.productsGroup.filter(item => item.prodGrpID !== id);
           },
         error:(err:any)=> {

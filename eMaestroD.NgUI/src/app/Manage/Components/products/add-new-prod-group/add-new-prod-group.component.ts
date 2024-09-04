@@ -88,14 +88,14 @@ export class AddNewProdGroupComponent {
 
       this.productGroupService.saveProductGroup(this.productGrouplist[0]).subscribe({
         next: (prd) => {
-          if(this.title == "Product Category Registration")
+          if(this.title == "Brand Registration")
           {
-            this.toastr.success("Product category has been successfully added!");
+            this.toastr.success("Brand has been successfully added!");
             this.dataEvent.emit({type:'groupAdded',value:prd});
           }
           else
           {
-            this.toastr.success("Product category has been successfully updated!");
+            this.toastr.success("Brand has been successfully updated!");
             this.dataEvent.emit({type:'',value:prd});
           }
         },
@@ -107,7 +107,7 @@ export class AddNewProdGroupComponent {
     }
     else
     {
-      this.toastr.error("Please Write Product Category Name.");
+      this.toastr.error("Please Write Brand Name.");
       this.onEnterTableInput(-1);
     }
   }
@@ -127,7 +127,7 @@ export class AddNewProdGroupComponent {
       }
       else
       {
-        this.toastr.error("Please Write Product Category Name.");
+        this.toastr.error("Please Write Brand Name.");
         this.onEnterTableInput(-1);
       }
     }

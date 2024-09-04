@@ -536,7 +536,7 @@ namespace eMaestroD.Api.Controllers
                         List<SqlParameter> parms4 = new List<SqlParameter>
                         {
                                 new SqlParameter { ParameterName = "@prodID", Value = 0 },
-                                new SqlParameter { ParameterName = "@locID", Value = loc.locID },
+                                new SqlParameter { ParameterName = "@locID", Value = loc.LocationId },
                                 new SqlParameter { ParameterName = "@comID", Value = comID },
                                 new SqlParameter { ParameterName = "@catID", Value = 0 }
                         };
@@ -553,7 +553,7 @@ namespace eMaestroD.Api.Controllers
                                 COAID = 98,
                                 relCOAID = 83,
                                 txTypeID = 41,
-                                locID = loc.locID,
+                                locID = loc.LocationId,
                                 depositID = newPeriod,
                                 prodID = prodItem.prodID,
                                 prodCode = prodItem.BarCode,

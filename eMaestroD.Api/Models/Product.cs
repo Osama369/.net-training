@@ -29,20 +29,21 @@ namespace eMaestroD.Api.Models
 
 
         [NotMapped]
-        [DisplayName(Name = "Category")]
+        [DisplayName(Name = "BRAND")]
         public string? prodGrpName { get; set; }
-        [NotMapped]
-        [DisplayName(Name = "Supplier Name")]
-        public string? vendName { get; set; }
+        //[NotMapped]
+        //[DisplayName(Name = "Supplier Name")]
+        //public string? vendName { get; set; }
 
         [DisplayName(Name = "Code")]
         public string? prodCode { get; set; }
 
 
         [DisplayName(Name = "Name")]
-        [UpperCase]
+        [UpperCase] 
         public string? prodName { get; set; }
-        //public String? shortName { get; set; }
+        [HiddenOnRender]
+        public String? shortName { get; set; }
 
         [DisplayName(Name = "Type")]
         public string? descr { get; set; }
@@ -64,8 +65,8 @@ namespace eMaestroD.Api.Models
         public decimal retailprice { get; set; } = 0;
         [HiddenOnRender]
         public decimal tP { get; set; } = 0;
-
-        //public Boolean isTaxable { get; set; }
+        [HiddenOnRender]
+        public bool? isTaxable { get; set; }
 
         //public Boolean isRaw { get; set; }
 
@@ -121,8 +122,20 @@ namespace eMaestroD.Api.Models
         [NotMapped]
         public List<ProductBarCodes> ProductBarCodes { get; set; }
 
-
-        //public bool isDiscount { get; set; }
+        [HiddenOnRender]
+        public int? prodManuID { get; set; }
+        [HiddenOnRender]
+        public int? depID { get; set; }
+        [HiddenOnRender]
+        public int? categoryID { get; set; }
+        [HiddenOnRender]
+        public Boolean? isImported { get; set; }
+        [HiddenOnRender]
+        public string? prodSize { get; set; }
+        [HiddenOnRender]
+        public string? prodColor { get; set; }
+        [HiddenOnRender]
+        public bool? isDiscount { get; set; }
     }
 
     public class Stock

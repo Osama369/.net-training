@@ -1,6 +1,7 @@
 ﻿using eMaestroD.Api.Common;
 using eMaestroD.Api.Data;
 using eMaestroD.Api.Models;
+using eMaestroD.Api.VMModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -135,7 +136,7 @@ namespace eMaestroD.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> getAllRoles()
         {
-            var SDL = await _AMDbContext.Roles.ToListAsync(); ;
+            var SDL = await _AMDbContext.Roles.ToListAsync();
             return Ok(SDL);
         }
 
@@ -191,6 +192,36 @@ namespace eMaestroD.Api.Controllers
                 item.timeZone = item.timeZone + " (" + item.current_utc_offset + ") (" + item.abbreviation + ")";
             }
             return Ok(timeZoneList);
+        }
+
+        [HttpGet("{comID}")]
+        public async Task<IActionResult> getAllDropdownData(int comID)
+        {
+            var data = new DropdownDataDto
+            {
+                ProductGroups = await _AMDbContext.ProdGroups.Where(x=>x.comID == comID).ToListAsync(),
+                Department = await _AMDbContext.Departments.Where(x => x.comID == comID).ToListAsync(),
+                ProdManufacture = await _AMDbContext.ProdManufactures.Where(x => x.comID == comID).ToListAsync(),
+                Category = await _AMDbContext.Categories.Where(x => x.comID == comID).ToListAsync(),
+                Offer = await _AMDbContext.Offers.Where(x => x.comID == comID).ToListAsync()
+            };
+
+            return Ok(data);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetBarcodeConfigSetting()
+        {
+            var data = _AMDbContext.BarcodeConfigSettings.ToList();
+            return Ok(data);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveBarcodeConfigSetting(List<BarcodeConfigSetting> barcodeConfigSettings)
+        {
+            _AMDbContext.BarcodeConfigSettings.UpdateRange(barcodeConfigSettings);
+            await _AMDbContext.SaveChangesAsync();
+            return NoContent();
         }
     }
 }

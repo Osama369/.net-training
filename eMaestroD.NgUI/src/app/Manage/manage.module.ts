@@ -20,8 +20,17 @@ import { AddNewProductComponent } from './Components/products/add-new-product/ad
 import { ConfirmCategoryComponent } from './Components/products/confirm-category/confirm-category.component';
 import { BankComponent } from './Components/bank/bank.component';
 import { SharedModule } from '../Shared/shared.module';
-import { InvoicesModule } from '../Invoices/invoices.module';
 import { ManageRoutingModule } from './manage-routing.module';
+import { CategoryComponent } from './Components/category/category.component';
+import { DepartmentComponent } from './Components/department/department.component';
+import { AddNewDepartmentComponent } from './Components/department/add-new-department/add-new-department.component';
+import { AddNewCategoryComponent } from './Components/category/add-new-category/add-new-category.component';
+import { ProdManufactureComponent } from './Components/prod-manufacture/prod-manufacture.component';
+import { AddNewProdManufactureComponent } from './Components/prod-manufacture/add-new-prod-manufacture/add-new-prod-manufacture.component';
+import { OfferComponent } from './Components/offer/offer.component';
+import { AddNewOfferComponent } from './Components/offer/add-new-offer/add-new-offer.component';
+import { SchemesComponent } from './Components/schemes/schemes.component';
+import { AddNewSchemesComponent } from './Components/schemes/add-new-schemes/add-new-schemes.component';
 
 
 
@@ -45,7 +54,17 @@ import { ManageRoutingModule } from './manage-routing.module';
     AddNewVendorComponent,
     AddNewProdGroupComponent,
     AddNewProductComponent,
-    ConfirmCategoryComponent
+    ConfirmCategoryComponent,
+    CategoryComponent,
+    DepartmentComponent,
+    AddNewDepartmentComponent,
+    AddNewCategoryComponent,
+    ProdManufactureComponent,
+    AddNewProdManufactureComponent,
+    OfferComponent,
+    AddNewOfferComponent,
+    SchemesComponent,
+    AddNewSchemesComponent
   ],
   imports: [
     CommonModule,

@@ -49,7 +49,7 @@ namespace eMaestroD.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> saveLocation([FromBody] Locations loc)
         {
-            if (loc.locID != 0)
+            if (loc.LocationId != 0)
             {
                 loc.modBy = username;
                 loc.modDate = DateTime.Now;
@@ -62,7 +62,7 @@ namespace eMaestroD.Api.Controllers
             {
                 var tenantID = cm.Decrypt(HttpContext.User.FindFirst(ClaimTypes.Upn).Value);
                 var tenlist = _Context.Tenants.Where(x => x.tenantID == int.Parse(tenantID)).ToList();
-                var locList = _AMDbContext.Locations.Where(x => x.comID == loc.comID).ToList();
+                var locList = _AMDbContext.Locations.Where(x => x.comID == loc.comID && x.LocTypeId == 5).ToList();
                 if (tenlist[0].maxLocationCount > locList.Count())
                 {
 
@@ -96,14 +96,14 @@ namespace eMaestroD.Api.Controllers
             {
                 return NotFound("Some invoices depend on this location, can't delete this location.");
             }
-            var list = _AMDbContext.Locations.Where(x => x.locID == locID).ToList();
+            var list = _AMDbContext.Locations.Where(x => x.LocationId == locID).ToList();
             if (_AMDbContext.Locations.Where(x => x.comID == list[0].comID).Count() == 1)
             {
                 return NotFound("Can't Delete Only One Location");
             }
             else
             {
-                _AMDbContext.RemoveRange(_AMDbContext.Locations.Where(a => a.locID == locID));
+                _AMDbContext.RemoveRange(_AMDbContext.Locations.Where(a => a.LocationId == locID));
                 await _AMDbContext.SaveChangesAsync();
                 _notificationInterceptor.SaveNotification("LocationDelete", list[0].comID, "");
                 return Ok();

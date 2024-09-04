@@ -1,11 +1,15 @@
 export interface Location {
-   locID?: any;
-   locTypeID? : any;
-   locCode? : any;
-   locName? : any;
-   descr? : any;
-   locAddress? : any;
-   locPhone? : any;
-   active? : any;
+  LocationId?: any;
+  ParentLocationId? : any;
+  LocationName? : any;
+  LocTypeId? : any;
+  active? : any;
+  crtBy? : any;
+  crtDate? : any;
+  modBy? : any;
+  modDate? : any;
    comID?:any;
+   locID?:any;
+   locName?:any;
+   locTypeID?:any;
 }

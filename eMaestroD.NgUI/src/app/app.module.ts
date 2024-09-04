@@ -13,12 +13,23 @@ import { AuthModule } from './Auth/auth.module';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => {
-    return appConfigService.loadAppConfig().then(() => {
-      const pleaseWaitElement = document.getElementById('please-wait-main');
-      if (pleaseWaitElement) {
-        pleaseWaitElement.style.display = 'none';
-      }
-    });
+    return appConfigService.loadAppConfig()
+      .then(() => {
+        const pleaseWaitElement = document.getElementById('please-wait-main');
+        if (pleaseWaitElement) {
+          pleaseWaitElement.style.display = 'none';
+        }
+      })
+      .catch(error => {
+        const errorElement = document.getElementById('error-message');
+        const pleaseWaitElement = document.getElementById('please-wait-main');
+        if (errorElement) {
+          pleaseWaitElement.style.display = 'none';
+          errorElement.style.display = 'block';
+          errorElement.textContent = 'Could not connect to the server. Please try again later.';
+        }
+        return Promise.reject(new Error('Application initialization failed.')); // This will stop the initialization process.
+      });
   };
 }
 

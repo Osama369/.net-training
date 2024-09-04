@@ -32,6 +32,13 @@ export class ProductsService {
     return this.http.get<Products[]>(this.baseApiUrl+'getAllProductWithCategory/'+comID);
   }
 
+  GetOneProductDetail(prodID:any): Observable<Products> {
+    let comID = localStorage.getItem('comID');
+    return this.http.get<Products>(this.baseApiUrl+'GetOneProductDetail/'+comID+'/'+prodID);
+  }
+
+
+
   uploadProducts(formData:any){
     let com = localStorage.getItem('comID');
     const headers = new HttpHeaders({

@@ -196,19 +196,19 @@ namespace eMaestroD.Api.Controllers
 
                                 _AMDbContext.UserCompanies.Add(uc);
 
-                                Locations locations = new Locations()
-                                {
-                                    locTypeID = 1,
-                                    locName = "Default",
-                                    comID = company.comID,
-                                    locCode = "1",
-                                    active = true,
-                                    crtBy = username,
-                                    crtDate = DateTime.Now,
-                                    modBy = username,
-                                    modDate = DateTime.Now,
-                                };
-                                _AMDbContext.Locations.Add(locations);
+                                //Locations locations = new Locations()
+                                //{
+                                //    locTypeID = 1,
+                                //    locName = "Default",
+                                //    comID = company.comID,
+                                //    locCode = "1",
+                                //    active = true,
+                                //    crtBy = username,
+                                //    crtDate = DateTime.Now,
+                                //    modBy = username,
+                                //    modDate = DateTime.Now,
+                                //};
+                                //_AMDbContext.Locations.Add(locations);
 
 
                                 Vendors vendor = new Vendors()

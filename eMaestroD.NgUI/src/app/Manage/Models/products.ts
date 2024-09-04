@@ -42,7 +42,13 @@ export interface Products {
     barcodeImage?:any;
     vendID?:any;
     vendName?:any;
-    productBarCodes?: ProductBarCodes[];
+    ProductBarCodes?: ProductBarCodes[];
+    prodManuID?:any;
+    depID?:any;
+    categoryID?:any;
+    isImported?:any;
+    prodSize?:any;
+    prodColor?:any;
 }
 
 
@@ -53,4 +59,9 @@ export class ProductBarCodes {
   Qty?: number;
   Unit?: string;
   Active?: boolean;
+  CostPrice? : any;
+  SalePrice? : any;
+  TradePrice? : any;
+  FOBPrice? : any;
+
 }

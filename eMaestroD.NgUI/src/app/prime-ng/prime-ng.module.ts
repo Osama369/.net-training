@@ -33,6 +33,8 @@ import { MessagesModule } from 'primeng/messages';
 import { MessageModule } from 'primeng/message';
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TabViewModule } from 'primeng/tabview';
+import { FieldsetModule } from 'primeng/fieldset';
+import { TreeSelectModule } from 'primeng/treeselect';
 
 @NgModule({
   exports: [
@@ -70,7 +72,9 @@ import { TabViewModule } from 'primeng/tabview';
     MessagesModule,
     MessageModule,
     TranslateModule,
-    TabViewModule
+    TabViewModule,
+    FieldsetModule,
+    TreeSelectModule
   ]
 })
 export class PrimeNgModule { }

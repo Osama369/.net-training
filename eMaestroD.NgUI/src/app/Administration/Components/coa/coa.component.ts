@@ -170,9 +170,18 @@ OnEdit()
     {
       if(this.parentID != "")
       {
-        this.title = "Update COA";
-        this.IsEdit = true;
-        this.AddNewCoaVisibility = true;
+        let list = this.listofCOA.find(x=>x.COAID == this.parentID);
+        if(list != undefined)
+          if(list.isSys != true)
+          {
+              this.title = "Update COA";
+              this.IsEdit = true;
+              this.AddNewCoaVisibility = true;
+          }
+          else
+          {
+            this.toastr.error("Can't Update System Account.");
+          }
       }
       else{
         this.toastr.error("Select Any Account.");

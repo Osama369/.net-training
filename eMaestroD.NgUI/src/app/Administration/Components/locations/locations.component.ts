@@ -1,196 +1,246 @@
-import { Location } from './../../Models/location';
-import { Component, OnInit } from '@angular/core';
-import { Table } from 'primeng/table';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import * as FileSaver from 'file-saver';
+import * as _ from 'lodash';
+import { Table } from 'primeng/table';
+import { TreeTable } from 'primeng/treetable';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { LocationService } from '../../Services/location.service';
+import { Location } from './../../Models/location';
+import { TreeNode } from 'primeng/api';
 
 @Component({
   selector: 'app-locations',
   templateUrl: './locations.component.html',
   styleUrls: ['./locations.component.css']
 })
-
 export class LocationsComponent implements OnInit {
 
-    loc : Location[];
-    locList : Location[];
-    title : any = "";
-    loading: boolean = true;
-    columns : any[] = [];
-    exportColumns : any[] =[];
-    locationVisibility : boolean = false;
-    bookmark : boolean = false;
+  @ViewChild('dt1', { static: true }) treeTable: TreeTable;
+  heading: any = "Locations";
+  locList: Location[];
+  AlllocList: Location[];
+  files: TreeNode[];
+  AddNewLocationVisibility: boolean = false;
+  title: any = "";
+  locationData: Location[] = [];
+  parentID: any = "";
+  IsEdit: boolean = false;
+  selectedRow: any;
+  bookmark: boolean = false;
 
-    constructor(private locationService: LocationService,
-      private toastr: ToastrService, private router: Router,private authService:AuthService,
-      public bookmarkService: BookmarkService,
-      public route : ActivatedRoute
-      ) { }
+  constructor(
+    private router: Router,
+    private locationService: LocationService,
+    private route: ActivatedRoute,
+    private authService: AuthService,
+    private toastr: ToastrService,
+    public bookmarkService: BookmarkService
+  ) { }
 
-    ngOnInit() {
-        this.locationService.getAllLoc().subscribe(loc => {
-          if(loc.length >0)
-          {
+  ngOnInit(): void {
+    this.SetLocationTableTree();
 
-            this.loc = loc;
-            this.loc = this.loc.filter(x=>x.comID == localStorage.getItem('comID'));
-            if(this.loc.length > 0)
-            {
+    // this.locationService.getAllLoc().subscribe({
+    //   next: (loc) => {
+    //     this.locList = loc;
+    //   }
+    // });
 
-              this.columns = Object.keys(this.loc[0]);
-              this.exportColumns.push(new Object({title: "Code",dataKey: "locCode"}));
-              this.exportColumns.push(new Object({title: "Name",dataKey: "locName"}));
-              this.exportColumns.push(new Object({title: "Descripton",dataKey: "descr"}));
-              this.exportColumns.push(new Object({title: "Address",dataKey: "locAddress"}));
-              this.exportColumns.push(new Object({title: "Phone",dataKey: "locPhone"}));
-            }
-            this.loading = false;
-          }
-          else
-          {
-            this.loading = false;
-          }
-      });
-
-      this.authService.GetBookmarkScreen(this.route.snapshot?.data['requiredPermission']).subscribe(x=>{
-        this.bookmark = x;
-    });
-    }
-
-    UpdateBookmark(value:any){
-      this.bookmarkService.Updatebookmark(this.route.snapshot.data['requiredPermission'],value).subscribe({
-        next: (result: any) => {
-          this.bookmark = value;
-        },
-      });;
-    }
-
-
-    clear(table: Table) {
-        table.clear();
-    }
-
-    editView(loc:any)
-    {
-      this.authService.checkPermission('LocationEdit').subscribe(x=>{
-        if(x)
-        {
-          this.title = "Edit Location"
-          this.locList = loc;
-          this.locationVisibility = true;
-        }
-        else{
-          this.toastr.error("Unauthorized Access! You don't have permission to access.");
-        }
-      });
-
-    }
-
-    deleteView(locID:any)
-    {
-      this.authService.checkPermission('LocationDelete').subscribe(x=>{
-        if(x)
-        {
-          if (confirm("Are you sure you want to delete this Location?") == true) {
-             this.locationService.deleteLoc(locID).subscribe({
-              next: x =>{
-                this.toastr.success("Location has been successfully deleted!");
-                this.locationService.getAllLoc().subscribe(loc => {
-                this.loc = loc;
-                })
-              },
-              error:err=>{
-                this.toastr.error(err.error);
-                }
-              }
-            );
-        }
-        }
-        else{
-          this.toastr.error("Unauthorized Access! You don't have permission to access.");
-        }
-      });
-
-
-    }
-
-  exportExcel() {
-    var date = new Date();
-    var dateFormate = `${date.getMonth()}-${date.getDate()}-${date.getFullYear()}`;
-    let filtercols = this.columns.filter((f) => {
-      return f.isHidden == true;
-    });
-    let filterList = this.loc;
-    filterList.filter((f: { [x: string]: any; }) => {
-      filtercols.map((m) => {
-        delete f[m.field];
-      });
-    });
-    import('xlsx').then((xlsx) => {
-      const worksheet = xlsx.utils.json_to_sheet(filterList);
-      const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
-      const excelBuffer: any = xlsx.write(workbook, {
-        bookType: 'xlsx',
-        type: 'array',
-      });
-      this.saveAsExcelFile(excelBuffer, "location");
+    this.authService.GetBookmarkScreen(this.route.snapshot?.data['requiredPermission']).subscribe(x => {
+      this.bookmark = x;
     });
   }
 
-  saveAsExcelFile(buffer: any, fileName: string): void {
-    let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-    let EXCEL_EXTENSION = '.xlsx';
-    const data: Blob = new Blob([buffer], {
-        type: EXCEL_TYPE
+  UpdateBookmark(value: any) {
+    this.bookmarkService.Updatebookmark(this.route.snapshot.data['requiredPermission'], value).subscribe({
+      next: (result: any) => {
+        this.bookmark = value;
+      },
     });
-    FileSaver.saveAs(data, fileName + EXCEL_EXTENSION);
   }
 
-  exportPdf() {
-    var date = new Date();
-    import('jspdf').then((jsPDF) => {
-      import('jspdf-autotable').then((x) => {
-        const doc = new jsPDF.default('p', 'px', 'a4');
-        (doc as any).autoTable(this.exportColumns, this.loc);
-
-        doc.save('location.pdf');
-
-      });
+  SetLocationTableTree() {
+    this.locationService.getAllLoc().subscribe(loc => {
+      this.locList = this.AlllocList = loc;
+      this.files = this.convertToTree(loc);
     });
+  }
+
+  convertToTree(locations: any[]): any[] {
+    const map = new Map<number, any>();
+    const roots: any[] = [];
+
+    locations.forEach(loc => {
+      const node = {
+        data: { "id": loc.LocationId, "name": loc.LocationName, "level": loc.LocTypeId, "parentlocID" : loc.ParentLocationId },
+        children: []
+      };
+      map.set(loc.LocationId, node);
+
+      if (loc.ParentLocationId === 0) {
+        roots.push(node);
+      } else {
+        const parent = map.get(loc.ParentLocationId);
+        if (parent) {
+          parent.children.push(node);
+        } else {
+          map.set(loc.ParentLocationId, { children: [node] });
+        }
+      }
+    });
+
+    return roots;
+  }
+
+  hide() {
+    this.parentID = "";
+    this.selectedRow = null;
   }
 
   handleChildData(data: any) {
-
-    if(data.type == 'added')
-    {
-        this.loc.push(data.value);
-        this.locationVisibility = false;
-    }
-    else
-    {
-        this.locationVisibility = false;
+    if (data.type == 'added') {
+      this.SetLocationTableTree();
+      this.AddNewLocationVisibility = false;
+    } else {
+      this.AddNewLocationVisibility = false;
     }
   }
 
-  AddNewLocation()
-  {
-
-    this.authService.checkPermission('LocationCreate').subscribe(x=>{
-      if(x)
-      {
-        this.locList = [];
-      this.title= "Location Registration";
-      this.locationVisibility = true;
-      }
-      else{
+  onAdd() {
+    this.authService.checkPermission('LocationCreate').subscribe(x => {
+      if (x) {
+        if (this.parentID != "") {
+          console.log(this.selectedRow);
+          const selectedLevel = this.selectedRow.data.level;
+          if (selectedLevel === 1 || selectedLevel === 4) {
+            this.title = "Add New Location";
+            this.IsEdit = false;
+            this.AddNewLocationVisibility = true;
+            this.locList = this.selectedRow.data;
+          } else {
+            this.toastr.error("You can only add a location at level 1 or 4.");
+          }
+        } else {
+          this.toastr.error("Select Any Location.");
+        }
+      } else {
         this.toastr.error("Unauthorized Access! You don't have permission to access.");
       }
     });
+  }
 
+  onEdit() {
+    this.authService.checkPermission('LocationEdit').subscribe(x => {
+      if (x) {
+        if (this.parentID != "") {
+          console.log(this.selectedRow);
+          const selectedLevel = this.selectedRow.data.level;
+          if (selectedLevel === 2 || selectedLevel === 5) {
+            this.title = "Update Location";
+            this.IsEdit = true;
+            this.AddNewLocationVisibility = true;
+            const parentName = this.AlllocList.find(loc => loc.LocationId == this.selectedRow.data.parentlocID).LocationName;
+            this.selectedRow.data = {...this.selectedRow.data, parentName : parentName}
+            console.log(this.selectedRow.data);
+            this.locList = this.selectedRow.data;
+          } else {
+            this.toastr.error("You can only edit a location at level 2 or 5.");
+          }
+        } else {
+          this.toastr.error("Select Any Location.");
+        }
+      } else {
+        this.toastr.error("Unauthorized Access! You don't have permission to access.");
+      }
+    });
+  }
+
+  onDelete() {
+    this.authService.checkPermission('LocationDelete').subscribe(x => {
+      if (x) {
+        if (this.parentID != "") {
+          console.log(this.selectedRow);
+          const selectedLocation = this.AlllocList.find(loc => loc.LocationId == this.parentID);
+
+          if (selectedLocation) {
+            const selectedLevel = selectedLocation.LocTypeId;
+
+            // Check if the location is at level 2 or 5
+            if (selectedLevel === 2 || selectedLevel === 5) {
+
+              // For level 2, ensure there are no level 3 locations under it
+              if (selectedLevel === 2) {
+                const hasLevel3Children = this.AlllocList.some(loc => loc.ParentLocationId == this.parentID && loc.LocTypeId == 3);
+
+                if (hasLevel3Children) {
+                  this.toastr.error("Cannot delete this location because it has level 3 locations under it.");
+                  return;
+                }
+              }
+
+              if (confirm("Are you sure you want to delete this Location?")) {
+                if (selectedLocation.active !== true) {
+                  this.locationService.deleteLoc(selectedLocation.LocationId).subscribe({
+                    next: x => {
+                      this.toastr.success("Location has been successfully deleted!");
+                      this.SetLocationTableTree();
+                    },
+                    error: err => {
+                      this.toastr.error(err.error);
+                    }
+                  });
+                } else {
+                  this.toastr.error("Can't Delete System Account.");
+                }
+              }
+            } else {
+              this.toastr.error("You can only delete locations at level 2 or 5.");
+            }
+          } else {
+            this.toastr.error("Select Any Location.");
+          }
+        } else {
+          this.toastr.error("Select Any Location.");
+        }
+      } else {
+        this.toastr.error("Unauthorized Access! You don't have permission to access.");
+      }
+    });
+  }
+
+  expandAll() {
+    const temp = _.cloneDeep(this.files);
+    temp.forEach((node: TreeNode) => {
+      this.expandCollapseRecursive(node, true);
+    });
+    this.files = temp;
+  }
+
+  collapseAll() {
+    const temp = _.cloneDeep(this.files);
+    temp.forEach((node: TreeNode) => {
+      this.expandCollapseRecursive(node, false);
+    });
+    this.files = temp;
+  }
+
+  expandCollapseRecursive(node: TreeNode, isExpand: boolean) {
+    node.expanded = isExpand;
+    if (node.children) {
+      node.children.forEach(childNode => {
+        this.expandCollapseRecursive(childNode, isExpand);
+      });
+    }
+  }
+
+  nodeSelect(event: any) {
+    this.parentID = event.node.data.id;
+  }
+
+  nodeUnselect(event: any) {
+    this.parentID = "";
   }
 
 }

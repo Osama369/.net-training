@@ -1,6 +1,6 @@
-import { filter } from 'rxjs';
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, Output, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
-import { Router } from '@angular/router';
+import { filter, empty, lastValueFrom } from 'rxjs';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Input, NgZone, Output, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Products } from 'src/app/Manage/Models/products';
 import { ProductCategoryService } from 'src/app/Manage/Services/product-category.service';
@@ -9,6 +9,11 @@ import { VendorService } from 'src/app/Manage/Services/vendor.service';
 import { prodGroups } from 'src/app/Manage/Models/prodGroups';
 import { Vendor } from 'src/app/Manage/Models/vendor';
 import { AuthService } from 'src/app/Shared/Services/auth.service';
+import { Department } from 'src/app/Manage/Models/department';
+import { ProdManufacture } from 'src/app/Manage/Models/prod-manufacture';
+import { Category } from 'src/app/Manage/Models/category';
+import { GenericService } from 'src/app/Shared/Services/generic.service';
+import { TreeNode } from 'primeng/api';
 
 @Component({
   selector: 'app-add-new-product',
@@ -17,34 +22,51 @@ import { AuthService } from 'src/app/Shared/Services/auth.service';
 })
 export class AddNewProductComponent {
 
-  productlist: Products[];
+
   productGrouplist: prodGroups[];
+  Supplierlist: Vendor[] =  [];
+  departmentList: Department[] = [];
+  prodManufactureList: ProdManufacture[] = [];
+  categoryList: Category[] = [];
+  categoryListByDepartment: TreeNode[] = [];
+
+
+  productlist: Products[];
   FilterProductGrouplist: prodGroups[];
   SelectedproductGrouplist: any;
-  Supplierlist: Vendor[];
   SelectedSupplier: any = null;
+  SelectedCategory : any = null;
   comName: any;
   @Output() dataEvent = new EventEmitter<any>();
   @Input() prodData : any;
   @Input() title : any;
   @Input() prodGroupData : any;
-  @Input() showGroupBtn : boolean = true;
+  @Input() showGroupBtn : boolean = false;
   SupplierVisible : boolean = false;
   selectedType : any;
   filterType : any;
   hiddenField : boolean = true;
   type :any[] = [ 'Goods','Service'];
-autoComplete: any;
+  autoComplete: any;
+  unitOptions = [
+    { label: 'Unit', value: 'Unit' },
+    { label: 'Pack', value: 'Pack' },
+    { label: 'Carton', value: 'Carton' }
+  ];
+  EditProdID:any;
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private productService:ProductsService,
     private toastr: ToastrService,
     private el: ElementRef,
     private cdr: ChangeDetectorRef,
     private productCategoryService: ProductCategoryService,
-    private vendorService : VendorService,
+    private genericService : GenericService,
     private AuthService : AuthService,
+    private zone: NgZone
+
   ) {}
 
 
@@ -60,79 +82,70 @@ autoComplete: any;
   @ViewChild('savebtn') savebtn: ElementRef<HTMLElement>;
 
   ngOnInit(): void {
+
+    this.route.params.subscribe(params1 => {
+      this.EditProdID = params1['id'];
+   });
+   console.log(this.EditProdID);
+
     this.selectedType = this.type[0];
 
-    this.productlist = [
-      {
-        prodID : undefined,
-        prodGrpID : undefined,
-        comID : undefined,
-        comName : undefined,
-        prodGrpName : undefined,
-        prodCode : undefined,
-        shortName : undefined,
-        prodName : undefined,
-        descr : undefined,
-        prodUnit : "pcs",
-        unitQty : undefined,
-        qty:undefined,
-        tax:undefined,
-        discount:undefined,
-        purchRate : 0,
-        amount:undefined,
-        sellRate : 0,
-        batch:undefined,
-        retailprice : undefined,
-        bonusQty:undefined,
-        tP : undefined,
-        isDiscount : false,
-        isTaxable : false,
-        isStore : false,
-        isRaw : false,
-        isBonus : false,
-        minQty : undefined,
-        maxQty : undefined,
-        mega : true,
-        active : true,
-        crtBy : undefined,
-        crtDate : undefined,
-        modby : undefined,
-        modDate : undefined,
-        expirydate : undefined,
-        qtyBal:undefined,
-        GLID:undefined,
-        TxID:undefined,
-        unitPrice:undefined,
-        vendID:undefined,
-        productBarCodes: [
-          {BarCode: '', Unit: 'pcs', Qty: 1}
-        ]
-      },
-    ];
-
     this.filterType = this.type;
-    this.productCategoryService.getAllGroups().subscribe({
-      next: (comp) => {
-        this.productGrouplist =(comp as { [key: string]: any })["enttityDataSource"];;
-        //this.productGrouplist.currentIndex(1);
-        this.SelectedproductGrouplist = {prodGrpID:this.productGrouplist[0].prodGrpID,prodGrpName:this.productGrouplist[0].prodGrpName};
-        this.FilterProductGrouplist = this.productGrouplist;
-      },
-      error: (response) => {
-      },
-    });
-
-    this.vendorService.getAllVendor().subscribe({
-      next: (data) => {
-        this.Supplierlist =(data as { [key: string]: any })["enttityDataSource"];
-        this.cdr.detectChanges(); // Trigger change detection
-      },
-      error: (response) => {
-      },
-    });
+    this.fetchAllDropdownData();
+    if(this.EditProdID)
+    {
+      this.getEditProductDetail();
+    }
 
   }
 
+  async getEditProductDetail()
+  {
+    const data = await lastValueFrom(this.productService.GetOneProductDetail(this.EditProdID));
+      this.productlist[0] = data;
+      this.onDepartmentChange(data.depID, data.categoryID);
+  }
+
+  async fetchAllDropdownData(): Promise<void> {
+    try {
+      const data = await lastValueFrom(this.genericService.getAllDropdownData());
+      this.productGrouplist = data.ProductGroups;
+      this.departmentList = data.Department;
+      this.prodManufactureList = data.ProdManufacture;
+      this.categoryList = data.Category;
+
+    } catch (error) {
+      console.error('Error fetching dropdown data', error);
+    }
+  }
+
+  onDepartmentChange(depID: number, categoryID: number) {
+    // Filter the categoryList based on the selected depID
+    this.categoryListByDepartment = this.buildCategoryTree(this.categoryList.filter(category => category.depID === depID)); //this.categoryList.filter(category => category.depID === depID);
+    this.SelectedCategory = null;
+    if(categoryID > 0)
+    {
+      const selectedCategory = this.findCategoryNode(this.categoryListByDepartment, categoryID);
+      if (selectedCategory) {
+        this.SelectedCategory = selectedCategory;
+      }
+    }
+    //this.categoryListByDepartment = this.categoryList.filter(category => category.depID === depID);
+  }
+
+  findCategoryNode(nodes: TreeNode[], categoryID: number): TreeNode | null {
+    for (const node of nodes) {
+        if (node.data.categoryID === categoryID) {
+            return node;
+        } else if (node.children && node.children.length > 0) {
+            const foundNode = this.findCategoryNode(node.children, categoryID);
+            if (foundNode) {
+                return foundNode;
+            }
+        }
+    }
+    return null;
+}
   hideFields()
   {
     if(this.selectedType == "Service")
@@ -157,7 +170,6 @@ autoComplete: any;
       this.productlist[0] = this.prodData;
       this.selectedType = this.prodData.descr;
       this.hideFields();
-      this.SelectedSupplier = this.Supplierlist.find(x=>x.vendID == this.productlist[0].vendID);
       this.SelectedproductGrouplist = {prodGrpID:this.productlist[0].prodGrpID,prodGrpName:this.productGrouplist.find(x=>x.prodGrpID==this.productlist[0].prodGrpID)?.prodGrpName};
     }
     else
@@ -170,10 +182,11 @@ autoComplete: any;
 selectedProducts: any;
 
 addNewRow() {
-  if(this.productlist[0].productBarCodes?.find(x=>x.BarCode == "" && x.Qty == 0 )){
+  console.log(this.productlist[0].ProductBarCodes);
+  if(this.productlist[0].ProductBarCodes?.find(x=>x.BarCode == empty.toString() && x.Qty == 0 )){
     this.toastr.info("Please Fill Empty row first to add new row!");
   }else{
-    this.productlist[0].productBarCodes?.push({ prodID: this.productlist[0].prodID, BarCode: '', Unit: '', Qty: 0 })
+    this.productlist[0].ProductBarCodes?.push({ prodID: this.productlist[0].prodID, BarCode: '', Unit: '', Qty: 0, Active: true})
     // this.productlist.push({ prodID: this.productlist.length + 1, barcode: '', prodUnit: '', baseQty: 0 });
   }
 }
@@ -215,6 +228,7 @@ onRowEditCancel(product:any, editing:any) {
   clear()
   {
     this.SelectedSupplier = null;
+    this.SelectedCategory = null;
     this.productlist = [
       {
         prodID : undefined,
@@ -257,8 +271,8 @@ onRowEditCancel(product:any, editing:any) {
         TxID:undefined,
         unitPrice:undefined,
         vendID:undefined,
-        productBarCodes: [
-          {BarCode: '', Unit: 'pcs', Qty: 1}
+        ProductBarCodes: [
+          {BarCode: '', Unit: 'pcs', Qty: 1, Active: true}
         ]
       },
     ];
@@ -266,13 +280,15 @@ onRowEditCancel(product:any, editing:any) {
 
   saveProduct()
   {
-    if(this.SelectedSupplier == null || this.SelectedSupplier == undefined)
+
+    if(this.SelectedCategory != null)
     {
-      this.toastr.error("Please Select Supplier.");
-      this.count++;
-      this.onEnterTableInput(0);
+      this.productlist[0].categoryID = this.SelectedCategory.data.categoryID;
+      console.log(this.SelectedCategory);
+      console.log(this.productlist[0].categoryID);
     }
-    else if(this.productlist[0].prodCode == "" || this.productlist[0].prodCode == undefined)
+
+    if(this.productlist[0].prodCode == "" || this.productlist[0].prodCode == undefined)
     {
       this.toastr.error("Please write product code.");
       this.count++;
@@ -284,10 +300,6 @@ onRowEditCancel(product:any, editing:any) {
       this.count++;
       this.onEnterTableInput(1);
     }
-    else if(this.SelectedproductGrouplist.prodGrpID == "" || this.SelectedproductGrouplist.prodGrpID == undefined)
-    {
-      this.toastr.error("Please select product category.");
-    }
     else
     {
       if(this.productlist[0].purchRate == null) {this.productlist[0].purchRate = 0}
@@ -295,9 +307,7 @@ onRowEditCancel(product:any, editing:any) {
       if(this.productlist[0].minQty == null) {this.productlist[0].minQty = 0}
       if(this.productlist[0].maxQty == null) {this.productlist[0].maxQty = 0}
       this.productlist[0].comID = localStorage.getItem('comID');
-      this.productlist[0].prodGrpID = this.SelectedproductGrouplist.prodGrpID;
       this.productlist[0].descr = this.selectedType;
-      this.productlist[0].isTaxable = true;
       this.productlist[0].isRaw = false;
       this.productlist[0].minQty = parseFloat(this.productlist[0].minQty);
       this.productlist[0].maxQty = parseFloat(this.productlist[0].maxQty);
@@ -310,25 +320,24 @@ onRowEditCancel(product:any, editing:any) {
         this.productlist[0].qty = 0;
       }
       this.productlist[0].qty = parseFloat(this.productlist[0].qty);
-      this.productlist[0].vendID = this.SelectedSupplier.vendID;
-      this.productlist[0].vendName = this.SelectedSupplier.vendName;
+
+      console.log(this.productlist[0])
       this.productService.saveProduct(this.productlist[0]).subscribe({
         next: (prd:any) => {
-          if(this.title == "Product Registration")
+          if(this.EditProdID == undefined)
           {
             this.toastr.success("Product has been successfully added!");
-            prd.prodGrpName = this.SelectedproductGrouplist.prodGrpName;
-            this.dataEvent.emit({type:'added',value:prd});
+            this.router.navigateByUrl('/Manage/Products')
             this.clear();
           }
           else
           {
             this.toastr.success("Product has been successfully updated!");
-            prd.prodGrpName = this.SelectedproductGrouplist.prodGrpName;
-            this.dataEvent.emit({type:'',value:prd});
+            this.router.navigateByUrl('/Manage/Products')
           }
         },
         error: (response) => {
+          console.log(response);
           this.toastr.error(response.error);
           this.onEnterTableInput(0);
         },
@@ -342,6 +351,7 @@ onRowEditCancel(product:any, editing:any) {
   {
     this.count++;
   }
+
 
   onEnterTableInput(index: number) {
       if(index == -1 && this.count==0)
@@ -416,5 +426,35 @@ onRowEditCancel(product:any, editing:any) {
           this.SelectedSupplier = data.value;
         }
         this.SupplierVisible = false;
+  }
+
+  buildCategoryTree(categories: any[]): TreeNode[] {
+    const categoryMap = new Map<number, TreeNode>();
+
+    // Step 1: Create a map of categoryID to TreeNode
+    categories.forEach(category => {
+        categoryMap.set(category.categoryID, {
+            label: category.categoryName,
+            data: category,
+            children: []
+        });
+    });
+
+    const tree: TreeNode[] = [];
+
+    // Step 2: Populate the tree structure
+    categories.forEach(category => {
+        const node = categoryMap.get(category.categoryID);
+        if (category.parentCategoryID) {
+            const parent = categoryMap.get(category.parentCategoryID);
+            if (parent) {
+                parent.children.push(node);
+            }
+        } else {
+            tree.push(node);
+        }
+    });
+
+    return tree;
   }
 }

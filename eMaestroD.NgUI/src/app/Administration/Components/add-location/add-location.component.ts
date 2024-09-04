@@ -20,7 +20,10 @@ export class AddLocationComponent {
   @Output() dataEvent = new EventEmitter<any>();
   @Input() LocData : any;
   @Input() title : any;
-  isEdit: boolean = false;
+  @Input() isEdit: boolean = false;
+  parentLocationName : any;
+
+  newtitle : any;
 
   sendDataToParent() {
     this.clear();
@@ -28,12 +31,8 @@ export class AddLocationComponent {
   }
 
   ngOnInit(): void {
+    this.newtitle = this.title;
     this.locationList = [{
-      locCode : "",
-      locName : "",
-      locPhone : "",
-      locAddress : "",
-      descr : "",
     }]
   }
   constructor(
@@ -44,43 +43,45 @@ export class AddLocationComponent {
     ) {}
 
   ngOnChanges(changes: SimpleChanges) {
-
+    this.newtitle = this.title;
     if(this.LocData != undefined && this.LocData.length != 0)
     {
-      this.isEdit = true;
-       this.locationList[0] = this.LocData;
+
+      if(this.isEdit)
+      {
+
+       this.locationList[0].LocationId = this.LocData.id;
+       this.locationList[0].LocationName = this.LocData.name;
+       this.locationList[0].ParentLocationId = this.LocData.parentlocID;
+       this.locationList[0].LocTypeId = this.LocData.level;
+       this.parentLocationName = this.LocData.parentName;
+
+      }else{
+
+       this.locationList[0].ParentLocationId = this.LocData.id;
+       this.locationList[0].LocTypeId = this.LocData.level + 1;
+       this.parentLocationName = this.LocData.name;
+      }
     }
     else
     {
-      this.isEdit = false;
-       this.clear();
+      this.clear();
     }
 }
   clear()
   {
     this.locationList = [{
-      locCode : "",
-      locName : "",
-      locPhone : "",
-      locAddress : "",
-      descr : "",
     }]
   }
   saveLoc()
   {
-    if(this.locationList[0].locCode == "" || this.locationList[0].locCode == undefined)
-    {
-      this.toastr.error("Please write location code");
-      this.onEnterTableInputCst(-1);
-    }
-    else if(this.locationList[0].locName == "" || this.locationList[0].locName == undefined)
+    if(this.locationList[0].LocationName == "" || this.locationList[0].LocationName == undefined)
     {
       this.toastr.error("Please write location name");
       this.onEnterTableInputCst(0);
     }
     else
     {
-      this.locationList[0].locTypeID= 1;
       this.locationList[0].comID= localStorage.getItem('comID');
       this.locationList[0].active = true;
       this.locaitonService.saveLoc(this.locationList[0]).subscribe({
@@ -93,7 +94,7 @@ export class AddLocationComponent {
           else
           {
             this.toastr.success("Location has been successfully updated");
-            this.dataEvent.emit({type:'',value:loc});
+            this.dataEvent.emit({type:'added',value:loc});
           }
 
         },

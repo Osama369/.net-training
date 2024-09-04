@@ -99,12 +99,6 @@ namespace eMaestroD.Api.Controllers
                 .Where(x => productGrpIds.Contains(x.prodGrpID))
                 .ToListAsync();
 
-
-            var vendorsIds = products.Select(x => x.vendID).ToList();
-            var vendors = await _AMDbContext.Vendors
-                .Where(x => vendorsIds.Contains(x.vendID))
-                .ToListAsync();
-
             var productBarCodes = await _AMDbContext.ProductBarCodes
                 .Where(x => productIds.Contains(x.prodID))
                 .ToListAsync();
@@ -113,8 +107,6 @@ namespace eMaestroD.Api.Controllers
             {
                 var prodGroup = prodGroups.FirstOrDefault(x => x.prodGrpID == product.prodGrpID);
                 product.prodGrpName = prodGroup?.prodGrpName;
-                var vendor = vendors.FirstOrDefault(x => x.vendID == product.vendID);
-                product.vendName = vendor?.vendName;
                 product.ProductBarCodes = productBarCodes.Where(x => x.prodID == product.prodID).ToList();
             }
 
@@ -139,6 +131,25 @@ namespace eMaestroD.Api.Controllers
 
         }
 
+        [HttpGet]
+        [Route("GetOneProductDetail/{comID}/{prodID}")]
+        public async Task<IActionResult> GetOneProductDetail(int comID, int prodID)
+        {
+
+            var product = await _AMDbContext.Products.Where(x => x.comID == comID && x.prodID == prodID && x.active == true).FirstOrDefaultAsync();
+
+          
+            var productBarCodes = await _AMDbContext.ProductBarCodes
+                .Where(x => x.prodID == prodID)
+                .ToListAsync();
+
+            product.ProductBarCodes = productBarCodes;
+
+            return Ok(product);
+
+        }
+
+
         [HttpPost]
         public async Task<IActionResult> AddProduct([FromBody] Product product)
         {
@@ -153,14 +164,8 @@ namespace eMaestroD.Api.Controllers
                     product.modby = username;
                     _AMDbContext.Products.Update(product);
 
-                    ProductBarCodes pd = new ProductBarCodes()
-                    {
-                        prodBCID = _AMDbContext.ProductBarCodes.Where(x => x.prodID == product.prodID).FirstOrDefault().prodBCID,
-                        prodID = product.prodID,
-                        BarCode = product.prodCode,
-                        Active = true,
-                    };
-                    _AMDbContext.ProductBarCodes.Update(pd);
+
+                    _AMDbContext.ProductBarCodes.UpdateRange(product.ProductBarCodes);
                     await _AMDbContext.SaveChangesAsync();
 
                     _notificationInterceptor.SaveNotification("ProductsEdit", product.comID, "");
@@ -182,7 +187,6 @@ namespace eMaestroD.Api.Controllers
 
                     foreach (var item in product.ProductBarCodes)
                     {
-                        item.Active = true;
                         item.prodID = product.prodID;
                     }
                     //ProductBarCodes pd = new ProductBarCodes()
@@ -722,8 +726,19 @@ namespace eMaestroD.Api.Controllers
         [HttpPost("BarcodeGenerator")]
         public async Task<IActionResult> BarcodeGenerator(List<Product> prodList)
         {
-            int quantity = int.Parse(prodList[0].unitQty.ToString());
+            //int quantity = int.Parse(prodList[0].unitQty.ToString());
             List<Product> duplicatedProdList = new List<Product>();
+
+            var pageSetting = _AMDbContext.BarcodeConfigSettings.ToList();
+
+            string pageWidth = pageSetting.FirstOrDefault(x=>x.key == "pageWidth").value;
+            string pageHeight = pageSetting.FirstOrDefault(x => x.key == "pageHeight").value;
+            string marginTop = pageSetting.FirstOrDefault(x => x.key == "marginTop").value;
+            string marginLeft = pageSetting.FirstOrDefault(x => x.key == "marginLeft").value;
+            string marginRight = pageSetting.FirstOrDefault(x => x.key == "marginRight").value;
+            string marginBottom = pageSetting.FirstOrDefault(x => x.key == "marginBottom").value;
+            string noOfBarcode = pageSetting.FirstOrDefault(x => x.key == "noOfBarcode").value;
+            string unit = pageSetting.FirstOrDefault(x => x.key == "unit").value;
 
             foreach (var item in prodList)
             {
@@ -731,23 +746,14 @@ namespace eMaestroD.Api.Controllers
                                               .Code128WithChecksum;
                 item.barcodeImage = (byte[])new ImageConverter().ConvertTo(barcode.Draw(item.prodCode, 50), typeof(byte[]));
 
-                for (int i = 0; i < quantity; i++)
+                for (int i = 0; i < int.Parse(item.unitQty.ToString()); i++)
                 {
                     duplicatedProdList.Add(item);
                 }
             }
 
-
-            var pageSetting = prodList[0].comment.Split('/');
-
-            string pageWidth = pageSetting[0];
-            string pageHeight = pageSetting[1];
-            string marginTop = pageSetting[2];
-            string marginLeft = pageSetting[3];
-            string marginRight = pageSetting[4];
-            string marginBottom = pageSetting[5];
-            string noOfBarcode = pageSetting[6];
-            string unit = "mm";
+            
+           
             var basePath = _configuration.GetSection("AppSettings:ImgPath").Value;
             // Set report parameters if needed
             // localReport.SetParameters(...);

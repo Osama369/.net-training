@@ -2271,7 +2271,7 @@ namespace eMaestroD.Api.Controllers
                             {
                                 for (int i = 2; i <= worksheet.RowsUsed().Count(); i++)
                                 {
-                                    var location = _AMDbContext.Locations.Where(x => x.locName == worksheet.Cell(i, 5).Value.ToString()).ToList();
+                                    var location = _AMDbContext.Locations.Where(x => x.LocationName == worksheet.Cell(i, 5).Value.ToString()).ToList();
                                     if (location.Count() > 0)
                                     {
                                         var existList = _AMDbContext.Products.Where(x => x.comID == comID && x.prodCode == worksheet.Cell(i, 1).Value.ToString() && x.prodName == worksheet.Cell(i, 2).Value.ToString());
@@ -2298,7 +2298,7 @@ namespace eMaestroD.Api.Controllers
                                                 modDate = DateTime.Now,
                                                 depositID = fiscalYear,
                                                 prodID = existList.FirstOrDefault().prodID,
-                                                locID = location[0].locID,
+                                                locID = location[0].LocationId,
                                                 comID = comID,
                                                 balSum = 0,
                                                 unitPrice = stockList.Find(x => x.prodID == existList.FirstOrDefault().prodID).unitPrice,

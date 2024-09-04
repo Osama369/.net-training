@@ -40,6 +40,10 @@
           <DataField>sellRate</DataField>
           <rd:TypeName>System.Decimal</rd:TypeName>
         </Field>
+        <Field Name="crtDate">
+          <DataField>crtDate</DataField>
+          <rd:TypeName>System.DateTime</rd:TypeName>
+        </Field>
       </Fields>
       <rd:DataSetInfo>
         <rd:DataSetName>DataSet1</rd:DataSetName>
@@ -64,31 +68,12 @@
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>1.37153cm</Height>
+                  <Height>0.77153cm</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Image Name="Image1">
-                          <Source>Database</Source>
-                          <Value>=Fields!barcodeImage.Value</Value>
-                          <MIMEType>image/jpeg</MIMEType>
-                          <Sizing>Fit</Sizing>
-                          <Style>
-                            <Border>
-                              <Style>None</Style>
-                            </Border>
-                          </Style>
-                        </Image>
-                      </CellContents>
-                    </TablixCell>
-                  </TablixCells>
-                </TablixRow>
-                <TablixRow>
-                  <Height>1.21679cm</Height>
-                  <TablixCells>
-                    <TablixCell>
-                      <CellContents>
-                        <Textbox Name="prodCode">
+                        <Textbox Name="Textbox1">
+                          <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
@@ -109,15 +94,7 @@
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Price : </Value>
-                                  <Style>
-                                    <FontFamily>verdana</FontFamily>
-                                    <FontSize>7pt</FontSize>
-                                    <FontWeight>Bold</FontWeight>
-                                  </Style>
-                                </TextRun>
-                                <TextRun>
-                                  <Value>=Fields!sellRate.Value</Value>
+                                  <Value>=Fields!prodCode.Value</Value>
                                   <Style>
                                     <FontFamily>verdana</FontFamily>
                                     <FontSize>7pt</FontSize>
@@ -130,7 +107,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>prodCode</rd:DefaultName>
+                          <rd:DefaultName>Textbox1</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -141,7 +118,72 @@
                             <PaddingBottom>2pt</PaddingBottom>
                           </Style>
                         </Textbox>
-                        <rd:Selected>true</rd:Selected>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>1.21679cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Image Name="Image1">
+                          <Source>Database</Source>
+                          <Value>=Fields!barcodeImage.Value</Value>
+                          <MIMEType>image/jpeg</MIMEType>
+                          <Sizing>Fit</Sizing>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                          </Style>
+                        </Image>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>0.6cm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="crtDate">
+                          <CanGrow>true</CanGrow>
+                          <KeepTogether>true</KeepTogether>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>EXP </Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>MM-dd-yyyy</Format>
+                                  </Style>
+                                </TextRun>
+                                <TextRun>
+                                  <Value>=Fields!crtDate.Value</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>MM-dd-yyyy</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <rd:DefaultName>crtDate</rd:DefaultName>
+                          <Style>
+                            <Border>
+                              <Style>None</Style>
+                            </Border>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
                       </CellContents>
                     </TablixCell>
                   </TablixCells>
@@ -160,6 +202,11 @@
                   <TablixMembers>
                     <TablixMember />
                     <TablixMember />
+                    <TablixMember>
+                      <Visibility>
+                        <Hidden>=IIf(IsNothing(Fields!crtDate.Value), true, false)</Hidden>
+                      </Visibility>
+                    </TablixMember>
                   </TablixMembers>
                 </TablixMember>
               </TablixMembers>
