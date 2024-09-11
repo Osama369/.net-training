@@ -34,16 +34,25 @@ namespace eMaestroD.Api.Data
             var tenantsID = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Upn);
             if (tenantsID != null)
             {
-                using (var dbContext = new AMDbContext(optionsBuilder.Options))
+                var tenant = _ConnectionStringsDictionary.GetItem(int.Parse(cm.Decrypt(tenantsID)));
+                if (tenant != null)
                 {
-                    var conString = dbContext.Tenants.Where(x => x.tenantID == int.Parse(cm.Decrypt(tenantsID))).ToList();
-                    if (conString.Count > 0)
+                    optionsBuilder.UseSqlServer(cm.Decrypt(tenant.connectionString));
+                }
+                else
+                {
+                    using (var dbContext = new AMDbContext(optionsBuilder.Options))
                     {
-                        var optionsBuilder1 = new DbContextOptionsBuilder<AMDbContext>();
-                        optionsBuilder1.UseSqlServer(cm.Decrypt(conString[0].connectionString));
-                        optionsBuilder1.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                        //UserConnections.Add(conString, tenantsID);
-                        return new AMDbContext(optionsBuilder1.Options);
+                        var conString = dbContext.Tenants.Where(x => x.tenantID == int.Parse(cm.Decrypt(tenantsID))).ToList();
+                        if (conString.Count > 0)
+                        {
+                            var optionsBuilder1 = new DbContextOptionsBuilder<AMDbContext>();
+                            optionsBuilder1.UseSqlServer(cm.Decrypt(conString[0].connectionString));
+                            optionsBuilder1.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                            //UserConnections.Add(conString, tenantsID);
+                            _ConnectionStringsDictionary.AddItem(new Item { Id = conString[0].tenantID, connectionString = conString[0].connectionString });
+                            return new AMDbContext(optionsBuilder1.Options);
+                        }
                     }
                 }
             }
