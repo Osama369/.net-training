@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { __await } from 'tslib';
 import { environment } from 'src/environments/environment';
+import { ProductViewModel } from '../Models/product-view-model';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,11 @@ export class ProductsService {
   getAllProducts(): Observable<Products[]> {
     let comID = localStorage.getItem('comID');
     return this.http.get<Products[]>(this.baseApiUrl+comID);
+  }
+
+  GetProducts(prodID:any): Observable<ProductViewModel[]> {
+    let comID = localStorage.getItem('comID');
+    return this.http.get<ProductViewModel[]>(this.baseApiUrl+'GetProducts/'+comID+'/'+prodID);
   }
 
   getAllProductsWithCategory(): Observable<Products[]> {

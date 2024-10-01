@@ -5,6 +5,7 @@ import { environment } from 'src/environments/environment';
 import { JournalVoucher } from 'src/app/Transaction/Models/journal-voucher';
 import { Gl } from '../Models/gl';
 import { InvoiceView } from '../Models/invoice-view';
+import { Invoice } from '../Models/invoice';
 
 @Injectable({
   providedIn: 'root'
@@ -13,9 +14,13 @@ export class InvoicesService {
 
   // baseApiUrl: string = "https://localhost:44386";
   baseApiUrl: string = environment.BaseApiUrl + '/GL';
+  ApiUrl: string = environment.BaseApiUrl + '/Invoice';
 
   constructor(private http: HttpClient) { }
 
+  saveInvoice(data: Invoice): Observable<void> {
+    return this.http.post<void>(this.ApiUrl + '/CreateInvoice', data);
+  }
 
   saveSaleInvoice(newInvoice: Gl[]): Observable<Gl[]> {
     return this.http.post<Gl[]>(this.baseApiUrl + '/AddSaleInvoice', newInvoice);

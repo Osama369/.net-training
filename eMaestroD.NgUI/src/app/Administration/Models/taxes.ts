@@ -3,4 +3,5 @@ export interface Taxes {
   TaxName?:any;
   taxValue?:any;
   isDefault?:any;
+  acctNo?:any;
 }

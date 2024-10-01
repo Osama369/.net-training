@@ -324,7 +324,7 @@ onRowEditCancel(product:any, editing:any) {
       console.log(this.productlist[0])
       this.productService.saveProduct(this.productlist[0]).subscribe({
         next: (prd:any) => {
-          if(this.EditProdID == undefined)
+          if(this.EditProdID != undefined)
           {
             this.toastr.success("Product has been successfully added!");
             this.router.navigateByUrl('/Manage/Products')

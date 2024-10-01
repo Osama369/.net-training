@@ -1,9 +1,10 @@
 ﻿using eMaestroD.Api.Data;
-using eMaestroD.Api.Models;
+using eMaestroD.Models.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using eMaestroD.DataAccess.DataSet;
 
 namespace eMaestroD.Api.Controllers
 {

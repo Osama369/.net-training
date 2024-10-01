@@ -90,12 +90,13 @@ input {
     background-color: #0d6efd;
     // background-color:var(--teal-900);
     color: white;
+    font-size: smaller;
     // background: rgb(0, 0, 0) !important;
 }
 
-// .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
-//   padding: 0rem 0.5rem !important;
-// }
+.p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
+  padding: 0.01rem 0.01rem !important;
+}
 
 // .p-datatable .p-datatable-tbody > tr > td, .p-datatable .p-datatable-thead > tr > th{
 //   // padding: 13px !important;

@@ -1,4 +1,29 @@
 export interface Products {
+    barCode?: any;
+    discountAmount?: any;
+    taxPercent?: any;
+    taxAmount?: any;
+    taxCode?:any;
+    extraDiscountPercent?: any;
+    extraDiscountAmount?: any;
+    advanceTaxPercent?: any;
+    advanceTaxAmount?: any;
+    advanceTaxCode?:any;
+    extraAdvanceTaxCode?:any;
+    extraAdvanceTaxPercent?: any;
+    extraAdvanceTaxAmount?: any;
+    rebatePercent?: any;
+    rebateAmount?: any;
+    grossValue?: number;
+    discountedGross?: number;
+    netAmountBeforeRebate?: any;
+    netAmount?: number;
+    netRate?: number;
+    prodBarcodeID?: any;
+    notes?: any;
+    batchNo?: any;
+    expiry?: any;
+    discountPercent?: any;
     prodID ?: any;
     prodGrpID ?: any;
     comID ?: any;
@@ -49,6 +74,9 @@ export interface Products {
     isImported?:any;
     prodSize?:any;
     prodColor?:any;
+    depName?:any;
+    prodManuName?:any;
+    categoryName?:any;
 }
 
 

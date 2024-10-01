@@ -11,9 +11,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
-using eMaestroD.Api.Models;
+using eMaestroD.Models.Models;
 using eMaestroD.Api.Common;
 using eMaestroD.Api.Data;
+using eMaestroD.DataAccess.DataSet;
 
 namespace eMaestroD.Api.Controllers
 {
@@ -22,8 +23,8 @@ namespace eMaestroD.Api.Controllers
     [Route("/api/[controller]/[action]")]
     public class UserController : Controller
     {
-        private readonly UserManager<RegisterBindingModel> _userManager;
-        private readonly SignInManager<RegisterBindingModel> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
 
         private readonly AMDbContext _AMDbContext;
         private readonly Context _Context;
@@ -34,7 +35,7 @@ namespace eMaestroD.Api.Controllers
         private readonly NotificationInterceptor _notificationInterceptor;
         string username = "";
         //private readonly ConnectionStringService _connectionStringService;
-        public UserController(UserManager<RegisterBindingModel> userManager, SignInManager<RegisterBindingModel> signInManager,
+        public UserController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
             AMDbContext aMDbContext, Context Context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor,
             IEmailService emailService, IWebHostEnvironment _environment, NotificationInterceptor notificationInterceptor)
         {
@@ -172,7 +173,7 @@ namespace eMaestroD.Api.Controllers
                     if (tenlist[0].maxUserCount > userlist.Count())
                     {
 
-                        var u = new RegisterBindingModel
+                        var u = new IdentityUser
                         {
                             UserName = user.Email,
                             Email = user.Email,

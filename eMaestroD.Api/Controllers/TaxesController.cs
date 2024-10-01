@@ -1,9 +1,10 @@
 ﻿using eMaestroD.Api.Common;
 using eMaestroD.Api.Data;
-using eMaestroD.Api.Models;
+using eMaestroD.Models.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using eMaestroD.DataAccess.DataSet;
 
 namespace eMaestroD.Api.Controllers
 {
@@ -37,15 +38,40 @@ namespace eMaestroD.Api.Controllers
 
         [HttpGet]
         [Route("{comID}")]
-        public async Task<IActionResult> getTaxesList(int comID)
+        public async Task<IActionResult> GetTaxesList(int comID)
         {
-            List<Taxes> SDL = _AMDbContext.Taxes.Where(x=>x.comID == comID).ToList();
+            var ParentAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CurrentLiability);
+            var parentCOAID = _AMDbContext.COA
+                .Where(x => x.acctNo == ParentAccCode && x.comID == comID) // Ensure the correct context for comID
+                .Select(x => x.COAID)
+                .FirstOrDefault();
+
+            var SDL = _AMDbContext.Taxes
+                .Where(x => x.comID == comID)
+                .Select(t => new
+                {
+                    t.TaxID,
+                    t.TaxName,
+                    t.comID,
+                    t.taxValue,
+                    t.isDefault,
+                    t.crtBy,
+                    t.crtDate,
+                    t.modby,
+                    t.modDate,
+                    acctNo = _AMDbContext.COA
+                                .Where(c => c.parentCOAID == parentCOAID && c.COANo == t.TaxID)
+                                .Select(c => c.acctNo)
+                                .FirstOrDefault() 
+                })
+                .ToList();
+
             return Ok(SDL);
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> saveTaxes([FromBody] Taxes taxes)
+        public async Task<IActionResult> SaveTaxes([FromBody] Taxes taxes)
         {
             var comID = int.Parse(Request.Headers["comID"].ToString());
             taxes.TaxName = taxes.TaxName.Trim();

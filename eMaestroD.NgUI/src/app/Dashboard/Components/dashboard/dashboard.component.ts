@@ -1,3 +1,4 @@
+import { SharedDataService } from './../../../Shared/Services/shared-data.service';
 import * as FileSaver from 'file-saver';
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { MenuItem } from 'primeng/api';
@@ -57,16 +58,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     constructor(public layoutService: LayoutService, public genericService: GenericService,
       private ref: ChangeDetectorRef, private signalrService : SignalrService,
+      private _sharedDataService : SharedDataService,
       private authService : AuthService, private router : Router) {
         this.subscription = this.layoutService.configUpdate$.subscribe(() => {
             this.initChart();
             this.ref.detectChanges();
-
         });
     }
 
 
     ngOnInit() {
+
         //this.productService.getProductsSmall().then(data => this.products = data);
 
         this.signalrService.ClearNotification();

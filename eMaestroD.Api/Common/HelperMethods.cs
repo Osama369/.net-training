@@ -1,16 +1,34 @@
 ﻿using eMaestroD.Api.Data;
-using eMaestroD.Api.Models;
+using eMaestroD.Models.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using eMaestroD.DataAccess.DataSet;
 
 namespace eMaestroD.Api.Common
 {
     public class HelperMethods
     {
         private readonly AMDbContext _AMDbContext;
-        public HelperMethods(AMDbContext aMDbContext)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public HelperMethods(AMDbContext aMDbContext, IHttpContextAccessor httpContextAccessor)
         {
             _AMDbContext = aMDbContext;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        public string GetActiveUser_Username()
+        {
+            var email = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.Email);
+            if (email != null)
+            {
+                var user = _AMDbContext.Users.Where(x => x.Email == email);
+                if (user != null)
+                {
+                    return user.FirstOrDefault().FirstName + " " + user.FirstOrDefault().LastName;
+                }
+            }
+            return "";
         }
 
         public string GenerateAcctNo(string parentAcctNo, int comID)

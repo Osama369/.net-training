@@ -1,8 +1,8 @@
-﻿using eMaestroD.Api.Data;
-using eMaestroD.Api.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
+using eMaestroD.DataAccess.DataSet;
+using eMaestroD.Models.ReportModels;
 
 namespace eMaestroD.Api.Controllers
 {

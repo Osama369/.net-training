@@ -1,7 +1,7 @@
 ﻿using ClosedXML.Excel;
 using eMaestroD.Api.Common;
 using eMaestroD.Api.Data;
-using eMaestroD.Api.Models;
+using eMaestroD.Models.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -15,6 +15,8 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using eMaestroD.DataAccess.DataSet;
+using eMaestroD.Shared.Common;
 
 namespace eMaestroD.Api.Controllers
 {

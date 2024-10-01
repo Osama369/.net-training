@@ -20,6 +20,7 @@ import { InvoicesComponent } from './Components/invoices/invoices.component';
 import { AddRowDirective } from './Directive/add-row.directive';
 import { DateFilterPipe } from './Pipes/date-filter-pipe.pipe';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { SharedDataService } from './Services/shared-data.service';
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);
@@ -73,7 +74,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
       provide:HTTP_INTERCEPTORS,
       useClass:TokenInterceptor,
       multi:true,
-    },
+    }
   ],
 })
 export class SharedModule { }

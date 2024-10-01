@@ -28,6 +28,10 @@ import { VoucherDetailViewComponent } from './Components/voucher-detail-view/vou
 import { SharedModule } from '../Shared/shared.module';
 import { ManageModule } from '../Manage/manage.module';
 import { InvoicesRoutingModule } from './invoices-routing.module';
+import { GRNComponent } from './Components/grn/grn.component';
+import { AddNewGrnComponent } from './Components/add-new-grn/add-new-grn.component';
+import { AddNewPurchaseMComponent } from './Components/add-new-purchase-m/add-new-purchase-m.component';
+import { PurchaseMComponent } from './Components/purchase-m/purchase-m.component';
 
 
 
@@ -58,7 +62,11 @@ import { InvoicesRoutingModule } from './invoices-routing.module';
     SaleReturn2Component,
     ServiceInvoiceComponent,
     StockShortageComponent,
-    VoucherDetailViewComponent
+    VoucherDetailViewComponent,
+    GRNComponent,
+    AddNewGrnComponent,
+    AddNewPurchaseMComponent,
+    PurchaseMComponent
   ],
   imports: [
     CommonModule,

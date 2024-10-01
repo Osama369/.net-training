@@ -9,7 +9,8 @@ using System.Collections;
 using Microsoft.AspNetCore.SignalR;
 using eMaestroD.Api.Hub;
 using eMaestroD.Api.Data;
-using eMaestroD.Api.Models;
+using eMaestroD.Models.Models;
+using eMaestroD.DataAccess.DataSet;
 
 namespace eMaestroD.Api.Common
 {

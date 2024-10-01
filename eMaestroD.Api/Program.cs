@@ -11,9 +11,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using eMaestroD.Api.Hub;
-using eMaestroD.Api.Models;
+using eMaestroD.Models.Models;
 using eMaestroD.Api.Data;
 using eMaestroD.Api.Common;
+using eMaestroD.InvoiceProcessing.Factories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,8 +31,12 @@ builder.Services.AddDbContext<Context>(options =>
 builder.Services.AddSingleton<EmailService>(); 
  builder.Services.AddScoped<IEmailService, EmailService>();
 
-builder.Services.AddScoped<GLService>();
+builder.Services.AddScoped<InvoiceValidationService>(); 
+builder.Services.AddScoped<GLService>(); 
+builder.Services.AddScoped<eMaestroD.DataAccess.Repositories.HelperMethods>();
+builder.Services.AddScoped<eMaestroD.DataAccess.DataSet.AMDbContext>();
 builder.Services.AddScoped<HelperMethods>();
+builder.Services.AddScoped<InvoiceHandlerFactory>();
 builder.Services.AddScoped<NotificationInterceptor>();
 
 builder.Services.AddSingleton<ConnectionStringsDictionary>();
@@ -40,14 +45,13 @@ builder.Services.AddScoped(provider => provider.GetRequiredService<CustomDbConte
 
 
 // Setup identity
-builder.Services.AddIdentityCore<RegisterBindingModel>()
+builder.Services.AddIdentityCore<IdentityUser>()
             .AddRoles<IdentityRole>()
-            .AddUserManager<CustomUserManager>()
-             .AddSignInManager<SignInManager<RegisterBindingModel>>()
+            .AddUserManager<UserManager<IdentityUser>>()
+             .AddSignInManager<SignInManager<IdentityUser>>()
             .AddEntityFrameworkStores<Context>()
             .AddDefaultTokenProviders();
 
-builder.Services.AddScoped<CustomUserManager>();
 
 
 //builder.Services.AddIdentityCore<RegisterBindingModel>().AddEntityFrameworkStores<AMDbContext>();

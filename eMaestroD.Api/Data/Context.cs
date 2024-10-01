@@ -1,11 +1,11 @@
-﻿using eMaestroD.Api.Models;
+﻿using eMaestroD.Models.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace eMaestroD.Api.Data
 {
-    public class Context : IdentityDbContext<RegisterBindingModel>
+    public class Context : IdentityDbContext<IdentityUser>
     {
         public Context(DbContextOptions options) : base(options)
         {

@@ -12,10 +12,12 @@ using System.Drawing.Imaging;
 using Microsoft.AspNetCore.Hosting;
 using System.Globalization;
 using System.Security.Claims;
-using eMaestroD.Api.Models;
+using eMaestroD.Models.Models;
 using eMaestroD.Api.Common;
-using eMaestroD.Api.Data;
 using Microsoft.AspNetCore.Authorization;
+using eMaestroD.DataAccess.DataSet;
+using eMaestroD.Models.ReportModels;
+using eMaestroD.Shared.Common;
 
 namespace eMaestroD.Api.Controllers
 {
@@ -764,8 +766,6 @@ namespace eMaestroD.Api.Controllers
             };
 
             SDL = _AMDbContext.StockSaleAndReturn.FromSqlRaw(sql, parms.ToArray()).ToList();
-
-
 
             if (SDL.Count > 0)
             {

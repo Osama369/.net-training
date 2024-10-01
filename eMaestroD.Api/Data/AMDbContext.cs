@@ -9,6 +9,7 @@ using System.Data.Entity.Infrastructure;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using eMaestroD.Api.Common;
 using eMaestroD.Api.Models;
+using Models.VMModels;
 
 namespace eMaestroD.Api.Data
 {
@@ -94,7 +95,8 @@ namespace eMaestroD.Api.Data
         public DbSet<Offer> Offers { get; set; }
         public DbSet<ProdDiscount> ProdDiscounts { get; set; }
         public DbSet<BarcodeConfigSetting> BarcodeConfigSettings { get; set; }
-
+        public DbSet<GLDetail> GLDetails { get; set; }
+        public DbSet<ProductViewModel> ProductViewModel { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

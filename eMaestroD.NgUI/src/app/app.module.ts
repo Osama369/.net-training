@@ -10,6 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppConfigService } from './Shared/Services/app-config.service';
 import { AuthModule } from './Auth/auth.module';
+import { SharedDataService } from './Shared/Services/shared-data.service';
 
 export function initializeApp(appConfigService: AppConfigService) {
   return () => {
@@ -53,7 +54,8 @@ export function initializeApp(appConfigService: AppConfigService) {
         useFactory: initializeApp,
         deps: [AppConfigService],
         multi: true
-      }
+      },
+      SharedDataService
     ],
   bootstrap: [AppComponent],
 })

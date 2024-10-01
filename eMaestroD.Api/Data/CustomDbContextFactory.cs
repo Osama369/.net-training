@@ -6,8 +6,9 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Configuration;
-using eMaestroD.Api.Models;
+using eMaestroD.Models.Models;
 using eMaestroD.Api.Common;
+using eMaestroD.DataAccess.DataSet;
 
 namespace eMaestroD.Api.Data
 {

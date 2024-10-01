@@ -70,6 +70,7 @@ export class AppMenuComponent implements OnInit {
                     { label: 'Invoices', icon: 'pi pi-fw pi-shopping-cart',
                         items:[
                           {label: 'Purchase Order', routerLink: ['/Invoices/PurchaseOrder']},
+                          {label: 'Goods Received Note', routerLink: ['/Invoices/GRN']},
                           {label: 'Purchase', routerLink: ['/Invoices/Purchase']},
                           {label: 'Purchase Return', routerLink: ['/Invoices/PurchaseReturn']},
                           {label: 'Quotations', routerLink: ['/Invoices/Quotations']},

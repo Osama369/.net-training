@@ -13,9 +13,10 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using eMaestroD.Api.Hub;
-using eMaestroD.Api.Models;
+using eMaestroD.Models.Models;
 using eMaestroD.Api.Common;
 using eMaestroD.Api.Data;
+using eMaestroD.DataAccess.DataSet;
 
 namespace eMaestroD.Api.Controllers
 {
@@ -24,8 +25,8 @@ namespace eMaestroD.Api.Controllers
     public class AccountController : Controller
     {
         //private readonly UserManager<RegisterBindingModel> _userManager;
-        private readonly SignInManager<RegisterBindingModel> _signInManager;
-        private readonly CustomUserManager _customUserManager;
+        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<IdentityUser> _userManager;
 
         private readonly AMDbContext _AMDbContext;
         private readonly Context _Context;
@@ -37,7 +38,7 @@ namespace eMaestroD.Api.Controllers
 
         private CustomMethod cm = new CustomMethod();
         //private readonly ConnectionStringService _connectionStringService;
-        public AccountController(CustomUserManager customUserManager, SignInManager<RegisterBindingModel> signInManager, AMDbContext aMDbContext, Context context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailService emailService, IWebHostEnvironment _environment, IHubContext<UserNotificationHub, INotificationHub> userNotifiation)
+        public AccountController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, AMDbContext aMDbContext, Context context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IEmailService emailService, IWebHostEnvironment _environment, IHubContext<UserNotificationHub, INotificationHub> userNotifiation)
         {
             _AMDbContext = aMDbContext;
             _Context = context;
@@ -48,7 +49,7 @@ namespace eMaestroD.Api.Controllers
             Environment = _environment;
             // _userManager = userManager;
             _signInManager = signInManager;
-            _customUserManager = customUserManager;
+            _userManager = userManager;
             _userNotification = userNotifiation;
         }
 
@@ -71,12 +72,12 @@ namespace eMaestroD.Api.Controllers
         [Route("{emailAddress}")]
         public async Task<IActionResult> ForgetPassword(string emailAddress)
         {
-            var u = await _customUserManager.FindByEmailAsync(emailAddress);
+            var u = await _userManager.FindByEmailAsync(emailAddress);
             if (u != null)
             {
                 string generatedPassword = cm.GenerateStrongPassword(8);
-                var code = await _customUserManager.GeneratePasswordResetTokenAsync(u);
-                var result = await _customUserManager.ResetPasswordAsync(u, code, generatedPassword);
+                var code = await _userManager.GeneratePasswordResetTokenAsync(u);
+                var result = await _userManager.ResetPasswordAsync(u, code, generatedPassword);
                 if (result.Succeeded)
                 {
                     var tenant = _AMDbContext.Tenants.Where(x => x.email.ToLower() == u.Email.ToLower()).ToList().FirstOrDefault();
@@ -103,17 +104,17 @@ namespace eMaestroD.Api.Controllers
             }
             else
             {
-                var userExist = await _customUserManager.FindByEmailAsync(tenants.email);
+                var userExist = await _userManager.FindByEmailAsync(tenants.email);
                 if (userExist == null)
                 {
-                    var user = new RegisterBindingModel
+                    var user = new IdentityUser
                     {
                         UserName = tenants.email,
                         Email = tenants.email
                     };
 
                     // Create the user
-                    var result = await _customUserManager.CreateAsync(user, tenants.password);
+                    var result = await _userManager.CreateAsync(user, tenants.password);
                     if (result.Succeeded)
                     {
                         tenants.password = "";
@@ -303,8 +304,8 @@ namespace eMaestroD.Api.Controllers
                     int result = 0;
                     foreach (var item in tenantUserList)
                     {
-                        var user = _customUserManager.FindByEmailAsync(item.email);
-                        await _customUserManager.DeleteAsync(user);
+                        var user = await _userManager.FindByEmailAsync(item.email);
+                        await _userManager.DeleteAsync(user);
                         result++;
 
                     }
@@ -341,7 +342,7 @@ namespace eMaestroD.Api.Controllers
         public async Task<IActionResult> loginUser(Tenants tenant)
         {
 
-            var user = await _customUserManager.FindByEmailAsync(tenant.email);
+            var user = await _userManager.FindByEmailAsync(tenant.email);
 
             if (user != null)
             {
@@ -416,7 +417,7 @@ namespace eMaestroD.Api.Controllers
         public async Task<IActionResult> LoginAdminPanel(Tenants tenant)
         {
 
-            var user = await _customUserManager.FindByEmailAsync(tenant.email);
+            var user = await _userManager.FindByEmailAsync(tenant.email);
 
             if (user != null)
             {
@@ -559,8 +560,8 @@ namespace eMaestroD.Api.Controllers
             }
             else
             {
-                //var user = await _customUserManager.FindByEmailAsync(tenant.email);
-                //var r = _customUserManager.GenerateChangeEmailTokenAsync(user, tenant.email);
+                //var user = await _userManager.FindByEmailAsync(tenant.email);
+                //var r = _userManager.GenerateChangeEmailTokenAsync(user, tenant.email);
 
                 var NewconnectionString = createDataBase(lst[0]);
                 restoreDatabase("eMD_" + lst[0].tenantID, lst[0].tenantID);
@@ -580,7 +581,7 @@ namespace eMaestroD.Api.Controllers
         [Route("{emailAddress}")]
         public async Task<IActionResult> VerifyEmailAddress(string emailAddress)
         {
-            var u = await _customUserManager.FindByEmailAsync(emailAddress);
+            var u = await _userManager.FindByEmailAsync(emailAddress);
             if (u != null)
             {
                 var user = _AMDbContext.Tenants.Where(x => x.email == emailAddress).ToList();

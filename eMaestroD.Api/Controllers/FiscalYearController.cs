@@ -2,10 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using System.Security.Claims;
-using eMaestroD.Api.Models;
+using eMaestroD.Models.Models;
 using eMaestroD.Api.Common;
 using eMaestroD.Api.Data;
 using Microsoft.AspNetCore.Authorization;
+using eMaestroD.DataAccess.DataSet;
+using eMaestroD.Shared.Common;
+using eMaestroD.Models.ReportModels;
 
 namespace eMaestroD.Api.Controllers
 {

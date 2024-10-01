@@ -27,6 +27,10 @@ import { SaleReturn2Component } from './Components/sale-return2/sale-return2.com
 import { ServiceInvoiceComponent } from './Components/service-invoice/service-invoice.component';
 import { StockShortageComponent } from './Components/stock-shortage/stock-shortage.component';
 import { VoucherDetailViewComponent } from './Components/voucher-detail-view/voucher-detail-view.component';
+import { GRNComponent } from './Components/grn/grn.component';
+import { AddNewGrnComponent } from './Components/add-new-grn/add-new-grn.component';
+import { AddNewPurchaseMComponent } from './Components/add-new-purchase-m/add-new-purchase-m.component';
+import { PurchaseMComponent } from './Components/purchase-m/purchase-m.component';
 
 
 const routes: Routes = [
@@ -38,8 +42,10 @@ const routes: Routes = [
   { path: 'inoviceDetail/:voucher', component: InvoicesComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'InvoiceDetail' }  },
   { path: 'SaleInvoices', component: SaleInvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleInvoices' }  },
   { path: 'Quotations', component: QuotationComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Quotations' }  },
-  { path: 'Purchase', component: PurchaseComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Purchase' }  },
-  { path: 'AddNewPurchase', component: AddPurchaseComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseCreate' }  },
+   { path: 'Purchase', component: PurchaseComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Purchase' }  },
+   { path: 'AddNewPurchase', component: AddPurchaseComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseCreate' }  },
+  //{ path: 'Purchase', component: PurchaseMComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Purchase' }  },
+  //{ path: 'AddNewPurchase', component: AddNewPurchaseMComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseCreate' }  },
   { path: 'AddNewPurchase/:id', component: AddPurchaseComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseEdit' }  },
   { path: 'AddNewPurchases/:id', component: AddOrderToPurchaseComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseCreate' }  },
   { path: 'AddNewPurchaseOrder', component: AddNewPurchaseOrderComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseOrderCreate' }  },
@@ -65,6 +71,10 @@ const routes: Routes = [
   { path: 'StockShortage', component: StockShortageComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'StockShortage' }  },
   { path: 'AddNewStockShortage', component: AddNewStockShortageComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'StockShortageCreate' }  },
   { path: 'AddNewStockShortage/:id', component: AddNewStockShortageComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'StockShortageEdit' }  },
+  { path: 'GRN', component: GRNComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'GRN' }  },
+  { path: 'AddNewGRN', component: AddNewGrnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'GRNCreate' }  },
+  { path: 'AddNewGRN/:id', component: AddNewGrnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'GRNEdit' }  },
+
 ];
 
 

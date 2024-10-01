@@ -17,10 +17,13 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.Text;
 using ClosedXML.Excel;
-using eMaestroD.Api.Models;
+using eMaestroD.Models.Models;
 using eMaestroD.Api.Common;
 using eMaestroD.Api.Data;
 using Microsoft.AspNetCore.Authorization;
+using Models.VMModels;
+using eMaestroD.DataAccess.DataSet;
+using eMaestroD.Shared.Common;
 
 namespace eMaestroD.Api.Controllers
 {
@@ -83,6 +86,21 @@ namespace eMaestroD.Api.Controllers
 
             return Ok(vM);
 
+        }
+
+        [HttpGet("GetProducts/{comID}/{prodID}")]
+        public async Task<IActionResult> GetProducts(int comID, int prodID = 0)
+        {
+            var products = await _AMDbContext.Set<ProductViewModel>()
+                .FromSqlRaw("EXEC GetProducts @comID = {0}, @prodID = {1}", comID, prodID)
+                .ToListAsync();
+
+            if (products == null || !products.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(products);
         }
 
         [HttpGet]
@@ -533,6 +551,7 @@ namespace eMaestroD.Api.Controllers
                                                     glItem.qty = qty;
                                                     glItem.qtyBal = glItem.qty;
                                                     glItem.unitPrice = p.purchRate;
+                                                    glItem.discountSum = 0;
                                                     glItem.debitSum = p.purchRate * glItem.qty;
                                                     glItem.dtTx = DateTime.Now;
                                                     glItem.isVoided = glItem.isDeposited = glItem.isCleared = glItem.isPaid = false;

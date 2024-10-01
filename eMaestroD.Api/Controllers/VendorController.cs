@@ -9,10 +9,12 @@ using ClosedXML.Excel;
 using Microsoft.Data.SqlClient;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
-using eMaestroD.Api.Models;
+using eMaestroD.Models.Models;
 using eMaestroD.Api.Common;
 using eMaestroD.Api.Data;
 using Microsoft.AspNetCore.Authorization;
+using eMaestroD.DataAccess.DataSet;
+using eMaestroD.Shared.Common;
 
 namespace eMaestroD.Api.Controllers
 {
