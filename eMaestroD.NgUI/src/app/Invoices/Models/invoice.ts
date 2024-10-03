@@ -16,14 +16,15 @@ export interface Invoice {
   totalAdvanceExtraTax?: number;
   totalExtraDiscount?: number;
   netTotal?: number;
-
-  products?: InvoiceProduct[];
+  notes?:string;
+  convertedInvoiceNo?:any;
+  Products?: InvoiceProduct[];
 }
 
 
 export interface InvoiceProduct {
   prodID?: number;
-  prodBarcodeID?: number;
+  prodBCID?: number;
   prodCode?: any;
   prodName?: any;
   descr?: any;
@@ -44,7 +45,7 @@ export interface InvoiceProduct {
   grossValue?: number;
   netAmount?: number;
 
-  productTaxes? : InvoiceProductTax[];
+  ProductTaxes? : InvoiceProductTax[];
 }
 
 export interface InvoiceProductTax

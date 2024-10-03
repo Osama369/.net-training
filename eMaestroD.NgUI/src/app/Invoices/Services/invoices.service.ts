@@ -5,7 +5,9 @@ import { environment } from 'src/environments/environment';
 import { JournalVoucher } from 'src/app/Transaction/Models/journal-voucher';
 import { Gl } from '../Models/gl';
 import { InvoiceView } from '../Models/invoice-view';
-import { Invoice } from '../Models/invoice';
+import { Invoice, InvoiceProduct, InvoiceProductTax } from '../Models/invoice';
+import { Products } from 'src/app/Manage/Models/products';
+import { ProductViewModel } from 'src/app/Manage/Models/product-view-model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,9 +20,15 @@ export class InvoicesService {
 
   constructor(private http: HttpClient) { }
 
-  saveInvoice(data: Invoice): Observable<void> {
+  SaveInvoice(data: Invoice): Observable<void> {
     return this.http.post<void>(this.ApiUrl + '/CreateInvoice', data);
   }
+
+  GetInvoice(voucherNo:string): Observable<Invoice> {
+    let comID = localStorage.getItem('comID');
+    return this.http.get<Invoice>(this.ApiUrl + '/GetInvoice/'+voucherNo);
+  }
+
 
   saveSaleInvoice(newInvoice: Gl[]): Observable<Gl[]> {
     return this.http.post<Gl[]>(this.baseApiUrl + '/AddSaleInvoice', newInvoice);
@@ -156,6 +164,162 @@ export class InvoicesService {
   CheckIFInvoiceExist(cstID:any,prdID:any): Observable<any> {
     let comID = localStorage.getItem('comID');
     return this.http.get<any>(this.baseApiUrl + '/CheckIFInvoiceExist/'+cstID+'/'+prdID+'/'+comID);
+  }
+
+
+
+    createInvoice(voucherNo: string, selectedType: any[], txTypeID: number, selectedCustomerName: any, selectedLocation: any, productList: ProductViewModel[], totalGross: number, totalDiscount: number, totalTax: number, totalRebate: number, totalExtraTax: number, totalAdvanceExtraTax: number, totalExtraDiscount: number, totalNetPayable: number, taxesList: any[], convertedInvoice : string): Invoice {
+    return {
+      invoiceID: 0,
+      invoiceDate: new Date(),
+      invoiceVoucherNo: voucherNo,
+      invoiceType : selectedType[0].name,
+
+      txtypeID: txTypeID,
+      vendID: selectedCustomerName.vendID || 0,
+      cstID: selectedCustomerName.cstID || 0,
+      comID: parseInt(localStorage.getItem('comID')!),
+      locID: selectedLocation?.LocationId,
+
+      grossTotal: totalGross,
+      totalDiscount: totalDiscount,
+      totalTax: totalTax,
+      totalRebate: totalRebate || 0,
+      totalExtraTax: totalExtraTax || 0,
+      totalAdvanceExtraTax: totalAdvanceExtraTax || 0,
+      totalExtraDiscount: totalExtraDiscount || 0,
+      netTotal: totalNetPayable,
+      convertedInvoiceNo : convertedInvoice,
+      Products: productList.filter(p => p.prodID > 0).map(p => this.createInvoiceProduct(p, taxesList))
+    };
+  }
+
+  createInvoiceProduct(product: ProductViewModel, taxesList: any[]): InvoiceProduct {
+    return {
+      prodID: product.prodID,
+      prodBCID: product.prodBCID,
+      prodCode: product.prodCode,
+      prodName: product.prodName.prodName,
+      descr: product.descr,
+      unitQty: product.unitQty,
+      qty: product.qty,
+      bounsQty: product.bonusQty,
+      notes: product.notes,
+      batchNo: product.batchNo,
+      expiry: product.expiryDate,
+      purchRate: product.purchRate,
+      sellRate: product.sellRate,
+      discountPercent: product.discountPercent,
+      discountAmount: product.discountAmount,
+      extraDiscountPercent: product.extraDiscountPercent,
+      extraDiscountAmount: product.extraDiscountAmount,
+      rebatePercent: product.rebatePercent,
+      rebateAmount: product.rebateAmount,
+      grossValue: product.grossValue,
+      netAmount: product.netAmount,
+      ProductTaxes: this.createProductTaxes(product, taxesList)
+    };
+  }
+
+  createProductTaxes(product: Products, taxesList: any[]): InvoiceProductTax[] {
+    return [
+      {
+        taxAcctNo: taxesList[0].acctNo,
+        taxPercent: product.taxPercent,
+        taxAmount: product.taxAmount
+      },
+      {
+        taxAcctNo: taxesList[1].acctNo,
+        taxPercent: product.advanceTaxPercent,
+        taxAmount: product.advanceTaxAmount
+      },
+      {
+        taxAcctNo: taxesList[2].acctNo,
+        taxPercent: product.extraAdvanceTaxPercent,
+        taxAmount: product.extraAdvanceTaxAmount
+      }
+    ];
+  }
+
+
+  remapInvoiceToVariables(invoice: Invoice) {
+    const voucherNo = invoice.invoiceVoucherNo;
+    const selectedType = [{ name: invoice.invoiceType }];
+    const txTypeID = invoice.txtypeID;
+    const selectedCustomerName = { vendID: invoice.vendID };
+    const selectedLocation = { LocationId: invoice.locID };
+
+    const totalGross = invoice.grossTotal;
+    const totalDiscount = invoice.totalDiscount;
+    const totalTax = invoice.totalTax;
+    const totalRebate = invoice.totalRebate;
+    const totalExtraTax = invoice.totalExtraTax;
+    const totalAdvanceExtraTax = invoice.totalAdvanceExtraTax;
+    const totalExtraDiscount = invoice.totalExtraDiscount;
+    const totalNetPayable = invoice.netTotal;
+
+    const productList = this.remapInvoiceProductsToVariables(invoice.Products);
+    const taxesList = this.remapInvoiceTaxesToVariables(invoice.Products);
+
+    // Return the values as an object
+    return {
+      voucherNo,
+      selectedType,
+      txTypeID,
+      selectedCustomerName,
+      selectedLocation,
+      productList,
+      totalGross,
+      totalDiscount,
+      totalTax,
+      totalRebate,
+      totalExtraTax,
+      totalAdvanceExtraTax,
+      totalExtraDiscount,
+      totalNetPayable,
+      taxesList
+    };
+  }
+
+  remapInvoiceProductsToVariables(invoiceProducts: InvoiceProduct[]): InvoiceProduct[] {
+    return invoiceProducts.map(product => ({
+      prodID: product.prodID,
+      prodBCID : product.prodBCID,
+      prodCode: product.prodCode,
+      prodName: product.prodName,
+      descr: product.descr,
+      unitQty: product.unitQty,
+      qty: product.qty,
+      bounsQty: product.bounsQty,
+      notes: product.notes,
+      batchNo: product.batchNo,
+      expiry: product.expiry,
+      purchRate: product.purchRate,
+      sellRate: product.sellRate,
+      taxDis: product.discountPercent,
+      discountPercent: product.discountPercent,
+      discountAmount: product.discountAmount,
+      extraDiscountPercent: product.extraDiscountPercent,
+      extraDiscountAmount: product.extraDiscountAmount,
+      rebatePercent: product.rebatePercent,
+      rebateAmount: product.rebateAmount,
+      grossValue: product.grossValue,
+      netAmount: product.netAmount,
+      taxPercent :product.ProductTaxes[0].taxPercent || 0,
+      taxAmount : product.ProductTaxes[0].taxAmount || 0,
+      advanceTaxPercent : product.ProductTaxes[1].taxPercent || 0,
+      advanceTaxAmount : product.ProductTaxes[1].taxAmount || 0,
+      extraAdvanceTaxPercent : product.ProductTaxes[2].taxPercent || 0,
+      extraAdvanceTaxAmount : product.ProductTaxes[2].taxAmount || 0
+    }));
+  }
+
+  remapInvoiceTaxesToVariables(invoiceProducts: InvoiceProduct[]): any[] {
+    return invoiceProducts.flatMap(product => product.ProductTaxes.map(tax => ({
+      acctNo: tax.taxAcctNo,
+      taxPercent: tax.taxPercent,
+      taxAmount: tax.taxAmount
+    })));
   }
 }
 

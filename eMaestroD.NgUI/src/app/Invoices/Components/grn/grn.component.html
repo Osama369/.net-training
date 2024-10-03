@@ -58,10 +58,13 @@
                       Amount
                   </div>
               </th>
+              <th>
+
+              </th>
           </tr>
       </ng-template>
       <ng-template pTemplate="body" let-invoices>
-          <tr>
+          <tr style="padding:0px">
               <td pFrozenColumn style="text-align: center !important;z-index: 0;">
                   <span class="p-buttonset">
                     <p-button (onClick)="printView(invoices.voucherNo)"  icon="pi pi-file-pdf" styleClass="p-button-rounded p-button-info p-button-text" title="Print"></p-button>
@@ -87,7 +90,10 @@
               <td>
                   {{invoices.amount | number : '1.2-2'}}
               </td>
-
+              <td style="float: right; vertical-align: middle;">
+                <button pButton type="button" style="padding: 5px !important; font-size: 12px !important" *ngIf="!invoices.checkName" translate (click)="ConvertToPurchase(invoices.voucherNo)" class="p-button-danger">Convert to Purchase</button>
+                <button pButton type="button" style="padding: 5px !important; font-size: 12px !important;" *ngIf="invoices.checkName" translate  class="p-button-success">Created At : {{invoices.checkName}}</button>
+            </td>
           </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">

@@ -45,7 +45,7 @@ namespace Models.VMModels
         // ProductBarCodes Table Fields
 
         [Key]
-        public int? ProdBCID { get; set; }
+        public int? prodBCID { get; set; }
         public string? barCode { get; set; }
         public decimal? costPrice { get; set; }
         public decimal? salePrice { get; set; }

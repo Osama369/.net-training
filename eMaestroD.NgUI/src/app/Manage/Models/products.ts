@@ -19,7 +19,7 @@ export interface Products {
     netAmountBeforeRebate?: any;
     netAmount?: number;
     netRate?: number;
-    prodBarcodeID?: any;
+    prodBCID?: any;
     notes?: any;
     batchNo?: any;
     expiry?: any;

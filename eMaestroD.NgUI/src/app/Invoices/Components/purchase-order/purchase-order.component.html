@@ -84,11 +84,11 @@
               <td style="float: right; vertical-align: middle;">
                   <button pButton type="button" style="padding: 5px !important; font-size: 12px !important" *ngIf="invoices.glComments == 'Convert To Purchase'" translate (click)="ConvertToSale(invoices.voucherNo,invoices.glComments)" class="p-button-danger">{{invoices.glComments}}</button>
                   <button pButton type="button" style="padding: 5px !important; font-size: 12px !important;" *ngIf="invoices.glComments != 'Convert To Purchase'" translate (click)="ConvertToSale(invoices.voucherNo,invoices.glComments)" class="p-button-success">{{invoices.glComments}}</button>
+              </td>
                   <!-- <button pButton type="button" icon="pi pi-file-pdf" (click)="printView(invoices.voucherNo)" class="p-button-secondary" style="margin-left: 5px;"></button>
                   <button *ngIf="invoices.glComments == 'Convert To Sale'" pButton type="button" icon="pi pi-pencil" (click)="editView(invoices.voucherNo)"  class="p-button-secondary" style="margin-left: 5px;">
                   </button>
                   <button  *ngIf="invoices.glComments == 'Convert To Sale'" pButton type="button" icon="pi pi-trash" (click)="deleteView(invoices.voucherNo)" class="p-button-secondary" style="margin-left: 5px;"></button> -->
-              </td>
               <!-- <td>
                   <p-progressBar [value]="invoices.amount" [showValue]="false"></p-progressBar>
               </td>

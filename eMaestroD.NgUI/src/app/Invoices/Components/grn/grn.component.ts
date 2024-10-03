@@ -201,4 +201,9 @@ export class GRNComponent implements OnInit {
         }
 
       }
+
+      ConvertToPurchase(invoiceNo:any)
+      {
+        this.router.navigateByUrl('/Invoices/AddNewPurchase/'+invoiceNo);
+      }
 }

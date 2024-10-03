@@ -46,10 +46,32 @@ namespace eMaestroD.Api.Controllers
             {
                 List<GL> glEntries = await _glService.ConvertInvoiceToGL(invoice);
                 await _glService.InsertGLEntries(glEntries);
+
                 
                 return Ok(new { message = "Invoice created successfully." });
             }
             catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("{voucherNo}")]
+        public async Task<IActionResult> GetInvoice(string voucherNo)
+        {
+            try
+            {
+                var invoice = await _glService.ConvertGLToInvoice(voucherNo);
+
+                if (invoice == null)
+                {
+                    return NotFound("Invoice not found.");
+                }
+
+                return Ok(invoice);
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

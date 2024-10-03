@@ -89,7 +89,7 @@ export class AddNewPurchaseMComponent implements OnInit{
   Filterproductlist: ProductViewModel[];
   clonedProduct: { [s: string]: ProductViewModel } = {};
   Reportvisible: boolean = false;
-  voucherNo: String = "";
+  voucherNo: string = "";
   VendorVisible: boolean = false;
   ProductsVisible: boolean = false;
   rowNmb : any=0;
@@ -125,8 +125,7 @@ export class AddNewPurchaseMComponent implements OnInit{
 
   PONumber : any;
 
-  GRNInvoiceList : Invoice[] = [];
-  itemList : Invoice[] = [];
+  GRNInvoiceList : Gl[] = [];
 
   selectedVoucherNo : any;
 
@@ -159,6 +158,8 @@ export class AddNewPurchaseMComponent implements OnInit{
   async ngOnInit(): Promise<void> {
     const today = new Date();
     this.selectedDate = today;
+
+
 
     this.sharedDataService.getProducts$().subscribe(products => {
       this.products = products;
@@ -197,9 +198,21 @@ export class AddNewPurchaseMComponent implements OnInit{
 
 
 
-
-    this.SelectedType[0] = { name: this.type[1].name };
+    this.SelectedType[0] = { name: this.type[0].name };
     this.filterType = this.type;
+
+    this.route.params.subscribe(params1 => {
+      this.EditVoucherNo = params1['id'];
+      if(this.EditVoucherNo != undefined)
+      {
+        console.log(this.EditVoucherNo);
+        this.selectedVoucherNo = this.EditVoucherNo;
+        this.GRNInvoiceList.unshift({ voucherNo : this.selectedVoucherNo});
+        console.log(this.selectedVoucherNo);
+        this.InvoiceOnChange();
+      }
+   });
+
 
   }
 
@@ -331,12 +344,12 @@ export class AddNewPurchaseMComponent implements OnInit{
       if(newObj != undefined && newObj != '' && typeof(newObj) != 'string')
       {
         this.rowNmb = i;
-        this.selectedProductList = this.products.filter(f => f.ProdBCID == newObj.ProdBCID);
-        this.filteredProduct = this.productlist.filter(f => f.ProdBCID == newObj.ProdBCID);
+        this.selectedProductList = this.products.filter(f => f.prodBCID == newObj.prodBCID);
+        this.filteredProduct = this.productlist.filter(f => f.prodBCID == newObj.prodBCID);
         if(this.filteredProduct.length > 1)
         {
           this.productlist[i].prodName = "";
-          let index = this.productlist.findIndex(f => f.ProdBCID == newObj.ProdBCID);
+          let index = this.productlist.findIndex(f => f.prodBCID == newObj.prodBCID);
           this.productlist[index].qty = this.productlist[index].qty+1;
           // this.productlist[index].qtyBal = parseFloat(this.productlist[index].qtyBal)+1;
           this.Itemcalculation(index);
@@ -348,8 +361,7 @@ export class AddNewPurchaseMComponent implements OnInit{
             {
               console.log(this.selectedProductList);
             this.productlist[i].prodID = this.selectedProductList[0].prodID;
-            this.productlist[i].ProdBCID = this.selectedProductList[0].ProdBCID;
-            this.productlist[i].barCode = this.selectedProductList[0].barCode;
+            this.productlist[i].prodBCID = this.selectedProductList[0].prodBCID;
             this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
             this.productlist[i].barCode = this.selectedProductList[0].barCode;
             this.productlist[i].unitQty = this.selectedProductList[0].unitQty;
@@ -398,10 +410,10 @@ export class AddNewPurchaseMComponent implements OnInit{
     rowData.purchRate = rowData.purchRate || 0;
     rowData.discount = rowData.discount || 0;
     rowData.discountAmount = rowData.discountAmount || 0;
-    rowData.taxPercent = rowData.taxPercent || 0;
-    rowData.taxAmount = rowData.taxAmount || 0;
     rowData.extraDiscountPercent = rowData.extraDiscountPercent || 0;
     rowData.extraDiscountAmount = rowData.extraDiscountAmount || 0;
+    rowData.taxPercent = rowData.taxPercent || 0;
+    rowData.taxAmount = rowData.taxAmount || 0;
     rowData.advanceTaxPercent = rowData.advanceTaxPercent || 0;
     rowData.advanceTaxAmount = rowData.advanceTaxAmount || 0;
     rowData.extraAdvanceTaxAmount = rowData.extraAdvanceTaxAmount || 0;
@@ -590,12 +602,29 @@ export class AddNewPurchaseMComponent implements OnInit{
     if(this.validateFields())
     {
       try {
-          this.invoice = this.createInvoice();
+          this.invoice = this.invoicesService.createInvoice(
+            this.voucherNo,
+            this.SelectedType,
+            this.txTypeID,
+            this.selectedCustomerName,
+            this.selectedLocation,
+            this.productlist,
+            this.totalGross,
+            this.totalDiscount,
+            this.totalTax,
+            this.totalRebate,
+            this.totalExtraTax,
+            this.totalAdvanceExtraTax,
+            this.totalExtraDiscount,
+            this.totalNetPayable,
+            this.taxesList,
+            this.selectedVoucherNo
+          );
           console.log(this.invoice);
-          const result = await lastValueFrom(this.invoicesService.saveInvoice(this.invoice));
+          const result = await lastValueFrom(this.invoicesService.SaveInvoice(this.invoice));
           console.log(result);
-          this.toastr.success("GRN has been successfully Created!");
-          this.router.navigateByUrl('/Invoices/GRN')
+          this.toastr.success("Purchase has been successfully Created!");
+          this.router.navigateByUrl('/Invoices/Purchase')
         } catch (result) {
           this.toastr.error(result.error);
       }
@@ -625,7 +654,7 @@ export class AddNewPurchaseMComponent implements OnInit{
     } else {
         if(this.EditVoucherNo != undefined && this.txTypeID != 3 )
         {
-          if(this.productlist[index].ProdBCID != undefined)
+          if(this.productlist[index].prodBCID != undefined)
           {
             if(product.qty != product.qtyBal)
             {
@@ -904,7 +933,7 @@ export class AddNewPurchaseMComponent implements OnInit{
           {
 
           this.productlist[i].prodID = this.selectedProductList[0].prodID;
-          this.productlist[i].ProdBCID = this.selectedProductList[0].ProdBCID;
+          this.productlist[i].prodBCID = this.selectedProductList[0].prodBCID;
           this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
           this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
           this.productlist[i].unitQty = this.selectedProductList[0].unitQty;
@@ -978,79 +1007,6 @@ export class AddNewPurchaseMComponent implements OnInit{
 }
 
 
-  createInvoice(): Invoice {
-    return {
-      invoiceID: 0,
-      invoiceDate: new Date(),
-      invoiceVoucherNo: this.voucherNo,
-      invoiceType : this.SelectedType[0].name,
-
-      txtypeID: this.txTypeID,
-      vendID: this.selectedCustomerName.vendID,
-      cstID: 0,
-      comID: parseInt(localStorage.getItem('comID')),
-      locID: this.selectedLocation?.LocationId,
-
-      grossTotal: this.totalGross,
-      totalDiscount: this.totalDiscount,
-      totalTax: this.totalTax,
-      totalRebate: this.totalRebate || 0,
-      totalExtraTax: this.totalExtraTax || 0,
-      totalAdvanceExtraTax: this.totalAdvanceExtraTax || 0,
-      totalExtraDiscount: this.totalExtraDiscount || 0,
-      netTotal: this.totalNetPayable,
-
-
-      products: this.productlist.filter(p => p.prodID > 0).map(p => this.createInvoiceProduct(p))
-    };
-  }
-
-  createInvoiceProduct(product: ProductViewModel): InvoiceProduct {
-  return {
-    prodID: product.prodID,
-    prodBarcodeID: product.ProdBCID,
-    prodCode: product.prodCode,
-    prodName: product.prodName.prodName,
-    descr: product.descr,
-    unitQty: product.unitQty,
-    qty: product.qty,
-    bounsQty: product.bonusQty,
-    notes: product.notes,
-    batchNo: product.batchNo,
-    expiry: product.expiryDate,
-    purchRate: product.purchRate,
-    sellRate: product.sellRate,
-    discountPercent: product.discountPercent,
-    discountAmount: product.discountAmount,
-    extraDiscountPercent: product.extraDiscountPercent,
-    extraDiscountAmount: product.extraDiscountAmount,
-    rebatePercent: product.rebatePercent,
-    rebateAmount: product.rebateAmount,
-    grossValue: product.grossValue,
-    netAmount: product.netAmount,
-    productTaxes: this.createProductTaxes(product)
-    };
-  }
-  createProductTaxes(product: Products): InvoiceProductTax[] {
-    return [
-      {
-        taxAcctNo: this.taxesList[0].acctNo,
-        taxPercent: product.taxPercent,
-        taxAmount: product.taxAmount
-      },
-      {
-        taxAcctNo: this.taxesList[1].acctNo,
-        taxPercent: product.advanceTaxPercent,
-        taxAmount: product.advanceTaxAmount
-      },
-      {
-        taxAcctNo: this.taxesList[2].acctNo,
-        taxPercent: product.extraAdvanceTaxPercent,
-        taxAmount: product.extraAdvanceTaxAmount
-      }
-    ];
-  }
-
   VendorOnChange()
   {
     if(this.selectedCustomerName == undefined){
@@ -1060,10 +1016,9 @@ export class AddNewPurchaseMComponent implements OnInit{
     else{
       this.invoicesService.GetInvoicesListByID(12,this.selectedCustomerName.vendID).subscribe({
         next:(result)=>{
-          this.GRNInvoiceList = result.filter(x=>x.txID == 0);
+          this.GRNInvoiceList = result.filter(x=>x.txID == 0 && x.checkName == null);
           console.log(this.GRNInvoiceList);
-          this.itemList = result.filter(x=>x.COAID == 98);
-          this.GRNInvoiceList.unshift({ invoiceVoucherNo : "Select Invoice No"});
+          this.GRNInvoiceList.unshift({ voucherNo : "Select Invoice No"});
         },
         error:(responce)=>{
           this.GRNInvoiceList = [];
@@ -1072,9 +1027,49 @@ export class AddNewPurchaseMComponent implements OnInit{
     }
   }
 
-  InvoiceOnChange()
+  async InvoiceOnChange()
   {
+    if(this.selectedVoucherNo == undefined || this.selectedVoucherNo == "Select Invoice No") {
+      this.toastr.error("Please select Invoice!");
+      this.onEnterComplex(2);
+      this.productlist = [];
+      return;
+    }
 
+    try {
+      const result = await lastValueFrom(this.invoicesService.GetInvoice(this.selectedVoucherNo));
+      const invoiceData = this.invoicesService.remapInvoiceToVariables(result);
+
+
+      this.productlist = invoiceData.productList;
+      this.selectedCustomerName = {vendID:invoiceData.selectedCustomerName.vendID,vendName:this.customers.find(x=>x.vendID == invoiceData.selectedCustomerName.vendID).vendName};
+      this.totalGross = invoiceData.totalGross;
+      this.totalDiscount = invoiceData.totalDiscount;
+      this.totalTax = invoiceData.totalTax;
+      this.totalRebate = invoiceData.totalRebate;
+      this.totalExtraTax = invoiceData.totalExtraTax;
+      this.totalAdvanceExtraTax = invoiceData.totalAdvanceExtraTax;
+      this.totalExtraDiscount = invoiceData.totalExtraDiscount;
+      this.totalNetPayable = invoiceData.totalNetPayable;
+      this.taxesList = invoiceData.taxesList;
+
+      for (let i = 0; i < this.productlist.length; i++) {
+        this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
+
+        this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
+        this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
+        this.productlist[i].barCode = this.selectedProductList[0].barCode;
+
+        this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
+        this.productlist[i].depName =this.selectedProductList[0].depName;
+        this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
+        this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
+        this.Itemcalculation(i)
+      }
+      console.log(result);
+    } catch (result) {
+      this.toastr.error(result);
+    }
   }
 }
 

@@ -34,7 +34,7 @@ export interface ProductViewModel {
   prodColor?: string | null;
 
   // ProductBarCodes Table Fields
-  ProdBCID?: number | null;
+  prodBCID?: number | null;
   barCode?: string | null;
   costPrice?: number | null;
   salePrice?: number | null;

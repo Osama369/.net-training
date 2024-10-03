@@ -88,7 +88,7 @@ export class AddNewGrnComponent implements OnInit{
   Filterproductlist: ProductViewModel[];
   clonedProduct: { [s: string]: ProductViewModel } = {};
   Reportvisible: boolean = false;
-  voucherNo: String = "";
+  voucherNo: string = "";
   VendorVisible: boolean = false;
   ProductsVisible: boolean = false;
   rowNmb : any=0;
@@ -193,7 +193,7 @@ export class AddNewGrnComponent implements OnInit{
 
 
 
-    this.SelectedType[0] = { name: this.type[1].name };
+    this.SelectedType[0] = { name: this.type[0].name };
     this.filterType = this.type;
 
   }
@@ -326,12 +326,12 @@ export class AddNewGrnComponent implements OnInit{
       if(newObj != undefined && newObj != '' && typeof(newObj) != 'string')
       {
         this.rowNmb = i;
-        this.selectedProductList = this.products.filter(f => f.ProdBCID == newObj.ProdBCID);
-        this.filteredProduct = this.productlist.filter(f => f.ProdBCID == newObj.ProdBCID);
+        this.selectedProductList = this.products.filter(f => f.prodBCID == newObj.prodBCID);
+        this.filteredProduct = this.productlist.filter(f => f.prodBCID == newObj.prodBCID);
         if(this.filteredProduct.length > 1)
         {
           this.productlist[i].prodName = "";
-          let index = this.productlist.findIndex(f => f.ProdBCID == newObj.ProdBCID);
+          let index = this.productlist.findIndex(f => f.prodBCID == newObj.prodBCID);
           this.productlist[index].qty = this.productlist[index].qty+1;
           // this.productlist[index].qtyBal = parseFloat(this.productlist[index].qtyBal)+1;
           this.Itemcalculation(index);
@@ -343,7 +343,7 @@ export class AddNewGrnComponent implements OnInit{
             {
               console.log(this.selectedProductList);
             this.productlist[i].prodID = this.selectedProductList[0].prodID;
-            this.productlist[i].ProdBCID = this.selectedProductList[0].ProdBCID;
+            this.productlist[i].prodBCID = this.selectedProductList[0].prodBCID;
             this.productlist[i].barCode = this.selectedProductList[0].barCode;
             this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
             this.productlist[i].barCode = this.selectedProductList[0].barCode;
@@ -585,9 +585,26 @@ export class AddNewGrnComponent implements OnInit{
     if(this.validateFields())
     {
       try {
-          this.invoice = this.createInvoice();
+          this.invoice = this.invoicesService.createInvoice(
+            this.voucherNo,
+            this.SelectedType,
+            this.txTypeID,
+            this.selectedCustomerName,
+            this.selectedLocation,
+            this.productlist,
+            this.totalGross,
+            this.totalDiscount,
+            this.totalTax,
+            this.totalRebate,
+            this.totalExtraTax,
+            this.totalAdvanceExtraTax,
+            this.totalExtraDiscount,
+            this.totalNetPayable,
+            this.taxesList,
+            null
+          );
           console.log(this.invoice);
-          const result = await lastValueFrom(this.invoicesService.saveInvoice(this.invoice));
+          const result = await lastValueFrom(this.invoicesService.SaveInvoice(this.invoice));
           console.log(result);
           this.toastr.success("GRN has been successfully Created!");
           this.router.navigateByUrl('/Invoices/GRN')
@@ -620,7 +637,7 @@ export class AddNewGrnComponent implements OnInit{
     } else {
         if(this.EditVoucherNo != undefined && this.txTypeID != 3 )
         {
-          if(this.productlist[index].ProdBCID != undefined)
+          if(this.productlist[index].prodBCID != undefined)
           {
             if(product.qty != product.qtyBal)
             {
@@ -899,7 +916,7 @@ export class AddNewGrnComponent implements OnInit{
           {
 
           this.productlist[i].prodID = this.selectedProductList[0].prodID;
-          this.productlist[i].ProdBCID = this.selectedProductList[0].ProdBCID;
+          this.productlist[i].prodBCID = this.selectedProductList[0].prodBCID;
           this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
           this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
           this.productlist[i].unitQty = this.selectedProductList[0].unitQty;
@@ -973,76 +990,5 @@ export class AddNewGrnComponent implements OnInit{
 }
 
 
-  createInvoice(): Invoice {
-    return {
-      invoiceID: 0,
-      invoiceDate: new Date(),
-      invoiceVoucherNo: this.voucherNo,
-      txtypeID: this.txTypeID,
-      vendID: this.selectedCustomerName.vendID,
-      cstID: 0,
-      comID: parseInt(localStorage.getItem('comID')),
-      locID: this.selectedLocation?.LocationId,
-      invoiceType : this.SelectedType[0].name,
-
-      grossTotal: this.totalGross,
-      totalDiscount: this.totalDiscount,
-      totalTax: this.totalTax,
-      totalRebate: this.totalRebate || 0,
-      totalExtraTax: this.totalExtraTax || 0,
-      totalAdvanceExtraTax: this.totalAdvanceExtraTax || 0,
-      totalExtraDiscount: this.totalExtraDiscount || 0,
-      netTotal: this.totalNetPayable,
-
-
-      products: this.productlist.filter(p => p.prodID > 0).map(p => this.createInvoiceProduct(p))
-    };
-  }
-
-  createInvoiceProduct(product: ProductViewModel): InvoiceProduct {
-  return {
-    prodID: product.prodID,
-    prodBarcodeID: product.ProdBCID,
-    prodCode: product.prodCode,
-    prodName: product.prodName.prodName,
-    descr: product.descr,
-    unitQty: product.unitQty,
-    qty: product.qty,
-    bounsQty: product.bonusQty,
-    notes: product.notes,
-    batchNo: product.batchNo,
-    expiry: product.expiryDate,
-    purchRate: product.purchRate,
-    sellRate: product.sellRate,
-    discountPercent: product.discountPercent,
-    discountAmount: product.discountAmount,
-    extraDiscountPercent: product.extraDiscountPercent,
-    extraDiscountAmount: product.extraDiscountAmount,
-    rebatePercent: product.rebatePercent,
-    rebateAmount: product.rebateAmount,
-    grossValue: product.grossValue,
-    netAmount: product.netAmount,
-    productTaxes: this.createProductTaxes(product)
-    };
-  }
-  createProductTaxes(product: Products): InvoiceProductTax[] {
-    return [
-      {
-        taxAcctNo: this.taxesList[0].acctNo,
-        taxPercent: product.taxPercent,
-        taxAmount: product.taxAmount
-      },
-      {
-        taxAcctNo: this.taxesList[1].acctNo,
-        taxPercent: product.advanceTaxPercent,
-        taxAmount: product.advanceTaxAmount
-      },
-      {
-        taxAcctNo: this.taxesList[2].acctNo,
-        taxPercent: product.extraAdvanceTaxPercent,
-        taxAmount: product.extraAdvanceTaxAmount
-      }
-    ];
-  }
 }
 

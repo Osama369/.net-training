@@ -1,5 +1,6 @@
 ﻿using eMaestroD.Api.Data;
 using eMaestroD.DataAccess.DataSet;
+using eMaestroD.DataAccess.IRepositories;
 using eMaestroD.InvoiceProcessing.Factories;
 using eMaestroD.Models.Models;
 using eMaestroD.Models.VMModels;
@@ -13,14 +14,16 @@ namespace eMaestroD.Api.Common
         private readonly AMDbContext _AMDbContext;
         private readonly HelperMethods _helperMethods;
         private readonly InvoiceHandlerFactory _invoiceHandlerFactory;
+        private readonly IGLRepository _glRepository;
         string userName = "";
 
-        public GLService(AMDbContext aMDbContext, HelperMethods helperMethods, InvoiceHandlerFactory invoiceHandlerFactory)
+        public GLService(AMDbContext aMDbContext, IGLRepository glRepository, HelperMethods helperMethods, InvoiceHandlerFactory invoiceHandlerFactory)
         {
             _AMDbContext = aMDbContext;
             _helperMethods = helperMethods;
             userName = _helperMethods.GetActiveUser_Username();
             _invoiceHandlerFactory = invoiceHandlerFactory;
+            _glRepository = glRepository;
 
         }
 
@@ -53,6 +56,78 @@ namespace eMaestroD.Api.Common
         }
 
 
+        public async Task<Invoice> ConvertGLToInvoice(string voucherNo)
+        {
+            var glEntries = await _glRepository.GetGLEntriesByVoucherNoAsync(voucherNo);
+
+            if (glEntries == null || !glEntries.Any())
+            {
+                throw new InvalidOperationException("No GL entries found for the provided voucher number.");
+            }
+
+            var masterEntry = glEntries.FirstOrDefault(ge => IsMasterEntry(ge));
+            if (masterEntry == null)
+            {
+                throw new InvalidOperationException("Master GL entry not found.");
+            }
+
+            var detailEntries = glEntries.Where(ge => !IsMasterEntry(ge) && ge.prodID > 0).ToList();
+
+            var invoice = new Invoice
+            {
+                txTypeID = masterEntry.txTypeID,
+                cstID = masterEntry.cstID,
+                vendID = masterEntry.vendID,
+                fiscalYear = masterEntry.depositID,
+                invoiceVoucherNo = masterEntry.voucherNo,
+                invoiceDate = masterEntry.dtTx,
+                locID = masterEntry.locID,
+                comID = masterEntry.comID,
+                netTotal = masterEntry.creditSum,
+                totalDiscount = masterEntry.discountSum,
+                totalExtraDiscount = masterEntry.extraDiscountSum,
+                totalTax = masterEntry.taxSum,
+                totalRebate = masterEntry.rebateSum,
+                convertedInvoiceNo = masterEntry.checkName,
+                Products = new List<InvoiceProduct>()
+            };
+
+            foreach (var detail in detailEntries)
+            {
+                var product = new InvoiceProduct
+                {
+                    prodID = detail.prodID,
+                    prodBCID = detail.prodBCID,
+                    qty = detail.qty,
+                    bounsQty = detail.bonusQty,
+                    purchRate = detail.unitPrice,
+                    netAmount = detail.debitSum,
+                    discountAmount = detail.discountSum,
+                    extraDiscountAmount = detail.extraDiscountSum,
+                    rebateAmount = detail.rebateSum,
+                    batchNo = detail.batchNo,
+                    expiry = detail.expiry,
+                    notes = detail.glComments,
+                    ProductTaxes = detail.gLDetails.Select(detailDetail => new InvoiceProductTax
+                    {
+                        taxAcctNo = detailDetail.acctNo,
+                        taxAmount = detailDetail.GLAmount,
+                        taxPercent = detailDetail.rate
+                    }).ToList()
+                };
+
+                invoice.Products.Add(product);
+            }
+
+            return invoice;
+        }
+
+        private bool IsMasterEntry(GL glEntry)
+        {
+            return string.IsNullOrEmpty(glEntry.acctNo) && string.IsNullOrEmpty(glEntry.relAcctNo);
+        }
+
+
         public async Task InsertGLEntries(List<GL> items)
         {
             using (var transaction = await _AMDbContext.Database.BeginTransactionAsync())
@@ -69,6 +144,9 @@ namespace eMaestroD.Api.Common
                         
                         await _AMDbContext.Set<GL>().AddRangeAsync(items.Skip(1));
                         await _AMDbContext.SaveChangesAsync();
+
+                        if (!string.IsNullOrEmpty(firstItem.checkName))
+                           await _glRepository.UpdateGLIsConvertedAsync(firstItem.checkName, firstItem.voucherNo);
                     }
 
                     await transaction.CommitAsync();

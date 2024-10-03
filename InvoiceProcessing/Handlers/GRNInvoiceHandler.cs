@@ -29,6 +29,10 @@ namespace eMaestroD.InvoiceProcessing.Handlers
 
             var AccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.GoodsReceivable);
             var relAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CashInHand);
+            if(invoice.invoiceType.ToLower() == "credit")
+            {
+                relAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeCreditors);
+            }
 
             glMasterEntry = new GL
             {
@@ -56,6 +60,8 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                 relAcctNo = "",
                 crtDate = DateTime.Now,
                 modDate = DateTime.Now,
+                isConverted = false,
+                balSum = invoice.invoiceType.ToLower() == "credit" ? (decimal)invoice.netTotal : 0
 
             };
 
@@ -74,7 +80,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                     vendID = invoice.vendID ?? 0,
                     cstID = invoice.cstID ?? 0,
                     prodID = product.prodID ?? 0,
-                    ProdBCID = product.prodBarcodeID ?? 0,
+                    prodBCID = product.prodBCID ?? 0,
                     qty = product.qty ?? 0,
                     bonusQty = product.bounsQty ?? 0,
                     qtyBal = product.qty ?? 0,
@@ -102,7 +108,8 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                     isVoided = false,
                     isDeposited = false,
                     isCleared = false,
-                    gLDetails = product.ProductTaxes.Where(x => x.taxAmount > 0).Select(tax => new GLDetail
+                    isConverted = false,
+                    gLDetails = product.ProductTaxes.Select(tax => new GLDetail
                     {
                         GLID = 0,
                         acctNo = tax.taxAcctNo,
@@ -144,12 +151,15 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                 relAcctNo = AccCode,
                 crtDate = DateTime.Now,
                 modDate = DateTime.Now,
-
+                isConverted = false,
+                balSum = invoice.invoiceType.ToLower() == "credit" ? (decimal)invoice.netTotal : 0
             };
 
             glEntries.Add(glDetailEntry);
 
             return glEntries;
         }
+        
+
     }
 }

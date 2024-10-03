@@ -141,8 +141,10 @@ namespace eMaestroD.Models.Models
             return this;
         }
 
-        public int ProdBCID { get; set; }
+        public int prodBCID { get; set; }
         public decimal rebateSum { get; set; }
+        public bool? isConverted { get; set; }
+
         public List<GLDetail>? gLDetails { get; set; } = new List<GLDetail>();
     }
 }

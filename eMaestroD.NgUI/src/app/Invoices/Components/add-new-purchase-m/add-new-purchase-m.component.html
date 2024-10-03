@@ -110,7 +110,7 @@
                     </td>
                     <td pFrozenColumn style="z-index: 1;">
                       <p-autoComplete #inputField styleClass="myclass"  appendTo="body" [(ngModel)]="rowData.prodName" [suggestions]="Filterproductlist" (completeMethod)="filterProduct($event)"
-                      field="prodName" value="ProdBCID" [minLength]="1" (keydown)="productVisible($event)" (keyup.enter)="onEnterTableInput(-1,ri)" (onBlur)="onChange(rowData.prodName,ri, autoComplete3)" class="myClass girdRow" [style]="{ 'width':'100% !important','min-width':'100%'}" #autoComplete3 (onFocus)="autoComplete3.show()"  (onBlur)="autoComplete3.hide()"></p-autoComplete>
+                      field="prodName" value="prodBCID" [minLength]="1" (keydown)="productVisible($event)" (keyup.enter)="onEnterTableInput(-1,ri)" (onBlur)="onChange(rowData.prodName,ri, autoComplete3)" class="myClass girdRow" [style]="{ 'width':'100% !important','min-width':'100%'}" #autoComplete3 (onFocus)="autoComplete3.show()"  (onBlur)="autoComplete3.hide()"></p-autoComplete>
                     </td>
                     <td>
                         <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText (keyup.enter)="onEnterTableInput(0, ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.qty" (ngModelChange)="updateQtyBal(rowData, ri)" class="girdRow">
@@ -301,17 +301,21 @@
   </p-dialog>
 
   <p-dialog #cstDailog [(visible)]="VendorVisible" [style]="{width: '40vw'}" (onHide)="closeVendorRegistration()">
-      <app-add-new-vendor [title]="'Supplier Registration'" (dataEvent)="handleChildData()"></app-add-new-vendor>
+      <div *ngIf="VendorVisible">
+        <app-add-new-vendor  [title]="'Supplier Registration'" (dataEvent)="handleChildData()"></app-add-new-vendor>
+      </div>
   </p-dialog>
 
 
   <p-dialog #PrdDailog [(visible)]="ProductsVisible" [style]="{width: '60vw'}" (onHide)="closeProductsRegistration()">
-      <app-add-new-product [title]="'Product Registration'" [showGroupBtn]="false" (dataEvent)="ProductsVisible = false"></app-add-new-product>
+    <div *ngIf="ProductsVisible">
+      <app-add-new-product  [title]="'Product Registration'" [showGroupBtn]="false" (dataEvent)="ProductsVisible = false"></app-add-new-product>
+    </div>
   </p-dialog>
 
 
   <p-dialog [(visible)]="PrintringVisible" [style]="{width: '20vw'}" (onHide)="closePrintingOption()">
-      <div class="container">
+      <div class="container"  *ngIf="PrintringVisible">
             <input type="radio" id="html" name="fav_language" (change)="onChangePrint($event)" value="thermal" checked>
             <label for="html" translate>Thermal View</label><br>
             <input type="radio" id="css" name="fav_language" (change)="onChangePrint($event)" value="A4">

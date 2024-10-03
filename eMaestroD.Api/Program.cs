@@ -15,6 +15,8 @@ using eMaestroD.Models.Models;
 using eMaestroD.Api.Data;
 using eMaestroD.Api.Common;
 using eMaestroD.InvoiceProcessing.Factories;
+using eMaestroD.DataAccess.IRepositories;
+using eMaestroD.DataAccess.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,13 +31,14 @@ builder.Services.AddDbContext<Context>(options =>
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
 builder.Services.AddSingleton<EmailService>(); 
- builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
+builder.Services.AddScoped<IGLRepository, GLRepository>();
 builder.Services.AddScoped<InvoiceValidationService>(); 
 builder.Services.AddScoped<GLService>(); 
 builder.Services.AddScoped<eMaestroD.DataAccess.Repositories.HelperMethods>();
 builder.Services.AddScoped<eMaestroD.DataAccess.DataSet.AMDbContext>();
-builder.Services.AddScoped<HelperMethods>();
+builder.Services.AddScoped<eMaestroD.Api.Common.HelperMethods>();
 builder.Services.AddScoped<InvoiceHandlerFactory>();
 builder.Services.AddScoped<NotificationInterceptor>();
 

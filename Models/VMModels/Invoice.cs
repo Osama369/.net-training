@@ -26,7 +26,9 @@ namespace eMaestroD.Models.VMModels
         public decimal? totalAdvanceExtraTax { get; set; }
         public decimal? totalExtraDiscount { get; set; }
         public decimal? netTotal { get; set; }
-
+        public string? notes { get; set; }
+        public string? convertedInvoiceNo { get; set; }
+        
         // List of products in the invoice
         public List<InvoiceProduct> Products { get; set; }
     }
