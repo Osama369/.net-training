@@ -19,6 +19,7 @@ import { Invoice, InvoiceProduct, InvoiceProductTax } from '../../Models/invoice
 import { lastValueFrom } from 'rxjs';
 import { ProductViewModel } from 'src/app/Manage/Models/product-view-model';
 import { Taxes } from 'src/app/Administration/Models/taxes';
+import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
 
 @Component({
   selector: 'app-add-new-grn',
@@ -117,7 +118,7 @@ export class AddNewGrnComponent implements OnInit{
 
   isProductCode: boolean = false;
   isArabic: boolean = false;
-  txTypeID : any = 12;
+  txTypeID : any = GLTxTypes.GoodsReceivedNote;
 
   vatInclude : boolean = true;
   showPleaseWait: boolean = false;
@@ -189,9 +190,6 @@ export class AddNewGrnComponent implements OnInit{
         this.taxesList = result;
       }
     })
-
-
-
 
     this.SelectedType[0] = { name: this.type[0].name };
     this.filterType = this.type;
@@ -581,7 +579,6 @@ export class AddNewGrnComponent implements OnInit{
 
   async saveInvoice()
   {
-    console.log(this.productlist);
     if(this.validateFields())
     {
       try {
@@ -589,7 +586,7 @@ export class AddNewGrnComponent implements OnInit{
             this.voucherNo,
             this.SelectedType,
             this.txTypeID,
-            this.selectedCustomerName,
+            this.selectedCustomerName.vendID,
             this.selectedLocation,
             this.productlist,
             this.totalGross,

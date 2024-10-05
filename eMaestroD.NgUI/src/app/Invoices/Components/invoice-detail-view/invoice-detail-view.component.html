@@ -29,9 +29,9 @@
         <label class="col-form-label col-2 required">{{list.prodCode}}</label>
         <label class="col-form-label col-3 required">{{list.prodName}}</label>
         <label class="col-form-label col-2 required" style="text-align: right;">{{list.qty | number : '1.2-2'}}</label>
-        <label class="col-form-label col-2 required" style="text-align: right;">{{list.sellRate | number : '1.2-2'}}</label>
-        <label class="col-form-label col-1 required" style="text-align: right;">{{list.discount }}</label>
-        <label class="col-form-label col-2 required" style="text-align: right;">{{list.amount | number : '1.2-2'}}</label>
+        <label class="col-form-label col-2 required" style="text-align: right;">{{list.purchRate | number : '1.2-2'}}</label>
+        <label class="col-form-label col-1 required" style="text-align: right;">{{list.discountPercent }}</label>
+        <label class="col-form-label col-2 required" style="text-align: right;">{{list.netAmount | number : '1.2-2'}}</label>
       </div>
       <div class="col-12" style="border-top: 1px solid black;padding:6px">
         <label class="col-form-label col-2 required" style="font-weight: bold;" translate>Sub Total</label>
@@ -39,7 +39,7 @@
         <label class="col-form-label col-2 required" style="text-align: right;">{{SubTotal | number : '1.2-2'}}</label>
       </div>
       <div *ngIf="TotalTax" class="col-12" style="padding:6px">
-        <label class="col-form-label col-2 required" translate style="font-weight: bold;">{{TaxName}}</label>
+        <label class="col-form-label col-2 required" translate style="font-weight: bold;">Total Tax</label>
         <label class="col-form-label col-8 required"></label>
         <label class="col-form-label col-2 required" style="text-align: right;" translate>{{TotalTax | number : '1.2-2'}}</label>
       </div>
@@ -58,7 +58,7 @@
       </div>
       <div class="col-12">
         <label class="col-form-label col-3 required" translate style="font-weight: bold;">Company Name</label>
-        <label class="col-form-label col-3 required" translate style="font-weight: bold;">Company <span>{{TaxName}}</span> No</label>
+        <label class="col-form-label col-3 required" translate style="font-weight: bold;">Company Tax No</label>
         <label class="col-form-label col-3 required" translate style="font-weight: bold;">Invoice Amount</label>
         <label class="col-form-label col-3 required" translate style="font-weight: bold;"><span>{{TaxName}}</span> Amount</label>
         <label class="col-form-label col-3 required" >{{companyName}}</label>

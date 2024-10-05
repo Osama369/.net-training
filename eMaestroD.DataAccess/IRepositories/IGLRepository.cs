@@ -4,13 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using eMaestroD.Models.Models;
+using eMaestroD.Models.VMModels;
 
 namespace eMaestroD.DataAccess.IRepositories
 {
     public interface IGLRepository
     {
+        Task<string> GenerateVoucherNoAsync(int txTypeID, int? comID);
         Task<List<GL>> GetGLEntriesByVoucherNoAsync(string voucherNo);
         Task<bool> UpdateGLIsConvertedAsync(string voucherNo, string convertedVoucherNo);
         Task InsertGLEntriesAsync(List<GL> glEntries);
+        Task<List<Invoice>> GetInvoicesAsync(int txTypeID, int customerOrVendorID, int comID);
     }
 }

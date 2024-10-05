@@ -13,7 +13,7 @@
   <p-table #dt1 [value]="invoices" dataKey="id"  styleClass="p-datatable-striped"
       [rows]="100" [showCurrentPageReport]="true" [rowsPerPageOptions]="[100,500,1000]" [loading]="loading"
       [paginator]="true" scrollHeight="100px" [scrollable]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-      [globalFilterFields]="['cstName','dtTx','amount','voucherNo']">
+      [globalFilterFields]="['cstName','dtTx','amount','invoiceVoucherNo']">
       <ng-template pTemplate="caption">
           <div class="table-header row" style="margin-top: 8px;margin-bottom: 8px;">
               <div class="col-md-6">
@@ -24,7 +24,7 @@
               </div>
               <div class="col-md-6" style="text-align:right !important;">
                 <span class="p-buttonset">
-                  <p-button icon="pi pi-plus" styleClass="p-button p-button-sm btns" [routerLink]="'./../AddNewPurchase'" [style]="{'margin-right': '8px'}" title="Add"></p-button>
+                  <p-button icon="pi pi-plus" styleClass="p-button p-button-sm btns" [routerLink]="'./../AddNewGRN'" [style]="{'margin-right': '8px'}" title="Add"></p-button>
                   <p-button icon="pi pi-file-excel" styleClass="p-button p-button-sm p-button-success btns" (onClick)="exportExcel()" [style]="{'margin-right': '8px'}" title="Export Excel"></p-button>
                   <p-button icon="pi pi-file-pdf" styleClass="p-button p-button-sm p-button-danger btns" [style]="{'margin-right': '8px'}" (onClick)="exportPdf()" title="Export PDF"></p-button>
                   <p-button icon="pi pi-fw pi-cog" styleClass="p-button p-button-sm p-button-secondary btns" (click)="reportSettingVisiblity=true" [style]="{'margin-right': '8px'}" title="Invoice Report Setting"></p-button>
@@ -35,73 +35,54 @@
       <ng-template pTemplate="header">
           <tr>
               <th style="min-width:10rem;text-align: center;"  pFrozenColumn translate>ACTIONS</th>
-              <th style="min-width:12rem" translate>
-                  <div class="flex justify-content-center align-items-center" translate>
+              <th style="min-width:13rem" translate>
+                  <div class="flex justify-content-center align-items-left" translate>
                       Invoice Date
                   </div>
               </th>
               <th style="min-width:12rem" translate>
-                  <div class="flex justify-content-center align-items-center" translate>
+                  <div class="flex justify-content-center align-items-left" translate>
                       Invoice No
                   </div>
               </th>
               <th style="min-width:8rem" translate>
-                <div class="flex justify-content-center align-items-center" translate>
+                <div class="flex justify-content-center align-items-left" translate>
                     Type
                 </div>
             </th>
               <th style="min-width:12rem" translate>
                 Supplier Name
               </th>
-              <th style="min-width:12rem" translate>
-                  <div class="flex justify-content-center align-items-right" translate>
+              <th style="min-width:6rem" translate>
                       Amount
-                  </div>
               </th>
-              <!-- <th th style="min-width:11rem">
-
-              </th> -->
           </tr>
       </ng-template>
       <ng-template pTemplate="body" let-invoices>
-          <tr>
+          <tr style="padding:0px">
               <td pFrozenColumn style="text-align: center !important;z-index: 0;">
                   <span class="p-buttonset">
-                    <p-button (onClick)="printView(invoices.voucherNo)"  icon="pi pi-file-pdf" styleClass="p-button-rounded p-button-info p-button-text" title="Print"></p-button>
-                    <p-button *ngIf="invoices.isPaymented" (onClick)="editView(invoices.voucherNo)" icon="pi pi-pencil" styleClass="p-button-rounded p-button-success p-button-text" title="Edit"></p-button>
-                    <p-button *ngIf="invoices.isPaymented" (onClick)="deleteView(invoices.voucherNo)" icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-text" title="Delete"></p-button>
-                    <!-- <p-button (onClick)="printView(invoices.voucherNo)"  icon="pi pi-money-bill" styleClass="p-button-rounded p-button-info p-button-text" title="Add Payment"></p-button> -->
-
-                     </span>
+                      <p-button (onClick)="printView(invoices.invoiceVoucherNo)"  icon="pi pi-file-pdf" styleClass="p-button-rounded p-button-info p-button-text" title="Print"></p-button>
+                      <p-button *ngIf="!invoices.isPaymented" (onClick)="editView(invoices.invoiceVoucherNo)" icon="pi pi-pencil" styleClass="p-button-rounded p-button-success p-button-text" title="Edit"></p-button>
+                      <p-button *ngIf="!invoices.isPaymented" (onClick)="deleteView(invoices.invoiceVoucherNo)" icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-text" title="Delete"></p-button>
+                    </span>
               </td>
               <td>
-                  {{invoices.dtTx | timezoneDate : "dd-MM-yyyy hh:mm:ss"}}
+                  {{invoices.invoiceDate | timezoneDate : "dd-MM-yyyy hh:mm:ss"}}
               </td>
               <td>
-                <a (click)="viewInvoiceDetail(invoices.voucherNo)" style="color:blue;" class="invoiceNo">{{invoices.voucherNo}} </a>
+                <a (click)="viewInvoiceDetail(invoices.invoiceVoucherNo)" style="color:blue;" class="invoiceNo">{{invoices.invoiceVoucherNo}} </a>
               </td>
               <td>
-                {{invoices.type}}
+                {{invoices.invoiceType}}
               </td>
               <td>
-                <a *ngIf="invoices.type.toLowerCase() == 'credit'" href="/SupplierLedgerReport/{{invoices.cstID}}" target="_blank">{{invoices.cstName}} </a>
-                <span *ngIf="invoices.type.toLowerCase() != 'credit'">{{invoices.cstName}} </span>
+                <a *ngIf="invoices.invoiceType.toLowerCase() == 'credit'" href="Reports/SupplierLedgerReport/{{invoices.CustomerOrVendorID}}" target="_blank">{{invoices.customerOrVendorName}} </a>
+                <span *ngIf="invoices.invoiceType.toLowerCase() != 'credit'">{{invoices.customerOrVendorName}} </span>
               </td>
               <td>
-                  {{invoices.amount | number : '1.2-2'}}
+                  {{invoices.netTotal | number : '1.2-2'}}
               </td>
-              <!-- <td>
-                  <button pButton type="button" icon="pi pi-file-pdf" (click)="printView(invoices.voucherNo)" class="p-button-secondary"></button>
-                  <button pButton type="button" icon="pi pi-pencil" (click)="editView(invoices.voucherNo)"  class="p-button-secondary" style="margin-left: 5px;">
-                  </button>
-                  <button pButton type="button" icon="pi pi-trash" (click)="deleteView(invoices.voucherNo)" class="p-button-secondary" style="margin-left: 5px;"></button>
-              </td> -->
-              <!-- <td>
-                  <p-progressBar [value]="invoices.amount" [showValue]="false"></p-progressBar>
-              </td>
-              <td class="text-center">
-                  <i class="pi" [ngClass]="{'true-icon pi-check-circle': invoices.dtTx, 'false-icon pi-times-circle': !invoices.dtTx}"></i>
-              </td> -->
           </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">

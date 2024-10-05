@@ -16,7 +16,7 @@ namespace eMaestroD.Api.Common
 
             foreach (var product in invoice.Products)
             {
-                decimal productTotal = (product.purchRate ?? 0) * (product.qty ?? 0);
+                decimal productTotal = (decimal)product.grossValue;
                 decimal discount = product.discountAmount ?? 0;
                 decimal extradiscount = product.extraDiscountAmount ?? 0;
                 decimal tax = product.ProductTaxes.Sum(x=>x.taxAmount) ?? 0;

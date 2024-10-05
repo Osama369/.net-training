@@ -14,8 +14,8 @@ namespace eMaestroD.Models.VMModels
         public string? invoiceType { get; set; }
         public int? fiscalYear { get; set; }
         public int? txTypeID { get; set; }
-        public int? vendID { get; set; }
-        public int? cstID { get; set; }
+        public int? CustomerOrVendorID { get; set; }
+        public string? customerOrVendorName { get; set; }
         public int? comID { get; set; }
         public int? locID { get; set; }
         public decimal? grossTotal { get; set; }
@@ -28,7 +28,7 @@ namespace eMaestroD.Models.VMModels
         public decimal? netTotal { get; set; }
         public string? notes { get; set; }
         public string? convertedInvoiceNo { get; set; }
-        
+        public bool? isPaymented { get; set; }
         // List of products in the invoice
         public List<InvoiceProduct> Products { get; set; }
     }

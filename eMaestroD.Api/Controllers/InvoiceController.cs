@@ -5,6 +5,7 @@ using eMaestroD.Models.VMModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using eMaestroD.DataAccess.DataSet;
+using eMaestroD.InvoiceProcessing.Interfaces;
 
 namespace eMaestroD.Api.Controllers
 {
@@ -17,8 +18,8 @@ namespace eMaestroD.Api.Controllers
         private IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly InvoiceValidationService _invoiceValidationService;
-        private readonly GLService _glService;
-        public InvoiceController(AMDbContext aMDbContext, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, InvoiceValidationService invoiceValidationService, GLService glService)
+        private readonly IGLService _glService;
+        public InvoiceController(AMDbContext aMDbContext, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, InvoiceValidationService invoiceValidationService, IGLService glService)
         {
             _AMDbContext = aMDbContext;
             _configuration = configuration;
@@ -70,6 +71,27 @@ namespace eMaestroD.Api.Controllers
                 }
 
                 return Ok(invoice);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("{txtypeID}/{customerOrVendorID}/{comID}")]
+        public async Task<IActionResult> GetInvoices(int txtypeID, int customerOrVendorID, int comID)
+        {
+            try
+            {
+                var invoices = await _glService.GetInvoicesAsync(txtypeID, customerOrVendorID, comID);
+
+                if (invoices == null)
+                {
+                    return NotFound("Invoices not found.");
+                }
+
+                return Ok(invoices);
             }
             catch (Exception ex)
             {

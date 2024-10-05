@@ -8,6 +8,8 @@ import { ReportSettingService } from 'src/app/Reports/Services/report-setting.se
 import { GenericService } from 'src/app/Shared/Services/generic.service';
 import { InvoicesService } from '../../Services/invoices.service';
 import { InvoiceView } from '../../Models/invoice-view';
+import { lastValueFrom } from 'rxjs';
+import { ProductViewModel } from 'src/app/Manage/Models/product-view-model';
 
 @Component({
   selector: 'app-detail-view',
@@ -28,7 +30,7 @@ export class InvoiceDetailViewComponent {
 
   heading:any = "Invoice Detail";
   EditVoucherNo : any;
-  productlist: Products[];
+  productlist: ProductViewModel[] = [{}];
   returnList: Products[];
   voucherlist: InvoiceView[];
   Name : any;
@@ -52,7 +54,7 @@ export class InvoiceDetailViewComponent {
   reportSettingItemList :any[]=[];
   isProductCode: boolean = false;
   showPleaseWait : boolean = false;
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.route.params.subscribe(params1 => {
       this.EditVoucherNo = params1['id'];
    });
@@ -61,125 +63,75 @@ export class InvoiceDetailViewComponent {
     this.reportSettingItemList = rpt;
   })
 
-   this.productlist = [this.CreateNewList()];
    this.returnList = [this.CreateNewList()];
    if(this.EditVoucherNo != undefined)
    {
     this.showPleaseWait = true;
-     this.invoicesService.getOneInvoiceDetail(this.EditVoucherNo).subscribe(invoices => {
-      if(invoices[0].txTypeID==1){this.heading="Purchase Invoice Detail";this.reportSettingItemList = this.reportSettingItemList.filter(x=>x.screenName.toLowerCase() == 	"purchase")}
-      else if(invoices[0].txTypeID==3){this.heading="Purchase Order Detail";this.reportSettingItemList = this.reportSettingItemList.filter(x=>x.screenName.toLowerCase() == 	"purchase order")}
-      else if(invoices[0].txTypeID==4){this.heading="Sale Invoice Detail";this.reportSettingItemList = this.reportSettingItemList.filter(x=>x.screenName.toLowerCase() == 	"sale")}
-      else if(invoices[0].txTypeID==11){this.heading="Service Invoice Detail";this.reportSettingItemList = this.reportSettingItemList.filter(x=>x.screenName.toLowerCase() == 	"service")}
-      else if(invoices[0].txTypeID==16){this.heading="Quotation Detail";this.reportSettingItemList = this.reportSettingItemList.filter(x=>x.screenName.toLowerCase() == 	"quotation")}
-      else if(invoices[0].txTypeID==5){this.heading="Sale Return Detail";this.reportSettingItemList = this.reportSettingItemList.filter(x=>x.screenName.toLowerCase() == 	"sale return")}
-      else if(invoices[0].txTypeID==2){this.heading="Purchase Return Detail";this.reportSettingItemList = this.reportSettingItemList.filter(x=>x.screenName.toLowerCase() == 	"purchase return")}
+    try{
 
-      let i = -1;
-       let j = -1;
-       let k = -1;
-       this.date = invoices[0].dtTx;
-       this.type = "Cash";
-       this.Name = invoices[0].cstName;
-       this.TaxName = invoices[0].taxName;
-       invoices.forEach((elem,index) => {
-        if(elem.checkName == "tax")
-         {
-            if(elem.relCOAID == 40 || elem.relCOAID == 83)
+      const invoice = await lastValueFrom(this.invoicesService.GetInvoice(this.EditVoucherNo));
+      console.log(invoice);
+       this.date = invoice.invoiceDate;
+       this.type = invoice.invoiceType;
+       this.Name = invoice.customerOrVendorName;
+       const seenProdBCIDs = new Set<number>();
+
+       this.productlist = invoice.Products.filter(product => {
+           if (!seenProdBCIDs.has(product.prodBCID)) {
+               seenProdBCIDs.add(product.prodBCID);
+               return true;
+           }
+           return false;
+       });
+        this.SubTotal = invoice.grossTotal
+        this.TotalTax = invoice.totalTax
+        this.TotalDiscount = invoice.totalDiscount;
+        this.Total = this.SubTotal + this.TotalTax - this.TotalDiscount;
+    }
+    catch(error){
+
+    }
+
+      this.invoicesService.GetReturnDetail(this.EditVoucherNo).subscribe(invoices => {
+      if(invoices != null)
+      {
+        let i = -1;
+        let j = -1;
+        let k = -1;
+          invoices.forEach((elem,index) => {
+            if(elem.prodID != 0 && elem.prodName != null)
             {
-              this.type = "Credit";
-              this.invoicesService.getPaymentDetail(this.EditVoucherNo).subscribe(invoices => {
-                this.voucherlist = invoices;
-                if(this.voucherlist != null)
-                {
-                    this.voucherlist.forEach(element => {
-                    this.PaymentTotal += element.amount;
-                  });
-                }
-              });
-            }
-            else if(elem.relCOAID == 80)
-            {
-              this.type = "Cash";
-
-              this.invoicesService.getCashPaymentDetail(this.EditVoucherNo).subscribe(invoices => {
-                this.voucherlist = invoices;
-                if(this.voucherlist != null)
-                {
-                    this.voucherlist.forEach(element => {
-                    this.PaymentTotal += element.amount;
-                  });
-                }
-              });
-
-            }
-           this.TotalTax = elem.creditSum+elem.debitSum;
-         }
-         else if(elem.prodID != 0 && elem.prodName != null)
-         {
-            i++;
-            this.productlist[i].prodCode  =elem.prodCode;
-            this.productlist[i].prodID  =elem.prodID;
-            this.productlist[i].prodName =elem.prodName;
-            this.productlist[i].sellRate  =elem.unitPrice;
-            this.productlist[i].discount  =elem.checkNo;
-            this.productlist[i].qty  =elem.qty;
-            if(elem.txTypeID==2)
-            {
-              this.productlist[i].qty  = -elem.qty;
-            }
-            this.productlist[i].amount  =this.productlist[i].qty*elem.unitPrice - elem.discountSum;
-            this.productlist[i].crtDate = elem.crtDate;
-            this.SubTotal += this.productlist[i].amount ;
-             this.productlist.push(this.CreateNewList());
-         }
-         });
-
-         this.productlist.splice(this.productlist.length-1,1);
-         this.TotalDiscount = invoices.find(x=>x.txID == 0)?.discountSum;
-         this.Total = this.SubTotal + this.TotalTax - this.TotalDiscount;
-
-         this.invoicesService.GetReturnDetail(this.EditVoucherNo).subscribe(invoices => {
-          if(invoices != null)
-          {
-            let i = -1;
-            let j = -1;
-            let k = -1;
-              invoices.forEach((elem,index) => {
-                if(elem.prodID != 0 && elem.prodName != null)
-                {
-                  i++;
-                  this.returnList[i].prodGrpName = elem.voucherNo;
-                  this.returnList[i].prodCode  =elem.prodCode;
-                  this.returnList[i].prodID  =elem.prodID;
-                  this.returnList[i].prodName =elem.prodName;
-                  this.returnList[i].sellRate  =elem.unitPrice;
-                  this.returnList[i].discount  =elem.checkNo;
-                  this.returnList[i].qty  =elem.qty;
-                  if(elem.txTypeID==2)
-                  {
-                    this.returnList[i].qty  = -elem.qty;
-                  }
-                  this.returnList[i].amount  =this.returnList[i].qty*elem.unitPrice - elem.discountSum;
-                  this.returnList[i].crtDate = elem.crtDate;
-                  this.returnSubTotal += this.returnList[i].amount ;
-                  this.returnList.push(this.CreateNewList());
+              i++;
+              this.returnList[i].prodGrpName = elem.voucherNo;
+              this.returnList[i].prodCode  =elem.prodCode;
+              this.returnList[i].prodID  =elem.prodID;
+              this.returnList[i].prodName =elem.prodName;
+              this.returnList[i].sellRate  =elem.unitPrice;
+              this.returnList[i].discount  =elem.checkNo;
+              this.returnList[i].qty  =elem.qty;
+              if(elem.txTypeID==2)
+              {
+                this.returnList[i].qty  = -elem.qty;
               }
-              else if(elem.prodID == 0) {
-                this.returnTotalTax += elem.taxSum;
-              }
-            });
-            this.returnList.splice(this.returnList.length-1,1);
-            this.returnTotalDiscount = invoices.find(x=>x.txID == 0)?.discountSum;
-            this.returnTotal = this.returnSubTotal + this.returnTotalTax - this.returnTotalDiscount;
+              this.returnList[i].amount  =this.returnList[i].qty*elem.unitPrice - elem.discountSum;
+              this.returnList[i].crtDate = elem.crtDate;
+              this.returnSubTotal += this.returnList[i].amount ;
+              this.returnList.push(this.CreateNewList());
           }
-          else{
-            this.returnList.splice(this.returnList.length-1,1);
+          else if(elem.prodID == 0) {
+            this.returnTotalTax += elem.taxSum;
           }
         });
+        this.returnList.splice(this.returnList.length-1,1);
+        this.returnTotalDiscount = invoices.find(x=>x.txID == 0)?.discountSum;
+        this.returnTotal = this.returnSubTotal + this.returnTotalTax - this.returnTotalDiscount;
+      }
+      else{
+        this.returnList.splice(this.returnList.length-1,1);
+      }
+    });
 
         this.showPleaseWait = false;
-    });
 
 
 

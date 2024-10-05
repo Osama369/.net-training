@@ -47,7 +47,7 @@
               </div>
 
               <div class="col-3">
-                <p-dropdown #inputField [options]="GRNInvoiceList"  [(ngModel)]="selectedVoucherNo"  styleClass="col-12" optionLabel="voucherNo" optionValue="voucherNo" (onChange)="InvoiceOnChange()" (keyup.enter)="onEnterComplex(3)"></p-dropdown>
+                <p-dropdown #inputField [options]="GRNInvoiceList"  [(ngModel)]="selectedVoucherNo"  styleClass="col-12" optionLabel="invoiceVoucherNo" optionValue="invoiceVoucherNo" (onChange)="InvoiceOnChange()" (keyup.enter)="onEnterComplex(3)"></p-dropdown>
               </div>
 
               <label class="col-form-label Vendor-label col-3 required" translate>Location</label>

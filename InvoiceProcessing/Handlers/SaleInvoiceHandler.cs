@@ -1,0 +1,291 @@
+﻿using eMaestroD.DataAccess.IRepositories;
+using eMaestroD.Models.Models;
+using eMaestroD.Models.VMModels;
+using eMaestroD.Shared.Config;
+using InvoiceProcessing.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace eMaestroD.InvoiceProcessing.Handlers
+{
+    public class SaleInvoiceHandler : IInvoiceHandler
+    {
+        private readonly IHelperMethods _helperMethods;
+        public SaleInvoiceHandler(IHelperMethods helperMethods)
+        {
+            _helperMethods = helperMethods;
+        }
+        public async Task<List<GL>> ConvertInvoiceToGL(Invoice invoice)
+        {
+
+            GL glMasterEntry = new GL();
+            GL glDetailEntry = new GL();
+            List<GL> glEntries = new List<GL>();
+            decimal? totalNetAmount = 0;
+
+            var saleLocalAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.SaleLocal);
+            //80
+            var cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeDebtors);
+            //98
+            var stockInTradeAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.StockInTrade);
+            //81
+            var costOfGoodsAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CostOfGoodsSold);
+
+            if (invoice.invoiceType.ToLower() == "cash")
+            {
+                cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CashInHand);
+            }
+
+            glMasterEntry = new GL
+            {
+                GLID = 0,
+                txTypeID = (int)invoice.txTypeID,
+                cstID = (int)invoice.CustomerOrVendorID,
+                vendID = 0,
+                depositID = (int)invoice.fiscalYear,
+                isDeposited = false,
+                isVoided = false,
+                isCleared = false,
+                isPaid = false,
+                voucherNo = invoice.invoiceVoucherNo,
+                instituteOffer = 0,
+                creditSum = (decimal)invoice.netTotal,
+                discountSum = (decimal)invoice.totalDiscount,
+                extraDiscountSum = (decimal)invoice.totalExtraDiscount,
+                taxSum = (decimal)invoice.totalTax + (decimal)invoice.totalExtraTax + (decimal)invoice.totalAdvanceExtraTax,
+                rebateSum = (decimal)invoice.totalRebate,
+                paidSum = 0,
+                dtTx = invoice.invoiceDate,
+                locID = (int)invoice.locID,
+                comID = invoice.comID,
+                acctNo = "",
+                relAcctNo = "",
+                crtDate = DateTime.Now,
+                modDate = DateTime.Now,
+                isConverted = false,
+                balSum = invoice.invoiceType.ToLower() == "credit" ? (decimal)invoice.netTotal : 0
+
+            };
+
+            glEntries.Add(glMasterEntry);
+
+
+            foreach (var product in invoice.Products)
+            {
+                GL glEntry1 = new GL
+                {
+                    txID = 0,
+                    txTypeID = invoice.txTypeID ?? 0,
+                    comID = invoice.comID,
+                    depositID = (int)invoice.fiscalYear,
+                    locID = invoice.locID ?? 0,
+                    cstID = (int)invoice.CustomerOrVendorID,
+                    vendID = 0,
+                    prodID = product.prodID ?? 0,
+                    prodBCID = product.prodBCID ?? 0,
+                    qty = product.qty ?? 0,
+                    bonusQty = product.bounsQty ?? 0,
+                    qtyBal = product.qty ?? 0,
+                    unitPrice = product.sellRate ?? 0,
+                    creditSum = product.netAmount ?? 0,
+                    discountSum = product.discountAmount ?? 0,
+                    extraDiscountSum = product.extraDiscountAmount ?? 0,
+                    rebateSum = product.rebateAmount ?? 0,
+                    batchNo = product.batchNo,
+                    taxSum = (decimal)product.ProductTaxes.Sum(x => x.taxAmount),
+                    debitSum = 0,
+                    dtTx = invoice.invoiceDate,
+                    expiry = product.expiry,
+                    glComments = product.notes,
+                    checkName = "",
+                    checkAdd = product.discountPercent.ToString() ?? "0",
+                    checkNo = "",
+                    voucherID = "",
+                    voucherNo = invoice.invoiceVoucherNo?.ToString(),
+                    crtDate = DateTime.Now,
+                    modDate = DateTime.Now,
+                    acctNo = saleLocalAccCode,
+                    relAcctNo = cashOrCreditAccCode,
+                    isPaid = false,
+                    isVoided = false,
+                    isDeposited = false,
+                    isCleared = false,
+                    isConverted = false,
+                    gLDetails = product.ProductTaxes.Select(tax => new GLDetail
+                    {
+                        GLID = 0,
+                        acctNo = tax.taxAcctNo,
+                        GLAmount = tax.taxAmount,
+                        rate = tax.taxPercent
+                    }).ToList()
+                };
+                
+                glEntries.Add(glEntry1);
+
+
+                GL glEntry2 = new GL
+                {
+                    txID = 0,
+                    txTypeID = invoice.txTypeID ?? 0,
+                    comID = invoice.comID,
+                    depositID = (int)invoice.fiscalYear,
+                    locID = invoice.locID ?? 0,
+                    cstID = (int)invoice.CustomerOrVendorID,
+                    vendID = 0,
+                    prodID = product.prodID ?? 0,
+                    prodBCID = product.prodBCID ?? 0,
+                    bonusQty = product.bounsQty ?? 0,
+                    qty = -(product.qty) ?? 0,
+                    qtyBal = 0,
+                    unitPrice = product.purchRate ?? 0,
+                    creditSum = product.purchRate * product.qty ?? 0,
+                    discountSum = 0,
+                    extraDiscountSum = 0,
+                    rebateSum = 0,
+                    batchNo = product.batchNo,
+                    taxSum = 0,
+                    debitSum = 0,
+                    dtTx = invoice.invoiceDate,
+                    expiry = product.expiry,
+                    glComments = product.notes,
+                    checkName = "",
+                    checkAdd = "",
+                    checkNo = "",
+                    voucherID = "",
+                    voucherNo = invoice.invoiceVoucherNo?.ToString(),
+                    crtDate = DateTime.Now,
+                    modDate = DateTime.Now,
+                    acctNo = stockInTradeAccCode,
+                    relAcctNo = costOfGoodsAccCode,
+                    isPaid = false,
+                    isVoided = false,
+                    isDeposited = false,
+                    isCleared = false,
+                    isConverted = false,
+                    gLDetails = null
+                };
+
+                glEntries.Add(glEntry2);
+
+
+                GL glEntry3 = new GL
+                {
+                    txID = 0,
+                    txTypeID = invoice.txTypeID ?? 0,
+                    comID = invoice.comID,
+                    depositID = (int)invoice.fiscalYear,
+                    locID = invoice.locID ?? 0,
+                    cstID = (int)invoice.CustomerOrVendorID,
+                    vendID = 0,
+                    prodID = product.prodID ?? 0,
+                    prodBCID = product.prodBCID ?? 0,
+                    bonusQty = product.bounsQty ?? 0,
+                    qty = product.qty ?? 0,
+                    qtyBal = 0,
+                    unitPrice = product.purchRate ?? 0,
+                    creditSum = 0,
+                    debitSum = product.purchRate * product.qty ?? 0,
+                    discountSum = 0,
+                    extraDiscountSum = 0,
+                    rebateSum = 0,
+                    batchNo = product.batchNo,
+                    taxSum = 0,
+                    dtTx = invoice.invoiceDate,
+                    expiry = product.expiry,
+                    glComments = product.notes,
+                    checkName = "",
+                    checkAdd = "",
+                    checkNo = "",
+                    voucherID = "",
+                    voucherNo = invoice.invoiceVoucherNo?.ToString(),
+                    crtDate = DateTime.Now,
+                    modDate = DateTime.Now,
+                    acctNo = costOfGoodsAccCode,
+                    relAcctNo = stockInTradeAccCode,
+                    isPaid = false,
+                    isVoided = false,
+                    isDeposited = false,
+                    isCleared = false,
+                    isConverted = false,
+                    gLDetails = null
+                };
+
+                glEntries.Add(glEntry3);
+
+
+                //GL glEntry2 = new GL();
+                //glEntry2 = glEntry1;
+
+                //glEntry2.qtyBal = 0;
+                //glEntry2.acctNo = stockInTradeAccCode;
+                //glEntry2.relAcctNo = costOfGoodsAccCode;
+                //glEntry2.qty = -(glEntry1.qty + glEntry1.bonusQty);
+                //glEntry2.unitPrice = (decimal)product.purchRate;
+                //glEntry2.creditSum = (decimal)(glEntry2.unitPrice * product.qty);
+                //glEntry2.discountSum = 0;
+                //glEntry2.taxSum = 0;
+                //glEntry2.gLDetails = null;
+
+                //glEntries.Add(glEntry2);
+
+
+                //GL glEntry3 = new GL();
+                //glEntry3 = glEntry2;
+                //glEntry3.qtyBal = 0;
+                //glEntry3.acctNo = costOfGoodsAccCode;
+                //glEntry3.relAcctNo = stockInTradeAccCode;
+                //glEntry3.qty = glEntry1.qty + glEntry1.bonusQty;
+                //glEntry3.unitPrice = (decimal)product.purchRate;
+                //glEntry3.creditSum = 0;
+                //glEntry3.debitSum = (decimal)(glEntry2.unitPrice * product.qty);
+                //glEntry3.discountSum = 0;
+                //glEntry3.taxSum = 0;
+
+                //glEntries.Add(glEntry3);
+
+
+                totalNetAmount += product.netAmount;
+
+            }
+
+
+            glDetailEntry = new GL
+            {
+                GLID = 0,
+                txTypeID = (int)invoice.txTypeID,
+                cstID = 0,
+                vendID = (int)invoice.CustomerOrVendorID,
+                depositID = (int)invoice.fiscalYear,
+                isDeposited = false,
+                isVoided = false,
+                isCleared = false,
+                isPaid = false,
+                voucherNo = invoice.invoiceVoucherNo,
+                instituteOffer = 0,
+                debitSum = (decimal)totalNetAmount,
+                creditSum = 0,
+                discountSum = 0,
+                extraDiscountSum = 0,
+                taxSum = 0,
+                rebateSum = 0,
+                paidSum = 0,
+                dtTx = invoice.invoiceDate,
+                locID = (int)invoice.locID,
+                comID = invoice.comID,
+                acctNo = cashOrCreditAccCode,
+                relAcctNo = saleLocalAccCode,
+                crtDate = DateTime.Now,
+                modDate = DateTime.Now,
+                isConverted = false,
+                balSum = invoice.invoiceType.ToLower() == "credit" ? (decimal)invoice.netTotal : 0
+            };
+
+            glEntries.Add(glDetailEntry);
+
+            return glEntries;
+        }
+    }
+}

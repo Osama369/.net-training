@@ -2809,7 +2809,7 @@ p-treeselect.p-treeselect-clearable .p-treeselect-clear-icon {
   text-align: left;
   border: 1px solid #383838;
   border-width: 0 0 1px 0;
-  padding: 1rem 1rem;
+  /* padding: 1rem 1rem; */
 }
 .p-datatable .p-datatable-tbody > tr > td .p-row-toggler,
 .p-datatable .p-datatable-tbody > tr > td .p-row-editor-init,
@@ -3136,10 +3136,6 @@ p-treeselect.p-treeselect-clearable .p-treeselect-clear-icon {
   padding: 1rem;
 }
 
-.fc {
-  /* FullCalendar 4 */
-  /* FullCalendar 5 */
-}
 .fc.fc-unthemed .fc-view-container th {
   background: #1e1e1e;
   border: 1px solid #383838;
