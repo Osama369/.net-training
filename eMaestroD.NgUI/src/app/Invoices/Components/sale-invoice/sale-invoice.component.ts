@@ -9,6 +9,9 @@ import { GenericService } from 'src/app/Shared/Services/generic.service';
 import { InvoicesService } from '../../Services/invoices.service';
 import { InvoiceView } from '../../Models/invoice-view';
 import { ToastrService } from 'ngx-toastr';
+import { Invoice } from '../../Models/invoice';
+import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
+import { lastValueFrom } from 'rxjs';
 
 
 @Component({
@@ -19,7 +22,7 @@ import { ToastrService } from 'ngx-toastr';
 
 export class SaleInvoiceComponent implements OnInit {
 
-    invoices: InvoiceView[];
+    invoices: Invoice[];
     invoiceNo: any;
     loading: boolean = true;
     PrintringVisible: boolean = false;
@@ -47,7 +50,7 @@ export class SaleInvoiceComponent implements OnInit {
       public route : ActivatedRoute
 
       ) { }
-    ngOnInit() {
+    async ngOnInit() {
 
         // this.genericService.getCurrency().subscribe(c =>{
         //   this.CurrencyCode = c[0].CurrencyCode;
@@ -57,15 +60,25 @@ export class SaleInvoiceComponent implements OnInit {
           this.reportSettingItemList = rpt.filter(x=>x.screenName.toLowerCase() == "sale");
         })
 
-        this.invoiceService.getInvoicesList(4).subscribe(invoices => {
-            this.invoices = invoices;
-            this.loading = false;
-            this.exportColumns.push(new Object({title: "Date",dataKey: "dtTx"}));
-            this.exportColumns.push(new Object({title: "Invoice No",dataKey: "voucherNo"}));
-            this.exportColumns.push(new Object({title: "Name",dataKey: "cstName"}));
-            this.exportColumns.push(new Object({title: "Comments",dataKey: "glComments"}));
-            this.exportColumns.push(new Object({title: "Total",dataKey: "amount"}));
-      });
+      //   this.invoiceService.getInvoicesList(4).subscribe(invoices => {
+      //       this.invoices = invoices;
+      //       this.loading = false;
+      //       this.exportColumns.push(new Object({title: "Date",dataKey: "dtTx"}));
+      //       this.exportColumns.push(new Object({title: "Invoice No",dataKey: "voucherNo"}));
+      //       this.exportColumns.push(new Object({title: "Name",dataKey: "cstName"}));
+      //       this.exportColumns.push(new Object({title: "Comments",dataKey: "glComments"}));
+      //       this.exportColumns.push(new Object({title: "Total",dataKey: "amount"}));
+      // });
+
+      try{
+        var result = await lastValueFrom(this.invoiceService.GetInvoices(GLTxTypes.SaleInvoice,0));
+        this.invoices = result;
+        console.log(this.invoices);
+        this.loading = false;
+      }
+      catch(error){
+        this.toasterService.error(error);
+      }
 
       this.authService.GetBookmarkScreen(this.route.snapshot?.data['requiredPermission']).subscribe(x=>{
         this.bookmark = x;

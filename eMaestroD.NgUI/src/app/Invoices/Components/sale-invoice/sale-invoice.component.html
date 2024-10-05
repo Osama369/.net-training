@@ -65,44 +65,32 @@
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-invoices>
-            <tr>
-                <td pFrozenColumn style="text-align: center !important;z-index: 0;">
-                    <span class="p-buttonset">
-                      <p-button (onClick)="printView(invoices.voucherNo)"  icon="pi pi-file-pdf" styleClass="p-button-rounded p-button-info p-button-text" title="Print"></p-button>
-                      <p-button *ngIf="invoices.isPaymented" (onClick)="editView(invoices.voucherNo)" icon="pi pi-pencil" styleClass="p-button-rounded p-button-success p-button-text" title="Edit"></p-button>
-                      <p-button *ngIf="invoices.isPaymented" (onClick)="deleteView(invoices.voucherNo)" icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-text" title="Delete"></p-button>
+          <tr style="padding:0px">
+              <td pFrozenColumn style="text-align: center !important;z-index: 0;">
+                  <span class="p-buttonset">
+                      <p-button (onClick)="printView(invoices.invoiceVoucherNo)"  icon="pi pi-file-pdf" styleClass="p-button-rounded p-button-info p-button-text" title="Print"></p-button>
+                      <p-button *ngIf="!invoices.isPaymented" (onClick)="editView(invoices.invoiceVoucherNo)" icon="pi pi-pencil" styleClass="p-button-rounded p-button-success p-button-text" title="Edit"></p-button>
+                      <p-button *ngIf="!invoices.isPaymented" (onClick)="deleteView(invoices.invoiceVoucherNo)" icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-text" title="Delete"></p-button>
                     </span>
-                </td>
-                <td>
-                    {{invoices.dtTx | timezoneDate : "dd-MM-yyyy hh:mm:ss"}}
-                </td>
-                <td>
-                  <a (click)="viewInvoiceDetail(invoices.voucherNo)" style="color:blue;" class="invoiceNo">{{invoices.voucherNo}} </a>
-                </td>
-                <td>
-                  {{invoices.type}}
               </td>
-                <td>
-                  <a *ngIf="invoices.type.toLowerCase() == 'credit'" href="/Reports/PartyLedgerReport/{{invoices.cstID}}" target="_blank">{{invoices.cstName}} </a>
-                  <span *ngIf="invoices.type.toLowerCase() != 'credit'">{{invoices.cstName}} </span>
-                </td>
-                <td>
-                    {{invoices.amount | number : '1.2-2'}}
-                </td>
-                <!-- <td>
-                    <button pButton type="button" icon="pi pi-file-pdf" (click)="printView(invoices.voucherNo)" class="p-button-secondary"></button>
-                    <button pButton type="button" icon="pi pi-pencil" (click)="editView(invoices.voucherNo)"  class="p-button-secondary" style="margin-left: 5px;">
-                    </button>
-                    <button pButton type="button" icon="pi pi-trash" (click)="deleteView(invoices.voucherNo)" class="p-button-secondary" style="margin-left: 5px;"></button>
-                </td> -->
-                <!-- <td>
-                    <p-progressBar [value]="invoices.amount" [showValue]="false"></p-progressBar>
-                </td>
-                <td class="text-center">
-                    <i class="pi" [ngClass]="{'true-icon pi-check-circle': invoices.dtTx, 'false-icon pi-times-circle': !invoices.dtTx}"></i>
-                </td> -->
-            </tr>
-        </ng-template>
+              <td>
+                  {{invoices.invoiceDate | timezoneDate : "dd-MM-yyyy hh:mm:ss"}}
+              </td>
+              <td>
+                <a (click)="viewInvoiceDetail(invoices.invoiceVoucherNo)" style="color:blue;" class="invoiceNo">{{invoices.invoiceVoucherNo}} </a>
+              </td>
+              <td>
+                {{invoices.invoiceType}}
+              </td>
+              <td>
+                <a *ngIf="invoices.invoiceType.toLowerCase() == 'credit'" href="Reports/PartyLedgerReport/{{invoices.CustomerOrVendorID}}" target="_blank">{{invoices.customerOrVendorName}} </a>
+                <span *ngIf="invoices.invoiceType.toLowerCase() != 'credit'">{{invoices.customerOrVendorName}} </span>
+              </td>
+              <td>
+                  {{invoices.netTotal | number : '1.2-2'}}
+              </td>
+          </tr>
+      </ng-template>
         <ng-template pTemplate="emptymessage">
             <tr>
                 <td colspan="7" translate>No Record found.</td>

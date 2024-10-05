@@ -93,7 +93,9 @@ input {
     font-size: smaller;
     // background: rgb(0, 0, 0) !important;
 }
-
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 0.01rem 0.01rem !important;
+}
 .p-datatable.p-datatable-sm .p-datatable-tbody > tr > td {
   padding: 0.01rem 0.01rem !important;
 }

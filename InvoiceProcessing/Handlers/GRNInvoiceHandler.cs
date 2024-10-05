@@ -1,4 +1,4 @@
-﻿using eMaestroD.DataAccess.Repositories;
+﻿using eMaestroD.DataAccess.IRepositories;
 using eMaestroD.Models.Models;
 using eMaestroD.Models.VMModels;
 using eMaestroD.Shared.Common;
@@ -14,8 +14,8 @@ namespace eMaestroD.InvoiceProcessing.Handlers
 {
     public class GRNInvoiceHandler : IInvoiceHandler
     {
-        private readonly HelperMethods _helperMethods;
-        public GRNInvoiceHandler(HelperMethods helperMethods)
+        private readonly IHelperMethods _helperMethods;
+        public GRNInvoiceHandler(IHelperMethods helperMethods)
         {
             _helperMethods = helperMethods;
         }
@@ -38,8 +38,8 @@ namespace eMaestroD.InvoiceProcessing.Handlers
             {
                 GLID = 0,
                 txTypeID = (int)invoice.txTypeID,
-                cstID = (int)invoice.cstID,
-                vendID = (int)invoice.vendID,
+                cstID = 0,
+                vendID = (int)invoice.CustomerOrVendorID,
                 depositID = (int)invoice.fiscalYear,
                 isDeposited = false,
                 isVoided = false,
@@ -77,8 +77,8 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                     comID = invoice.comID,
                     depositID = (int)invoice.fiscalYear,
                     locID = invoice.locID ?? 0,
-                    vendID = invoice.vendID ?? 0,
-                    cstID = invoice.cstID ?? 0,
+                    cstID = 0,
+                    vendID = (int)invoice.CustomerOrVendorID,
                     prodID = product.prodID ?? 0,
                     prodBCID = product.prodBCID ?? 0,
                     qty = product.qty ?? 0,
@@ -128,8 +128,8 @@ namespace eMaestroD.InvoiceProcessing.Handlers
             {
                 GLID = 0,
                 txTypeID = (int)invoice.txTypeID,
-                cstID = (int)invoice.cstID,
-                vendID = (int)invoice.vendID,
+                cstID = 0,
+                vendID = (int)invoice.CustomerOrVendorID,
                 depositID = (int)invoice.fiscalYear,
                 isDeposited = false,
                 isVoided = false,

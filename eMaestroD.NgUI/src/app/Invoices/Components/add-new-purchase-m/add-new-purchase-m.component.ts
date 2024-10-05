@@ -19,6 +19,7 @@ import { Invoice, InvoiceProduct, InvoiceProductTax } from '../../Models/invoice
 import { lastValueFrom } from 'rxjs';
 import { ProductViewModel } from 'src/app/Manage/Models/product-view-model';
 import { Taxes } from 'src/app/Administration/Models/taxes';
+import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
 
 @Component({
   selector: 'app-add-new-purchase-m',
@@ -118,14 +119,14 @@ export class AddNewPurchaseMComponent implements OnInit{
 
   isProductCode: boolean = false;
   isArabic: boolean = false;
-  txTypeID : any = 1;
+  txTypeID : any = GLTxTypes.PurchaseInvoice;
 
   vatInclude : boolean = true;
   showPleaseWait: boolean = false;
 
   PONumber : any;
 
-  GRNInvoiceList : Gl[] = [];
+  GRNInvoiceList : Invoice[] = [];
 
   selectedVoucherNo : any;
 
@@ -205,10 +206,8 @@ export class AddNewPurchaseMComponent implements OnInit{
       this.EditVoucherNo = params1['id'];
       if(this.EditVoucherNo != undefined)
       {
-        console.log(this.EditVoucherNo);
         this.selectedVoucherNo = this.EditVoucherNo;
-        this.GRNInvoiceList.unshift({ voucherNo : this.selectedVoucherNo});
-        console.log(this.selectedVoucherNo);
+        this.GRNInvoiceList.unshift({ invoiceVoucherNo : this.selectedVoucherNo});
         this.InvoiceOnChange();
       }
    });
@@ -250,7 +249,6 @@ export class AddNewPurchaseMComponent implements OnInit{
             this.enterKeyPressCount = 1;
             let drop =inputFieldARRAY[index-1].el.nativeElement.querySelector('input');
             drop.focus();
-            //drop.close();
           }
         }
     }
@@ -369,6 +367,7 @@ export class AddNewPurchaseMComponent implements OnInit{
             this.productlist[i].qtyBal = 1;
             this.productlist[i].purchRate = this.selectedProductList[0].costPrice;
             this.productlist[i].discount = 0;
+
             this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
             this.productlist[i].depName =this.selectedProductList[0].depName;
             this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
@@ -606,7 +605,7 @@ export class AddNewPurchaseMComponent implements OnInit{
             this.voucherNo,
             this.SelectedType,
             this.txTypeID,
-            this.selectedCustomerName,
+            this.selectedCustomerName.vendID,
             this.selectedLocation,
             this.productlist,
             this.totalGross,
@@ -1014,11 +1013,11 @@ export class AddNewPurchaseMComponent implements OnInit{
       this.onEnterComplex(0);
     }
     else{
-      this.invoicesService.GetInvoicesListByID(12,this.selectedCustomerName.vendID).subscribe({
+      this.invoicesService.GetInvoices(GLTxTypes.GoodsReceivedNote,this.selectedCustomerName.vendID).subscribe({
         next:(result)=>{
-          this.GRNInvoiceList = result.filter(x=>x.txID == 0 && x.checkName == null);
+          this.GRNInvoiceList = result.filter(x=>x.convertedInvoiceNo == null);
           console.log(this.GRNInvoiceList);
-          this.GRNInvoiceList.unshift({ voucherNo : "Select Invoice No"});
+          this.GRNInvoiceList.unshift({ invoiceVoucherNo : "Select Invoice No"});
         },
         error:(responce)=>{
           this.GRNInvoiceList = [];
@@ -1042,7 +1041,7 @@ export class AddNewPurchaseMComponent implements OnInit{
 
 
       this.productlist = invoiceData.productList;
-      this.selectedCustomerName = {vendID:invoiceData.selectedCustomerName.vendID,vendName:this.customers.find(x=>x.vendID == invoiceData.selectedCustomerName.vendID).vendName};
+      this.selectedCustomerName = {vendID:invoiceData.CustomerOrVendorID,vendName:this.customers.find(x=>x.vendID == invoiceData.CustomerOrVendorID).vendName};
       this.totalGross = invoiceData.totalGross;
       this.totalDiscount = invoiceData.totalDiscount;
       this.totalTax = invoiceData.totalTax;

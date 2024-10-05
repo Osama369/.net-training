@@ -17,6 +17,7 @@ using eMaestroD.Api.Common;
 using eMaestroD.InvoiceProcessing.Factories;
 using eMaestroD.DataAccess.IRepositories;
 using eMaestroD.DataAccess.Repositories;
+using eMaestroD.InvoiceProcessing.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,12 +35,15 @@ builder.Services.AddSingleton<EmailService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddScoped<IGLRepository, GLRepository>();
+builder.Services.AddScoped<IVendorRepository, VendorRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<InvoiceValidationService>(); 
-builder.Services.AddScoped<GLService>(); 
-builder.Services.AddScoped<eMaestroD.DataAccess.Repositories.HelperMethods>();
-builder.Services.AddScoped<eMaestroD.DataAccess.DataSet.AMDbContext>();
 builder.Services.AddScoped<eMaestroD.Api.Common.HelperMethods>();
 builder.Services.AddScoped<InvoiceHandlerFactory>();
+builder.Services.AddScoped<IHelperMethods, eMaestroD.DataAccess.Repositories.HelperMethods>();
+builder.Services.AddScoped<IGLService,eMaestroD.InvoiceProcessing.Services.GLService>();
+builder.Services.AddScoped<eMaestroD.DataAccess.DataSet.AMDbContext>();
 builder.Services.AddScoped<NotificationInterceptor>();
 
 builder.Services.AddSingleton<ConnectionStringsDictionary>();

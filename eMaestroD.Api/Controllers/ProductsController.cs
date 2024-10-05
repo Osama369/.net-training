@@ -88,11 +88,11 @@ namespace eMaestroD.Api.Controllers
 
         }
 
-        [HttpGet("GetProducts/{comID}/{prodID}")]
-        public async Task<IActionResult> GetProducts(int comID, int prodID = 0)
+        [HttpGet("GetProducts/{comID}/{prodBCID}")]
+        public async Task<IActionResult> GetProducts(int comID, int prodBCID = 0)
         {
             var products = await _AMDbContext.Set<ProductViewModel>()
-                .FromSqlRaw("EXEC GetProducts @comID = {0}, @prodID = {1}", comID, prodID)
+                .FromSqlRaw("EXEC GetProducts @comID = {0}, @prodBCID = {1}", comID, prodBCID)
                 .ToListAsync();
 
             if (products == null || !products.Any())

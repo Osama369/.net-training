@@ -4,8 +4,8 @@ export interface Invoice {
   invoiceVoucherNo?:any;
   invoiceType?:any;
   txtypeID?:number;
-  vendID?:number;
-  cstID?:number;
+  CustomerOrVendorID?:number;
+  customerOrVendorName?:string;
   comID?:number;
   locID?:number;
   grossTotal?: number;

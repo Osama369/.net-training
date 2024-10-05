@@ -74,7 +74,7 @@ namespace eMaestroD.Models.Models
         public decimal debitSum { get; set; }
 
         public decimal discountSum { get; set; }
-        public decimal extraDiscountSum { get; set; }
+        public decimal? extraDiscountSum { get; set; }
         public decimal paidSum { get; set; }
         public decimal taxSum { get; set; }
         public decimal unusedSum { get; set; }
@@ -142,7 +142,7 @@ namespace eMaestroD.Models.Models
         }
 
         public int prodBCID { get; set; }
-        public decimal rebateSum { get; set; }
+        public decimal? rebateSum { get; set; }
         public bool? isConverted { get; set; }
 
         public List<GLDetail>? gLDetails { get; set; } = new List<GLDetail>();

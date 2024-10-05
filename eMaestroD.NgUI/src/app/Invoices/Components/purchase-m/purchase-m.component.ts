@@ -9,6 +9,9 @@ import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { GenericService } from 'src/app/Shared/Services/generic.service';
 import { InvoicesService } from '../../Services/invoices.service';
 import { InvoiceView } from '../../Models/invoice-view';
+import { lastValueFrom } from 'rxjs';
+import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
+import { Invoice } from '../../Models/invoice';
 
 @Component({
   selector: 'app-purchase-m',
@@ -17,7 +20,7 @@ import { InvoiceView } from '../../Models/invoice-view';
 })
 export class PurchaseMComponent implements OnInit {
 
-    invoices: InvoiceView[];
+    invoices: Invoice[];
     invoiceNo: any;
     loading: boolean = true;
     PrintringVisible: boolean = false;
@@ -43,22 +46,31 @@ export class PurchaseMComponent implements OnInit {
       public route : ActivatedRoute
       ) { }
 
-    ngOnInit() {
+    async ngOnInit() {
 
       this.reportSettingService.GetInvoiceReportSettings().subscribe(rpt=>{
         this.reportSettingItemList = rpt.filter(x=>x.screenName.toLowerCase() == "purchase");
       })
 
+      try{
+        var result = await lastValueFrom(this.invoiceService.GetInvoices(GLTxTypes.PurchaseInvoice,0));
+        this.invoices = result;
+        console.log(this.invoices);
+        this.loading = false;
+      }
+      catch(error){
+        this.toasterService.error(error);
+      }
 
-        this.invoiceService.getInvoicesList(1).subscribe(invoices => {
-            this.invoices = invoices;
-            this.loading = false;
-            this.exportColumns.push(new Object({title: "Date",dataKey: "dtTx"}));
-            this.exportColumns.push(new Object({title: "Invoice No",dataKey: "voucherNo"}));
-            this.exportColumns.push(new Object({title: "Name",dataKey: "cstName"}));
-            this.exportColumns.push(new Object({title: "Comments",dataKey: "glComments"}));
-            this.exportColumns.push(new Object({title: "Total",dataKey: "amount"}));
-        });
+        // this.invoiceService.getInvoicesList(1).subscribe(invoices => {
+        //     this.invoices = invoices;
+        //     this.loading = false;
+        //     this.exportColumns.push(new Object({title: "Date",dataKey: "dtTx"}));
+        //     this.exportColumns.push(new Object({title: "Invoice No",dataKey: "voucherNo"}));
+        //     this.exportColumns.push(new Object({title: "Name",dataKey: "cstName"}));
+        //     this.exportColumns.push(new Object({title: "Comments",dataKey: "glComments"}));
+        //     this.exportColumns.push(new Object({title: "Total",dataKey: "amount"}));
+        // });
 
         this.authService.GetBookmarkScreen(this.route.snapshot?.data['requiredPermission']).subscribe(x=>{
           this.bookmark = x;

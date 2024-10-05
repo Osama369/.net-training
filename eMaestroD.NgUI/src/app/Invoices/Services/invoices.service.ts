@@ -29,6 +29,13 @@ export class InvoicesService {
     return this.http.get<Invoice>(this.ApiUrl + '/GetInvoice/'+voucherNo);
   }
 
+  GetInvoices(txtypeID:number,customerOrVendorID:number): Observable<Invoice[]> {
+    let comID = localStorage.getItem('comID');
+    return this.http.get<Invoice[]>(this.ApiUrl + '/GetInvoices/'+txtypeID+'/'+customerOrVendorID+'/'+comID);
+  }
+
+
+
 
   saveSaleInvoice(newInvoice: Gl[]): Observable<Gl[]> {
     return this.http.post<Gl[]>(this.baseApiUrl + '/AddSaleInvoice', newInvoice);
@@ -87,7 +94,7 @@ export class InvoicesService {
     return this.http.post<InvoiceView[]>(this.baseApiUrl + '/savePaymentVoucher', newInvoice);
   }
 
-  getInvoiceDetailByCustomer(cstID:Gl,prdID:Gl): Observable<Gl> {
+  getInvoiceDetailByCustomer(cstID:any,prdID:any): Observable<Gl> {
     let comID = localStorage.getItem('comID');
     return this.http.get<Gl>(this.baseApiUrl + '/getInvoiceDetailByCustomer/'+cstID+'/'+prdID+'/'+comID);
   }
@@ -168,7 +175,7 @@ export class InvoicesService {
 
 
 
-    createInvoice(voucherNo: string, selectedType: any[], txTypeID: number, selectedCustomerName: any, selectedLocation: any, productList: ProductViewModel[], totalGross: number, totalDiscount: number, totalTax: number, totalRebate: number, totalExtraTax: number, totalAdvanceExtraTax: number, totalExtraDiscount: number, totalNetPayable: number, taxesList: any[], convertedInvoice : string): Invoice {
+    createInvoice(voucherNo: string, selectedType: any[], txTypeID: number, CustomerOrVendorID: any, selectedLocation: any, productList: ProductViewModel[], totalGross: number, totalDiscount: number, totalTax: number, totalRebate: number, totalExtraTax: number, totalAdvanceExtraTax: number, totalExtraDiscount: number, totalNetPayable: number, taxesList: any[], convertedInvoice : string): Invoice {
     return {
       invoiceID: 0,
       invoiceDate: new Date(),
@@ -176,8 +183,7 @@ export class InvoicesService {
       invoiceType : selectedType[0].name,
 
       txtypeID: txTypeID,
-      vendID: selectedCustomerName.vendID || 0,
-      cstID: selectedCustomerName.cstID || 0,
+      CustomerOrVendorID: CustomerOrVendorID,
       comID: parseInt(localStorage.getItem('comID')!),
       locID: selectedLocation?.LocationId,
 
@@ -209,7 +215,7 @@ export class InvoicesService {
       expiry: product.expiryDate,
       purchRate: product.purchRate,
       sellRate: product.sellRate,
-      discountPercent: product.discountPercent,
+      discountPercent: product.discount,
       discountAmount: product.discountAmount,
       extraDiscountPercent: product.extraDiscountPercent,
       extraDiscountAmount: product.extraDiscountAmount,
@@ -246,7 +252,7 @@ export class InvoicesService {
     const voucherNo = invoice.invoiceVoucherNo;
     const selectedType = [{ name: invoice.invoiceType }];
     const txTypeID = invoice.txtypeID;
-    const selectedCustomerName = { vendID: invoice.vendID };
+    const CustomerOrVendorID = invoice.CustomerOrVendorID;
     const selectedLocation = { LocationId: invoice.locID };
 
     const totalGross = invoice.grossTotal;
@@ -266,7 +272,7 @@ export class InvoicesService {
       voucherNo,
       selectedType,
       txTypeID,
-      selectedCustomerName,
+      CustomerOrVendorID,
       selectedLocation,
       productList,
       totalGross,

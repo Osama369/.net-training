@@ -31,11 +31,15 @@ import { GRNComponent } from './Components/grn/grn.component';
 import { AddNewGrnComponent } from './Components/add-new-grn/add-new-grn.component';
 import { AddNewPurchaseMComponent } from './Components/add-new-purchase-m/add-new-purchase-m.component';
 import { PurchaseMComponent } from './Components/purchase-m/purchase-m.component';
+import { AddNewSaleMComponent } from './Components/add-new-sale-m/add-new-sale-m.component';
 
 
 const routes: Routes = [
-  { path: 'AddNewSale', component: NewInvoiceComponent , canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleInvoicesCreate' }  },
-  { path: 'AddNewSale/:id', component: NewInvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleInvoicesEdit' }  },
+  // { path: 'AddNewSale', component: NewInvoiceComponent , canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleInvoicesCreate' }  },
+  // { path: 'AddNewSale/:id', component: NewInvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleInvoicesEdit' }  },
+  { path: 'AddNewSale', component: AddNewSaleMComponent , canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleInvoicesCreate' }  },
+  { path: 'AddNewSale/:id', component: AddNewSaleMComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleInvoicesEdit' }  },
+
   { path: 'AddNewSales/:id', component: AddQuotationToSaleComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleInvoicesCreate' }  },
   { path: 'AddNewQuotation', component: QuotationInvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'QuotationsCreate' }  },
   { path: 'AddNewQuotation/:id', component: QuotationInvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'QuotationsEdit' }  },

@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Authorization;
 using eMaestroD.DataAccess.DataSet;
 using eMaestroD.Models.ReportModels;
 using eMaestroD.Shared.Common;
+using eMaestroD.InvoiceProcessing.Interfaces;
 
 namespace eMaestroD.Api.Controllers
 {
@@ -61,8 +62,8 @@ namespace eMaestroD.Api.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly NotificationInterceptor _notificationInterceptor; 
         private readonly HelperMethods _helperMethods; 
-        private readonly GLService _gLService;
-        public GLController(AMDbContext aMDbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor, GLService gLService, HelperMethods helperMethods)
+        private readonly IGLService _gLService;
+        public GLController(AMDbContext aMDbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor, IGLService gLService, HelperMethods helperMethods)
         {
             _AMDbContext = aMDbContext;
             _notificationInterceptor = notificationInterceptor;
@@ -3061,14 +3062,15 @@ namespace eMaestroD.Api.Controllers
                         pro2.relCOAID = 81;
                         pro2.acctNo = stockInTradeAccCode;
                         pro2.relAcctNo = costOfGoodsAccCode;
+                        decimal unitPrc = PurhcaseInvoiceUpdateAsync(pro2.prodID, pro1.qty, pro2.GLID, pro1.unitPrice, pro2.unitPrice, obj);
+                        unitPrc = unitPrc == 0 ? pro1.unitPrice : unitPrc;
+                        pro2.qty = -(pro1.qty + pro1.bonusQty);
+                        pro2.unitPrice = unitPrc / obj.qty;
+                        pro2.creditSum = unitPrc;
                         pro2.txTypeID = obj.txTypeID;
                         pro2.depositID = fiscalYear;
                         pro2.cstID = obj.cstID;
                         pro2.voucherNo = obj.voucherNo;
-                        decimal unitPrc = PurhcaseInvoiceUpdateAsync(pro2.prodID, pro1.qty, pro2.GLID, pro1.unitPrice, pro2.unitPrice, obj);
-                        unitPrc = unitPrc == 0 ? pro1.unitPrice : unitPrc;
-                        pro2.unitPrice = unitPrc / obj.qty;
-                        pro2.creditSum = unitPrc;
                         pro2.glComments = obj.glComments;
                         pro2.crtDate = obj.crtDate;
                         pro2.modDate = DateTime.Now;
@@ -3076,7 +3078,6 @@ namespace eMaestroD.Api.Controllers
                         pro2.isPaid = false;
                         pro2.isDeposited = false;
                         pro2.isCleared = false;
-                        pro2.qty = -(pro1.qty + pro1.bonusQty);
                         pro2.locID = obj.locID;
                         pro2.comID = obj.comID;
                         pro2.paidSum = 0;
