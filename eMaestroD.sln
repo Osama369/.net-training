@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eMaestroD.Api", "eMaestroD.
 EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "eMaestroD.NgUI", "eMaestroD.NgUI\", "{A5B6D674-0994-481E-AADB-EB5AD9EEE82F}"
 	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_48902"
 		Debug.AspNetCompiler.PhysicalPath = "eMaestroD.NgUI\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_48902\"
@@ -28,7 +28,7 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "eMaestroD.NgUI", "eMaestroD
 EndProject
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "eMaestroD.NgUI.Admin", "eMaestroD.NgUI.Admin\", "{72D04238-1455-467C-9930-95F09EE5BFB8}"
 	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.5"
 		Debug.AspNetCompiler.VirtualPath = "/localhost_48905"
 		Debug.AspNetCompiler.PhysicalPath = "eMaestroD.NgUI.Admin\"
 		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_48905\"
@@ -49,11 +49,11 @@ Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "eMaestroD.NgUI.Admin", "eMa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eMaestroD.Models", "Models\eMaestroD.Models.csproj", "{0C18D439-7568-49D1-AC21-17D74EB27B24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMaestroD.InvoiceProcessing", "InvoiceProcessing\eMaestroD.InvoiceProcessing.csproj", "{C0E7F445-12DB-424A-BED5-C924927BB696}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eMaestroD.InvoiceProcessing", "InvoiceProcessing\eMaestroD.InvoiceProcessing.csproj", "{C0E7F445-12DB-424A-BED5-C924927BB696}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMaestroD.Shared", "eMaestroD.Shared\eMaestroD.Shared.csproj", "{FEAED4F3-F314-4F7F-914A-8204EE59A5C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eMaestroD.Shared", "eMaestroD.Shared\eMaestroD.Shared.csproj", "{FEAED4F3-F314-4F7F-914A-8204EE59A5C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eMaestroD.DataAccess", "eMaestroD.DataAccess\eMaestroD.DataAccess.csproj", "{B2901B6E-70F4-4D72-9C0D-BD2B92B83813}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eMaestroD.DataAccess", "eMaestroD.DataAccess\eMaestroD.DataAccess.csproj", "{B2901B6E-70F4-4D72-9C0D-BD2B92B83813}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
