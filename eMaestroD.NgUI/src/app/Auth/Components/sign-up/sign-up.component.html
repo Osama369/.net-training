@@ -73,7 +73,7 @@
         <button translate (click)="RegisterNewConfiguration()" #savebtn style="width: 100%;background-image:linear-gradient(to right, rgb(244,160,200) 0%, rgb(112,40,228) 100%); border: none;" class="btn btn-success p-button-rounded col-5">Register</button>
       </div>
       <div class="col-12" style="margin-top: 5px;">
-        <label translate>Already have an account? <a routerLink="/login"> Sign In</a></label>
+        <label translate>Already have an account? <a [routerLink]="'/' + APP_ROUTES.account.login"> Sign In</a></label>
       </div>
       </div>
       </div>

@@ -1036,21 +1036,19 @@ export class AddNewPurchaseMComponent implements OnInit{
     }
 
     try {
-      const result = await lastValueFrom(this.invoicesService.GetInvoice(this.selectedVoucherNo));
-      const invoiceData = this.invoicesService.remapInvoiceToVariables(result);
+      const invoiceData = await lastValueFrom(this.invoicesService.GetInvoice(this.selectedVoucherNo));
 
-
-      this.productlist = invoiceData.productList;
-      this.selectedCustomerName = {vendID:invoiceData.CustomerOrVendorID,vendName:this.customers.find(x=>x.vendID == invoiceData.CustomerOrVendorID).vendName};
-      this.totalGross = invoiceData.totalGross;
+      this.productlist = invoiceData.Products;
+      this.selectedCustomerName = {vendID:invoiceData.CustomerOrVendorID,vendName:invoiceData.customerOrVendorName};
+      this.totalGross = invoiceData.grossTotal;
       this.totalDiscount = invoiceData.totalDiscount;
       this.totalTax = invoiceData.totalTax;
       this.totalRebate = invoiceData.totalRebate;
       this.totalExtraTax = invoiceData.totalExtraTax;
       this.totalAdvanceExtraTax = invoiceData.totalAdvanceExtraTax;
       this.totalExtraDiscount = invoiceData.totalExtraDiscount;
-      this.totalNetPayable = invoiceData.totalNetPayable;
-      this.taxesList = invoiceData.taxesList;
+      this.totalNetPayable = invoiceData.netTotal;
+      // this.taxesList = invoiceData.taxesList;
 
       for (let i = 0; i < this.productlist.length; i++) {
         this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
@@ -1065,7 +1063,6 @@ export class AddNewPurchaseMComponent implements OnInit{
         this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
         this.Itemcalculation(i)
       }
-      console.log(result);
     } catch (result) {
       this.toastr.error(result);
     }

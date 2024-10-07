@@ -8,6 +8,7 @@ import { PaymentDetail } from 'src/app/Administration/Models/payment-detail';
 import { Tenants } from 'src/app/Administration/Models/tenants';
 import { TenantService } from 'src/app/Administration/Services/tenant.service';
 import { AuthService } from 'src/app/Shared/Services/auth.service';
+import { APP_ROUTES } from 'src/app/app-routes';
 
 
 @Component({
@@ -16,6 +17,7 @@ import { AuthService } from 'src/app/Shared/Services/auth.service';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
+  APP_ROUTES = APP_ROUTES;
   captchaResolved: boolean = false;
   key:any;
   checkCaptcha(captchaResponse : any) {
@@ -145,7 +147,7 @@ export class RegisterComponent implements OnInit {
       this.tenantService.saveTenant(this.List[0]).subscribe({
         next : (value:any) => {
           sessionStorage.setItem("email",value.email);
-          this.router.navigate(['/Confirmation']);
+          this.router.navigate([APP_ROUTES.account.confirmation]);
           this.toastr.clear();
         },
         error : (err) => {
@@ -292,7 +294,7 @@ export class RegisterComponent implements OnInit {
             this.tenantService.saveTenantPaymentDetail(payment).subscribe(response => {
                 this.toastr.clear();
                 this.toastr.success("Payment Successfully Verified, You can now log in to eMaestro!","",);
-                this.router.navigate(['/login']);
+                this.router.navigate([APP_ROUTES.account.login]);
               }, error => {
                 this.toastr.clear();
                 this.toastr.error("Something went wrong");

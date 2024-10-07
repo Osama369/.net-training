@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { GenericService } from './generic.service';
 import { ThemeService } from '../Services/theme.service';
 import { ScreenService } from 'src/app/Administration/Services/screen.service';
+import { APP_ROUTES } from 'src/app/app-routes';
 
 @Injectable({
   providedIn: 'root'
@@ -50,18 +51,18 @@ export class AuthService {
   canAccess(){
     if (!this.isAuthenticated()) {
         //redirect to login
-        this.router.navigate(['/login']);
+        this.router.navigate([APP_ROUTES.account.login]);
     }
   }
   canAuthenticate(){
     if (this.isAuthenticated()) {
       //redirect to dashboard
       this.layoutService.state.staticMenuDesktopInactive = false;
-      this.router.navigate(['/Dashboard']);
+      this.router.navigate([APP_ROUTES.dashboard]);
     }
     else if(localStorage.getItem('token')!==null && localStorage.getItem('comID') == null)
     {
-      this.router.navigate(['/SelectCompany']);
+      this.router.navigate([APP_ROUTES.account.selectCompany]);
     }
   }
 

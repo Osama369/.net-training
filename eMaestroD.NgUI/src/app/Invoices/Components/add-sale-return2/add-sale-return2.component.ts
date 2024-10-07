@@ -970,7 +970,6 @@ export class AddSaleReturn2Component implements OnInit{
               this.invoiceNo = Gl[0].voucherNo;
               this.onPrinterClick();
             }
-            //this.router.navigate(['inoviceDetail',this.gl[0].voucherNo]);
           },
           error: (response) => {
             this.toastr.error(response.error);

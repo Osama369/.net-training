@@ -12,6 +12,7 @@ import { Tenants } from 'src/app/Administration/Models/tenants';
 import { TenantService } from 'src/app/Administration/Services/tenant.service';
 import { AppConfigService } from '../../../Shared/Services/app-config.service';
 import { AuthService } from 'src/app/Shared/Services/auth.service';
+import { APP_ROUTES } from 'src/app/app-routes';
 
 @Component({
   selector: 'app-sign-up',
@@ -19,6 +20,7 @@ import { AuthService } from 'src/app/Shared/Services/auth.service';
   styleUrls: ['./sign-up.component.css']
 })
 export class SignUpComponent implements OnInit {
+  APP_ROUTES = APP_ROUTES;
   captchaResolved: boolean = false;
   key:any;
   checkCaptcha(captchaResponse : any) {
@@ -297,7 +299,7 @@ export class SignUpComponent implements OnInit {
       this.tenantService.saveTenant(this.List[0]).subscribe({
         next : (value:any) => {
           sessionStorage.setItem("email",value.email);
-          this.router.navigate(['/Confirmation']);
+          this.router.navigate([APP_ROUTES.account.confirmation]);
           this.toastr.clear();
         },
         error : (err) => {

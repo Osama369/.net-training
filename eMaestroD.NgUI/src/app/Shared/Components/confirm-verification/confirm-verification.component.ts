@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../Services/auth.service';
 import { Tenants } from 'src/app/Administration/Models/tenants';
 import { TenantService } from 'src/app/Administration/Services/tenant.service';
+import { APP_ROUTES } from 'src/app/app-routes';
 
 @Component({
   selector: 'app-confirm-verification',
@@ -59,7 +60,7 @@ export class ConfirmVerificationComponent implements OnInit {
         next: (cnf) =>{
           this.toastr.clear();
           this.toastr.success("Email Verified Successfully, Log In!");
-          this.router.navigate(['/login']);
+          this.router.navigate([APP_ROUTES.account.login]);
         },
         error: (err) =>{
           this.toastr.clear();
