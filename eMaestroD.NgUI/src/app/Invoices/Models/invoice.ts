@@ -1,11 +1,13 @@
 export interface Invoice {
   invoiceID?: number;
+  invoiceDetailID? :number;
   invoiceDate?: Date;
   invoiceVoucherNo?:any;
   invoiceType?:any;
   txtypeID?:number;
   CustomerOrVendorID?:number;
   customerOrVendorName?:string;
+  fiscalYear? : number;
   comID?:number;
   locID?:number;
   grossTotal?: number;
@@ -23,6 +25,7 @@ export interface Invoice {
 
 
 export interface InvoiceProduct {
+  prodInvoiceID? :number;
   prodID?: number;
   prodBCID?: number;
   prodCode?: any;

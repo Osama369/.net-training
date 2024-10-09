@@ -41,7 +41,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
 
             glMasterEntry = new GL
             {
-                GLID = 0,
+                GLID = (int)invoice.invoiceID,
                 txTypeID = (int)invoice.txTypeID,
                 cstID = (int)invoice.CustomerOrVendorID,
                 vendID = 0,
@@ -77,7 +77,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
             {
                 GL glEntry1 = new GL
                 {
-                    txID = 0,
+                    GLID = product.prodInvoiceID != null && product.prodInvoiceID != 0 ? (int)product.prodInvoiceID : 0,
                     txTypeID = invoice.txTypeID ?? 0,
                     comID = invoice.comID,
                     depositID = (int)invoice.fiscalYear,
@@ -128,7 +128,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
 
                 GL glEntry2 = new GL
                 {
-                    txID = 0,
+                    GLID = product.prodInvoiceID != null && product.prodInvoiceID != 0 ?  (int)product.prodInvoiceID + 1: 0,
                     txTypeID = invoice.txTypeID ?? 0,
                     comID = invoice.comID,
                     depositID = (int)invoice.fiscalYear,
@@ -173,7 +173,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
 
                 GL glEntry3 = new GL
                 {
-                    txID = 0,
+                    GLID = product.prodInvoiceID != null && product.prodInvoiceID != 0 ? (int)product.prodInvoiceID + 2 : 0,
                     txTypeID = invoice.txTypeID ?? 0,
                     comID = invoice.comID,
                     depositID = (int)invoice.fiscalYear,
@@ -216,37 +216,6 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                 glEntries.Add(glEntry3);
 
 
-                //GL glEntry2 = new GL();
-                //glEntry2 = glEntry1;
-
-                //glEntry2.qtyBal = 0;
-                //glEntry2.acctNo = stockInTradeAccCode;
-                //glEntry2.relAcctNo = costOfGoodsAccCode;
-                //glEntry2.qty = -(glEntry1.qty + glEntry1.bonusQty);
-                //glEntry2.unitPrice = (decimal)product.purchRate;
-                //glEntry2.creditSum = (decimal)(glEntry2.unitPrice * product.qty);
-                //glEntry2.discountSum = 0;
-                //glEntry2.taxSum = 0;
-                //glEntry2.gLDetails = null;
-
-                //glEntries.Add(glEntry2);
-
-
-                //GL glEntry3 = new GL();
-                //glEntry3 = glEntry2;
-                //glEntry3.qtyBal = 0;
-                //glEntry3.acctNo = costOfGoodsAccCode;
-                //glEntry3.relAcctNo = stockInTradeAccCode;
-                //glEntry3.qty = glEntry1.qty + glEntry1.bonusQty;
-                //glEntry3.unitPrice = (decimal)product.purchRate;
-                //glEntry3.creditSum = 0;
-                //glEntry3.debitSum = (decimal)(glEntry2.unitPrice * product.qty);
-                //glEntry3.discountSum = 0;
-                //glEntry3.taxSum = 0;
-
-                //glEntries.Add(glEntry3);
-
-
                 totalNetAmount += product.netAmount;
 
             }
@@ -254,7 +223,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
 
             glDetailEntry = new GL
             {
-                GLID = 0,
+                GLID = (int)invoice.invoiceID,
                 txTypeID = (int)invoice.txTypeID,
                 cstID = 0,
                 vendID = (int)invoice.CustomerOrVendorID,

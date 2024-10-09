@@ -26,9 +26,7 @@ const routes: Routes = [
     { path: APP_ROUTES.notFound, component: NotFoundComponent },
     { path: APP_ROUTES.notAuthorized, component: NotAuthorizeComponent },
     { path: APP_ROUTES.account.selectCompany, component: SelectCompanyComponent, canActivate:[loginGuard] },
-    { path: APP_ROUTES.dashboard, loadChildren: () => import('./Dashboard/dashboard.module').then(m => m.DashboardModule),resolve: {
-      sharedData: SharedDataResolver,
-    },canActivate: [AuthGuard] },
+    { path: APP_ROUTES.dashboard, loadChildren: () => import('./Dashboard/dashboard.module').then(m => m.DashboardModule),canActivate: [AuthGuard] },
     { path: APP_ROUTES.administration.base, loadChildren: () => import('./Administration/administration.module').then(m => m.AdministrationModule),resolve: {
       sharedData: SharedDataResolver,
     }, canActivate: [AuthGuard] },

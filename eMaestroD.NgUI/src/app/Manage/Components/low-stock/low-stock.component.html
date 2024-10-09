@@ -13,7 +13,7 @@
       </div> -->
   </div>
       <p-table #dt1 [value]="Products" styleClass="p-datatable-striped" [rows]="100" [paginator]="true" [globalFilterFields]="['prodCode','prodName','qty','qtyBal']"
-      [(selection)]="selectedProducts" [rowHover]="true" dataKey="prodID" scrollHeight="100px" [scrollable]="true" scrollDirection="vertical" [rowsPerPageOptions]="[100,500,1000]"
+      [(selection)]="selectedProducts" [rowHover]="true" dataKey="prodBCID" scrollHeight="100px" [scrollable]="true" scrollDirection="vertical" [rowsPerPageOptions]="[100,500,1000]"
       currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [showCurrentPageReport]="true">
 
       <ng-template pTemplate="caption">
@@ -39,7 +39,7 @@
               <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
             </th>
               <th style="min-width:8rem" translate>
-                      Code
+                      Barcode
               </th>
               <th style="min-width:12rem" translate>
                       Name
@@ -50,9 +50,6 @@
               <th style="min-width:10rem" translate>
                       Avalaible Qty
               </th>
-              <!-- <th th style="min-width:11rem">
-
-              </th> -->
           </tr>
       </ng-template>
       <ng-template pTemplate="body" let-Product>
@@ -61,7 +58,7 @@
               <p-tableCheckbox [value]="Product"></p-tableCheckbox>
             </td>
               <td>
-                  {{Product.prodCode}}
+                  {{Product.barCode}}
               </td>
               <td>
                 {{Product.prodName | uppercase}}

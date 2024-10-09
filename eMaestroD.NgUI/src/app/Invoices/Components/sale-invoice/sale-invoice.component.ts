@@ -132,12 +132,10 @@ export class SaleInvoiceComponent implements OnInit {
         {
           if (confirm("Are you sure you want to delete this invoice?") == true) {
               this.loading = true;
-              this.invoiceService.deleteInvoice(invoiceNo).subscribe(asd => {
-                this.toasterService.success("Sale Invoice has been successfully deleted.");
-                  this.invoiceService.getInvoicesList(4).subscribe(invoices => {
-                      this.invoices = invoices;
-                      this.loading = false;
-                  });
+              this.invoiceService.DeleteInvoice(invoiceNo).subscribe(asd => {
+                this.toasterService.success("Sale Invoice has been successfully deleted!");
+                  this.invoices = this.invoices.filter(x=>x.invoiceVoucherNo != invoiceNo);
+                  this.loading = false;
                 },
                 responce =>{
                   this.toasterService.error(responce.error);

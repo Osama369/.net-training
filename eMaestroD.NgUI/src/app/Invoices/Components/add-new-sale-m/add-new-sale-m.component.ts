@@ -163,6 +163,10 @@ export class AddNewSaleMComponent implements OnInit{
   totalNetPayable: number;
   totalRebate: number;
 
+  invoiceID : number = 0;
+  invoiceDetailID : number = 0;
+  fiscalYear : number = 0;
+
   constructor(
     private productService: ProductsService,
     private router: Router,
@@ -188,9 +192,6 @@ export class AddNewSaleMComponent implements OnInit{
   }
 
   async ngOnInit(): Promise<void> {
-    this.route.params.subscribe(params1 => {
-      this.EditVoucherNo = params1['id'];
-   });
 
   this.sharedDataService.getProducts$().subscribe(products => {
     this.products = products;
@@ -246,6 +247,15 @@ export class AddNewSaleMComponent implements OnInit{
     this.filterType = this.type;
 
     await this.GetBankListAsync();
+
+    this.route.params.subscribe(params1 => {
+      this.EditVoucherNo = params1['id'];
+      if(this.EditVoucherNo != undefined)
+      {
+        this.RenderEditItem();
+      }
+   });
+
   }
 
     // Generate array of serials with a specified quantity
@@ -945,6 +955,9 @@ export class AddNewSaleMComponent implements OnInit{
   async SaveData(url :any){
     try {
       this.invoice = this.invoicesService.createInvoice(
+        this.invoiceID,
+        this.invoiceDetailID,
+        this.fiscalYear,
         this.voucherNo,
         this.SelectedType,
         this.txTypeID,
@@ -1515,6 +1528,61 @@ export class AddNewSaleMComponent implements OnInit{
 
   onPaymentDailogClose(){
     this.savebtnDisable = false;
+  }
+
+  async RenderEditItem()
+  {
+    const invoiceData = await lastValueFrom(this.invoicesService.GetInvoice(this.EditVoucherNo));
+
+    this.invoiceID = invoiceData.invoiceID;
+    this.invoiceDetailID = invoiceData.invoiceDetailID;
+    this.fiscalYear = invoiceData.fiscalYear;
+    this.voucherNo = invoiceData.invoiceVoucherNo;
+    this.selectedCustomerName = {vendID:invoiceData.CustomerOrVendorID,vendName:invoiceData.customerOrVendorName};
+    this.totalGross = invoiceData.grossTotal;
+    this.totalDiscount = invoiceData.totalDiscount;
+    this.totalTax = invoiceData.totalTax;
+    this.totalRebate = invoiceData.totalRebate;
+    this.totalExtraTax = invoiceData.totalExtraTax;
+    this.totalAdvanceExtraTax = invoiceData.totalAdvanceExtraTax;
+    this.totalExtraDiscount = invoiceData.totalExtraDiscount;
+    this.totalNetPayable = invoiceData.netTotal;
+
+    const seenProdBCIDs = new Set<number>();
+
+    this.productlist = invoiceData.Products.filter(product => {
+        if (!seenProdBCIDs.has(product.prodBCID)) {
+            seenProdBCIDs.add(product.prodBCID);
+            return true;
+        }
+        return false;
+    });
+
+    for (let i = 0; i < this.productlist.length; i++) {
+      this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
+
+      this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
+      this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
+      this.productlist[i].barCode = this.selectedProductList[0].barCode;
+
+      this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
+      this.productlist[i].depName =this.selectedProductList[0].depName;
+      this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
+      this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
+
+      if(invoiceData.Products[i].expiry)
+      {
+        this.productlist[i].expiryDate = new Date(invoiceData.Products[i].expiry);
+      }
+      this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0;
+      this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0;
+      this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0;
+      this.productlist[i].advanceTaxAmount= invoiceData.Products[i].ProductTaxes[1].taxAmount || 0;
+      this.productlist[i].extraAdvanceTaxPercent= invoiceData.Products[i].ProductTaxes[2].taxPercent || 0;
+      this.productlist[i].extraAdvanceTaxAmount= invoiceData.Products[i].ProductTaxes[2].taxAmount || 0;
+      this.productlist[i].prodInvoiceID= invoiceData.Products[i].prodInvoiceID || 0;
+      this.Itemcalculation(i)
+    }
   }
 }
 

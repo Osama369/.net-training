@@ -15,6 +15,8 @@ namespace eMaestroD.InvoiceProcessing.Interfaces
         Task<Invoice> ConvertGLToInvoice(string voucherNo);
         Task<List<Invoice>> GetInvoicesAsync(int txTypeID, int customerOrVendorID, int comID);
         Task InsertGLEntries(List<GL> items);
+        Task UpdateGLEntries(List<GL> items);
         Task InsertGLEntriesAsync<T>(IEnumerable<T> items, DateTime now, string username) where T : GL;
+        Task DeleteInvoice(string VoucherNo);
     }
 }

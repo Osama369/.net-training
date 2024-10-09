@@ -137,13 +137,12 @@ namespace eMaestroD.Models.Models
     {
         [Key]
         public int prodID { get; set; }
+        public int prodBCID { get; set; }
         public string? prodName { get; set; }
-        public string? prodCode { get; set; }
+        public string? barCode { get; set; }
         public decimal qty { get; set; }
         public decimal qtyBal { get; set; }
         public decimal bonusQty { get; set; }
-        public decimal unitPrice { get; set; }
+        public string? batchNo { get; set; }
     }
-
-
 }

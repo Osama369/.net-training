@@ -685,17 +685,15 @@ namespace eMaestroD.Api.Controllers
         public async Task<List<StockList>> StockReportAsync(string prodID, int locID, int comID, int catID)
         {
             List<StockList> SDL;
-            string sql = "EXEC Report_StockList @prodID,@locID,@comID, @catID";
+            string sql = "EXEC Report_StockList @prodBCID,@locID,@comID, @catID";
             List<SqlParameter> parms = new List<SqlParameter>
             {
-                    new SqlParameter { ParameterName = "@prodID", Value = prodID },
+                    new SqlParameter { ParameterName = "@prodBCID", Value = prodID },
                     new SqlParameter { ParameterName = "@locID", Value = locID },
                     new SqlParameter { ParameterName = "@comID", Value = comID },
                     new SqlParameter { ParameterName = "@catID", Value = catID }
             };
             SDL = _AMDbContext.StockList.FromSqlRaw(sql, parms.ToArray()).ToList();
-
-
 
             if (SDL.Count > 0)
             {
