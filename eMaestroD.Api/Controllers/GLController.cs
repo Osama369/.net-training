@@ -1775,14 +1775,14 @@ namespace eMaestroD.Api.Controllers
         }
 
         [HttpGet]
-        [Route("{cstID:int}/{prodID:int}/{comID}")]
-        public async Task<IActionResult> CheckIFInvoiceExist(int cstID, int prodID, int comID)
+        [Route("{cstID:int}/{prodBCID:int}/{comID}")]
+        public async Task<IActionResult> CheckIFInvoiceExist(int cstID, int prodBCID, int comID)
         {
             List<StockList> SDL;
-            string sql = "EXEC Report_StockList @prodID,@locID,@comID";
+            string sql = "EXEC Report_StockList @prodBCID,@locID,@comID";
             List<SqlParameter> parms = new List<SqlParameter>
             {
-                    new SqlParameter { ParameterName = "@prodID", Value = prodID },
+                    new SqlParameter { ParameterName = "@prodBCID", Value = prodBCID },
                     new SqlParameter { ParameterName = "@locID", Value = 0 },
                     new SqlParameter { ParameterName = "@comID", Value = comID },
             };
@@ -2246,10 +2246,10 @@ namespace eMaestroD.Api.Controllers
                 string EmptyRowNumberForCompany = "";
 
                 List<StockList> stockList;
-                string sql = "EXEC Report_StockList @prodID,@locID,@comID, @catID";
+                string sql = "EXEC Report_StockList @prodBCID,@locID,@comID, @catID";
                 List<SqlParameter> parms = new List<SqlParameter>
                 {
-                        new SqlParameter { ParameterName = "@prodID", Value = 0 },
+                        new SqlParameter { ParameterName = "@prodBCID", Value = 0 },
                         new SqlParameter { ParameterName = "@locID", Value = 0 },
                         new SqlParameter { ParameterName = "@comID", Value = comID },
                         new SqlParameter { ParameterName = "@catID", Value = 0 }

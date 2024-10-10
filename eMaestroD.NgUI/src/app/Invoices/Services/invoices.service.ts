@@ -34,8 +34,11 @@ export class InvoicesService {
     return this.http.get<Invoice[]>(this.ApiUrl + '/GetInvoices/'+txtypeID+'/'+customerOrVendorID+'/'+comID);
   }
 
-
-
+  DeleteInvoice(voucherNo:string)
+  {
+    let comID = localStorage.getItem('comID');
+    return this.http.delete<void>(this.ApiUrl + '/DeleteInvoice/'+voucherNo+'/'+comID);
+  }
 
   saveSaleInvoice(newInvoice: Gl[]): Observable<Gl[]> {
     return this.http.post<Gl[]>(this.baseApiUrl + '/AddSaleInvoice', newInvoice);
@@ -168,20 +171,21 @@ export class InvoicesService {
     return this.http.delete<InvoiceView[]>(this.baseApiUrl + '/deleteJournal/'+VoucherNo+'/'+comID);
   }
 
-  CheckIFInvoiceExist(cstID:any,prdID:any): Observable<any> {
+  CheckIFInvoiceExist(cstID:any,prodBCID:any): Observable<any> {
     let comID = localStorage.getItem('comID');
-    return this.http.get<any>(this.baseApiUrl + '/CheckIFInvoiceExist/'+cstID+'/'+prdID+'/'+comID);
+    return this.http.get<any>(this.baseApiUrl + '/CheckIFInvoiceExist/'+cstID+'/'+prodBCID+'/'+comID);
   }
 
 
 
-    createInvoice(voucherNo: string, selectedType: any[], txTypeID: number, CustomerOrVendorID: any, selectedLocation: any, productList: ProductViewModel[], totalGross: number, totalDiscount: number, totalTax: number, totalRebate: number, totalExtraTax: number, totalAdvanceExtraTax: number, totalExtraDiscount: number, totalNetPayable: number, taxesList: any[], convertedInvoice : string): Invoice {
+    createInvoice(invoiceID:number,invoiceDetailID:number,fiscalYear:number,voucherNo: string, selectedType: any[], txTypeID: number, CustomerOrVendorID: any, selectedLocation: any, productList: ProductViewModel[], totalGross: number, totalDiscount: number, totalTax: number, totalRebate: number, totalExtraTax: number, totalAdvanceExtraTax: number, totalExtraDiscount: number, totalNetPayable: number, taxesList: any[], convertedInvoice : string): Invoice {
     return {
-      invoiceID: 0,
+      invoiceID: invoiceID,
+      invoiceDetailID : invoiceDetailID,
+      fiscalYear : fiscalYear,
       invoiceDate: new Date(),
       invoiceVoucherNo: voucherNo,
       invoiceType : selectedType[0].name,
-
       txtypeID: txTypeID,
       CustomerOrVendorID: CustomerOrVendorID,
       comID: parseInt(localStorage.getItem('comID')!),
@@ -202,6 +206,7 @@ export class InvoicesService {
 
   createInvoiceProduct(product: ProductViewModel, taxesList: any[]): InvoiceProduct {
     return {
+      prodInvoiceID : product.prodInvoiceID,
       prodID: product.prodID,
       prodBCID: product.prodBCID,
       prodCode: product.prodCode,

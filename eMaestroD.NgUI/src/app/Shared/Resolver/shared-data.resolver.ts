@@ -10,6 +10,6 @@ export class SharedDataResolver implements Resolve<any> {
   constructor(private sharedDataService: SharedDataService) {}
 
   resolve(): Observable<any> {
-    return this.sharedDataService.loadAllData(); // Simply load the data via service
+    return this.sharedDataService.loadAllData();
   }
 }

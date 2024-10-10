@@ -27,7 +27,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
             List<GL> glEntries = new List<GL>();
             decimal? totalNetAmount = 0;
             
-            var AccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.GoodsReceivable);
+            var AccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.StockInTrade);
             var relAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CashInHand);
             if (invoice.invoiceType.ToLower() == "credit")
             {
@@ -38,7 +38,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
 
             glMasterEntry = new GL
             {
-                GLID = 0,
+                GLID = (int)invoice.invoiceID,
                 txTypeID = (int)invoice.txTypeID,
                 cstID = 0,
                 vendID = (int)invoice.CustomerOrVendorID,
@@ -74,7 +74,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
             {
                 GL glEntry1 = new GL
                 {
-                    txID = 0,
+                    GLID = product.prodInvoiceID != null ? (int)product.prodInvoiceID : 0,
                     txTypeID = invoice.txTypeID ?? 0,
                     comID = invoice.comID,
                     depositID = (int)invoice.fiscalYear,
@@ -128,7 +128,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
 
             glDetailEntry = new GL
             {
-                GLID = 0,
+                GLID = (int)invoice.invoiceDetailID,
                 txTypeID = (int)invoice.txTypeID,
                 cstID = 0,
                 vendID = (int)invoice.CustomerOrVendorID,

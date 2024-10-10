@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../../../Shared/Services/auth.service';
 import { SignalrService } from '../../../Shared/Services/signalr.service';
 import { Tenants } from 'src/app/Administration/Models/tenants';
+import { APP_ROUTES } from 'src/app/app-routes';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,7 @@ import { Tenants } from 'src/app/Administration/Models/tenants';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-
+  APP_ROUTES = APP_ROUTES;
   formdata = {email:"",password:""};
   tenant : Tenants[] = [];
   submit=false;
@@ -74,7 +75,7 @@ export class LoginComponent implements OnInit {
               else
               {
                 sessionStorage.setItem('email',this.formdata.email)
-                this.router.navigate(["/Confirmation"]);
+                this.router.navigate([APP_ROUTES.account.confirmation]);
               }
             },
             error:data=>{

@@ -3,6 +3,7 @@ import { ActivatedRoute, ActivatedRouteSnapshot, CanActivate, Router, RouterStat
 import { ToastrService } from 'ngx-toastr';
 import { ScreenService } from '../Administration/Services/screen.service';
 import { AuthService } from '../Shared/Services/auth.service';
+import { APP_ROUTES } from '../app-routes';
 @Injectable({
   providedIn: 'root'
 })
@@ -20,12 +21,13 @@ export class AuthGuard implements CanActivate {
       if(localStorage.getItem('token') == null)
       {
         this.toast.error("Please Login First!");
-        this.router.navigate(['login']);
+        this.router.navigate([APP_ROUTES.account.login]);
         return false;
       }
       else{
         this.toast.error("Please Select Company!");
-        this.router.navigate(['login']);
+        this.router.navigate([APP_ROUTES.account.login]);
+
         return false;
       }
     }

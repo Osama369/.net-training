@@ -77,5 +77,6 @@ export interface ProductViewModel {
   amount?: string;
   batchNo?:string;
   notes?:string;
-  expiryDate?:any;
+  expiryDate?:Date;
+  prodInvoiceID?:number | 0;
 }

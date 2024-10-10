@@ -2,6 +2,7 @@ import { ActivatedRouteSnapshot, CanActivate, CanActivateFn, Router, RouterState
 import { Observable, catchError, map, of } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { AuthService } from '../Shared/Services/auth.service';
+import { APP_ROUTES } from '../app-routes';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +20,7 @@ export class PermissionGuard implements CanActivate {
         if (hasPermission) {
           key = true;
         } else {
-          this.router.navigate(['/not-authorized']);
+          this.router.navigate([APP_ROUTES.notAuthorized]);
           key= false;
         }
       });

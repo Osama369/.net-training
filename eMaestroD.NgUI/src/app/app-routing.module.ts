@@ -12,41 +12,40 @@ import { RegisterComponent } from './Auth/Components/register/register.component
 import { SelectCompanyComponent } from './Shared/Components/select-company/select-company.component';
 import { SignUpComponent } from './Auth/Components/sign-up/sign-up.component';
 import { SharedDataResolver } from './Shared/Resolver/shared-data.resolver';
+import { APP_ROUTES } from './app-routes';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: '', component: AppLayoutComponent,
+  { path: APP_ROUTES.default, redirectTo: APP_ROUTES.account.login, pathMatch: 'full' },
+  { path: APP_ROUTES.default, component: AppLayoutComponent,
     children: [
-    { path: 'login', component: LoginComponent },
-    { path: 'SignUp', component: SignUpComponent },
-    { path: 'Register', component: RegisterComponent },
-    { path: 'topbar', component: AppTopBarComponent },
-    { path: 'Confirmation', component: ConfirmVerificationComponent },
-    { path: '404', component: NotFoundComponent },
-    { path: 'not-authorized', component: NotAuthorizeComponent },
-    { path: 'SelectCompany', component: SelectCompanyComponent, canActivate:[loginGuard] },
-    { path: 'Dashboard', loadChildren: () => import('./Dashboard/dashboard.module').then(m => m.DashboardModule),resolve: {
-      sharedData: SharedDataResolver,
-    },canActivate: [AuthGuard] },
-    { path: 'Administration', loadChildren: () => import('./Administration/administration.module').then(m => m.AdministrationModule),resolve: {
+    { path: APP_ROUTES.account.login, component: LoginComponent },
+    { path: APP_ROUTES.account.signUp, component: SignUpComponent },
+    { path: APP_ROUTES.account.register, component: RegisterComponent },
+    { path: APP_ROUTES.topbar, component: AppTopBarComponent },
+    { path: APP_ROUTES.account.confirmation, component: ConfirmVerificationComponent },
+    { path: APP_ROUTES.notFound, component: NotFoundComponent },
+    { path: APP_ROUTES.notAuthorized, component: NotAuthorizeComponent },
+    { path: APP_ROUTES.account.selectCompany, component: SelectCompanyComponent, canActivate:[loginGuard] },
+    { path: APP_ROUTES.dashboard, loadChildren: () => import('./Dashboard/dashboard.module').then(m => m.DashboardModule),canActivate: [AuthGuard] },
+    { path: APP_ROUTES.administration.base, loadChildren: () => import('./Administration/administration.module').then(m => m.AdministrationModule),resolve: {
       sharedData: SharedDataResolver,
     }, canActivate: [AuthGuard] },
-    { path: 'Invoices', loadChildren: () => import('./Invoices/invoices.module').then(m => m.InvoicesModule),
+    { path: APP_ROUTES.invoices.base, loadChildren: () => import('./Invoices/invoices.module').then(m => m.InvoicesModule),
       resolve: {
         sharedData: SharedDataResolver,
       }, canActivate: [AuthGuard] },
-    { path: 'Manage', loadChildren: () => import('./Manage/manage.module').then(m => m.ManageModule),
+    { path: APP_ROUTES.manage.base, loadChildren: () => import('./Manage/manage.module').then(m => m.ManageModule),
       resolve: {
         sharedData: SharedDataResolver,
       }, canActivate: [AuthGuard] },
-    { path: 'Reports', loadChildren: () => import('./Reports/reports.module').then(m => m.ReportsModule),resolve: {
+    { path: APP_ROUTES.reports.base, loadChildren: () => import('./Reports/reports.module').then(m => m.ReportsModule),resolve: {
       sharedData: SharedDataResolver,
     }, canActivate: [AuthGuard] },
-    { path: 'Transactions', loadChildren: () => import('./Transaction/transaction.module').then(m => m.TransactionModule),resolve: {
+    { path: APP_ROUTES.transactions.base, loadChildren: () => import('./Transaction/transaction.module').then(m => m.TransactionModule),resolve: {
       sharedData: SharedDataResolver,
     }, canActivate: [AuthGuard] }
   ]},
-  { path: '**', redirectTo: '404' }
+  { path: '**', redirectTo: APP_ROUTES.notFound }
 ];
 
 @NgModule({

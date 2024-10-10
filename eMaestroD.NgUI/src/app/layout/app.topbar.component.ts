@@ -1,3 +1,4 @@
+import { APP_ROUTES } from './../app-routes';
 import { filter } from 'rxjs';
 import { ChangeDetectorRef, Component, ElementRef, NgZone, SimpleChanges, ViewChild } from '@angular/core';
 import { MenuItem } from 'primeng/api';
@@ -48,6 +49,7 @@ export class AppTopBarComponent {
       this.signalRService.startConnection();
     this.signalRService.addMessageListner();
   }
+    app_routes = APP_ROUTES ;
     changeCompanyVisibility:boolean = false;
     config = this.appConfigService.getConfig();
     path : any = this.config.LogoPath;
@@ -199,7 +201,7 @@ export class AppTopBarComponent {
         this.path = this.config.LogoPath;
         this.auth.removeToken();
         this.auth.canAccess();
-        this.router.navigate(['/login']);
+        this.router.navigate([this.app_routes.account.login]);
         this.changeCompanyVisibility = false;
         this.themeService.switchTheme('lara-light-blue');
         this.translateService.setDefaultLang('en');
@@ -222,7 +224,6 @@ export class AppTopBarComponent {
       // })
       // this.changeCompanyVisibility = true;
 
-      // this.router.navigate(['/SelectCompany']);
     }
 
     RegisterNewCompany()

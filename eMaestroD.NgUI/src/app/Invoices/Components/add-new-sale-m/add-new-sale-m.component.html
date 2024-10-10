@@ -213,34 +213,18 @@
   </p-dialog>
 
   <p-dialog #cstDailog [(visible)]="CustomersVisible" [style]="{width: '40vw'}" (onHide)="closeCustomerRegistration()">
-      <app-add-new-customer-for-invoice [title]="'Customer Registration'"  [type]="SelectedType[0].name" (dataEvent)="handleChildData($event)"></app-add-new-customer-for-invoice>
+      <div  *ngIf="CustomersVisible">
+        <app-add-new-customer-for-invoice [title]="'Customer Registration'"  [type]="SelectedType[0].name" (dataEvent)="handleChildData($event)"></app-add-new-customer-for-invoice>
+      </div>
   </p-dialog>
 
 
   <p-dialog #PrdDailog [(visible)]="ProductsVisible" [style]="{width: '60vw'}" (onHide)="closeProductsRegistration()">
-      <app-add-new-product [title]="'Product Registration'" [showGroupBtn]="false" (dataEvent)="ProductsVisible = false"></app-add-new-product>
+    <div  *ngIf="CustomersVisible">
+      <app-add-new-product app-add-new-product [title]="'Product Registration'" [showGroupBtn]="false" (dataEvent)="ProductsVisible = false"></app-add-new-product>
+    </div>
   </p-dialog>
 
-
-  <p-dialog [modal]="true" [(visible)]="PrintringVisible" [style]="{width: '25vw'}">
-    <div class="container">
-          <div class="col-12">
-            <input type="radio" id="css" name="fav_language" (change)="onChangePrint($event)" value="A4"checked>
-            &nbsp;
-            <label class="col-4" for="css" translate>A4 View</label>
-            <input type="radio" id="html" name="fav_language" (change)="onChangePrint($event)" value="thermal">
-            &nbsp;
-            <label class="col-4" for="html" translate>Thermal View</label>
-            <br>
-          </div>
-        <p-checkbox [(ngModel)]="isBankInfo" [hidden]="bankDetail" [binary]="true" [value]="isBankInfo" label=" Include bank detail on print"></p-checkbox>
-        <div style="text-align: right;">
-          <br>
-          <button (click)="onPrinterClick()" translate autofocus class="btn btn-primary"><i class="fa fa-save"></i> Submit</button>
-          &nbsp;<button (click)="PrintringVisible=false" translate class="btn btn-danger"><i class="fa fa-undo"></i> Close</button>
-        </div>
-      </div>
-</p-dialog>
 
 
 <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>

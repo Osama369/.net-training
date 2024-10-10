@@ -11,6 +11,7 @@ import { ThemeService } from '../../Services/theme.service';
 import { Companies } from 'src/app/Administration/Models/companies';
 import { Tenants } from 'src/app/Administration/Models/tenants';
 import { UserService } from 'src/app/Administration/Services/user.service';
+import { APP_ROUTES } from 'src/app/app-routes';
 
 @Component({
   selector: 'app-select-company',
@@ -144,7 +145,7 @@ export class SelectCompanyComponent implements OnInit {
     //remove token
     this.auth.removeToken();
     this.auth.canAccess();
-    this.router.navigate(['/login']);
+    this.router.navigate([APP_ROUTES.account.login]);
 }
 
   openDailogForCreateNewCompany(){
