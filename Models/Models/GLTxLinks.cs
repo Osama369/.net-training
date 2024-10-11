@@ -38,5 +38,9 @@ namespace eMaestroD.Models.Models
         public int fiscalYear { get; set; }
 
         public string? prodCode { get; set; }
+        public int? prodBCID { get; set; }
+        public string? acctNo { get; set; }
+        public string? relAcctNo { get; set; }
+
     }
 }

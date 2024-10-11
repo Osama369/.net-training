@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace eMaestroD.Api.Data
+namespace eMaestroD.DataAccess.DataSet
 {
     public class Context : IdentityDbContext<IdentityUser>
     {

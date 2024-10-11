@@ -155,12 +155,12 @@ namespace eMaestroD.InvoiceProcessing.Services
             return string.IsNullOrEmpty(glEntry.acctNo) && string.IsNullOrEmpty(glEntry.relAcctNo);
         }
 
-        public async Task InsertGLEntries(List<GL> items)
+        public async Task InsertInvoice(List<GL> items)
         {
             await _glRepository.InsertGLEntriesAsync(items);
         }
 
-        public async Task UpdateGLEntries(List<GL> items)
+        public async Task UpdateInvoice(List<GL> items)
         {
             await _glRepository.UpdateGLEntriesAsync(items);
         }

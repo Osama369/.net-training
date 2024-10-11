@@ -48,11 +48,11 @@ namespace eMaestroD.Api.Controllers
                 List<GL> glEntries = await _glService.ConvertInvoiceToGL(invoice);
                 if(invoice.invoiceID == 0)
                 {
-                    await _glService.InsertGLEntries(glEntries);
+                    await _glService.InsertInvoice(glEntries);
                 }
                 else
                 {
-                    await _glService.UpdateGLEntries(glEntries);
+                    await _glService.UpdateInvoice(glEntries);
                 }
 
 

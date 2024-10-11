@@ -7,6 +7,7 @@ import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { UserService } from '../../Services/user.service';
 import { Users } from '../../Models/users';
+import { APP_ROUTES } from 'src/app/app-routes';
 
 @Component({
   selector: 'app-users',
@@ -107,7 +108,7 @@ export class UsersComponent implements OnInit {
     }
     SetAuthorization(user:any)
     {
-      this.router.navigateByUrl('/PermissionScreen/'+user.RoleID+','+user.UserID);
+      this.router.navigateByUrl(APP_ROUTES.administration.authorization+"/"+user.RoleID+','+user.UserID);
 
     }
 

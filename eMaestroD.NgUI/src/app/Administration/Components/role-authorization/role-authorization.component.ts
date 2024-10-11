@@ -64,6 +64,7 @@ export class RoleAuthorizationComponent implements OnInit {
 
   roleOnChange(roleID : any)
   {
+    this.datalist = undefined;
     this.SelectedUser = [];
     this.userService.getAllUsers().subscribe((us:any)=>{
       this.userList = us;
