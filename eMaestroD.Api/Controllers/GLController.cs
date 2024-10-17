@@ -5048,7 +5048,8 @@ namespace eMaestroD.Api.Controllers
                 checkName = obj1[0].checkName,
                 comID = obj1[0].comID,
                 acctNo = "",
-                relAcctNo = ""
+                relAcctNo = "",
+                prodBCID = 0
             };
             if (isEdit)
             {
@@ -5074,6 +5075,7 @@ namespace eMaestroD.Api.Controllers
                     pro1.journalID = obj.journalID;
                     pro1.taxSum = 0;
                     pro1.comID = obj.comID;
+                    pro1.prodBCID = 0;
                     #region ------ Sale Delivery Product 1 Entry -------
                     if (!isEdit)
                     {
@@ -5131,6 +5133,7 @@ namespace eMaestroD.Api.Controllers
                     pro2.journalID = obj.journalID;
                     pro2.taxSum = 0;
                     pro2.comID = obj.comID;
+                    pro2.prodBCID = 0;
 
                     #region ------ Sale Delivery Product 2 Entry -------
 
@@ -5237,7 +5240,8 @@ namespace eMaestroD.Api.Controllers
                 checkName = obj1[0].checkName,
                 comID = obj1[0].comID,
                 acctNo = "",
-                relAcctNo = ""
+                relAcctNo = "",
+                prodBCID = 0
             };
             glLt.Add(glMasterEntry);
             #endregion
@@ -5304,6 +5308,7 @@ namespace eMaestroD.Api.Controllers
                     pro1.crtBy = pro1.modBy = obj.crtBy;
                     pro1.glComments = obj.glComments;
                     pro1.voucherNo = obj.voucherNo;
+                    pro1.prodBCID = 0;
                     glLt.Add(pro1);
                     #endregion
 
@@ -5367,8 +5372,9 @@ namespace eMaestroD.Api.Controllers
                 checkName = obj1[0].checkName,
                 comID = obj1[0].comID,
                 acctNo = "",
-                relAcctNo = ""
-            };
+                relAcctNo = "",
+                prodBCID = 0
+        };
             glLt.Add(glMasterEntry);
             #endregion
 
@@ -5392,6 +5398,7 @@ namespace eMaestroD.Api.Controllers
                     pro1.journalID = obj.journalID;
                     pro1.taxSum = 0;
                     pro1.comID = obj.comID;
+                    pro1.prodBCID = 0;
                     #region ------ Sale Delivery Product 1 Entry -------
                     pro1.GLID = 0;
                     pro1.dtTx = obj.dtTx;
@@ -5485,7 +5492,8 @@ namespace eMaestroD.Api.Controllers
                 checkName = obj1[0].checkName,
                 comID = obj1[0].comID,
                 acctNo = "",
-                relAcctNo = ""
+                relAcctNo = "",
+                prodBCID = 0
             };
             if (isEdit)
             {
@@ -5510,7 +5518,7 @@ namespace eMaestroD.Api.Controllers
                     pro1.journalID = obj.journalID;
                     pro1.taxSum = 0;
                     pro1.comID = obj.comID;
-
+                    pro1.prodBCID = 0;
                     #region ------ Sale Delivery Product 1 Entry -------
                     if (!isEdit)
                         pro1.GLID = 0;
@@ -5565,7 +5573,7 @@ namespace eMaestroD.Api.Controllers
                     pro2.journalID = obj.journalID;
                     pro2.taxSum = 0;
                     pro2.comID = obj.comID;
-
+                    pro2.prodBCID = 0;
                     #region ------ Sale Delivery Product 2 Entry -------
 
                     if (!isEdit)

@@ -437,6 +437,15 @@ export class AddNewSaleMComponent implements OnInit{
 
   count = 0;
   onEnterTableInput(index: number, rownumber:number) {
+    console.log(rownumber);
+    console.log(this.productlist[rownumber].prodName);
+    console.log(this.inputFieldsTable.length);
+    if(this.productlist[rownumber].prodName == undefined || this.productlist[rownumber].prodName == "")
+    {
+      let el: HTMLElement = this.savebtn.nativeElement;
+      el.focus();
+    }
+
       index = index + (rownumber*3);
       if (index < this.inputFieldsTable.length-1) {
         this.focusOnTableInput(index + 1);
@@ -618,7 +627,7 @@ export class AddNewSaleMComponent implements OnInit{
     // Ensure values are not null, assign default value (0) if null
     rowData.qty = rowData.qty || 0;
     rowData.bonusQty = rowData.bonusQty || 0;
-    rowData.purchRate = rowData.purchRate || 0;
+    rowData.sellRate = rowData.sellRate || 0;
     rowData.discount = rowData.discount || 0;
     rowData.discountAmount = rowData.discountAmount || 0;
     rowData.taxPercent = rowData.taxPercent || 0;
@@ -954,6 +963,7 @@ export class AddNewSaleMComponent implements OnInit{
 
   async SaveData(url :any){
     try {
+      console.log(this.productlist);
       this.invoice = this.invoicesService.createInvoice(
         this.invoiceID,
         this.invoiceDetailID,
@@ -1538,7 +1548,7 @@ export class AddNewSaleMComponent implements OnInit{
     this.invoiceDetailID = invoiceData.invoiceDetailID;
     this.fiscalYear = invoiceData.fiscalYear;
     this.voucherNo = invoiceData.invoiceVoucherNo;
-    this.selectedCustomerName = {vendID:invoiceData.CustomerOrVendorID,vendName:invoiceData.customerOrVendorName};
+    this.selectedCustomerName = {cstID:invoiceData.CustomerOrVendorID,cstName:invoiceData.customerOrVendorName};
     this.totalGross = invoiceData.grossTotal;
     this.totalDiscount = invoiceData.totalDiscount;
     this.totalTax = invoiceData.totalTax;
@@ -1550,13 +1560,18 @@ export class AddNewSaleMComponent implements OnInit{
 
     const seenProdBCIDs = new Set<number>();
 
-    this.productlist = invoiceData.Products.filter(product => {
-        if (!seenProdBCIDs.has(product.prodBCID)) {
-            seenProdBCIDs.add(product.prodBCID);
-            return true;
-        }
-        return false;
+    this.productlist = await new Promise(resolve => {
+      const filteredProducts = invoiceData.Products.filter(product => {
+          if (!seenProdBCIDs.has(product.prodBCID)) {
+              seenProdBCIDs.add(product.prodBCID);
+              return true;
+          }
+          return false;
+      });
+      resolve(filteredProducts);
     });
+
+    console.log(this.productlist);
 
     for (let i = 0; i < this.productlist.length; i++) {
       this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
@@ -1564,7 +1579,7 @@ export class AddNewSaleMComponent implements OnInit{
       this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
       this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
       this.productlist[i].barCode = this.selectedProductList[0].barCode;
-
+      this.productlist[i].purchRate =this.selectedProductList[0].purchRate;
       this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
       this.productlist[i].depName =this.selectedProductList[0].depName;
       this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
@@ -1574,13 +1589,17 @@ export class AddNewSaleMComponent implements OnInit{
       {
         this.productlist[i].expiryDate = new Date(invoiceData.Products[i].expiry);
       }
-      this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0;
-      this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0;
-      this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0;
-      this.productlist[i].advanceTaxAmount= invoiceData.Products[i].ProductTaxes[1].taxAmount || 0;
-      this.productlist[i].extraAdvanceTaxPercent= invoiceData.Products[i].ProductTaxes[2].taxPercent || 0;
-      this.productlist[i].extraAdvanceTaxAmount= invoiceData.Products[i].ProductTaxes[2].taxAmount || 0;
-      this.productlist[i].prodInvoiceID= invoiceData.Products[i].prodInvoiceID || 0;
+      if(invoiceData.Products[i].ProductTaxes.length > 0){
+        this.productlist[i].taxID= invoiceData.Products[i].ProductTaxes[0].taxDetailID || 0,
+        this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0,
+        this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0,
+        this.productlist[i].advanceTaxID= invoiceData.Products[i].ProductTaxes[1].taxDetailID || 0,
+        this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0,
+        this.productlist[i].advanceTaxAmount= invoiceData.Products[i].ProductTaxes[1].taxAmount || 0,
+        this.productlist[i].extraAdvanceTaxID= invoiceData.Products[i].ProductTaxes[2].taxDetailID || 0,
+        this.productlist[i].extraAdvanceTaxPercent= invoiceData.Products[i].ProductTaxes[2].taxPercent || 0,
+        this.productlist[i].extraAdvanceTaxAmount= invoiceData.Products[i].ProductTaxes[2].taxAmount || 0
+      }
       this.Itemcalculation(i)
     }
   }

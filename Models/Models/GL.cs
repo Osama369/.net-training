@@ -146,5 +146,6 @@ namespace eMaestroD.Models.Models
         public bool? isConverted { get; set; }
 
         public List<GLDetail>? gLDetails { get; set; } = new List<GLDetail>();
+        public List<GLTxLinks>? gLtxLinks { get; set; } = new List<GLTxLinks>();
     }
 }

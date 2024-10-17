@@ -116,7 +116,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                     isConverted = false,
                     gLDetails = product.ProductTaxes.Select(tax => new GLDetail
                     {
-                        GLID = 0,
+                        GLDetailID = tax.taxDetailID,
                         acctNo = tax.taxAcctNo,
                         GLAmount = tax.taxAmount,
                         rate = tax.taxPercent
@@ -223,7 +223,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
 
             glDetailEntry = new GL
             {
-                GLID = (int)invoice.invoiceID,
+                GLID = (int)invoice.invoiceDetailID,
                 txTypeID = (int)invoice.txTypeID,
                 cstID = 0,
                 vendID = (int)invoice.CustomerOrVendorID,

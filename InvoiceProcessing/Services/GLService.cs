@@ -28,6 +28,7 @@ namespace eMaestroD.InvoiceProcessing.Services
             _customerRepository = customerRepository;
             _vendorRepository = vendorRepository;
             _productRepository = productRepository;
+
         }
 
         public async Task<string> GenerateVoucherNo(int txTypeID, int? comID)
@@ -124,10 +125,11 @@ namespace eMaestroD.InvoiceProcessing.Services
                     prodBCID = detail.prodBCID,
                     prodCode = productDetail.FirstOrDefault().barCode,
                     prodName = productDetail.FirstOrDefault().prodName,
-   
+
                     qty = detail.qty,
                     bounsQty = detail.bonusQty,
                     purchRate = detail.unitPrice,
+                    sellRate = detail.unitPrice,
                     netAmount = detail.debitSum > 0 ? detail.debitSum : detail.creditSum,
                     discountPercent = (detail.checkAdd != null && decimal.TryParse(detail.checkAdd.ToString(), out var parsedValue)) ? parsedValue : 0,
                     discountAmount = detail.discountSum,
@@ -136,11 +138,12 @@ namespace eMaestroD.InvoiceProcessing.Services
                     batchNo = detail.batchNo,
                     expiry = detail.expiry,
                     notes = detail.glComments,
-                    ProductTaxes = detail.gLDetails.Select(detailDetail => new InvoiceProductTax
+                    ProductTaxes = detail.gLDetails.Select(detail => new InvoiceProductTax
                     {
-                        taxAcctNo = detailDetail.acctNo,
-                        taxAmount = detailDetail.GLAmount,
-                        taxPercent = detailDetail.rate
+                        taxDetailID = detail.GLDetailID,
+                        taxAcctNo = detail.acctNo,
+                        taxAmount = detail.GLAmount,
+                        taxPercent = detail.rate
                     }).ToList()
                 };
 
@@ -175,39 +178,10 @@ namespace eMaestroD.InvoiceProcessing.Services
             await _glRepository.DeleteGLEntriesAsync(VoucherNo);
         }
 
+        //Remove this after all invoices changes
         public async Task InsertGLEntriesAsync<T>(IEnumerable<T> items, DateTime now, string username) where T : GL
         {
-            //using (var transaction = await _AMDbContext.Database.BeginTransactionAsync())
-            //{
-            //    try
-            //    {
-            //        int gl1 = 0;
-            //        foreach (var item in items)
-            //        {
-            //            item.crtDate = now;
-            //            item.crtBy = username;
-            //            item.modDate = now;
-            //            item.modBy = username;
-            //            if (gl1 != 0)
-            //            {
-            //                item.txID = gl1;
-            //            }
-            //            await _AMDbContext.Set<T>().AddAsync(item);
-            //            await _AMDbContext.SaveChangesAsync();
-            //            if (gl1 == 0)
-            //            {
-            //                gl1 = item.GLID;
-            //            }
-            //        }
-
-            //        await transaction.CommitAsync();
-            //    }
-            //    catch (Exception)
-            //    {
-            //        await transaction.RollbackAsync();
-            //        throw;
-            //    }
-            //}
+            await _glRepository.OldInsertGLEntriesAsync(items, now, username);
         }
     }
 }

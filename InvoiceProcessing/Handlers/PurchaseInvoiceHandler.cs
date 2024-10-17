@@ -113,6 +113,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                     checkName = invoice.convertedInvoiceNo,
                     gLDetails = product.ProductTaxes.Select(tax => new GLDetail
                     {
+                        GLDetailID = tax.taxDetailID,
                         GLID = 0,
                         acctNo = tax.taxAcctNo,
                         GLAmount = tax.taxAmount,

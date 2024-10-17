@@ -279,6 +279,11 @@ export class AddNewPurchaseMComponent implements OnInit{
   }
   count = 0;
   onEnterTableInput(index: number, rownumber:number) {
+      if(this.productlist[rownumber].prodName == undefined)
+      {
+        let el: HTMLElement = this.savebtn.nativeElement;
+        el.focus();
+      }
 
       index = index + (rownumber*27);
       if (index < this.inputFieldsTable.length-1) {
@@ -433,40 +438,40 @@ export class AddNewPurchaseMComponent implements OnInit{
 
     // Determine if discount is based on percentage or amount
     if (rowData.discount > 0) {
-      rowData.discountAmount = parseFloat(((rowData.grossValue * rowData.discount) / 100).toFixed(2));
+      rowData.discountAmount = parseFloat(((rowData.grossValue * rowData.discount) / 100).toFixed(2)) || 0;
     } else {
-      rowData.discount = parseFloat(((rowData.discountAmount / rowData.grossValue) * 100).toFixed(2));
+      rowData.discount = parseFloat(((rowData.discountAmount / rowData.grossValue) * 100).toFixed(2)) || 0;
     }
 
     // Calculate discounted gross value
-    rowData.discountedGross = parseFloat((rowData.grossValue - rowData.discountAmount).toFixed(2));
+    rowData.discountedGross = parseFloat((rowData.grossValue - rowData.discountAmount).toFixed(2)) || 0;
 
     // Determine if tax is based on percentage or amount
     if (rowData.taxPercent > 0) {
-      rowData.taxAmount = parseFloat(((rowData.discountedGross * rowData.taxPercent) / 100).toFixed(2));
+      rowData.taxAmount = parseFloat(((rowData.discountedGross * rowData.taxPercent) / 100).toFixed(2)) || 0;
     } else {
-      rowData.taxPercent = parseFloat(((rowData.taxAmount / rowData.discountedGross) * 100).toFixed(2));
+      rowData.taxPercent = parseFloat(((rowData.taxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
     }
 
     // Determine if extra discount is based on percentage or amount
     if (rowData.extraDiscountPercent > 0) {
-      rowData.extraDiscountAmount = parseFloat(((rowData.discountedGross * rowData.extraDiscountPercent) / 100).toFixed(2));
+      rowData.extraDiscountAmount = parseFloat(((rowData.discountedGross * rowData.extraDiscountPercent) / 100).toFixed(2)) || 0;
     } else {
-      rowData.extraDiscountPercent = parseFloat(((rowData.extraDiscountAmount / rowData.discountedGross) * 100).toFixed(2));
+      rowData.extraDiscountPercent = parseFloat(((rowData.extraDiscountAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
     }
 
     // Calculate advance tax amount
     if (rowData.advanceTaxPercent > 0) {
-      rowData.advanceTaxAmount = parseFloat(((rowData.discountedGross * rowData.advanceTaxPercent) / 100).toFixed(2));
+      rowData.advanceTaxAmount = parseFloat(((rowData.discountedGross * rowData.advanceTaxPercent) / 100).toFixed(2)) || 0;
     } else {
-      rowData.advanceTaxPercent = parseFloat(((rowData.advanceTaxAmount / rowData.discountedGross) * 100).toFixed(2));
+      rowData.advanceTaxPercent = parseFloat(((rowData.advanceTaxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
     }
 
     // Calculate extra advance tax amount
     if (rowData.extraAdvanceTaxPercent > 0) {
-      rowData.extraAdvanceTaxAmount = parseFloat(((rowData.discountedGross * rowData.extraAdvanceTaxPercent) / 100).toFixed(2));
+      rowData.extraAdvanceTaxAmount = parseFloat(((rowData.discountedGross * rowData.extraAdvanceTaxPercent) / 100).toFixed(2)) || 0;
     } else {
-      rowData.extraAdvanceTaxPercent = parseFloat(((rowData.extraAdvanceTaxAmount / rowData.discountedGross) * 100).toFixed(2));
+      rowData.extraAdvanceTaxPercent = parseFloat(((rowData.extraAdvanceTaxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
     }
 
     // Calculate net amount before rebate
@@ -476,13 +481,13 @@ export class AddNewPurchaseMComponent implements OnInit{
 
     // Determine if rebate is based on percentage or amount
     if (rowData.rebatePercent > 0) {
-      rowData.rebateAmount = parseFloat(((rowData.netAmountBeforeRebate * rowData.rebatePercent) / 100).toFixed(2));
+      rowData.rebateAmount = parseFloat(((rowData.netAmountBeforeRebate * rowData.rebatePercent) / 100).toFixed(2)) || 0;
     } else {
-      rowData.rebatePercent = parseFloat(((rowData.rebateAmount / rowData.netAmountBeforeRebate) * 100).toFixed(2));
+      rowData.rebatePercent = parseFloat(((rowData.rebateAmount / rowData.netAmountBeforeRebate) * 100).toFixed(2)) || 0;
     }
 
     // Calculate net amount after rebate
-    rowData.netAmount = parseFloat((rowData.netAmountBeforeRebate - rowData.rebateAmount).toFixed(2));
+    rowData.netAmount = parseFloat((rowData.netAmountBeforeRebate - rowData.rebateAmount).toFixed(2)) || 0;
 
     // Calculate net rate (net amount divided by total quantity)
     let totalQty = rowData.qty;
@@ -1102,8 +1107,7 @@ export class AddNewPurchaseMComponent implements OnInit{
     this.totalAdvanceExtraTax = invoiceData.totalAdvanceExtraTax;
     this.totalExtraDiscount = invoiceData.totalExtraDiscount;
     this.totalNetPayable = invoiceData.netTotal;
-    console.log(invoiceData.Products)
-    console.log(invoiceData.Products[0].expiry)
+
     for (let i = 0; i < this.productlist.length; i++) {
       this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
 
@@ -1120,14 +1124,16 @@ export class AddNewPurchaseMComponent implements OnInit{
       {
         this.productlist[i].expiryDate = new Date(invoiceData.Products[i].expiry);
       }
-      this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0;
-      this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0;
-      this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0;
-      this.productlist[i].advanceTaxAmount= invoiceData.Products[i].ProductTaxes[1].taxAmount || 0;
-      this.productlist[i].extraAdvanceTaxPercent= invoiceData.Products[i].ProductTaxes[2].taxPercent || 0;
-      this.productlist[i].extraAdvanceTaxAmount= invoiceData.Products[i].ProductTaxes[2].taxAmount || 0;
-      this.productlist[i].prodInvoiceID= invoiceData.Products[i].prodInvoiceID || 0;
-      this.Itemcalculation(i)
+      this.productlist[i].taxID= invoiceData.Products[i].ProductTaxes[0].taxDetailID || 0,
+      this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0,
+      this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0,
+      this.productlist[i].advanceTaxID= invoiceData.Products[i].ProductTaxes[1].taxDetailID || 0,
+      this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0,
+      this.productlist[i].advanceTaxAmount= invoiceData.Products[i].ProductTaxes[1].taxAmount || 0,
+      this.productlist[i].extraAdvanceTaxID= invoiceData.Products[i].ProductTaxes[2].taxDetailID || 0,
+      this.productlist[i].extraAdvanceTaxPercent= invoiceData.Products[i].ProductTaxes[2].taxPercent || 0,
+      this.productlist[i].extraAdvanceTaxAmount= invoiceData.Products[i].ProductTaxes[2].taxAmount || 0
+       this.Itemcalculation(i)
     }
   }
 }

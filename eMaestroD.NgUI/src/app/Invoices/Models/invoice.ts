@@ -53,6 +53,7 @@ export interface InvoiceProduct {
 
 export interface InvoiceProductTax
 {
+    taxDetailID?:number;
     taxAcctNo?:string;
     taxPercent?:number;
     taxAmount?:number;

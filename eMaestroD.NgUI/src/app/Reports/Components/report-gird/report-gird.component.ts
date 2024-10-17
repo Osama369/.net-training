@@ -1,17 +1,8 @@
-import { filter } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, Input, ViewChild, SimpleChanges } from "@angular/core";
-import * as FileSaver from "file-saver";
 import { Table } from "primeng/table";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable"
-import html2canvas from 'html2canvas';
-import jspdf from 'jspdf';
-import { fontStyle } from 'html2canvas/dist/types/css/property-descriptors/font-style';
-import { fontWeight } from 'html2canvas/dist/types/css/property-descriptors/font-weight';
-import { ButtonModule } from 'primeng/button';
-import { FLOAT } from 'html2canvas/dist/types/css/property-descriptors/float';
-import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastrService } from 'ngx-toastr';

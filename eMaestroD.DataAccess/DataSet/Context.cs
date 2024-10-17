@@ -14,6 +14,7 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<AuthorizationsTemplate> AuthorizationsTemplate { get; set; }
         public DbSet<Screens> Screens { get; set; }
         public DbSet<PaymentDetail> PaymentDetails { get; set; }
+        public DbSet<TenantUser> TenantUsers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

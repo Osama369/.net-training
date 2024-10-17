@@ -40,7 +40,7 @@ namespace eMaestroD.DataAccess.Repositories
                 .ToListAsync();
         }
 
-        public async Task<bool> UpdateGLIsConvertedAsync(string voucherNo, string convertedVoucherNo)
+        public async Task<bool> UpdateGLIsConvertedAsync(string voucherNo, string convertedVoucherNo, bool isDeleted)
         {
             try
             {
@@ -53,8 +53,16 @@ namespace eMaestroD.DataAccess.Repositories
 
                 foreach (var entry in entries)
                 {
-                    entry.isConverted = true;
-                    entry.checkName = convertedVoucherNo;
+                    if (!isDeleted)
+                    {
+                        entry.isConverted = true;
+                        entry.checkName = convertedVoucherNo;
+                    }
+                    else
+                    {
+                        entry.isConverted = false;
+                        entry.checkName = "";
+                    }
 
                     _dbContext.Entry(entry).State = EntityState.Modified;
                 }
@@ -89,7 +97,7 @@ namespace eMaestroD.DataAccess.Repositories
                         await _dbContext.SaveChangesAsync();
 
                         if (!string.IsNullOrEmpty(firstItem.checkName))
-                            await UpdateGLIsConvertedAsync(firstItem.checkName, firstItem.voucherNo);
+                            await UpdateGLIsConvertedAsync(firstItem.checkName, firstItem.voucherNo, false);
                     }
 
                     await transaction.CommitAsync();
@@ -180,6 +188,9 @@ namespace eMaestroD.DataAccess.Repositories
                     var entriesToDelete = await this.GetGLEntriesByVoucherNoAsync(voucherNo);
                     if (entriesToDelete.Any())
                     {
+                        if (!string.IsNullOrEmpty(entriesToDelete.First().checkName))
+                            await UpdateGLIsConvertedAsync(entriesToDelete.First().checkName, entriesToDelete.First().voucherNo, true);
+
                         var glDetailsToDelete = entriesToDelete
                             .SelectMany(gl => gl.gLDetails)
                             .ToList();
@@ -191,6 +202,42 @@ namespace eMaestroD.DataAccess.Repositories
 
                         _dbContext.Set<GL>().RemoveRange(entriesToDelete);
                         await _dbContext.SaveChangesAsync();
+                    }
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+        }
+
+        //Temp method until all invoices change.
+        public async Task OldInsertGLEntriesAsync(IEnumerable<GL> items, DateTime now, string username)
+        {
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    int gl1 = 0;
+                    foreach (var item in items)
+                    {
+                        item.crtDate = now;
+                        item.crtBy = username;
+                        item.modDate = now;
+                        item.modBy = username;
+                        if (gl1 != 0)
+                        {
+                            item.txID = gl1;
+                        }
+                        await _dbContext.Set<GL>().AddAsync(item);
+                        await _dbContext.SaveChangesAsync();
+                        if (gl1 == 0)
+                        {
+                            gl1 = item.GLID;
+                        }
                     }
 
                     await transaction.CommitAsync();
