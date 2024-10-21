@@ -4,10 +4,10 @@
     <div class="col-12">
       <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Goods Received Note
         <i class="pi pi-times-circle" (click)="confirmDailog('close')" style="font-size: 1.5rem; float:right"></i>
-        <a (click)="ChangeIsShowDetail()" style="float:right; margin-right: 8px;">{{isShowDetails? 'Show Details':'Hide Details'}}</a>
+        <a (click)="ChangeIsShowDetail()" *ngIf="isShowSideBar" style="float:right; margin-right: 8px;">{{isShowDetails? 'Show Details':'Hide Details'}}</a>
       </h4>
     </div>
-      <div [ngClass]="isShowDetails ? 'col-12' : 'col-9'">
+      <div [ngClass]="isShowDetails || !isShowSideBar ? 'col-12' : 'col-9'">
           <div class="row">
               <!-- <label class="col-form-label date-label col-4 required">Invoice No</label>  -->
 
@@ -29,7 +29,7 @@
               </div> -->
 
               <div class="col-3">
-                  <p-calendar #calender #inputField (keyup.enter)="onEnterComplex(0)" [(ngModel)]="selectedDate" [maxDate]="maxDate"   [showIcon]="true" dateFormat="dd/mm/yy"></p-calendar>
+                  <p-calendar #calender #inputField (keyup.enter)="onEnterComplex(0)" [(ngModel)]="selectedDate" [minDate]="maxDate" [maxDate]="maxDate"   [showIcon]="true" dateFormat="dd/mm/yy"></p-calendar>
               </div>
 
               <div class="col-3">
@@ -65,9 +65,9 @@
                         </div>
                       </th>
                       <th rowspan="2" style="text-align: center;"  translate>Qty</th>
-                      <th rowspan="2" style="text-align: center;"  translate>Bouns Qty</th>
                       <th rowspan="2" style="text-align: center;"  translate>Price</th>
                       <th rowspan="2" style="text-align: center;"  translate >Gross Value</th>
+                      <th rowspan="2" style="text-align: center;"  translate>Bouns Qty</th>
                       <th rowspan="2" style="text-align: center;"  translate>Batch #</th>
                       <th rowspan="2" style="text-align: center;"  translate>Expiry Date</th>
                       <th colspan="2" style="text-align: center;     border-bottom: 1px solid;">
@@ -116,14 +116,15 @@
                     <td>
                         <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(0, ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.qty" (ngModelChange)="updateQtyBal(rowData, ri)" class="girdRow">
                     </td>
+
                     <td>
-                        <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(1, ri)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.bonusQty" (ngModelChange)="updateQtyBal(rowData, ri)" class="girdRow">
+                        <input #inputFieldTable [style]="{'width':'75px', 'text-align':'right'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(1, ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.purchRate" (ngModelChange)="Itemcalculation(ri)"  class="girdRow">
                     </td>
                     <td>
-                        <input #inputFieldTable [style]="{'width':'75px', 'text-align':'right'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(2, ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.purchRate" (ngModelChange)="Itemcalculation(ri)"  class="girdRow">
+                        <input #inputFieldTable [style]="{'width':'75px', 'text-align':'right'}" (keyup.enter)="onEnterTableInput(2, ri)" pInputText [disabled]="!rowData.barCode && !rowData.prodName" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.grossValue" readonly class="girdRow">
                     </td>
                     <td>
-                        <input #inputFieldTable [style]="{'width':'75px', 'text-align':'right'}" (keyup.enter)="onEnterTableInput(3, ri)" pInputText [disabled]="!rowData.barCode && !rowData.prodName" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.grossValue" readonly class="girdRow">
+                      <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(3, ri)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.bonusQty" (ngModelChange)="updateQtyBal(rowData, ri)" class="girdRow">
                     </td>
                     <td>
                         <input #inputFieldTable [style]="{'width':'80px'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(5, ri)" type="text" [(ngModel)]="rowData.batchNo" class="girdRow">
@@ -221,7 +222,7 @@
           </div> -->
 
       </div>
-      <div [ngClass]="isShowDetails ? 'd-none' : 'col-3'">
+      <div [ngClass]="isShowDetails || !isShowSideBar ? 'd-none' : 'col-3'">
          <div class="row" style="margin-top: 20px; background-color:black;color: white; height: 30px !important;cursor: pointer;" (click)="showProductDetails()">
               <h4 class="col-9" style="color:white">Product Detail</h4>
               <i class="pi pi-angle-up col-3" *ngIf="ProductDetailShow" style="font-size: 2rem; float: right;padding: 0px !important;text-align: right;padding-right: 5px !important;" ></i>

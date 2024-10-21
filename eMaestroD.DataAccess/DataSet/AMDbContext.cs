@@ -93,6 +93,7 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<Offer> Offers { get; set; }
         public DbSet<ProdDiscount> ProdDiscounts { get; set; }
         public DbSet<BarcodeConfigSetting> BarcodeConfigSettings { get; set; }
+        public DbSet<ConfigSetting> ConfigSettings { get; set; }
         public DbSet<GLDetail> GLDetails { get; set; }
         public DbSet<ProductViewModel> ProductViewModel { get; set; }
 

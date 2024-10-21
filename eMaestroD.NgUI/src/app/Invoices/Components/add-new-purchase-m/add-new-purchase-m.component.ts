@@ -20,6 +20,7 @@ import { lastValueFrom } from 'rxjs';
 import { ProductViewModel } from 'src/app/Manage/Models/product-view-model';
 import { Taxes } from 'src/app/Administration/Models/taxes';
 import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
+import { ConfigSetting } from 'src/app/Shared/Models/config-setting';
 
 @Component({
   selector: 'app-add-new-purchase-m',
@@ -45,6 +46,7 @@ export class AddNewPurchaseMComponent implements OnInit{
   ) { }
 
   isShowDetails : boolean = false;
+  isShowSideBar : boolean = false;
 
   totalGross: number;
   totalDiscount: number;
@@ -197,6 +199,14 @@ export class AddNewPurchaseMComponent implements OnInit{
     this.sharedDataService.getTaxes$().subscribe({
       next : (result:any)=>{
         this.taxesList = result;
+      }
+    })
+
+    this.sharedDataService.getConfigSettings$().subscribe({
+      next : (result:ConfigSetting[])=>{
+        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on Purchase").value;
+        console.log(result);
+
       }
     })
 
@@ -1090,7 +1100,6 @@ export class AddNewPurchaseMComponent implements OnInit{
 
   async RenderEditItem()
   {
-    console.log("here");
     const invoiceData = await lastValueFrom(this.invoicesService.GetInvoice(this.EditVoucherNo));
 
     this.invoiceID = invoiceData.invoiceID;

@@ -1,3 +1,4 @@
+import { ConfigSetting } from './../../../Shared/Models/config-setting';
 import { SharedDataService } from './../../../Shared/Services/shared-data.service';
 import { ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -16,11 +17,11 @@ import { InvoicesService } from '../../Services/invoices.service';
 import { InvoiceView } from '../../Models/invoice-view';
 import { Vendor } from 'src/app/Manage/Models/vendor';
 import { Invoice, InvoiceProduct, InvoiceProductTax } from '../../Models/invoice';
-import { lastValueFrom } from 'rxjs';
 import { ProductViewModel } from 'src/app/Manage/Models/product-view-model';
 import { Taxes } from 'src/app/Administration/Models/taxes';
 import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
 import { APP_ROUTES } from 'src/app/app-routes';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-add-new-grn',
@@ -45,6 +46,7 @@ export class AddNewGrnComponent implements OnInit{
   ) { }
 
   isShowDetails : boolean = false;
+  isShowSideBar : boolean = false;
 
   totalGross: number;
   totalDiscount: number;
@@ -160,7 +162,6 @@ export class AddNewGrnComponent implements OnInit{
     this.selectedDate = today;
 
     this.sharedDataService.getProducts$().subscribe(products => {
-      console.log("PRODUCTS DETAILS"+products);
       this.products = products;
       this.Filterproductlist = this.products;
     });
@@ -192,6 +193,13 @@ export class AddNewGrnComponent implements OnInit{
     this.sharedDataService.getTaxes$().subscribe({
       next : (result:any)=>{
         this.taxesList = result;
+      }
+    })
+
+    this.sharedDataService.getConfigSettings$().subscribe({
+      next : (result:ConfigSetting[])=>{
+        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on GRN").value;
+        console.log(result);
       }
     })
 

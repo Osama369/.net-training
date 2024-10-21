@@ -333,8 +333,6 @@ namespace eMaestroD.Api.Controllers
                     _notificationInterceptor.SaveNotification("UsersDelete", user[0].ComID, "");
                     return Ok();
                 }
-
-
             }
             else
             {

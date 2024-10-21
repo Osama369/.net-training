@@ -103,6 +103,23 @@
           <!-- <button #cancelbtn (click)="confirmDailog('cancel')" translate style="margin-left: 10px;" class="btn btn-outline-danger col-5">Cancel</button> -->
         </div>
       </p-tabPanel>
+      <p-tabPanel header="Operational Controls">
+        <div class="row mb-3" style="vertical-align: bottom;" >
+          <div *ngFor="let config of configSetting; let i = index" class="col-6 mb-3">
+            <!-- Label for the key -->
+            <label class="col-10" [for]="'switch-' + i">{{ config.key }}</label>
+            <p-inputSwitch
+              id="'switch-' + i"
+              class="col-2"
+              [(ngModel)]="config.value"
+            ></p-inputSwitch>
+          </div>
+
+        </div>
+        <div class="row">
+          <button class="btn btn-primary col-3" (click)="saveConfigSettings()">Save Settings</button>
+        </div>
+      </p-tabPanel>
     </p-tabView>
 
 

@@ -1,7 +1,7 @@
 import { ProductsService } from 'src/app/Manage/Services/products.service';
 import { Injectable } from '@angular/core';
 import { ProductViewModel } from 'src/app/Manage/Models/product-view-model';
-import { BehaviorSubject, forkJoin, Observable, of, tap } from 'rxjs';
+import { BehaviorSubject, forkJoin, lastValueFrom, Observable, of, tap } from 'rxjs';
 import { LocationService } from 'src/app/Administration/Services/location.service';
 import { Location } from 'src/app/Administration/Models/location';
 import { Vendor } from 'src/app/Manage/Models/vendor';
@@ -12,6 +12,8 @@ import { ReportSettingService } from 'src/app/Reports/Services/report-setting.se
 import { InvoiceReportSettings } from 'src/app/Reports/Models/invoice-report-settings';
 import { Taxes } from 'src/app/Administration/Models/taxes';
 import { TaxesService } from 'src/app/Administration/Services/taxes.service';
+import { ConfigSetting } from '../Models/config-setting';
+import { AppConfigService } from './app-config.service';
 
 @Injectable()
 export class SharedDataService {
@@ -22,6 +24,7 @@ export class SharedDataService {
   private customerSubject: BehaviorSubject<Customer[]> = new BehaviorSubject<Customer[]>([]);
   private reportSettingItemSubject: BehaviorSubject<InvoiceReportSettings[]> = new BehaviorSubject<InvoiceReportSettings[]>([]);
   private taxesSubject: BehaviorSubject<Taxes[]> = new BehaviorSubject<Taxes[]>([]);
+  private configSettingSubject: BehaviorSubject<ConfigSetting[]> = new BehaviorSubject<ConfigSetting[]>([]);
 
   constructor(
     private _productsService: ProductsService,
@@ -29,7 +32,8 @@ export class SharedDataService {
     private _customerService: CustomersService,
     private _vendorService: VendorService,
     private _reportSettingService: ReportSettingService,
-    private _taxesService: TaxesService
+    private _taxesService: TaxesService,
+    private _appConfigService: AppConfigService
   ) {
     this.loadAllData().subscribe();
   }
@@ -44,6 +48,7 @@ export class SharedDataService {
         vendors: this._vendorService.getAllVendor(),
         reportSettings: this._reportSettingService.GetInvoiceReportSettings(),
         taxes: this._taxesService.getAllTaxes(),
+        config: this._appConfigService.GetConfigSettings(),
       }).pipe(
         tap(result => {
           this.productsSubject.next(result.products);
@@ -52,7 +57,7 @@ export class SharedDataService {
           this.vendorSubject.next(result.vendors);
           this.reportSettingItemSubject.next(result.reportSettings);
           this.taxesSubject.next(result.taxes);
-
+          this.configSettingSubject.next(result.config);
           console.log(result);
           this.isLoaded = true;  // Mark as loaded
         })
@@ -86,5 +91,14 @@ export class SharedDataService {
 
   getTaxes$(): Observable<Taxes[]> {
     return this.taxesSubject.asObservable();
+  }
+
+  getConfigSettings$(): Observable<ConfigSetting[]> {
+    return this.configSettingSubject.asObservable();
+  }
+
+  updateConfigSettings$(data:ConfigSetting[]) {
+    lastValueFrom(this._appConfigService.SaveConfigSetting(data));
+    this.configSettingSubject.next(data);
   }
 }

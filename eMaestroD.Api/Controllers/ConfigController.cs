@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using eMaestroD.DataAccess.DataSet;
+using eMaestroD.Models.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 
@@ -9,10 +13,12 @@ namespace eMaestroD.Api.Controllers
     public class ConfigController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly AMDbContext _AMDbContext;
 
-        public ConfigController(IConfiguration configuration)
+        public ConfigController(IConfiguration configuration, AMDbContext aMDbContext)
         {
             _configuration = configuration;
+            _AMDbContext = aMDbContext;
         }
 
         [HttpGet]
@@ -27,5 +33,24 @@ namespace eMaestroD.Api.Controllers
 
             return Ok(appSettings);
         }
+
+        [HttpGet("GetConfigSettings/{comID}")]
+        [Authorize]
+        public async Task<IActionResult> GetConfigSettings(int comID)
+        {
+            var configSettings = await _AMDbContext.ConfigSettings.Where(x => x.comID == comID).ToListAsync();
+            return Ok(configSettings);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> SaveConfigSettings(List<ConfigSetting> configSetting)
+        {
+            _AMDbContext.ConfigSettings.UpdateRange(configSetting);
+            await _AMDbContext.SaveChangesAsync();
+
+            return NoContent();
+        }
+
     }
 }
