@@ -1,7 +1,7 @@
 import { ProductsService } from 'src/app/Manage/Services/products.service';
 import { Injectable } from '@angular/core';
 import { ProductViewModel } from 'src/app/Manage/Models/product-view-model';
-import { BehaviorSubject, forkJoin, lastValueFrom, Observable, of, tap } from 'rxjs';
+import { BehaviorSubject, defaultIfEmpty, forkJoin, lastValueFrom, Observable, of, tap } from 'rxjs';
 import { LocationService } from 'src/app/Administration/Services/location.service';
 import { Location } from 'src/app/Administration/Models/location';
 import { Vendor } from 'src/app/Manage/Models/vendor';
@@ -53,28 +53,27 @@ export class SharedDataService {
   // Check if data is already loaded and if comID and tenantID match
   if (this.isLoaded && this.storedComID === currentComID && this.storedTenantID === currentTenantID) {
     console.log("Data is already loaded and comID and tenantID match");
-    return of(true); // No further loading required
+    return of(true);
   }
 
   // If not loaded or comID/tenantID don't match, load data
   return forkJoin({
-    products: this._productsService.GetProducts(0),
-    locations: this._locationService.getAllLoc(),
-    customers: this._customerService.getAllCustomers(),
-    vendors: this._vendorService.getAllVendor(),
-    reportSettings: this._reportSettingService.GetInvoiceReportSettings(),
-    taxes: this._taxesService.getAllTaxes(),
-    config: this._appConfigService.GetConfigSettings(),
+    products: this._productsService.GetProducts(0).pipe(defaultIfEmpty([])),
+    locations: this._locationService.getAllLoc().pipe(defaultIfEmpty([])),
+    customers: this._customerService.getAllCustomers().pipe(defaultIfEmpty([])),
+    vendors: this._vendorService.getAllVendor().pipe(defaultIfEmpty([])),
+    reportSettings: this._reportSettingService.GetInvoiceReportSettings().pipe(defaultIfEmpty([])),
+    taxes: this._taxesService.getAllTaxes().pipe(defaultIfEmpty([])),
+    config: this._appConfigService.GetConfigSettings().pipe(defaultIfEmpty([])),
   }).pipe(
     tap(result => {
-      this.productsSubject.next(result.products);
-      this.locationSubject.next(result.locations);
-      this.customerSubject.next(result.customers);
-      this.vendorSubject.next(result.vendors);
-      this.reportSettingItemSubject.next(result.reportSettings);
-      this.taxesSubject.next(result.taxes);
-      this.configSettingSubject.next(result.config);
-      console.log(result);
+      this.productsSubject.next(result.products || []);
+      this.locationSubject.next(result.locations || []);
+      this.customerSubject.next(result.customers || []);
+      this.vendorSubject.next(result.vendors || []);
+      this.reportSettingItemSubject.next(result.reportSettings || []);
+      this.taxesSubject.next(result.taxes || []);
+      this.configSettingSubject.next(result.config || []);
 
       this.isLoaded = true;
       this.storedComID = localStorage.getItem('comID');
