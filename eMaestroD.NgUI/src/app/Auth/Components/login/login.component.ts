@@ -20,6 +20,7 @@ export class LoginComponent implements OnInit {
   resetPasswordVisibility: boolean = false;
   saveDisable: boolean = false;
   emailAddress:any;
+  showPleaseWait : boolean = false;
   // loading=false;
   errorMessage="";
   constructor(private auth:AuthService,
@@ -59,6 +60,7 @@ export class LoginComponent implements OnInit {
     }
     else
     {
+      this.showPleaseWait = true;
         this.tenant[0] = {
           email : this.formdata.email,
           password : this.formdata.password
@@ -71,15 +73,18 @@ export class LoginComponent implements OnInit {
                 localStorage.setItem('tenantNames', JSON.stringify(data.tenantNames));
                 this.auth.storeToken(data.idToken);
                 this.auth.canAuthenticate();
+                this.showPleaseWait = false;
               }
               else
               {
                 sessionStorage.setItem('email',this.formdata.email)
                 this.router.navigate([APP_ROUTES.account.confirmation]);
+                this.showPleaseWait = false;
               }
             },
             error:data=>{
               this.toastr.error(data.error);
+              this.showPleaseWait = false;
             }
         }).add(()=>{
             // this.loading =false;

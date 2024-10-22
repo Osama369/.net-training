@@ -18,6 +18,9 @@ import { AppConfigService } from './app-config.service';
 @Injectable()
 export class SharedDataService {
   private isLoaded: boolean = false;
+  private storedComID: any;
+  private storedTenantID: any;
+
   private productsSubject: BehaviorSubject<ProductViewModel[]> = new BehaviorSubject<ProductViewModel[]>([]);
   private locationSubject: BehaviorSubject<Location[]> = new BehaviorSubject<Location[]>([]);
   private vendorSubject: BehaviorSubject<Vendor[]> = new BehaviorSubject<Vendor[]>([]);
@@ -35,38 +38,49 @@ export class SharedDataService {
     private _taxesService: TaxesService,
     private _appConfigService: AppConfigService
   ) {
+    this.storedComID = localStorage.getItem('comID');
+    this.storedTenantID = localStorage.getItem('tenantID');
+
     this.loadAllData().subscribe();
   }
 
   loadAllData(): Observable<any> {
     console.log("in");
-    if (!this.isLoaded) {
-      return forkJoin({
-        products: this._productsService.GetProducts(0),
-        locations: this._locationService.getAllLoc(),
-        customers: this._customerService.getAllCustomers(),
-        vendors: this._vendorService.getAllVendor(),
-        reportSettings: this._reportSettingService.GetInvoiceReportSettings(),
-        taxes: this._taxesService.getAllTaxes(),
-        config: this._appConfigService.GetConfigSettings(),
-      }).pipe(
-        tap(result => {
-          this.productsSubject.next(result.products);
-          this.locationSubject.next(result.locations);
-          this.customerSubject.next(result.customers);
-          this.vendorSubject.next(result.vendors);
-          this.reportSettingItemSubject.next(result.reportSettings);
-          this.taxesSubject.next(result.taxes);
-          this.configSettingSubject.next(result.config);
-          console.log(result);
-          this.isLoaded = true;  // Mark as loaded
-        })
-      );
-    } else {
-      console.log("else");
-      // If data is already loaded, return an empty observable
-      return of(true); // No further loading required
-    }
+
+     // Get stored values from localStorage
+     const currentComID = localStorage.getItem('comID');
+     const currentTenantID = localStorage.getItem('tenantID');
+  // Check if data is already loaded and if comID and tenantID match
+  if (this.isLoaded && this.storedComID === currentComID && this.storedTenantID === currentTenantID) {
+    console.log("Data is already loaded and comID and tenantID match");
+    return of(true); // No further loading required
+  }
+
+  // If not loaded or comID/tenantID don't match, load data
+  return forkJoin({
+    products: this._productsService.GetProducts(0),
+    locations: this._locationService.getAllLoc(),
+    customers: this._customerService.getAllCustomers(),
+    vendors: this._vendorService.getAllVendor(),
+    reportSettings: this._reportSettingService.GetInvoiceReportSettings(),
+    taxes: this._taxesService.getAllTaxes(),
+    config: this._appConfigService.GetConfigSettings(),
+  }).pipe(
+    tap(result => {
+      this.productsSubject.next(result.products);
+      this.locationSubject.next(result.locations);
+      this.customerSubject.next(result.customers);
+      this.vendorSubject.next(result.vendors);
+      this.reportSettingItemSubject.next(result.reportSettings);
+      this.taxesSubject.next(result.taxes);
+      this.configSettingSubject.next(result.config);
+      console.log(result);
+
+      this.isLoaded = true;
+      this.storedComID = localStorage.getItem('comID');
+      this.storedTenantID = localStorage.getItem('tenantID');
+      })
+    );
   }
 
    getProducts$(): Observable<ProductViewModel[]> {

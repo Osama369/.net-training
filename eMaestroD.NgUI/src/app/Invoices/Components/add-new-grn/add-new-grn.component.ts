@@ -1052,5 +1052,9 @@ export class AddNewGrnComponent implements OnInit{
     }
   }
 
+  sumField(field: string): number {
+    return this.productlist.reduce((acc, curr) => acc + (Number(curr[field]) || 0), 0);
+  }
+
 }
 

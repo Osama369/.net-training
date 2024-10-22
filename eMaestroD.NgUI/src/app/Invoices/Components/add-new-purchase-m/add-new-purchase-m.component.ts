@@ -1145,5 +1145,8 @@ export class AddNewPurchaseMComponent implements OnInit{
        this.Itemcalculation(i)
     }
   }
+  sumField(field: string): number {
+    return this.productlist.reduce((acc, curr) => acc + (Number(curr[field]) || 0), 0);
+  }
 }
 

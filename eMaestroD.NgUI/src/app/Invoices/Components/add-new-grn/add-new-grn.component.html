@@ -201,10 +201,43 @@
                 </tr>
             </ng-template>
               <ng-template pTemplate="footer">
+                <tr>
+
                     <td pFrozenColumn>
                       <button #newRowButton pButton type="button" icon="pi pi-plus" [label]="'Add' | translate"
                       pAddRow [table]="dt" [newRow]="newRow()" (click)="focusing()" [style]="{'margin-top': '10px !important','height':'25px !important'}"></button>
                     </td>
+
+                        <td pFrozenColumn>Total:</td>
+                        <td style="text-align: right;">{{ sumField('qty') }}</td>
+                        <td style="text-align: right;">{{ sumField('purchRate') }}</td>
+                        <td style="text-align: right;">{{ sumField('grossValue') }}</td>
+                        <td style="text-align: right;">{{ sumField('bonusQty') }}</td>
+                        <td></td> <!-- Batch -->
+                        <td></td> <!-- Expiry -->
+                        <td style="text-align: right;">{{ sumField('discount') }}</td>
+                        <td style="text-align: right;">{{ sumField('discountAmount') }}</td>
+                        <td style="text-align: right;">{{ sumField('discountedGross') }}</td>
+                        <td style="text-align: right;">{{ sumField('taxPercent') }}</td>
+                        <td style="text-align: right;">{{ sumField('taxAmount') }}</td>
+                        <td style="text-align: right;">{{ sumField('extraAdvanceTaxPercent') }}</td>
+                        <td style="text-align: right;">{{ sumField('extraAdvanceTaxAmount') }}</td>
+                        <td style="text-align: right;">{{ sumField('extraDiscountPercent') }}</td>
+                        <td style="text-align: right;">{{ sumField('extraDiscountAmount') }}</td>
+                        <td style="text-align: right;">{{ sumField('advanceTaxPercent') }}</td>
+                        <td style="text-align: right;">{{ sumField('advanceTaxAmount') }}</td>
+                        <td style="text-align: right;">{{ sumField('netAmountBeforeRebate') }}</td>
+                        <td style="text-align: right;">{{ sumField('rebatePercent') }}</td>
+                        <td style="text-align: right;">{{ sumField('rebateAmount') }}</td>
+                        <td style="text-align: right;">{{ sumField('netAmount') }}</td>
+                        <td style="text-align: right;">{{ sumField('netRate') }}</td>
+                        <td style="text-align: right;">{{ sumField('mrp') }}</td>
+                        <td style="text-align: right;">{{ sumField('sellingPrice') }}</td>
+                        <td style="text-align: right;">{{ sumField('lastCostPrice') }}</td>
+                        <td style="text-align: right;">{{ sumField('diff') }}</td>
+                        <td></td> <!-- Notes -->
+                        <td></td> <!-- Action -->
+                      </tr>
               </ng-template>
           </p-table>
 
