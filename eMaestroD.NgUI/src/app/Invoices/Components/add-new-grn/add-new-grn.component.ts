@@ -1,3 +1,4 @@
+import { ConfigSetting } from './../../../Shared/Models/config-setting';
 import { SharedDataService } from './../../../Shared/Services/shared-data.service';
 import { ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -16,11 +17,11 @@ import { InvoicesService } from '../../Services/invoices.service';
 import { InvoiceView } from '../../Models/invoice-view';
 import { Vendor } from 'src/app/Manage/Models/vendor';
 import { Invoice, InvoiceProduct, InvoiceProductTax } from '../../Models/invoice';
-import { lastValueFrom } from 'rxjs';
 import { ProductViewModel } from 'src/app/Manage/Models/product-view-model';
 import { Taxes } from 'src/app/Administration/Models/taxes';
 import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
 import { APP_ROUTES } from 'src/app/app-routes';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-add-new-grn',
@@ -45,6 +46,7 @@ export class AddNewGrnComponent implements OnInit{
   ) { }
 
   isShowDetails : boolean = false;
+  isShowSideBar : boolean = false;
 
   totalGross: number;
   totalDiscount: number;
@@ -160,7 +162,6 @@ export class AddNewGrnComponent implements OnInit{
     this.selectedDate = today;
 
     this.sharedDataService.getProducts$().subscribe(products => {
-      console.log("PRODUCTS DETAILS"+products);
       this.products = products;
       this.Filterproductlist = this.products;
     });
@@ -192,6 +193,13 @@ export class AddNewGrnComponent implements OnInit{
     this.sharedDataService.getTaxes$().subscribe({
       next : (result:any)=>{
         this.taxesList = result;
+      }
+    })
+
+    this.sharedDataService.getConfigSettings$().subscribe({
+      next : (result:ConfigSetting[])=>{
+        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on GRN").value;
+        console.log(result);
       }
     })
 
@@ -264,6 +272,12 @@ export class AddNewGrnComponent implements OnInit{
   }
   count = 0;
   onEnterTableInput(index: number, rownumber:number) {
+
+    if(this.productlist[rownumber].prodName == undefined)
+      {
+        let el: HTMLElement = this.savebtn.nativeElement;
+        el.focus();
+      }
 
       index = index + (rownumber*27);
       if (index < this.inputFieldsTable.length-1) {
@@ -417,40 +431,40 @@ export class AddNewGrnComponent implements OnInit{
 
     // Determine if discount is based on percentage or amount
     if (rowData.discount > 0) {
-      rowData.discountAmount = parseFloat(((rowData.grossValue * rowData.discount) / 100).toFixed(2));
+      rowData.discountAmount = parseFloat(((rowData.grossValue * rowData.discount) / 100).toFixed(2)) || 0;
     } else {
-      rowData.discount = parseFloat(((rowData.discountAmount / rowData.grossValue) * 100).toFixed(2));
+      rowData.discount = parseFloat(((rowData.discountAmount / rowData.grossValue) * 100).toFixed(2)) || 0;
     }
 
     // Calculate discounted gross value
-    rowData.discountedGross = parseFloat((rowData.grossValue - rowData.discountAmount).toFixed(2));
+    rowData.discountedGross = parseFloat((rowData.grossValue - rowData.discountAmount).toFixed(2)) || 0;
 
     // Determine if tax is based on percentage or amount
     if (rowData.taxPercent > 0) {
-      rowData.taxAmount = parseFloat(((rowData.discountedGross * rowData.taxPercent) / 100).toFixed(2));
+      rowData.taxAmount = parseFloat(((rowData.discountedGross * rowData.taxPercent) / 100).toFixed(2)) || 0;
     } else {
-      rowData.taxPercent = parseFloat(((rowData.taxAmount / rowData.discountedGross) * 100).toFixed(2));
+      rowData.taxPercent = parseFloat(((rowData.taxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
     }
 
     // Determine if extra discount is based on percentage or amount
     if (rowData.extraDiscountPercent > 0) {
-      rowData.extraDiscountAmount = parseFloat(((rowData.discountedGross * rowData.extraDiscountPercent) / 100).toFixed(2));
+      rowData.extraDiscountAmount = parseFloat(((rowData.discountedGross * rowData.extraDiscountPercent) / 100).toFixed(2)) || 0;
     } else {
-      rowData.extraDiscountPercent = parseFloat(((rowData.extraDiscountAmount / rowData.discountedGross) * 100).toFixed(2));
+      rowData.extraDiscountPercent = parseFloat(((rowData.extraDiscountAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
     }
 
     // Calculate advance tax amount
     if (rowData.advanceTaxPercent > 0) {
-      rowData.advanceTaxAmount = parseFloat(((rowData.discountedGross * rowData.advanceTaxPercent) / 100).toFixed(2));
+      rowData.advanceTaxAmount = parseFloat(((rowData.discountedGross * rowData.advanceTaxPercent) / 100).toFixed(2)) || 0;
     } else {
-      rowData.advanceTaxPercent = parseFloat(((rowData.advanceTaxAmount / rowData.discountedGross) * 100).toFixed(2));
+      rowData.advanceTaxPercent = parseFloat(((rowData.advanceTaxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
     }
 
     // Calculate extra advance tax amount
     if (rowData.extraAdvanceTaxPercent > 0) {
-      rowData.extraAdvanceTaxAmount = parseFloat(((rowData.discountedGross * rowData.extraAdvanceTaxPercent) / 100).toFixed(2));
+      rowData.extraAdvanceTaxAmount = parseFloat(((rowData.discountedGross * rowData.extraAdvanceTaxPercent) / 100).toFixed(2)) || 0;
     } else {
-      rowData.extraAdvanceTaxPercent = parseFloat(((rowData.extraAdvanceTaxAmount / rowData.discountedGross) * 100).toFixed(2));
+      rowData.extraAdvanceTaxPercent = parseFloat(((rowData.extraAdvanceTaxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
     }
 
     // Calculate net amount before rebate
@@ -460,13 +474,13 @@ export class AddNewGrnComponent implements OnInit{
 
     // Determine if rebate is based on percentage or amount
     if (rowData.rebatePercent > 0) {
-      rowData.rebateAmount = parseFloat(((rowData.netAmountBeforeRebate * rowData.rebatePercent) / 100).toFixed(2));
+      rowData.rebateAmount = parseFloat(((rowData.netAmountBeforeRebate * rowData.rebatePercent) / 100).toFixed(2)) || 0;
     } else {
-      rowData.rebatePercent = parseFloat(((rowData.rebateAmount / rowData.netAmountBeforeRebate) * 100).toFixed(2));
+      rowData.rebatePercent = parseFloat(((rowData.rebateAmount / rowData.netAmountBeforeRebate) * 100).toFixed(2)) || 0;
     }
 
     // Calculate net amount after rebate
-    rowData.netAmount = parseFloat((rowData.netAmountBeforeRebate - rowData.rebateAmount).toFixed(2));
+    rowData.netAmount = parseFloat((rowData.netAmountBeforeRebate - rowData.rebateAmount).toFixed(2)) || 0;
 
     // Calculate net rate (net amount divided by total quantity)
     let totalQty = rowData.qty;
@@ -1036,6 +1050,10 @@ export class AddNewGrnComponent implements OnInit{
       this.productlist[i].prodInvoiceID= invoiceData.Products[i].prodInvoiceID || 0;
       this.Itemcalculation(i)
     }
+  }
+
+  sumField(field: string): number {
+    return this.productlist.reduce((acc, curr) => acc + (Number(curr[field]) || 0), 0);
   }
 
 }

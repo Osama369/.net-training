@@ -165,9 +165,9 @@ namespace eMaestroD.Api.Controllers
             {
 
                 var existEmail = await _userManager.FindByEmailAsync(user.Email);
+                var tenantID = Decrypt(HttpContext.User.FindFirst(ClaimTypes.Upn).Value);
                 if (existEmail == null)
                 {
-                    var tenantID = Decrypt(HttpContext.User.FindFirst(ClaimTypes.Upn).Value);
                     var tenlist = _Context.Tenants.Where(x => x.tenantID == int.Parse(tenantID)).ToList();
                     var userlist = _AMDbContext.Users.ToList();
                     if (tenlist[0].maxUserCount > userlist.Count())
@@ -185,6 +185,24 @@ namespace eMaestroD.Api.Controllers
 
                         if (result.Succeeded)
                         {
+
+                            var tenantUser = new TenantUser
+                            {
+                                tenantID = int.Parse(tenantID),
+                                userID = u.Id,
+                                email = user.Email,
+                                isPrimary = true, // Assuming this user is the primary user for the tenant
+                                ordinal = 1, // Assuming this is the first user
+                                active = true,
+                                created = DateTime.Now,
+                                crtBy = user.FirstName + " " + user.LastName,
+                                updated = DateTime.Now,
+                                modBy = user.FirstName + " " + user.LastName
+                            };
+
+                            await _Context.TenantUsers.AddAsync(tenantUser);
+                            await _Context.SaveChangesAsync();
+
                             return Ok(user);
                         }
 
@@ -192,7 +210,28 @@ namespace eMaestroD.Api.Controllers
                     }
                     return NotFound("User limit reached. No new users can be added.");
                 }
-                return NotFound("This Email Address Already Exist");
+                else if(existEmail.Email == user.Email)
+                {
+                    var tenantUser = new TenantUser
+                    {
+                        tenantID = int.Parse(tenantID),
+                        userID = existEmail.Id,
+                        email = user.Email,
+                        isPrimary = false, // Assuming this user is the primary user for the tenant
+                        ordinal = 1, // Assuming this is the first user
+                        active = true,
+                        created = DateTime.Now,
+                        crtBy = user.FirstName + " " + user.LastName,
+                        updated = DateTime.Now,
+                        modBy = user.FirstName + " " + user.LastName
+                    };
+
+                    await _Context.TenantUsers.AddAsync(tenantUser);
+                    await _Context.SaveChangesAsync();
+                    
+                    return Ok(user);
+                }
+                return NotFound("Try Again, Something went wrong.");
             }
             return Ok(user);
         }
@@ -281,7 +320,6 @@ namespace eMaestroD.Api.Controllers
             var email = HttpContext.User.FindFirst(ClaimTypes.Email);
             if (email.Value != user[0].Email)
             {
-
                 var u = await _userManager.FindByEmailAsync(user[0].Email);
 
                 var result = await _userManager.DeleteAsync(u);
@@ -295,8 +333,6 @@ namespace eMaestroD.Api.Controllers
                     _notificationInterceptor.SaveNotification("UsersDelete", user[0].ComID, "");
                     return Ok();
                 }
-
-
             }
             else
             {

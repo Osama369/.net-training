@@ -1,3 +1,4 @@
+import { DepartmentService } from 'src/app/Manage/Services/department.service';
 import { HttpClient } from '@angular/common/http';
 import { Component, QueryList, ViewChildren } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -10,6 +11,8 @@ import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { ReportService } from '../../Services/report.service';
 import { Location } from './../../../Administration/Models/location';
+import { Department } from 'src/app/Manage/Models/department';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 
 @Component({
@@ -20,7 +23,14 @@ import { Location } from './../../../Administration/Models/location';
 export class StockStatusCommulativeValuationComponent {
   constructor(private authService : AuthService,
     public bookmarkService: BookmarkService,
-    public route : ActivatedRoute,private http: HttpClient,private productCategoryService : ProductCategoryService ,private locationService:LocationService, private sanitizer: DomSanitizer, private datePipe: DatePipe,private reportService: ReportService){}
+    public route : ActivatedRoute,private http: HttpClient,
+    private productCategoryService : ProductCategoryService ,
+    private sharedDataService:SharedDataService,
+    private sanitizer: DomSanitizer,
+    private datePipe: DatePipe,
+    private reportService: ReportService,
+    private departmentService : DepartmentService
+  ){}
 
   @ViewChildren('inputField') inputFields: QueryList<any>;
   DateFrom :any;
@@ -30,6 +40,9 @@ export class StockStatusCommulativeValuationComponent {
   allowBtn: boolean = false;
   cols:any []= [];
   data:any[];
+
+  productDepartmentlist: Department[];
+  SelectedproductDepartment: any;
 
   productGrouplist: prodGroups[];
   FilterProductGrouplist: prodGroups[];
@@ -58,17 +71,33 @@ export class StockStatusCommulativeValuationComponent {
       },
     });
 
-    this.locationService.getAllLoc().subscribe({
-      next : (loc:any)=>{
-        this.locations = loc;
-    	this.locations.unshift({
-          locID : 0,
-          locName : "---ALL---"
-          }
-        );
-        this.selectedLocation = {locID : this.locations[0].locID, locName : this.locations[0].locName}
-      }
-    });
+
+      this.departmentService.getAllDepartments().subscribe({
+        next: (departments) => {
+          this.productDepartmentlist = (departments as { [key: string]: any })["enttityDataSource"];
+          this.productDepartmentlist.unshift({
+            depID : 0,
+            depName : "---ALL---"
+            }
+          );
+          this.SelectedproductDepartment = {depID : this.productDepartmentlist[0].depID, depName : this.productDepartmentlist[0].depName}
+        }
+      });
+
+
+      this.sharedDataService.getLocations$().subscribe({
+        next : (loc:any)=>{
+          this.locations = loc;
+          this.locations.unshift({
+            locID : 0,
+            locName : "---ALL---"
+            }
+          );
+          this.selectedLocation = {locID : this.locations[0].locID, locName : this.locations[0].locName}
+        }
+      })
+
+
     this.authService.GetBookmarkScreen(this.route.snapshot?.data['requiredPermission']).subscribe(x=>{
       this.bookmark = x;
   });
@@ -125,11 +154,13 @@ export class StockStatusCommulativeValuationComponent {
 
   submit()
   {
+    console.log(this.selectedLocation);
+    console.log(this.SelectedproductDepartment);
 
     let d1 = this.datePipe.transform('1900-01-01', "yyyy-MM-dd");
     let d2 =  this.datePipe.transform(this.DateTo, "yyyy-MM-dd");
 
-    this.reportService.runReportWith2Para("StockStatusCumulativeValuation",d1,d2,this.selectedLocation.locID, this.SelectedproductGrouplist.prodGrpID).subscribe(data => {
+    this.reportService.runReportWith3Para("StockStatusCumulativeValuation",d1,d2,this.selectedLocation.locID, this.SelectedproductDepartment.depID).subscribe(data => {
       this.data = (data as { [key: string]: any })["enttityDataSource"];
       this.cols = (data as { [key: string]: any })["entityModel"];
       this.allowBtn = true;

@@ -1,3 +1,4 @@
+import { AppConfigService } from 'src/app/Shared/Services/app-config.service';
 import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -11,6 +12,8 @@ import { ThemeService } from 'src/app/Shared/Services/theme.service';
 import { Configuration } from '../../Models/configuration';
 import { Companies } from '../../Models/companies';
 import { Currency } from '../../Models/currency';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
+import { ConfigSetting } from 'src/app/Shared/Models/config-setting';
 
 @Component({
   selector: 'app-configuration',
@@ -29,7 +32,9 @@ export class ConfigurationComponent {
     private router: Router,
     public bookmarkService: BookmarkService,
     public route : ActivatedRoute,
-    private logoService: LogoService
+    private logoService: LogoService,
+    private sharedDataService : SharedDataService,
+    private appConfigService : AppConfigService
   ) { }
 
   configurationList : Companies[] = [];
@@ -49,7 +54,7 @@ export class ConfigurationComponent {
   filteredPrintingList:any;
   SelectedView:any;
   bookmark : boolean = false;
-
+  configSetting : ConfigSetting[] = [];
   countryList : any[] = [
 "Afghanistan"
 ,"Albania"
@@ -477,6 +482,10 @@ export class ConfigurationComponent {
       this.CurrencyList = asd;
     });
 
+    this.sharedDataService.getConfigSettings$().subscribe(data=>{
+      this.configSetting = data;
+      })
+
   }
 
   createNewConfiguration()
@@ -490,5 +499,11 @@ export class ConfigurationComponent {
       CurrencyCode:undefined,
       logoFile:undefined,
     }
+  }
+
+  saveConfigSettings()
+  {
+    this.sharedDataService.updateConfigSettings$(this.configSetting);
+    this.toastr.success("Setting has been Successfully Saved.")
   }
 }

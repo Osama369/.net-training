@@ -115,7 +115,8 @@ export class AuthService {
 
   removeToken(){
     this.layoutService.state.staticMenuDesktopInactive = true;
-    localStorage.removeItem('tenantNames')
+    localStorage.removeItem('tenantNames');
+    localStorage.removeItem('tenantID');
     localStorage.removeItem('token');
     localStorage.removeItem('comID');
     localStorage.removeItem('comName');

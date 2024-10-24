@@ -9,10 +9,11 @@ export class ReportService {
   constructor(private http: HttpClient) { }
   baseApiUrl: string = environment.BaseApiUrl + '/Report';
 
-  runReportWith1Para(Reportname : any,para1:any,locID:any, catID:any) {
+  runReportWith1Para(Reportname : any,para1:any,locID:any, catID:any, vendID?:any) {
 
     const headers = new HttpHeaders({
       'catID': catID != null? catID : 0,
+      'vendID': vendID != null? vendID : 0,
     });
 
     let comID = localStorage.getItem('comID');

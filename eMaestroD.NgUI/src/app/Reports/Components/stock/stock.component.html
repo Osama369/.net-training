@@ -23,6 +23,23 @@
                   >
                   </p-dropdown>
                   &nbsp;
+                  <label class="col-form-label date-label required" translate>Name<span>:</span>&nbsp;</label>
+                  <p-dropdown
+                  #inputField
+                  styleClass="ReportDropDown"
+                  [(ngModel)]="SelectedVendor"
+                  [options]="Vendor"
+                  optionLabel="vendName"
+                  [filter]="true"
+                  [filterBy]="'vendName'"
+                  [showClear]="true"
+                  >
+                  <ng-template let-vendor pTemplate="item">
+                    <div>{{vendor.vendCode}} - {{vendor.vendName}}</div>
+                  </ng-template>
+                  </p-dropdown>
+
+                  &nbsp;
                     <label class="col-form-label date-label required" translate>Product Name<span>:</span>&nbsp;</label>
                     <!-- <p-autoComplete #inputField [(ngModel)]="SelectedProduct" [suggestions]="Filterproductlist" (completeMethod)="filterProduct($event)"
                     field="prodName" value="prodID" [minLength]="1" [dropdown]="true" class="ReportDropDown"></p-autoComplete> -->
@@ -37,6 +54,8 @@
                         [showClear]="true"
                         >
                         </p-dropdown>
+
+
 
                     &nbsp;
                     <label class="col-form-label Vendor-label required" translate>Location<span>:</span>&nbsp;</label>

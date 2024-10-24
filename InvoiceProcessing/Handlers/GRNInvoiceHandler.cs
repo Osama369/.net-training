@@ -111,7 +111,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                     isConverted = false,
                     gLDetails = product.ProductTaxes.Select(tax => new GLDetail
                     {
-                        GLID = 0,
+                        GLDetailID = tax.taxDetailID,
                         acctNo = tax.taxAcctNo,
                         GLAmount = tax.taxAmount,
                         rate = tax.taxPercent

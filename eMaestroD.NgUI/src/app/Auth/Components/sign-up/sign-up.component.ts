@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
-import { environment } from 'src/environments/environment';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Tenants } from 'src/app/Administration/Models/tenants';
 import { TenantService } from 'src/app/Administration/Services/tenant.service';
 import { AppConfigService } from '../../../Shared/Services/app-config.service';

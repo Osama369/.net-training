@@ -33,7 +33,7 @@
                     <p-inputNumber [disabled]="true" (keyup.enter)="onEnterComplex(0)" [useGrouping]="false" placeholder="SVN-00000000" [(ngModel)]="invoiceNo1"prefix="SVN-"></p-inputNumber>
                 </div> -->
                 <div class="col-3">
-                  <p-calendar #inputField (keyup.enter)="onEnterComplex(0)"  [maxDate]="maxDate"   [(ngModel)]="selectedDate" [showIcon]="true" dateFormat="dd/mm/yy"></p-calendar>
+                  <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" [minDate]="maxDate"  [maxDate]="maxDate"   [(ngModel)]="selectedDate" [showIcon]="true" dateFormat="dd/mm/yy"></p-calendar>
                 </div>
 
                 <div class="col-3">

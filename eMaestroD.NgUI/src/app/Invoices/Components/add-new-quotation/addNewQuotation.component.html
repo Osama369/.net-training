@@ -89,7 +89,7 @@
 
                         <td >
                             <!-- <p-autoComplete #inputField styleClass="myclass" [(ngModel)]="rowData.prodName" [suggestions]="Filterproductlist" (completeMethod)="filterProduct($event)"
-                            field="prodName" value="prodID" [minLength]="1" (keydown)="productVisible($event)" (onBlur)="onChange(rowData.prodName,ri, autoComplete)"  #autoComplete3 (onFocus)="autoComplete3.show()"  (onBlur)="autoComplete3.hide()"     class="myClass girdRow" [style]="{ 'width':'100% !important','min-width':'100%'}"></p-autoComplete> -->
+                            field="prodName" value="prodID" [minLength]="1" (keydown)="productVisible($event)" (onBlur)="onChange(rowData.prodName,ri, autoComplete)"  #autoComplete3 (onFocus)="autoComplete3.show()"        class="myClass girdRow" [style]="{ 'width':'100% !important','min-width':'100%'}"></p-autoComplete> -->
 
                             <p-autoComplete #inputField styleClass="myclass" [(ngModel)]="rowData.prodName" appendTo="body" [suggestions]="Filterproductlist" (completeMethod)="filterProduct($event)" (keyup.enter)="onEnterTableInput(-1,ri)" (onBlur)="onChange(rowData.prodName,ri, autoComplete3)" #autoComplete3 (onFocus)="autoComplete3.show()"
                             field="prodName" value="prodID" [minLength]="1" (keydown)="productVisible($event)"      class="myClass girdRow" [style]="{ 'width':'100% !important','min-width':'100%'}"></p-autoComplete>

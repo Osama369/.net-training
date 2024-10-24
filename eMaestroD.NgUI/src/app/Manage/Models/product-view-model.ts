@@ -59,12 +59,15 @@ export interface ProductViewModel {
   bonusQty?: number;
   discountAmount?: number;
   discountPercent?: number;
+  taxID?:number;
   taxPercent?: number;
   taxAmount?: number;
   extraDiscountPercent?: number;
   extraDiscountAmount?: number;
+  advanceTaxID?:number;
   advanceTaxPercent?: number;
   advanceTaxAmount?: number;
+  extraAdvanceTaxID?: number;
   extraAdvanceTaxAmount?: number;
   extraAdvanceTaxPercent?: number;
   rebatePercent?: number;

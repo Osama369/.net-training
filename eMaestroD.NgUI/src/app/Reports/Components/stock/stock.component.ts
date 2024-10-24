@@ -11,6 +11,8 @@ import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { ReportService } from '../../Services/report.service';
 import { Location } from './../../../Administration/Models/location';
+import { Vendor } from 'src/app/Manage/Models/vendor';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 
 @Component({
@@ -22,7 +24,7 @@ export class StockComponent {
   constructor(private authService : AuthService,
     public bookmarkService: BookmarkService,
     public route : ActivatedRoute,private productService:ProductsService,
-    private productCategoryService : ProductCategoryService ,private locationService:LocationService,private http: HttpClient, private sanitizer: DomSanitizer,private reportService: ReportService){}
+    private productCategoryService : ProductCategoryService ,private sharedDataService:SharedDataService,private http: HttpClient, private sanitizer: DomSanitizer,private reportService: ReportService){}
 
   SelectedProduct:any;
   productlist: Products[];
@@ -43,6 +45,12 @@ export class StockComponent {
   LocationList : Location[];
   locations : Location[];
   bookmark : boolean = false;
+  Vendor: Vendor[];
+  SelectedVendor:any;
+  vendorlist: Vendor[];
+  FilterVendorlist: Vendor[];
+
+
   ngOnInit(): void {
     this.productService.getAllProducts().subscribe({
       next: (products) => {
@@ -112,7 +120,7 @@ export class StockComponent {
       },
     });
 
-    this.locationService.getAllLoc().subscribe({
+    this.sharedDataService.getLocations$().subscribe({
       next : (loc:any)=>{
         this.locations = loc;
         this.locations.unshift({
@@ -123,6 +131,19 @@ export class StockComponent {
         this.selectedLocation = {locID : this.locations[0].locID, locName : this.locations[0].locName}
       }
     })
+
+    this.sharedDataService.getVendors$().subscribe({
+      next: (vnd) => {
+        this.Vendor = (vnd as { [key: string]: any })["enttityDataSource"];;
+        this.Vendor.unshift({
+          vendID : 0,
+          vendName : "---ALL---",
+          });
+
+          this.SelectedVendor = {vendID:  0, vendName: '---ALL---'};
+        }
+   });
+
     this.authService.GetBookmarkScreen(this.route.snapshot?.data['requiredPermission']).subscribe(x=>{
       this.bookmark = x;
   });
@@ -231,7 +252,7 @@ export class StockComponent {
 
   submit()
   {
-    this.reportService.runReportWith1Para("StockList",this.SelectedProduct.prodID,this.selectedLocation.locID, this.SelectedproductGrouplist.prodGrpID).subscribe(data => {
+    this.reportService.runReportWith1Para("StockList",this.SelectedProduct.prodID,this.selectedLocation.locID, this.SelectedproductGrouplist.prodGrpID,this.SelectedVendor.vendID).subscribe(data => {
       this.data = (data as { [key: string]: any })["enttityDataSource"];
       this.cols = (data as { [key: string]: any })["entityModel"];
       this.allowBtn = true;

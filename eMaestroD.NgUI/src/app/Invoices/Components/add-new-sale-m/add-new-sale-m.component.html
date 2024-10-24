@@ -115,16 +115,16 @@
                       </td>
 
                       <td >
-                                  <input #qtyField  [style]="{'width':'50px !important','min-width':'100%'}" pInputText #inputFieldTable (keyup.enter)="onEnterTableInput(0,ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"  appFocusNext class="p-inputtext-sm" type="text" [(ngModel)]="rowData.qty" (blur)="ShowSerialNoDailog(rowData,rowData.qty, ri)" (change)="Itemcalculation(ri)" class="girdRow">
+                                  <input #qtyField  [style]="{'width':'50px !important','min-width':'100%'}" pInputText #inputFieldTable [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(0,ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"  appFocusNext class="p-inputtext-sm" type="text" [(ngModel)]="rowData.qty" (blur)="ShowSerialNoDailog(rowData,rowData.qty, ri)" (change)="Itemcalculation(ri)" class="girdRow">
                       </td>
                       <td>
-                                  <input [style]="{'width':'80px !important','min-width':'100%','text-align':'right'}" pInputText #inputFieldTable  (keyup.enter)="onEnterTableInput(1,ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.sellRate" (change)="Itemcalculation(ri)" class="girdRow">
+                                  <input [style]="{'width':'80px !important','min-width':'100%','text-align':'right'}" pInputText #inputFieldTable [disabled]="!rowData.barCode && !rowData.prodName"  (keyup.enter)="onEnterTableInput(1,ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.sellRate" (change)="Itemcalculation(ri)" class="girdRow">
                       </td>
                       <td>
-                                  <input [style]="{'width':'40px !important','min-width':'100%','text-align':'right'}" pInputText  #inputFieldTable (keyup.enter)="addNewRow(rowData)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.discount" (change)="Itemcalculation(ri)" (input)="onDiscountChange($event, ri)"  class="girdRow">
+                                  <input [style]="{'width':'40px !important','min-width':'100%','text-align':'right'}" pInputText  #inputFieldTable [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="addNewRow(rowData)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.discount" (change)="Itemcalculation(ri)" (input)="onDiscountChange($event, ri)"  class="girdRow">
                       </td>
                       <td>
-                                  <input [style]="{'width':'120px !important','min-width':'100%' ,'text-align':'right','font-weight': 'bold'}" pInputText class="p-inputtext-sm" type="text" [(ngModel)]="rowData.netAmount" readonly class="girdRow">
+                                  <input [style]="{'width':'120px !important','min-width':'100%' ,'text-align':'right','font-weight': 'bold'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.netAmount" readonly class="girdRow">
                       </td>
                       <td>
                           <button pButton type="button" title="Delete Row" icon="pi pi-trash" (click)="onRowDeleteInit(rowData,ri)" class="p-button-rounded p-button-text" [style]="{'height': '20px !important','width': '20px !important',color:'var(--gray-900)'}"></button>
@@ -166,7 +166,7 @@
                   <label class="col-form-label col-6" style="text-align: right;" name="purchRate" [(ngModel)]="productlist[rowNmb].purchRate" ngDefaultControl *ngIf="!eyeOpen"><i class="pi pi-eye-slash" style="font-size: 1rem" (click)="showPurchasePrice()"></i></label>
               </div>
           </div>
-          <div class="row" style="margin-top: 20px; background-color:var(--surface-900);color: var(--surface-0); padding:4px; height: 35px !important;" (click)="showCustomerDetails()">
+          <!-- <div class="row" style="margin-top: 20px; background-color:var(--surface-900);color: var(--surface-0); padding:4px; height: 35px !important;" (click)="showCustomerDetails()">
               <h4 class="col-9" style="color: var(--surface-0);" translate>Customer Detail</h4>
               <i class="pi pi-angle-up col-3" *ngIf="CustomerDetailShow" style="font-size: 2rem; float: right;padding: 0px !important;text-align: right;padding-right: 5px !important;" ></i>
               <i class="pi pi-angle-down col-3" *ngIf="!CustomerDetailShow" style="font-size: 2rem; float: right;padding: 0px !important;text-align: right;padding-right: 5px !important;"></i>
@@ -174,12 +174,12 @@
           <div class="row" *ngIf="CustomerDetailShow">
               <div class="col-12" style="border-radius: 10px; background-color:'';">
                   <label class="col-form-label col-6 required" translate><strong translate>Date</strong></label>
-                  <label class="col-form-label col-6" style="text-align: right;" name="inoviceNo" [(ngModel)]="invoicelist[rowNmb].dtTx" ngDefaultControl >{{invoicelist[rowNmb].dtTx}}</label>
+                  <label class="col-form-label col-6" style="text-align: right;" name="inoviceNo" *ngIf="invoicelist[rowNmb].dtTx" [(ngModel)]="invoicelist[rowNmb].dtTx" ngDefaultControl >{{invoicelist[rowNmb].dtTx}}</label>
                   <label class="col-form-label col-6 required" translate><strong translate>Last Sold Price</strong></label>
-                  <label class="col-form-label col-6" style="text-align: right;" name="unitPrice" [(ngModel)]="invoicelist[rowNmb].unitPrice" ngDefaultControl *ngIf="eyeOpenforSoldPrice">{{invoicelist[rowNmb].unitPrice}}  <i class="pi pi-eye" style="font-size: 1rem" (click)="showLastSoldPrice()"></i></label>
-                  <label class="col-form-label col-6" style="text-align: right;" name="unitPrice" [(ngModel)]="invoicelist[rowNmb].unitPrice" ngDefaultControl *ngIf="!eyeOpenforSoldPrice"><i class="pi pi-eye-slash" style="font-size: 1rem" (click)="showLastSoldPrice()"></i></label>
+                  <label class="col-form-label col-6" style="text-align: right;" name="unitPrice" *ngIf="invoicelist[rowNmb].unitPrice && eyeOpenforSoldPrice" [(ngModel)]="invoicelist[rowNmb].unitPrice" ngDefaultControl >{{invoicelist[rowNmb].unitPrice}}  <i class="pi pi-eye" style="font-size: 1rem" (click)="showLastSoldPrice()"></i></label>
+                  <label class="col-form-label col-6" style="text-align: right;" name="unitPrice" *ngIf="invoicelist[rowNmb].unitPrice && !eyeOpenforSoldPrice" [(ngModel)]="invoicelist[rowNmb].unitPrice" ngDefaultControl><i class="pi pi-eye-slash" style="font-size: 1rem" (click)="showLastSoldPrice()"></i></label>
               </div>
-          </div>
+          </div> -->
           <div class="row" style="margin-top: 20px; background-color:var(--surface-900);color: var(--surface-0); padding:4px; height: 35px !important;" (click)="showInvoiceDetails()">
               <h4 class="col-9" style="color: var(--surface-0);" translate>Invoice Detail</h4>
               <i class="pi pi-angle-up col-3" *ngIf="invoiceDetailShow" style="font-size: 2rem; float: right;padding: 0px !important;text-align: right;padding-right: 5px !important;"></i>
@@ -189,10 +189,10 @@
               <div class="col-12" style="border-radius: 10px; background-color: '';">
                   <label class="col-form-label col-6 required" translate><strong translate>Sub Total</strong></label>
                   <label class="col-form-label col-6" style="text-align: right;" name="SubTotal" [(ngModel)]="totalGross" ngDefaultControl >{{totalGross | number:'1.2-2'}}</label>
-                  <label class="col-form-label col-6 required" translate>
-                    <!-- <p-checkbox [(ngModel)]="vatInclude" (ngModelChange)="calculateTotalAmount()" [binary]="true" inputId="binary"></p-checkbox> -->
+                  <!-- <label class="col-form-label col-6 required" translate>
+                    <p-checkbox [(ngModel)]="vatInclude" (ngModelChange)="calculateTotalAmount()" [binary]="true" inputId="binary"></p-checkbox>
                     <strong> {{this.TaxName | translate}} <span>({{this.TaxValue}}%)</span></strong></label>
-                  <label class="col-form-label col-6" style="text-align: right;" name="TotalTax" [(ngModel)]="totalTax" ngDefaultControl >{{totalTax | number:'1.2-2'}}</label>
+                  <label class="col-form-label col-6" style="text-align: right;" name="TotalTax" [(ngModel)]="totalTax" ngDefaultControl >{{totalTax | number:'1.2-2'}}</label> -->
                   <label class="col-form-label col-6 required" translate><strong translate>Discount</strong></label>
                   <label class="col-form-label col-6" style="text-align: right;font-weight: bold;" name="Total" [(ngModel)]="totalDiscount" ngDefaultControl >{{totalDiscount | number:'1.2-2'}}</label>
                   <!-- <input #focusDiscountInput class="col-form-label col-6 p-inputtext-md" style="float:right ; text-align: right; width: 60px !important; height: 30px !important;" name="TotalDiscount" pInputText type="text" [(ngModel)]="TotalDiscount" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" (ngModelChange)="calculateTotalAmount()" (keyup.enter)="focusOnSaveButton()"> -->

@@ -53,6 +53,7 @@ export class SelectCompanyComponent implements OnInit {
       const primaryTenant = this.tenantlist.find(tenant => tenant.isPrimary);
       if (primaryTenant) {
         this.selectedTenant = primaryTenant.tenantID;
+        localStorage.setItem('tenantID', primaryTenant.tenantID);
       }
     }
     this.NewCompanyList = [{companyName:""}]
@@ -88,6 +89,7 @@ export class SelectCompanyComponent implements OnInit {
         });
 
         // Save updated tenant list back to localStorage
+        localStorage.setItem('tenantID', tenantId);
         localStorage.setItem('tenantNames', JSON.stringify(this.tenantlist));
       }
 

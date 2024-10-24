@@ -12,10 +12,13 @@ namespace eMaestroD.DataAccess.IRepositories
     {
         Task<string> GenerateVoucherNoAsync(int txTypeID, int? comID);
         Task<List<GL>> GetGLEntriesByVoucherNoAsync(string voucherNo);
-        Task<bool> UpdateGLIsConvertedAsync(string voucherNo, string convertedVoucherNo);
-        Task InsertGLEntriesAsync(List<GL> glEntries); 
+        Task<bool> UpdateGLIsConvertedAsync(string voucherNo, string convertedVoucherNo, bool isDeleted); 
+         Task InsertGLEntriesAsync(List<GL> glEntries); 
         Task UpdateGLEntriesAsync(List<GL> glEntries);
         Task DeleteGLEntriesAsync(string voucherNo);
         Task<List<Invoice>> GetInvoicesAsync(int txTypeID, int customerOrVendorID, int comID);
+
+        //Temp until all method change
+        Task OldInsertGLEntriesAsync(IEnumerable<GL> items, DateTime now, string username);
     }
 }

@@ -12,7 +12,7 @@ namespace Models.VMModels
         public int? prodID { get; set; }
         public int? prodGrpID { get; set; }
         public string prodCode { get; set; }
-        public string shortName { get; set; }
+        public string? shortName { get; set; }
         public string prodName { get; set; }
         public string descr { get; set; }
         public string prodUnit { get; set; }

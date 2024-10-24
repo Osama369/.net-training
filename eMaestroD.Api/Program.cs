@@ -18,6 +18,7 @@ using eMaestroD.InvoiceProcessing.Factories;
 using eMaestroD.DataAccess.IRepositories;
 using eMaestroD.DataAccess.Repositories;
 using eMaestroD.InvoiceProcessing.Interfaces;
+using eMaestroD.DataAccess.DataSet;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,7 @@ builder.Services.AddDbContext<Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnection"));
     options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
 });
+
 builder.Services.AddSingleton<EmailService>(); 
 builder.Services.AddScoped<IEmailService, EmailService>();
 

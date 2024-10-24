@@ -166,7 +166,7 @@
 
                       <td >
                           <p-autoComplete #inputField styleClass="myclass" [(ngModel)]="rowData.prodName" [suggestions]="Filterproductlist" (completeMethod)="filterProduct($event)"
-                          field="prodName" value="prodID" [minLength]="1" (keydown)="productVisible($event)" (keyup.enter)="onEnterTableInput(-1,ri)" (onBlur)="onChange(rowData.prodName,ri, autoComplete3)" class="myClass girdRow" [style]="{ 'width':'100% !important','min-width':'100%'}" #autoComplete3 (onFocus)="autoComplete3.show()"  (onBlur)="autoComplete3.hide()"></p-autoComplete>
+                          field="prodName" value="prodID" [minLength]="1" (keydown)="productVisible($event)" (keyup.enter)="onEnterTableInput(-1,ri)" (onBlur)="onChange(rowData.prodName,ri, autoComplete3)" class="myClass girdRow" [style]="{ 'width':'100% !important','min-width':'100%'}" #autoComplete3 (onFocus)="autoComplete3.show()"   ></p-autoComplete>
 <!--
                               <p-dropdown #inputField [style]="{'width':'100% !important','min-width':'100%'}" [options]="products" (click)="increaseFocusIndexForProducts()" [(ngModel)]="rowData.prodName" optionLabel="prodName" optionValue="prodName" [filter]="true" filterBy="prodName" placeholder="Select a Product" (onChange)="onChange(rowData.prodName,ri)"
                               (keydown)="productVisible($event)" (keyup.enter)="onEnterTableInput(-1,ri)" >
