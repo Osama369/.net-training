@@ -32,10 +32,10 @@ export class TaxReportBySupplierComponent {
 
   Vendor: Vendor[];
   SelectedVendor:any;
-  SelectedType:any;
   vendorlist: Vendor[];
-  FilterTypelist: any;
   FilterVendorlist: Vendor[];
+  SelectedType:any;
+  FilterTypelist: any;
   @ViewChildren('inputField') inputFields: QueryList<any>;
   DateFrom :any;
   DateTo :any;

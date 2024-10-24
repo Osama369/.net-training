@@ -9,16 +9,28 @@
                         <div class="col-12">
                         <label class="col-form-label date-label required" translate>As of Date<span>:</span>&nbsp;</label>
                         <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" [(ngModel)]="DateTo" class="ReportDropDown" dateFormat="dd/mm/yy"></p-calendar>
-                        &nbsp;
+                        <!-- &nbsp;
                         <label class="col-form-label date-label required" translate>Category<span>:</span>&nbsp;</label>
-                        <!-- <p-autoComplete #inputField [(ngModel)]="SelectedproductGrouplist" [suggestions]="FilterProductGrouplist" (completeMethod)="filterProductCategory($event)"
-                        field="prodGrpName" value="prodGrpID" [minLength]="1" class="ReportDropDown" [dropdown]="true"></p-autoComplete> -->
                         <p-dropdown
                         #inputField
                         styleClass="ReportDropDown"
                         [(ngModel)]="SelectedproductGrouplist"
                         [options]="productGrouplist"
                         optionLabel="prodGrpName"
+                        [filter]="true"
+                        [filterBy]="'prodGrpName'"
+                        [showClear]="true"
+                        >
+                        </p-dropdown> -->
+                        &nbsp;
+                        <label class="col-form-label date-label required" translate>Department<span>:</span>&nbsp;</label>
+                        <p-dropdown
+                        #inputField
+                        styleClass="ReportDropDown"
+                        [(ngModel)]="SelectedproductDepartment"
+                        [options]="productDepartmentlist"
+                        optionLabel="depName"
+                        optionValue="depID"
                         [filter]="true"
                         [filterBy]="'prodGrpName'"
                         [showClear]="true"

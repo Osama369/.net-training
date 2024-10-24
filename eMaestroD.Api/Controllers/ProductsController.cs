@@ -153,18 +153,13 @@ namespace eMaestroD.Api.Controllers
         [Route("GetOneProductDetail/{comID}/{prodID}")]
         public async Task<IActionResult> GetOneProductDetail(int comID, int prodID)
         {
-
             var product = await _AMDbContext.Products.Where(x => x.comID == comID && x.prodID == prodID && x.active == true).FirstOrDefaultAsync();
-
-          
             var productBarCodes = await _AMDbContext.ProductBarCodes
                 .Where(x => x.prodID == prodID)
                 .ToListAsync();
 
             product.ProductBarCodes = productBarCodes;
-
             return Ok(product);
-
         }
 
 

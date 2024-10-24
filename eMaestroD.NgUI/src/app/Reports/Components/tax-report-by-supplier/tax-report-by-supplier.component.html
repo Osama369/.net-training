@@ -15,13 +15,6 @@
                       <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" [(ngModel)]="DateTo" class="ReportDropDown" dateFormat="dd/mm/yy"></p-calendar>
                       &nbsp;
                       <label class="col-form-label date-label required" translate>Name<span>:</span>&nbsp;</label>
-                        <!-- <p-autoComplete #inputField [(ngModel)]="SelectedVendor" [suggestions]="FilterVendorlist" (completeMethod)="filterVendor($event)"
-                        field="vendName" value="vendID" [minLength]="1" [dropdown]="true" class="ReportDropDown">
-                        <ng-template let-vendor pTemplate="item">
-                          <div>{{vendor.vendCode}} - {{vendor.vendName}}</div>
-                        </ng-template>
-                      </p-autoComplete> -->
-
                       <p-dropdown
                       #inputField
                       styleClass="ReportDropDown"

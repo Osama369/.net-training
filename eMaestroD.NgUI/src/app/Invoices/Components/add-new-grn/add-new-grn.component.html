@@ -52,6 +52,7 @@
               </div>
           </div>
           <br>
+
           <p-table #dt [value]="productlist" dataKey="prodID" editMode="row" styleClass="p-datatable-sm" [scrollable]="true" class="AddTable" scrollHeight="300px" scrollDirection="vertical">
               <ng-template pTemplate="header">
                   <tr>
@@ -201,7 +202,7 @@
                 </tr>
             </ng-template>
               <ng-template pTemplate="footer">
-                <tr>
+                <tr class="sticky-footer">
 
                     <td pFrozenColumn>
                       <button #newRowButton pButton type="button" icon="pi pi-plus" [label]="'Add' | translate"
@@ -372,3 +373,4 @@
 
 
 <app-please-wait *ngIf="showPleaseWait"></app-please-wait>
+

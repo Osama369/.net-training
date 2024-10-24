@@ -62,8 +62,9 @@ namespace eMaestroD.Api.Controllers
             else if (ReportName == "StockList")
             {
                 int catID = int.Parse(Request.Headers["catID"].ToString());
+                int vendID = int.Parse(Request.Headers["vendID"].ToString());
                 int lID = int.Parse(locID);
-                var res = await StockReportAsync(Parameter, lID, comID, catID);
+                var res = await StockReportAsync(Parameter, lID, comID, catID, vendID);
 
                 ResponsedGroupListVM vM = new ResponsedGroupListVM();
                 vM.enttityDataSource = res;
@@ -682,16 +683,17 @@ namespace eMaestroD.Api.Controllers
 
 
         [NonAction]
-        public async Task<List<StockList>> StockReportAsync(string prodID, int locID, int comID, int catID)
+        public async Task<List<StockList>> StockReportAsync(string prodID, int locID, int comID, int catID, int vendID)
         {
             List<StockList> SDL;
-            string sql = "EXEC Report_StockList @prodBCID,@locID,@comID, @catID";
+            string sql = "EXEC Report_StockList @prodBCID,@locID,@comID, @catID,@vendID";
             List<SqlParameter> parms = new List<SqlParameter>
             {
                     new SqlParameter { ParameterName = "@prodBCID", Value = prodID },
                     new SqlParameter { ParameterName = "@locID", Value = locID },
                     new SqlParameter { ParameterName = "@comID", Value = comID },
-                    new SqlParameter { ParameterName = "@catID", Value = catID }
+                    new SqlParameter { ParameterName = "@catID", Value = catID },
+                    new SqlParameter { ParameterName = "@vendID", Value = vendID }
             };
             SDL = _AMDbContext.StockList.FromSqlRaw(sql, parms.ToArray()).ToList();
 
