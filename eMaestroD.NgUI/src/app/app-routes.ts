@@ -1,0 +1,111 @@
+export const APP_ROUTES = {
+  default: '',
+
+  account: {
+    base: 'Account',
+    login: 'Account/login',
+    signUp: 'Account/SignUp',
+    register: 'Account/Register',
+    confirmation: 'Account/Confirmation',
+    selectCompany: 'Account/SelectCompany',
+  },
+
+  topbar: 'topbar',
+
+  notFound: '404',
+  notAuthorized: 'not-authorized',
+
+  dashboard: 'Dashboard',
+
+  manage: {
+    base: 'Manage',
+    reorder: 'Manage/ReOrder',
+    manufacture: 'Manage/Manufacture',
+    brand: 'Manage/Brand',
+    department: 'Manage/Department',
+    category: 'Manage/Category',
+    products: 'Manage/Products',
+    productBarcode: 'Manage/ProductBarcode',
+    offer: 'Manage/Offer',
+    schemes: 'Manage/Schemes',
+    customers: 'Manage/Customers',
+    suppliers: 'Manage/Suppliers',
+    bank: 'Manage/Bank',
+    creditCard: 'Manage/CreditCard',
+    bulkStockUpdate: 'Manage/bulkStockUpdate',
+  },
+
+  invoices: {
+    base: 'Invoices',
+    purchaseOrder: 'Invoices/PurchaseOrder',
+    grn: 'Invoices/GRN',
+    purchase: 'Invoices/Purchase',
+    purchaseReturn: 'Invoices/PurchaseReturn',
+    quotations: 'Invoices/Quotations',
+    saleInvoices: 'Invoices/SaleInvoices',
+    saleReturn: 'Invoices/SaleReturn',
+    serviceInvoices: 'Invoices/ServiceInvoices',
+  },
+
+  transactions: {
+    base: 'Transactions',
+    receipt: 'Transactions/Receipt',
+    payment: 'Transactions/Payment',
+    journal: 'Transactions/Journal',
+    expense: 'Transactions/Expense',
+    dayBook: 'Transactions/DayBook',
+  },
+
+  reports: {
+    base: 'Reports',
+    inventoryReports: {
+      dailySale: 'Reports/DailySaleReport',
+      saleHistory: 'Reports/SaleHistoryReport',
+      stock: 'Reports/StockReport',
+      stockValuation: 'Reports/StockValuationReport',
+      stockSaleAndReturn: 'Reports/StockSaleAndReturnReport',
+    },
+    accountReports: {
+      advancedSearch: 'Reports/AdvancedSearchReport',
+      accountReceivable: 'Reports/AccountReceivable',
+      accountPayable: 'Reports/AccountPayable',
+      bankBook: 'Reports/BankBookReport',
+      creditCard: 'Reports/CreditCardReport',
+      cashBook: 'Reports/CashBookReport',
+      cashRegister: 'Reports/CashRegisterReport',
+      monthlySales: 'Reports/MonthlySales',
+      taxReports: {
+        taxDetail: 'Reports/TaxDetail',
+        taxDetailByCustomer: 'Reports/TaxDetailByCustomer',
+        taxDetailBySupplier: 'Reports/TaxDetailBySupplier',
+        taxSummary: 'Reports/TaxSummary',
+      },
+      generalJournal: 'Reports/GeneralJournalReport',
+      ledgerReports: {
+        generalLedger: 'Reports/GeneralLedgerReport',
+        itemLedger: 'Reports/ItemLedgerReport',
+        partyLedger: 'Reports/PartyLedgerReport',
+      },
+      trialBalance: 'Reports/TrialBalanceReport',
+      balanceSheet: 'Reports/BalanceSheetReport',
+      profitReports: {
+        itemWiseProfit: 'Reports/ItemWiseProfitReport',
+        invoiceWiseProfit: 'Reports/InvoiceWiseProfit',
+        profitAndLoss: 'Reports/ProfitAndLossReport',
+      },
+    },
+  },
+
+  administration: {
+    base: 'Administration',
+    location: 'Administration/Location',
+    taxes: 'Administration/Taxes',
+    chartOfAccounts: 'Administration/COA',
+    users: 'Administration/Users',
+    fiscalYear: 'Administration/FiscalYear',
+    authorization: 'Administration/PermissionScreen',
+    notification: 'Administration/Notification',
+    notificationAlert: 'Administration/NotificationAlert',
+    companySetting: 'Administration/Configuration',
+  },
+};

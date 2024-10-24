@@ -535,10 +535,10 @@ namespace eMaestroD.Api.Controllers
                         //};
                         //obj1 = _AMDbContext.StockStatus.FromSqlRaw<StockStatus>(sql4, parms4.ToArray()).ToList();
 
-                        string sql4 = "EXEC Report_StockList @prodID,@locID,@comID, @catID";
+                        string sql4 = "EXEC Report_StockList @prodBCID,@locID,@comID, @catID";
                         List<SqlParameter> parms4 = new List<SqlParameter>
                         {
-                                new SqlParameter { ParameterName = "@prodID", Value = 0 },
+                                new SqlParameter { ParameterName = "@prodBCID", Value = 0 },
                                 new SqlParameter { ParameterName = "@locID", Value = loc.LocationId },
                                 new SqlParameter { ParameterName = "@comID", Value = comID },
                                 new SqlParameter { ParameterName = "@catID", Value = 0 }

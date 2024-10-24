@@ -31,7 +31,7 @@ export class SharedDataService {
     private _reportSettingService: ReportSettingService,
     private _taxesService: TaxesService
   ) {
-    this.loadAllData();
+    this.loadAllData().subscribe();
   }
 
   loadAllData(): Observable<any> {

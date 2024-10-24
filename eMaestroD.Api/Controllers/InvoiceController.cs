@@ -46,9 +46,16 @@ namespace eMaestroD.Api.Controllers
             try
             {
                 List<GL> glEntries = await _glService.ConvertInvoiceToGL(invoice);
-                await _glService.InsertGLEntries(glEntries);
+                if(invoice.invoiceID == 0)
+                {
+                    await _glService.InsertGLEntries(glEntries);
+                }
+                else
+                {
+                    await _glService.UpdateGLEntries(glEntries);
+                }
 
-                
+
                 return Ok(new { message = "Invoice created successfully." });
             }
             catch(Exception ex)
@@ -92,6 +99,21 @@ namespace eMaestroD.Api.Controllers
                 }
 
                 return Ok(invoices);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+    
+        [HttpDelete]
+        [Route("{voucherNo}/{comID}")]
+        public async Task<IActionResult> DeleteInvoice(string voucherNo, int comID)
+        {
+            try
+            {
+                await _glService.DeleteInvoice(voucherNo);
+                return Ok();
             }
             catch (Exception ex)
             {

@@ -11,6 +11,7 @@ import {
 import { catchError, Observable, switchMap, throwError } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from '../Shared/Services/auth.service';
+import { APP_ROUTES } from '../app-routes';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
@@ -39,7 +40,7 @@ export class TokenInterceptor implements HttpInterceptor {
             }
         else {
             localStorage.clear();
-            this.router.navigate(["/login"]);
+            this.router.navigate([APP_ROUTES.account.login]);
         }
       }
     return next.handle(request);
@@ -61,7 +62,6 @@ export class TokenInterceptor implements HttpInterceptor {
   //     catchError((err)=>{
   //       return throwError(()=>{
   //         this.toast.warning({detail:"Warning", summary:"Token is expired, Please Login again"});
-  //         this.router.navigate(['login'])
   //       })
   //     })
   //   )

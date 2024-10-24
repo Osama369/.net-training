@@ -8,6 +8,7 @@ namespace eMaestroD.Models.VMModels
 {
     public class InvoiceProduct
     {
+        public int? prodInvoiceID { get; set; }
         public int? prodID { get; set; }
         public int? prodBCID { get; set; }
         public string? prodCode { get; set; }

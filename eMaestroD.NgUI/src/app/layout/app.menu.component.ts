@@ -4,6 +4,7 @@ import { LayoutService } from './service/app.layout.service';
 import { Router } from '@angular/router';
 import { AutoComplete } from 'primeng/autocomplete';
 import { ScreenService } from '../Administration/Services/screen.service';
+import { APP_ROUTES } from '../app-routes';
 
 @Component({
     selector: 'app-menu',
@@ -27,7 +28,7 @@ export class AppMenuComponent implements OnInit {
         const childItems = parent.items.flatMap((item: any) => item.items ? item.items.map((child: any) => ({  child: child.label, routerLink: child.routerLink })) : []);
         return [...childItems]; // Include parent label as well
       });
-      allItems.unshift({ parent: "Dashboard", child: "Dashboard", routerLink: ['/Dashboard'] });
+      allItems.unshift({ parent: "Dashboard", child: "Dashboard", routerLink: [APP_ROUTES.dashboard] });
       this.filteredItems = allItems.filter(item => item.child.toLowerCase().includes(this.selectedItem.toLowerCase()));
     }
 
@@ -44,121 +45,135 @@ export class AppMenuComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.model = [
+      this.model = [
+        {
+          label: '',
+          items: [
             {
-                label: '',
-                items: [
-                    { label: 'Dashboard', icon: 'pi pi-fw pi-home', routerLink: ['/Dashboard'] },
-                    { label: 'Manage', icon: 'pi pi-fw pi-pencil',
-                        items:[
-                            {label: 'Re-Order Products', routerLink: ['/Manage/ReOrder']},
-                            {label: 'Manufacture', routerLink: ['/Manage/Manufacture']},
-                            {label: 'Brand', routerLink: ['/Manage/Brand']},
-                            {label: 'Departments', routerLink: ['/Manage/Department']},
-                            {label: 'Category', routerLink: ['/Manage/Category']},
-                            {label: 'Products', routerLink: ['/Manage/Products']},
-                            {label: 'Print Barcode', routerLink: ['/Manage/ProductBarcode']},
-                            {label: 'Offer', routerLink: ['/Manage/Offer']},
-                            {label: 'Schemes', routerLink: ['/Manage/Schemes']},
-                            {label: 'Customers', routerLink: ['/Manage/Customers']},
-                            {label: 'Suppliers', routerLink: ['/Manage/Suppliers']},
-                            {label: 'Bank', routerLink: ['/Manage/Bank']},
-                            {label: 'Credit Card', routerLink: ['/Manage/CreditCard']},
-                            {label: 'Bulk Stock Update', routerLink: ['/Manage/bulkStockUpdate']},
-                        ]
+              label: 'Dashboard',
+              icon: 'pi pi-fw pi-home',
+              routerLink: [APP_ROUTES.dashboard],
+            },
+            {
+              label: 'Manage',
+              icon: 'pi pi-fw pi-pencil',
+              items: [
+                { label: 'Re-Order Products', routerLink: [APP_ROUTES.manage.reorder] },
+                { label: 'Manufacture', routerLink: [APP_ROUTES.manage.manufacture] },
+                { label: 'Brand', routerLink: [APP_ROUTES.manage.brand] },
+                { label: 'Departments', routerLink: [APP_ROUTES.manage.department] },
+                { label: 'Category', routerLink: [APP_ROUTES.manage.category] },
+                { label: 'Products', routerLink: [APP_ROUTES.manage.products] },
+                { label: 'Print Barcode', routerLink: [APP_ROUTES.manage.productBarcode] },
+                { label: 'Offer', routerLink: [APP_ROUTES.manage.offer] },
+                { label: 'Schemes', routerLink: [APP_ROUTES.manage.schemes] },
+                { label: 'Customers', routerLink: [APP_ROUTES.manage.customers] },
+                { label: 'Suppliers', routerLink: [APP_ROUTES.manage.suppliers] },
+                { label: 'Bank', routerLink: [APP_ROUTES.manage.bank] },
+                { label: 'Credit Card', routerLink: [APP_ROUTES.manage.creditCard] },
+                { label: 'Bulk Stock Update', routerLink: [APP_ROUTES.manage.bulkStockUpdate] },
+              ],
+            },
+            {
+              label: 'Invoices',
+              icon: 'pi pi-fw pi-shopping-cart',
+              items: [
+                { label: 'Purchase Order', routerLink: [APP_ROUTES.invoices.purchaseOrder] },
+                { label: 'Goods Received Note', routerLink: [APP_ROUTES.invoices.grn] },
+                { label: 'Purchase', routerLink: [APP_ROUTES.invoices.purchase] },
+                { label: 'Purchase Return', routerLink: [APP_ROUTES.invoices.purchaseReturn] },
+                { label: 'Quotations', routerLink: [APP_ROUTES.invoices.quotations] },
+                { label: 'Sale Invoices', routerLink: [APP_ROUTES.invoices.saleInvoices] },
+                { label: 'Sale Return', routerLink: [APP_ROUTES.invoices.saleReturn] },
+                { label: 'Service Invoices', routerLink: [APP_ROUTES.invoices.serviceInvoices] },
+                // { label: 'Stock Shortage', routerLink: [APP_ROUTES.invoices.stockShortage] },
+              ],
+            },
+            {
+              label: 'Transactions',
+              icon: 'pi pi-fw pi-money-bill',
+              items: [
+                { label: 'Receipt Voucher', routerLink: [APP_ROUTES.transactions.receipt] },
+                { label: 'Payment Voucher', routerLink: [APP_ROUTES.transactions.payment] },
+                { label: 'Journal Voucher', routerLink: [APP_ROUTES.transactions.journal] },
+                { label: 'Expense Voucher', routerLink: [APP_ROUTES.transactions.expense] },
+                { label: 'Day Book', routerLink: [APP_ROUTES.transactions.dayBook] },
+              ],
+            },
+            {
+              label: 'Reports',
+              icon: 'pi pi-fw pi-file-pdf',
+              items: [
+                {
+                  label: 'Inventory Reports',
+                  items: [
+                    { label: 'Daily Sale', routerLink: [APP_ROUTES.reports.inventoryReports.dailySale] },
+                    { label: 'Sale History', routerLink: [APP_ROUTES.reports.inventoryReports.saleHistory] },
+                    { label: 'Stock', routerLink: [APP_ROUTES.reports.inventoryReports.stock] },
+                    { label: 'Stock Valuation', routerLink: [APP_ROUTES.reports.inventoryReports.stockValuation] },
+                    { label: 'Stock Sale And Return', routerLink: [APP_ROUTES.reports.inventoryReports.stockSaleAndReturn] },
+                  ],
+                },
+                {
+                  label: 'Account Reports',
+                  items: [
+                    { label: 'Advanced Search', routerLink: [APP_ROUTES.reports.accountReports.advancedSearch] },
+                    { label: 'Account Receivable', routerLink: [APP_ROUTES.reports.accountReports.accountReceivable] },
+                    { label: 'Account Payable', routerLink: [APP_ROUTES.reports.accountReports.accountPayable] },
+                    { label: 'Bank Book', routerLink: [APP_ROUTES.reports.accountReports.bankBook] },
+                    { label: 'Credit Card', routerLink: [APP_ROUTES.reports.accountReports.creditCard] },
+                    { label: 'Cash Book', routerLink: [APP_ROUTES.reports.accountReports.cashBook] },
+                    { label: 'Cash Register', routerLink: [APP_ROUTES.reports.accountReports.cashRegister] },
+                    { label: 'Monthly Sales', routerLink: [APP_ROUTES.reports.accountReports.monthlySales] },
+                    {
+                      label: 'Tax Reports',
+                      items: [
+                        { label: 'Tax Report', routerLink: [APP_ROUTES.reports.accountReports.taxReports.taxDetail] },
+                        { label: 'Sales Tax Report', routerLink: [APP_ROUTES.reports.accountReports.taxReports.taxDetailByCustomer] },
+                        { label: 'Purchase Tax Report', routerLink: [APP_ROUTES.reports.accountReports.taxReports.taxDetailBySupplier] },
+                        { label: 'Tax Summary', routerLink: [APP_ROUTES.reports.accountReports.taxReports.taxSummary] },
+                      ],
                     },
-                    { label: 'Invoices', icon: 'pi pi-fw pi-shopping-cart',
-                        items:[
-                          {label: 'Purchase Order', routerLink: ['/Invoices/PurchaseOrder']},
-                          {label: 'Goods Received Note', routerLink: ['/Invoices/GRN']},
-                          {label: 'Purchase', routerLink: ['/Invoices/Purchase']},
-                          {label: 'Purchase Return', routerLink: ['/Invoices/PurchaseReturn']},
-                          {label: 'Quotations', routerLink: ['/Invoices/Quotations']},
-                          {label: 'Sale Invoices', routerLink: ['/Invoices/SaleInvoices']},
-                          {label: 'Sale Return', routerLink: ['/Invoices/SaleReturn']},
-                          {label: 'Service Invoices', routerLink: ['/Invoices/ServiceInvoices']},
-                       //   {label: 'Stock Shortage', routerLink: ['/StockShortage']},
-                        ]
+                    { label: 'General Journal', routerLink: [APP_ROUTES.reports.accountReports.generalJournal] },
+                    {
+                      label: 'Ledger Reports',
+                      items: [
+                        { label: 'General Ledger', routerLink: [APP_ROUTES.reports.accountReports.ledgerReports.generalLedger] },
+                        { label: 'Item Ledger', routerLink: [APP_ROUTES.reports.accountReports.ledgerReports.itemLedger] },
+                        { label: 'Party Ledger', routerLink: [APP_ROUTES.reports.accountReports.ledgerReports.partyLedger] },
+                      ],
                     },
-                    { label: 'Transactions', icon: 'pi pi-fw pi-money-bill',
-                    items:[
-                        {label: 'Receipt Voucher', routerLink: ['/Transactions/Receipt']},
-                        {label: 'Payment Voucher', routerLink: ['/Transactions/Payment']},
-                        {label: 'Journal Voucher', routerLink: ['/Transactions/Journal']},
-                        {label: 'Expense Voucher', routerLink: ['/Transactions/Expense']},
-                        {label: 'Day Book', routerLink: ['/Transactions/DayBook']},
-                    ]
+                    { label: 'Trial Balance', routerLink: [APP_ROUTES.reports.accountReports.trialBalance] },
+                    { label: 'Balance Sheet', routerLink: [APP_ROUTES.reports.accountReports.balanceSheet] },
+                    {
+                      label: 'Profit Reports',
+                      items: [
+                        { label: 'Item Wise Profit', routerLink: [APP_ROUTES.reports.accountReports.profitReports.itemWiseProfit] },
+                        { label: 'Invoice Wise Profit', routerLink: [APP_ROUTES.reports.accountReports.profitReports.invoiceWiseProfit] },
+                        { label: 'Profit And Loss', routerLink: [APP_ROUTES.reports.accountReports.profitReports.profitAndLoss] },
+                      ],
                     },
-                    { label: 'Reports', icon: 'pi pi-fw pi-file-pdf',
-                        items: [
-                        {
-                            label: 'Inventory Reports',
-                            items: [
-                                { label: 'Daily Sale', routerLink: ['/Reports/DailySaleReport']  },
-                                { label: 'Sale History', routerLink: ['/Reports/SaleHistoryReport']  },
-                                { label: 'Stock', routerLink: ['/Reports/StockReport']  },
-                                { label: 'Stock Valuation', routerLink: ['/Reports/StockValuationReport']  },
-                                { label: 'Stock Sale And Return', routerLink: ['/Reports/StockSaleAndReturnReport']  },
-                            ],
-                        },
-                        {
-                            label: 'Account Reports',
-                            items: [
-                                { label: 'Advanced Search', routerLink: ['/Reports/AdvancedSearchReport']  },
-                                { label: 'Account Receivable', routerLink: ['/Reports/AccountReceivable']  },
-                                { label: 'Account Payable', routerLink: ['/Reports/AccountPayable']  },
-                                { label: 'Bank Book', routerLink: ['/Reports/BankBookReport']  },
-                                { label: 'Credit Card', routerLink: ['/Reports/CreditCardReport']  },
-                                { label: 'Cash Book', routerLink: ['/Reports/CashBookReport']  },
-                                { label: 'Cash Register', routerLink: ['/Reports/CashRegisterReport']  },
-                                { label: 'Monthly Sales', routerLink: ['/Reports/MonthlySales']  },
-                                { label : 'Tax Reports',
-                                items :[
-                                  { label: 'Tax Report', routerLink: ['/Reports/TaxDetail']  },
-                                  { label: 'Sales Tax Report', routerLink: ['/Reports/TaxDetailByCustomer']  },
-                                  { label: 'Purchase Tax Report', routerLink: ['/Reports/TaxDetailBySupplier']  },
-                                  { label: 'Tax Summary', routerLink: ['/Reports/TaxSummary']  },
-                                  ]
-                                },
-                                { label: 'General Journal', routerLink: ['/Reports/GeneralJournalReport']  },
-                                { label : 'Ledger Reports',
-                                items :[
-                                  { label: 'General Ledger', routerLink: ['/Reports/GeneralLedgerReport']  },
-                                  { label: 'Item Ledger', routerLink: ['/Reports/ItemLedgerReport']  },
-                                  { label: 'Party ledger', routerLink: ['/Reports/PartyLedgerReport']  },
-                                  ]
-                                },
-                                { label: 'Trial Balance', routerLink: ['/Reports/TrialBalanceReport']  },
-                                { label: 'Balance Sheet', routerLink: ['/Reports/BalanceSheetReport']  },
-                                { label : 'Profit Reports',
-                                items :[
-                                  { label: 'Item Wise Profit', routerLink: ['/Reports/ItemWiseProfitReport']  },
-                                  { label: 'Invoice Wise Profit', routerLink: ['/Reports/InvoiceWiseProfit']  },
-                                  { label: 'Profit And Loss', routerLink: ['/Reports/ProfitAndLossReport']  },
-                                  ]
-                                }
-                              ],
-
-                        },
-
-                        ]
-
-                    },
-                    { label: 'Administration', icon: 'pi pi-fw pi-cog',
-                      items:[
-                        {label: 'Location', routerLink: ['/Administration/Location']},
-                        {label: 'Taxes', routerLink: ['/Administration/Taxes']},
-                        {label: 'Chart Of Accounts', routerLink: ['/Administration/COA']},
-                        {label: 'Users', routerLink: ['/Administration/Users']},
-                        {label: 'Fiscal Year', routerLink: ['/Administration/FiscalYear']},
-                        {label: 'Authorization', routerLink: ['/Administration/PermissionScreen']},
-                        {label: 'Notification', routerLink: ['/Administration/Notification']},
-                        {label: 'Notification Alert', routerLink: ['/Administration/NotificationAlert']},
-                        {label: 'Company Setting', routerLink: ['/Administration/Configuration']}
-                      ]
-                    },
-                ]
-            }
-        ];
+                  ],
+                },
+              ],
+            },
+            {
+              label: 'Administration',
+              icon: 'pi pi-fw pi-cog',
+              items: [
+                { label: 'Location', routerLink: [APP_ROUTES.administration.location] },
+                { label: 'Taxes', routerLink: [APP_ROUTES.administration.taxes] },
+                { label: 'Chart Of Accounts', routerLink: [APP_ROUTES.administration.chartOfAccounts] },
+                { label: 'Users', routerLink: [APP_ROUTES.administration.users] },
+                { label: 'Fiscal Year', routerLink: [APP_ROUTES.administration.fiscalYear] },
+                { label: 'Authorization', routerLink: [APP_ROUTES.administration.authorization] },
+                { label: 'Notification', routerLink: [APP_ROUTES.administration.notification] },
+                { label: 'Notification Alert', routerLink: [APP_ROUTES.administration.notificationAlert] },
+                { label: 'Company Setting', routerLink: [APP_ROUTES.administration.companySetting] },
+              ],
+            },
+          ],
+        },
+      ];
     }
 }

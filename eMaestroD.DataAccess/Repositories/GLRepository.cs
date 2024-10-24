@@ -69,6 +69,8 @@ namespace eMaestroD.DataAccess.Repositories
             }
         }
 
+        
+
         public async Task InsertGLEntriesAsync(List<GL> items)
         {
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
@@ -88,6 +90,33 @@ namespace eMaestroD.DataAccess.Repositories
 
                         if (!string.IsNullOrEmpty(firstItem.checkName))
                             await UpdateGLIsConvertedAsync(firstItem.checkName, firstItem.voucherNo);
+                    }
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+        }
+        public async Task UpdateGLEntriesAsync(List<GL> items)
+        {
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var firstItem = items.FirstOrDefault();
+                    if (firstItem != null)
+                    {
+                        _dbContext.Set<GL>().Update(firstItem);
+                        await _dbContext.SaveChangesAsync();
+
+                        items.Skip(1).ToList().ForEach(item => item.txID = firstItem.GLID);
+
+                        _dbContext.Set<GL>().UpdateRange(items.Skip(1));
+                        await _dbContext.SaveChangesAsync();
                     }
 
                     await transaction.CommitAsync();
@@ -128,7 +157,7 @@ namespace eMaestroD.DataAccess.Repositories
                             totalExtraDiscount = gl.extraDiscountSum ?? 0,
                             totalTax = gl.taxSum,
                             totalRebate = gl.rebateSum ?? 0,
-                            convertedInvoiceNo = gl.checkName ?? "",
+                            convertedInvoiceNo = gl.checkName,
                             customerOrVendorName = customer != null ? customer.cstName : vendor.vendName,
                             CustomerOrVendorID = customer != null ? customer.cstID : vendor.vendID,
                             txTypeID = gl.txTypeID,
@@ -140,6 +169,38 @@ namespace eMaestroD.DataAccess.Repositories
                         };
 
             return await query.ToListAsync();
+        }
+
+        public async Task DeleteGLEntriesAsync(string voucherNo)
+        {
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var entriesToDelete = await this.GetGLEntriesByVoucherNoAsync(voucherNo);
+                    if (entriesToDelete.Any())
+                    {
+                        var glDetailsToDelete = entriesToDelete
+                            .SelectMany(gl => gl.gLDetails)
+                            .ToList();
+
+                        if (glDetailsToDelete.Any())
+                        {
+                            _dbContext.Set<GLDetail>().RemoveRange(glDetailsToDelete);
+                        }
+
+                        _dbContext.Set<GL>().RemoveRange(entriesToDelete);
+                        await _dbContext.SaveChangesAsync();
+                    }
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
         }
     }
 }
