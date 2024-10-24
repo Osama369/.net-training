@@ -84,29 +84,19 @@ export class StockStatusCommulativeValuationComponent {
         }
       });
 
-    this.departmentService.getAllDepartments().subscribe({
-      next : (loc:any)=>{
-        this.locations = loc;
-    	this.locations.unshift({
-          locID : 0,
-          locName : "---ALL---"
-          }
-        );
-        this.selectedLocation = {locID : this.locations[0].locID, locName : this.locations[0].locName}
-      }
-    });
 
-    this.sharedDataService.getLocations$().subscribe({
-      next : (loc:any)=>{
-        this.locations = loc;
-    	this.locations.unshift({
-          locID : 0,
-          locName : "---ALL---"
-          }
-        );
-        this.selectedLocation = {locID : this.locations[0].locID, locName : this.locations[0].locName}
-      }
-    });
+      this.sharedDataService.getLocations$().subscribe({
+        next : (loc:any)=>{
+          this.locations = loc;
+          this.locations.unshift({
+            locID : 0,
+            locName : "---ALL---"
+            }
+          );
+          this.selectedLocation = {locID : this.locations[0].locID, locName : this.locations[0].locName}
+        }
+      })
+
 
     this.authService.GetBookmarkScreen(this.route.snapshot?.data['requiredPermission']).subscribe(x=>{
       this.bookmark = x;
@@ -164,6 +154,8 @@ export class StockStatusCommulativeValuationComponent {
 
   submit()
   {
+    console.log(this.selectedLocation);
+    console.log(this.SelectedproductDepartment);
 
     let d1 = this.datePipe.transform('1900-01-01', "yyyy-MM-dd");
     let d2 =  this.datePipe.transform(this.DateTo, "yyyy-MM-dd");
