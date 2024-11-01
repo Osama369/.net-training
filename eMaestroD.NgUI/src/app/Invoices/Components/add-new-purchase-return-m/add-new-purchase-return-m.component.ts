@@ -23,13 +23,13 @@ import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
 import { ConfigSetting } from 'src/app/Shared/Models/config-setting';
 
 @Component({
-  selector: 'app-add-new-purchase-m',
-  templateUrl: './add-new-purchase-m.component.html',
-  styleUrls: ['./add-new-purchase-m.component.scss'],
+  selector: 'app-add-new-purchase-return-m',
+  templateUrl: './add-new-purchase-return-m.component.html',
+  styleUrls: ['./add-new-purchase-return-m.component.scss'],
   providers:[ConfirmationService,MessageService]
 })
 
-export class AddNewPurchaseMComponent implements OnInit{
+export class AddNewPurchaseReturnMComponent implements OnInit{
   constructor(
     private router: Router,
     private vendorService:VendorService,
@@ -56,6 +56,8 @@ export class AddNewPurchaseMComponent implements OnInit{
   totalExtraTax: number;
   totalExtraDiscount: number;
   totalAdvanceExtraTax: number;
+
+  returnTotalAmount: number = 0;
 
   type :any[] = [ {
     name:'Cash'
@@ -121,7 +123,7 @@ export class AddNewPurchaseMComponent implements OnInit{
 
   isProductCode: boolean = false;
   isArabic: boolean = false;
-  txTypeID : any = GLTxTypes.PurchaseInvoice;
+  txTypeID : any = GLTxTypes.PurchaseReturn;
 
   vatInclude : boolean = true;
   showPleaseWait: boolean = false;
@@ -220,14 +222,7 @@ export class AddNewPurchaseMComponent implements OnInit{
       if(this.EditVoucherNo != undefined)
       {
         console.log(this.EditVoucherNo.split("-")[0]);
-        if(this.EditVoucherNo.split("-")[0] == "GRN")
-        {
-          this.selectedVoucherNo = this.EditVoucherNo;
-          this.GRNInvoiceList.unshift({ invoiceVoucherNo : this.selectedVoucherNo});
-          this.InvoiceOnChange();
-        }else{
-          this.RenderEditItem();
-        }
+        this.RenderEditItem();
       }
    });
 
@@ -507,6 +502,13 @@ export class AddNewPurchaseMComponent implements OnInit{
     this.productlist[rowIndex] = rowData;
 
     this.calculateTotalSummary();
+
+    if(this.totalNetPayable > this.returnTotalAmount)
+    {
+      this.productlist[rowIndex] = {};
+      this.Itemcalculation(rowIndex);
+      this.toastr.error("Maxinum Amount Reached!");
+    }
   }
 
   calculateTotalSummary() {
@@ -1025,18 +1027,25 @@ export class AddNewPurchaseMComponent implements OnInit{
   this.VendorVisible = false;
 }
 
+clear()
+{
+  this.returnTotalAmount = 0;
+  this.productlist = [{}];
+  this.rowNmb = 0;
+}
 
   VendorOnChange()
   {
+    this.clear();
     if(this.selectedCustomerName == undefined){
       this.toastr.error("Please select supplier!");
       this.onEnterComplex(0);
     }
     else{
-      this.invoicesService.GetInvoices(GLTxTypes.GoodsReceivedNote,this.selectedCustomerName.vendID).subscribe({
+      this.invoicesService.GetInvoices(GLTxTypes.PurchaseInvoice,this.selectedCustomerName.vendID).subscribe({
         next:(result)=>{
           console.log(result);
-          this.GRNInvoiceList = result.filter(x=>x.convertedInvoiceNo == null || x.convertedInvoiceNo == "");
+          this.GRNInvoiceList = result.filter(x=>(x.convertedInvoiceNo == null || x.convertedInvoiceNo == "") && x.isPaymented == false);
           if(this.GRNInvoiceList.length > 0){
             this.GRNInvoiceList.unshift({ invoiceVoucherNo : "Select Invoice No"});
           }else{
@@ -1052,47 +1061,17 @@ export class AddNewPurchaseMComponent implements OnInit{
 
   async InvoiceOnChange()
   {
+    this.clear();
     if(this.selectedVoucherNo == undefined || this.selectedVoucherNo == "Select Invoice No") {
       this.toastr.error("Please select Invoice!");
       this.onEnterComplex(2);
-      this.productlist = [];
       return;
     }
 
     try {
       const invoiceData = await lastValueFrom(this.invoicesService.GetInvoice(this.selectedVoucherNo));
 
-      this.productlist = invoiceData.Products;
-      this.selectedCustomerName = {vendID:invoiceData.CustomerOrVendorID,vendName:invoiceData.customerOrVendorName};
-      this.totalGross = invoiceData.grossTotal;
-      this.totalDiscount = invoiceData.totalDiscount;
-      this.totalTax = invoiceData.totalTax;
-      this.totalRebate = invoiceData.totalRebate;
-      this.totalExtraTax = invoiceData.totalExtraTax;
-      this.totalAdvanceExtraTax = invoiceData.totalAdvanceExtraTax;
-      this.totalExtraDiscount = invoiceData.totalExtraDiscount;
-      this.totalNetPayable = invoiceData.netTotal;
-      for (let i = 0; i < this.productlist.length; i++) {
-        this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
-
-        this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
-        this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
-        this.productlist[i].barCode = this.selectedProductList[0].barCode;
-
-        this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
-        this.productlist[i].depName =this.selectedProductList[0].depName;
-        this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
-        this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
-
-        this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0,
-        this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0,
-        this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0,
-        this.productlist[i].advanceTaxAmount= invoiceData.Products[i].ProductTaxes[1].taxAmount || 0,
-        this.productlist[i].extraAdvanceTaxPercent= invoiceData.Products[i].ProductTaxes[2].taxPercent || 0,
-        this.productlist[i].extraAdvanceTaxAmount= invoiceData.Products[i].ProductTaxes[2].taxAmount || 0
-        this.productlist[i].prodInvoiceID=  0;
-        this.Itemcalculation(i)
-      }
+      this.returnTotalAmount = invoiceData.totalRemainingPayment;
     } catch (result) {
       this.toastr.error(result);
     }

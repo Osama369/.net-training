@@ -1,5 +1,6 @@
 ﻿using eMaestroD.Models.Models;
 using eMaestroD.Models.ReportModels;
+using eMaestroD.Models.VMModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -96,6 +97,14 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<ConfigSetting> ConfigSettings { get; set; }
         public DbSet<GLDetail> GLDetails { get; set; }
         public DbSet<ProductViewModel> ProductViewModel { get; set; }
+        public DbSet<VendorProduct> VendorProducts { get; set; }
+        public DbSet<InvoiceProduct> InvoiceProducts { get; set; }
+        public DbSet<TempGL> TempGL { get; set; }
+        public DbSet<TempGLDetail> TempGLDetails { get; set; }
+        public DbSet<TransactionLog> TransactionLogs { get; set; }
+
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -131,6 +140,7 @@ namespace eMaestroD.DataAccess.DataSet
             modelBuilder.Entity<DayBook>().HasNoKey();
             modelBuilder.Entity<InvoiceView>().HasNoKey();
             modelBuilder.Entity<SalesSummary>().HasNoKey();
+            modelBuilder.Entity<InvoiceProduct>().HasNoKey();
         }
 
     }

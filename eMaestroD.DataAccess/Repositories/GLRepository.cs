@@ -144,6 +144,7 @@ namespace eMaestroD.DataAccess.Repositories
                                            .Select(f => f.period)
                                            .FirstOrDefaultAsync();
 
+
             var query = from gl in _dbContext.gl
                         join c in _dbContext.Customers on gl.cstID equals c.cstID into customerGroup
                         from customer in customerGroup.DefaultIfEmpty()
@@ -211,6 +212,36 @@ namespace eMaestroD.DataAccess.Repositories
                     await transaction.RollbackAsync();
                     throw;
                 }
+            }
+        }
+
+
+        public async Task<List<InvoiceProduct>> GetItemsBySupplierAndDate(int supplierId, DateTime datefrom, DateTime dateTo)
+        {
+            string sql = "EXEC GetProductsBySupplierAndDateRange @SupplierID, @DateFrom, @DateTo";
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                new SqlParameter { ParameterName = "@SupplierID", Value = supplierId },
+                new SqlParameter { ParameterName = "@DateFrom", Value = datefrom },
+                new SqlParameter { ParameterName = "@DateTo", Value = dateTo }
+            };
+
+            var SDL = await _dbContext.InvoiceProducts.FromSqlRaw(sql, parms.ToArray()).ToListAsync();
+            return SDL;
+        }
+
+        //will do this after tempGL
+        public async Task<List<GLTxLinks>> GenerateGLTxLinks(string invoiceNo, int? GLID)
+        {
+            if(GLID != 0)
+            {
+                var result = await _dbContext.GLTxLinks.Where(x=>x.GLID == GLID).ToListAsync();
+                return result;
+            }
+            else
+            {
+                var result = await _dbContext.GLTxLinks.Where(x => x.GLID == GLID).ToListAsync();
+                return result;
             }
         }
 

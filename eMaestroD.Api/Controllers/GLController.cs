@@ -4218,14 +4218,10 @@ namespace eMaestroD.Api.Controllers
             gltxLnks = new GLTxLinks();
             gltxLinksUpdated = new List<GLTxLinks>();
             gltxLinksDelete = new List<GLTxLinks>();
-            //141
-            var saleLocalAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.SaleLocal);
             //80 OR 83
             var cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeCreditors);
             //98
             var stockInTradeAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.StockInTrade);
-            //81
-            var costOfGoodsAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CostOfGoodsSold);
             int accountID = 83;
             if (obj1[0].type == "Cash")
             {

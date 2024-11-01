@@ -11,6 +11,7 @@ namespace eMaestroD.InvoiceProcessing.Interfaces
     public interface IGLService
     {
         Task<string> GenerateVoucherNo(int txTypeID, int? comID);
+        Task<List<GLTxLinks>> GenerateGLTxLinks(string invoiceNo, int? GLID);
         Task<List<GL>> ConvertInvoiceToGL(Invoice invoice);
         Task<Invoice> ConvertGLToInvoice(string voucherNo);
         Task<List<Invoice>> GetInvoicesAsync(int txTypeID, int customerOrVendorID, int comID);
@@ -18,5 +19,7 @@ namespace eMaestroD.InvoiceProcessing.Interfaces
         Task UpdateInvoice(List<GL> items);
         Task InsertGLEntriesAsync<T>(IEnumerable<T> items, DateTime now, string username) where T : GL;
         Task DeleteInvoice(string VoucherNo);
+        Task<List<InvoiceProduct>> GetItemsBySupplierAndDate(int supplierId, DateTime datefrom, DateTime dateTo);
+
     }
 }

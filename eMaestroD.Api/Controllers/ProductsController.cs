@@ -197,6 +197,19 @@ namespace eMaestroD.Api.Controllers
                     product.crtBy = product.modby = username;
                     await _AMDbContext.Products.AddAsync(product);
                     await _AMDbContext.SaveChangesAsync();
+                    
+                    product.ProductBarCodes.Add(new ProductBarCodes
+                    {
+                        Active = true,
+                        BarCode = product.prodCode,
+                        CostPrice = product.purchRate,
+                        SalePrice = product.sellRate,
+                        FOBPrice = product.tP,
+                        TradePrice = product.retailprice,
+                        prodID = product.prodID,
+                        Qty = 1,
+                        Unit = product.prodUnit
+                    });
 
                     foreach (var item in product.ProductBarCodes)
                     {

@@ -14,14 +14,12 @@ namespace eMaestroD.Api.Controllers
     [Route("/api/[controller]/[action]")]
     public class InvoiceController : Controller
     {
-        private readonly AMDbContext _AMDbContext;
         private IConfiguration _configuration;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly InvoiceValidationService _invoiceValidationService;
         private readonly IGLService _glService;
         public InvoiceController(AMDbContext aMDbContext, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, InvoiceValidationService invoiceValidationService, IGLService glService)
         {
-            _AMDbContext = aMDbContext;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
             _invoiceValidationService = invoiceValidationService;
@@ -119,6 +117,21 @@ namespace eMaestroD.Api.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [HttpGet]
+        [Route("{supplierId}/{dateFrom}/{dateTo}")]
+        public async Task<IActionResult> GetItemsBySupplierAndDate(int supplierId, DateTime dateFrom, DateTime dateTo)
+        {
+
+            var invoices = await _glService.GetItemsBySupplierAndDate(supplierId, dateFrom, dateTo);
+
+            if (invoices == null)
+            {
+                return NotFound("Invoices not found.");
+            }
+
+            return Ok(invoices); 
         }
     }
 }

@@ -33,6 +33,7 @@ import { AddNewGrnComponent } from './Components/add-new-grn/add-new-grn.compone
 import { AddNewPurchaseMComponent } from './Components/add-new-purchase-m/add-new-purchase-m.component';
 import { PurchaseMComponent } from './Components/purchase-m/purchase-m.component';
 import { AddNewSaleMComponent } from './Components/add-new-sale-m/add-new-sale-m.component';
+import { AddNewPurchaseReturnMComponent } from './Components/add-new-purchase-return-m/add-new-purchase-return-m.component';
 
 
 
@@ -68,7 +69,8 @@ import { AddNewSaleMComponent } from './Components/add-new-sale-m/add-new-sale-m
     AddNewGrnComponent,
     AddNewPurchaseMComponent,
     PurchaseMComponent,
-    AddNewSaleMComponent
+    AddNewSaleMComponent,
+    AddNewPurchaseReturnMComponent
   ],
   imports: [
     CommonModule,

@@ -22,6 +22,8 @@ namespace eMaestroD.InvoiceProcessing.Factories
             return txTypeID switch
             {
                 1 => new PurchaseInvoiceHandler(_helperMethods),
+                2 => new PurchaseReturnHandler(_helperMethods),
+                3 => new PurchaseOrderHandler(_helperMethods),
                 4 => new SaleInvoiceHandler(_helperMethods),
                 12 => new GRNInvoiceHandler(_helperMethods),
                 _ => throw new NotSupportedException($"Invoice type with txTypeID {txTypeID} is not supported.")

@@ -32,6 +32,7 @@ import { AddNewGrnComponent } from './Components/add-new-grn/add-new-grn.compone
 import { AddNewPurchaseMComponent } from './Components/add-new-purchase-m/add-new-purchase-m.component';
 import { PurchaseMComponent } from './Components/purchase-m/purchase-m.component';
 import { AddNewSaleMComponent } from './Components/add-new-sale-m/add-new-sale-m.component';
+import { AddNewPurchaseReturnMComponent } from './Components/add-new-purchase-return-m/add-new-purchase-return-m.component';
 
 
 const routes: Routes = [
@@ -64,8 +65,10 @@ const routes: Routes = [
   { path: 'PurchaseReturn', component: PurchaseReturn2Component, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNote' }  },
   { path: 'AddNewDebitNote', component: AddPurchaseReturnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteCreate' }  },
   { path: 'AddNewDebitNote/:id', component: AddPurchaseReturnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteEdit' }  },
-  { path: 'AddNewPurchaseReturn', component: AddPurchaseReturn2Component, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteCreate' }  },
-  { path: 'AddNewPurchaseReturn/:id', component: AddPurchaseReturn2Component, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteCreate' }  },
+  // { path: 'AddNewPurchaseReturn', component: AddPurchaseReturn2Component, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteCreate' }  },
+  // { path: 'AddNewPurchaseReturn/:id', component: AddPurchaseReturn2Component, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteCreate' }  },
+  { path: 'AddNewPurchaseReturn', component: AddNewPurchaseReturnMComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteCreate' }  },
+  { path: 'AddNewPurchaseReturn/:id', component: AddNewPurchaseReturnMComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteCreate' }  },
   { path: 'CreditNote', component: SaleReturnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CreditNote' }  },
   { path: 'SaleReturn', component: SaleReturn2Component, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CreditNote' }  },
   { path: 'AddNewCreditNote', component: AddSaleReturnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CreditNoteCreate' }  },

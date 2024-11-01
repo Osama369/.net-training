@@ -29,6 +29,16 @@ export class InvoicesService {
     return this.http.get<Invoice>(this.ApiUrl + '/GetInvoice/'+voucherNo);
   }
 
+  GetInvoiceDetailBy(voucherNo:string): Observable<Invoice> {
+    let comID = localStorage.getItem('comID');
+    return this.http.get<Invoice>(this.ApiUrl + '/GetInvoice/'+voucherNo);
+  }
+
+  GetItemsBySupplierAndDate(supplierId: string, fromDate: any, ToDate: any): Observable<InvoiceProduct[]> {
+    return this.http.get<InvoiceProduct[]>(`${this.ApiUrl}/GetItemsBySupplierAndDate/${supplierId}/${fromDate}/${ToDate}`);
+  }
+
+
   GetInvoices(txtypeID:number,customerOrVendorID:number): Observable<Invoice[]> {
     let comID = localStorage.getItem('comID');
     return this.http.get<Invoice[]>(this.ApiUrl + '/GetInvoices/'+txtypeID+'/'+customerOrVendorID+'/'+comID);

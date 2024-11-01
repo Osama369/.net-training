@@ -112,6 +112,7 @@ namespace eMaestroD.InvoiceProcessing.Services
                 convertedInvoiceNo = masterEntry.checkName,
                 invoiceType = masterEntry.balSum > 0 ? "Credit" : "Cash",
                 isPaymented = masterEntry.isPaid,
+                totalRemainingPayment = entry.balSum,
                 Products = new List<InvoiceProduct>()
             };
 
@@ -125,7 +126,6 @@ namespace eMaestroD.InvoiceProcessing.Services
                     prodBCID = detail.prodBCID,
                     prodCode = productDetail.FirstOrDefault().barCode,
                     prodName = productDetail.FirstOrDefault().prodName,
-
                     qty = detail.qty,
                     bounsQty = detail.bonusQty,
                     purchRate = detail.unitPrice,
@@ -168,6 +168,11 @@ namespace eMaestroD.InvoiceProcessing.Services
             await _glRepository.UpdateGLEntriesAsync(items);
         }
 
+        public async Task<List<GLTxLinks>> GenerateGLTxLinks(string invoiceNo, int? GLID)
+        {
+            var result = await _glRepository.GenerateGLTxLinks(invoiceNo, GLID);
+            return result;
+        }
         public async Task<List<Invoice>> GetInvoicesAsync(int txTypeID, int customerOrVendorID, int comID)
         {
             return await _glRepository.GetInvoicesAsync(txTypeID, customerOrVendorID, comID);
@@ -178,6 +183,12 @@ namespace eMaestroD.InvoiceProcessing.Services
             await _glRepository.DeleteGLEntriesAsync(VoucherNo);
         }
 
+        public async Task<List<InvoiceProduct>> GetItemsBySupplierAndDate(int supplierId, DateTime datefrom, DateTime dateTo)
+        {
+            var data = await _glRepository.GetItemsBySupplierAndDate(supplierId, datefrom, dateTo);
+            return data;
+        }
+        
         //Remove this after all invoices changes
         public async Task InsertGLEntriesAsync<T>(IEnumerable<T> items, DateTime now, string username) where T : GL
         {

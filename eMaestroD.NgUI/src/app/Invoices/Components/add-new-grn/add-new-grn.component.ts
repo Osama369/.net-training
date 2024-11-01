@@ -530,11 +530,10 @@ export class AddNewGrnComponent implements OnInit{
   {
     if(this.EditVoucherNo != undefined)
     {
-      this.router.navigateByUrl('/Invoices/Purchase')
+      this.router.navigateByUrl(APP_ROUTES.invoices.grn);
     }
     else
     {
-      // this.selectedCustomerName = undefined;
       this.TotalDiscount = 0;
       let today = new Date();
       this.selectedDate = today;
@@ -545,7 +544,6 @@ export class AddNewGrnComponent implements OnInit{
       this.onEnterComplex(0);
       this.savebtnDisable = false;
     }
-
   }
 
 
@@ -624,7 +622,7 @@ export class AddNewGrnComponent implements OnInit{
           const result = await lastValueFrom(this.invoicesService.SaveInvoice(this.invoice));
           console.log(result);
           this.toastr.success("GRN has been successfully Created!");
-          this.router.navigateByUrl('/Invoices/GRN')
+          this.router.navigateByUrl(APP_ROUTES.invoices.grn);
         } catch (result) {
           this.toastr.error(result.error);
       }
@@ -1053,8 +1051,9 @@ export class AddNewGrnComponent implements OnInit{
   }
 
   sumField(field: string): number {
-    return this.productlist.reduce((acc, curr) => acc + (Number(curr[field]) || 0), 0);
+    return parseFloat(this.productlist.reduce((acc, curr) => acc + (Number(curr[field]) || 0), 0).toFixed(2));
   }
+
 
 }
 

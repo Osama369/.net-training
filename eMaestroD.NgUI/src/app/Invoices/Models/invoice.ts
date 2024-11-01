@@ -20,6 +20,8 @@ export interface Invoice {
   netTotal?: number;
   notes?:string;
   convertedInvoiceNo?:any;
+  isPaymented? : boolean;
+  totalRemainingPayment?:number;
   Products?: InvoiceProduct[];
 }
 
