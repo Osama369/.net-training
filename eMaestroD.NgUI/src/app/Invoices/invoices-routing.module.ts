@@ -33,6 +33,8 @@ import { AddNewPurchaseMComponent } from './Components/add-new-purchase-m/add-ne
 import { PurchaseMComponent } from './Components/purchase-m/purchase-m.component';
 import { AddNewSaleMComponent } from './Components/add-new-sale-m/add-new-sale-m.component';
 import { AddNewPurchaseReturnMComponent } from './Components/add-new-purchase-return-m/add-new-purchase-return-m.component';
+import { InvoicePostingComponent } from './Components/invoice-posting/invoice-posting.component';
+import { PurchaseReturnMComponent } from './Components/purchase-return-m/purchase-return-m.component';
 
 
 const routes: Routes = [
@@ -62,7 +64,7 @@ const routes: Routes = [
   { path: 'AddNewServiceInvoice', component: AddServiceInvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ServiceInvoicesCreate' }  },
   { path: 'AddNewServiceInvoice/:id', component: AddServiceInvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ServiceInvoicesEdit' }  },
   { path: 'DebitNote', component: PurchaseReturnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNote' }  },
-  { path: 'PurchaseReturn', component: PurchaseReturn2Component, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNote' }  },
+  { path: 'PurchaseReturn', component: PurchaseReturnMComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNote' }  },
   { path: 'AddNewDebitNote', component: AddPurchaseReturnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteCreate' }  },
   { path: 'AddNewDebitNote/:id', component: AddPurchaseReturnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteEdit' }  },
   // { path: 'AddNewPurchaseReturn', component: AddPurchaseReturn2Component, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteCreate' }  },
@@ -81,6 +83,7 @@ const routes: Routes = [
   { path: 'GRN', component: GRNComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'GRN' }  },
   { path: 'AddNewGRN', component: AddNewGrnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'GRNCreate' }  },
   { path: 'AddNewGRN/:id', component: AddNewGrnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'GRNEdit' }  },
+  { path: 'invoicePosting', component: InvoicePostingComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'InvoicePosting' }  },
 
 ];
 

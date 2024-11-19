@@ -1,4 +1,5 @@
 ﻿using eMaestroD.DataAccess.IRepositories;
+using eMaestroD.InvoiceProcessing.Interfaces;
 using eMaestroD.Models.Models;
 using eMaestroD.Models.VMModels;
 using eMaestroD.Shared.Config;
@@ -14,13 +15,18 @@ namespace eMaestroD.InvoiceProcessing.Handlers
     public class SaleInvoiceHandler : IInvoiceHandler
     {
         private readonly IHelperMethods _helperMethods;
-        public SaleInvoiceHandler(IHelperMethods helperMethods)
+        private readonly IGLService _gLService;
+        public SaleInvoiceHandler(IHelperMethods helperMethods, IGLService gLService)
         {
             _helperMethods = helperMethods;
+            _gLService = gLService;
         }
-        public async Task<List<GL>> ConvertInvoiceToGL(Invoice invoice)
+        public async Task<List<object>> ConvertInvoiceToGL(Invoice invoice)
         {
-
+            if (string.IsNullOrEmpty(invoice.invoiceVoucherNo))
+            {
+                invoice.invoiceVoucherNo = await _gLService.GenerateGLVoucherNo((int)invoice.txTypeID, invoice.comID);
+            }
             GL glMasterEntry = new GL();
             GL glDetailEntry = new GL();
             List<GL> glEntries = new List<GL>();
@@ -254,7 +260,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
 
             glEntries.Add(glDetailEntry);
 
-            return glEntries;
+            return glEntries.Cast<object>().ToList();
         }
     }
 }

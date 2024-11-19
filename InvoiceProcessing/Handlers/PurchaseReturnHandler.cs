@@ -16,13 +16,19 @@ namespace eMaestroD.InvoiceProcessing.Handlers
     public class PurchaseReturnHandler : IInvoiceHandler
     {
         private readonly IHelperMethods _helperMethods;
-        public PurchaseReturnHandler(IHelperMethods helperMethods)
+        private readonly IGLService _gLService;
+        public PurchaseReturnHandler(IHelperMethods helperMethods, IGLService gLService)
         {
             _helperMethods = helperMethods;
+            _gLService = gLService;
         }
-        public async Task<List<GL>> ConvertInvoiceToGL(Invoice invoice)
+        public async Task<List<object>> ConvertInvoiceToGL(Invoice invoice)
         {
-           
+            if (string.IsNullOrEmpty(invoice.invoiceVoucherNo))
+            {
+                invoice.invoiceVoucherNo = await _gLService.GenerateGLVoucherNo((int)invoice.txTypeID, invoice.comID);
+            }
+
             GL glMasterEntry = new GL();
             GL glDetailEntry = new GL();
             List<GL> glEntries = new List<GL>();
@@ -62,7 +68,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                 crtDate = DateTime.Now,
                 modDate = DateTime.Now,
                 isConverted = false,
-                checkName = "",
+                checkName = invoice.convertedInvoiceNo,
                 balSum = invoice.invoiceType.ToLower() == "credit" ? (decimal)invoice.netTotal : 0
             };
 
@@ -109,7 +115,10 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                     isDeposited = false,
                     isCleared = false,
                     isConverted = false,
-                    checkName = "",
+                    checkName = invoice.convertedInvoiceNo,
+                    mrp = product.mrp,
+                    sellPrice = product.sellingPrice,
+                    lastCost = product.lastCost,
                     gLDetails = product.ProductTaxes.Select(tax => new GLDetail
                     {
                         GLDetailID = tax.taxDetailID,
@@ -154,13 +163,13 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                 crtDate = DateTime.Now,
                 modDate = DateTime.Now,
                 isConverted = false,
-                checkName = "",
+                checkName = invoice.convertedInvoiceNo,
                 balSum = invoice.invoiceType.ToLower() == "credit" ? (decimal)invoice.netTotal : 0
             };
 
             glEntries.Add(glDetailEntry);
 
-            return glEntries;
+            return glEntries.Cast<object>().ToList();
         }
     }
 }

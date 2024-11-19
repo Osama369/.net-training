@@ -3,11 +3,11 @@ import { Component, QueryList, ViewChildren } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { VendorService } from 'src/app/Manage/Services/vendor.service';
 import { Vendor } from 'src/app/Manage/Models/vendor';
 import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { ReportService } from '../../Services/report.service';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 
 @Component({
@@ -27,7 +27,7 @@ export class AccountsPayableComponent {
   pdfUrl: SafeResourceUrl;
   bookmark : boolean = false;
 
-  constructor(private vendorService:VendorService,
+  constructor(private sharedDataService : SharedDataService,
     private http: HttpClient,
     private sanitizer: DomSanitizer,
     private datePipe: DatePipe,
@@ -46,11 +46,13 @@ export class AccountsPayableComponent {
     this.DateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
     this.DateTo = today;
 
-    this.vendorService.getAllVendor().subscribe({
+    this.sharedDataService.getVendors$().subscribe({
       next: (vendors) => {
-        this.vendors = (vendors as { [key: string]: any })["enttityDataSource"];;
-        this.vendors.unshift(this.createNewVendor());
-    this.SelectedProduct = {vendID:  0, vendName: '---ALL---'};
+        this.vendors = [...(vendors as { [key: string]: any })["enttityDataSource"]];
+        console.log(this.vendors);
+          this.vendors.unshift(this.createNewVendor());
+        console.log(this.vendors);
+        this.SelectedProduct = {vendID:  0, vendName: '---ALL---'};
       },
       error: (response) => {
         console.log(response);

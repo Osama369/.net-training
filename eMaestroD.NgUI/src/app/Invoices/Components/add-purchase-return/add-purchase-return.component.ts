@@ -21,6 +21,7 @@ import { type, Gl } from '../../Models/gl';
 import { InvoicesService } from '../../Services/invoices.service';
 import { InvoiceView } from '../../Models/invoice-view';
 import { Location } from './../../../Administration/Models/location';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 @Component({
   selector: 'app-add-purchase-return',
@@ -136,6 +137,7 @@ export class AddPurchaseReturnComponent implements OnInit{
     private citiesService:CitiesService,
     private customersService:CustomersService,
     private vendorService:VendorService,
+    private sharedDataService:SharedDataService,
     private locationService:LocationService,
     private invoicesService:InvoicesService,
     private toastr: ToastrService,
@@ -164,10 +166,15 @@ export class AddPurchaseReturnComponent implements OnInit{
       },
     });
 
-    this.locationService.getAllLoc().subscribe({
+    this.sharedDataService.getLocations$().subscribe({
       next : (loc:any)=>{
-        this.locations = loc;
-        this.selectedLocation = {locID : this.locations[0].locID, locName : this.locations[0].locName}
+        this.locations = loc.filter(x=>x.LocTypeId == 5);
+          this.locations.unshift({
+            LocationId : 0,
+            LocationName : "---ALL---"
+            }
+          );
+        this.selectedLocation = {LocationId : this.locations[0].LocationId, LocationName : this.locations[0].LocationName};
       }
     })
 
@@ -191,8 +198,8 @@ export class AddPurchaseReturnComponent implements OnInit{
               let i = -1;
               let j = -1;
               let k = -1;
-              let locName = this.locations.find(x=>x.locID == invoices[0].locID)?.locName;
-              this.selectedLocation = {locID : invoices[0].locID, locName: locName };
+              let locName = this.locations.find(x=>x.LocationId == invoices[0].locID)?.LocationName;
+              this.selectedLocation = {LocationId : invoices[0].locID, LocationName: locName };
               invoices.forEach((elem,index) => {
                 if(elem.relCOAID == 83 )
                 {
@@ -479,7 +486,7 @@ export class AddPurchaseReturnComponent implements OnInit{
     let query = event.query;
     for (let i = 0; i < this.locations.length; i++) {
       let loc = this.locations[i];
-      if (loc.locName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+      if (loc.LocationName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
         filtered.push(loc);
       }
     }
@@ -548,7 +555,7 @@ export class AddPurchaseReturnComponent implements OnInit{
       this.toastr.error("Please select customer!");
       this.onEnterComplex(1);
     }
-    else if(this.selectedLocation.locID == undefined) {
+    else if(this.selectedLocation.LocationId == undefined) {
       this.toastr.error("Please select location!");
       this.onEnterComplex(2);
     }
@@ -617,7 +624,7 @@ export class AddPurchaseReturnComponent implements OnInit{
         this.gl[i].modBy = "";
         this.gl[i].depositID = 2018;
         this.gl[i].taxName = this.TaxName
-        this.gl[i].locID = this.selectedLocation.locID;
+        this.gl[i].locID = this.selectedLocation.LocationId;
         this.gl[i].comID = localStorage.getItem('comID');
         this.gl[i].paidSum = (this.productlist[i].sellRate/100*this.productlist[i].discount)*this.productlist[i].qty;
         this.gl[i].checkNo = this.productlist[i].discount;

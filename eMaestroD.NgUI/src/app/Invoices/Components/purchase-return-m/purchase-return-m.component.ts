@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Table } from 'primeng/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as FileSaver from 'file-saver';
-import { getCurrencySymbol } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { ReportSettingService } from 'src/app/Reports/Services/report-setting.service';
 import { AuthService } from 'src/app/Shared/Services/auth.service';
@@ -10,20 +9,18 @@ import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { GenericService } from 'src/app/Shared/Services/generic.service';
 import { InvoicesService } from '../../Services/invoices.service';
 import { InvoiceView } from '../../Models/invoice-view';
-import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
 import { lastValueFrom } from 'rxjs';
+import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
 import { Invoice } from '../../Models/invoice';
-import { ConfirmationService } from 'primeng/api';
 
 @Component({
-  selector: 'app-grn',
-  templateUrl: './grn.component.html',
-  styleUrls: ['./grn.component.scss']
+  selector: 'app-purchase-return-m',
+  templateUrl: './purchase-return-m.component.html',
+  styleUrls: ['./purchase-return-m.component.scss']
 })
+export class PurchaseReturnMComponent implements OnInit {
 
-export class GRNComponent implements OnInit {
-
-    invoices: Invoice[] = [];
+    invoices: Invoice[];
     invoiceNo: any;
     loading: boolean = true;
     PrintringVisible: boolean = false;
@@ -46,29 +43,25 @@ export class GRNComponent implements OnInit {
       private authService : AuthService,
       private reportSettingService : ReportSettingService,
       public bookmarkService: BookmarkService,
-      public route : ActivatedRoute,
-      public confirmationService : ConfirmationService
+      public route : ActivatedRoute
       ) { }
 
     async ngOnInit() {
 
       this.reportSettingService.GetInvoiceReportSettings().subscribe(rpt=>{
-        this.reportSettingItemList = rpt.filter(x=>x.screenName.toLowerCase() == "purchase");
+        this.reportSettingItemList = rpt.filter(x=>x.screenName.toLowerCase() == "purchase return");
       })
 
-
       try{
-        var result = await lastValueFrom(this.invoiceService.GetInvoices(GLTxTypes.GoodsReceivedNote,0));
+        var result = await lastValueFrom(this.invoiceService.GetInvoices(GLTxTypes.PurchaseReturn,0));
         this.invoices = result;
-        console.log(this.invoices);
         this.loading = false;
       }
       catch(error){
         this.toasterService.error(error);
       }
 
-
-        // this.invoiceService.getInvoicesList(12).subscribe(invoices => {
+        // this.invoiceService.getInvoicesList(1).subscribe(invoices => {
         //     this.invoices = invoices;
         //     this.loading = false;
         //     this.exportColumns.push(new Object({title: "Date",dataKey: "dtTx"}));
@@ -114,23 +107,22 @@ export class GRNComponent implements OnInit {
           this.isArabic = false;
         }
         this.Reportvisible = true;
-        //this.PrintringVisible = true;
     }
 
     editView(invoiceNo:any)
     {
-        this.router.navigateByUrl('/Invoices/AddNewGRN/'+invoiceNo);
+        this.router.navigateByUrl('/Invoices/AddNewPurchaseReturn/'+invoiceNo);
     }
 
     deleteView(invoiceNo:any)
     {
-      this.authService.checkPermission('GRNDelete').subscribe((x:any)=>{
+      this.authService.checkPermission('DebitNoteDelete').subscribe((x:any)=>{
         if(x)
         {
         if (confirm("Are you sure you want to delete this invoice?") == true) {
             this.loading = true;
             this.invoiceService.DeleteInvoice(invoiceNo).subscribe(asd => {
-              this.toasterService.success("GRN has been successfully deleted!");
+              this.toasterService.success("Purchase Return Invoice has been successfully deleted!");
                 this.invoices = this.invoices.filter(x=>x.invoiceVoucherNo != invoiceNo);
                 this.loading = false;
               },
@@ -180,7 +172,7 @@ export class GRNComponent implements OnInit {
             bookType: 'xlsx',
             type: 'array',
           });
-          this.saveAsExcelFile(excelBuffer, "Purchase Invoice");
+          this.saveAsExcelFile(excelBuffer, "Purchase Return Invoice");
         });
       }
 
@@ -200,7 +192,7 @@ export class GRNComponent implements OnInit {
             const doc = new jsPDF.default('p', 'px', 'a4');
             (doc as any).autoTable(this.exportColumns, this.invoices);
 
-            doc.save('PurchaseInvoices.pdf');
+            doc.save('PurchaseReturnInvoices.pdf');
 
           });
         });
@@ -214,36 +206,5 @@ export class GRNComponent implements OnInit {
           this.reportSettingItemList = data;
         }
 
-      }
-
-      ConvertToPurchase(invoiceNo:any)
-      {
-        this.router.navigateByUrl('/Invoices/AddNewPurchase/'+invoiceNo);
-      }
-
-      confirmApproval(invoice:any) {
-          this.confirmationService.confirm({
-            header: 'Confirm Approval',
-            message: 'Are you sure you want to approve this GRN? This action can\'t be undone.',
-            accept: async () => {
-             try{
-               await lastValueFrom(this.invoiceService.ApproveInvoice(invoice.invoiceVoucherNo));
-               invoice.transactionStatus = "Approved";
-               invoice.isApproved = true;
-               invoice.isApproved1 = true;
-
-              }
-              catch{
-                this.toasterService.error("Something went wrong.");
-                invoice.isApproved = false;
-                invoice.isApproved1 = false;
-              }
-
-            },
-            reject:()=>{
-              invoice.isApproved = false;
-              invoice.isApproved1 = false;
-            }
-          });
       }
 }

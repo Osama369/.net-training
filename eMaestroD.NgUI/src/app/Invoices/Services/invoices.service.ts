@@ -25,8 +25,11 @@ export class InvoicesService {
   }
 
   GetInvoice(voucherNo:string): Observable<Invoice> {
-    let comID = localStorage.getItem('comID');
     return this.http.get<Invoice>(this.ApiUrl + '/GetInvoice/'+voucherNo);
+  }
+
+  GetInvoiceRemainingAmount(voucherNo:string): Observable<number> {
+    return this.http.get<number>(this.ApiUrl + '/GetInvoiceRemainingAmount/'+voucherNo);
   }
 
   GetInvoiceDetailBy(voucherNo:string): Observable<Invoice> {
@@ -43,6 +46,20 @@ export class InvoicesService {
     let comID = localStorage.getItem('comID');
     return this.http.get<Invoice[]>(this.ApiUrl + '/GetInvoices/'+txtypeID+'/'+customerOrVendorID+'/'+comID);
   }
+
+  ApproveInvoice(voucherNo:string)
+  {
+    let comID = localStorage.getItem('comID');
+    return this.http.get<void>(this.ApiUrl + '/ApproveInvoice/'+voucherNo+'/'+comID);
+  }
+
+
+  PostInvoices(invoces:Invoice[])
+  {
+    return this.http.post<void>(this.ApiUrl + '/PostInvoices/',invoces);
+  }
+
+
 
   DeleteInvoice(voucherNo:string)
   {
@@ -238,6 +255,9 @@ export class InvoicesService {
       rebateAmount: product.rebateAmount,
       grossValue: product.grossValue,
       netAmount: product.netAmount,
+      mrp: product.mrp,
+      sellingPrice: product.sellingPrice,
+      lastCost : product.lastCost,
       ProductTaxes: this.createProductTaxes(product, taxesList)
     };
   }

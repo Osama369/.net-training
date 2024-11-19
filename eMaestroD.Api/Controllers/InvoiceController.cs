@@ -43,16 +43,25 @@ namespace eMaestroD.Api.Controllers
 
             try
             {
-                List<GL> glEntries = await _glService.ConvertInvoiceToGL(invoice);
-                if(invoice.invoiceID == 0)
-                {
-                    await _glService.InsertInvoice(glEntries);
-                }
-                else
-                {
-                    await _glService.UpdateInvoice(glEntries);
-                }
+                //List<GL> glEntries = await _glService.ConvertInvoiceToGL(invoice);
+                //if(invoice.invoiceID == 0)
+                //{
+                //    await _glService.InsertInvoice(glEntries);
+                //}
+                //else
+                //{
+                //    await _glService.UpdateInvoice(glEntries);
+                //}
 
+                var entries = await _glService.ConvertInvoiceToGL(invoice);
+                if (entries.FirstOrDefault() is TempGL)
+                {
+                    await _glService.InsertOrUpdateInvoice<TempGL>(entries.Cast<TempGL>().ToList());
+                }
+                else if (entries.FirstOrDefault() is GL)
+                {
+                    await _glService.InsertOrUpdateInvoice<GL>(entries.Cast<GL>().ToList());
+                }
 
                 return Ok(new { message = "Invoice created successfully." });
             }
@@ -120,6 +129,22 @@ namespace eMaestroD.Api.Controllers
         }
 
         [HttpGet]
+        [Route("{voucherNo}/{comID}")]
+        public async Task<IActionResult> ApproveInvoice(string voucherNo, int comID)
+        {
+            try
+            {
+                await _glService.ApproveInvoice(voucherNo);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        
+        [HttpGet]
         [Route("{supplierId}/{dateFrom}/{dateTo}")]
         public async Task<IActionResult> GetItemsBySupplierAndDate(int supplierId, DateTime dateFrom, DateTime dateTo)
         {
@@ -132,6 +157,40 @@ namespace eMaestroD.Api.Controllers
             }
 
             return Ok(invoices); 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostInvoices(List<Invoice> invoices)
+        {
+            try
+            {
+                await _glService.PostInvoices(invoices);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("{voucherNo}")]
+        public async Task<IActionResult> GetInvoiceRemainingAmount(string voucherNo)
+        {
+            try
+            {
+                var invoice = await _glService.GetInvoiceRemainingAmount(voucherNo);
+
+                if (invoice == null)
+                {
+                    return NotFound("Invoice not found.");
+                }
+                return Ok(invoice);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

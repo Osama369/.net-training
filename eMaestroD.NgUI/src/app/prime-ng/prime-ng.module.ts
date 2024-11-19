@@ -35,6 +35,7 @@ import { TranslateModule, TranslateLoader } from '@ngx-translate/core';
 import { TabViewModule } from 'primeng/tabview';
 import { FieldsetModule } from 'primeng/fieldset';
 import { TreeSelectModule } from 'primeng/treeselect';
+import { ChipModule } from 'primeng/chip';
 
 @NgModule({
   exports: [
@@ -74,7 +75,8 @@ import { TreeSelectModule } from 'primeng/treeselect';
     TranslateModule,
     TabViewModule,
     FieldsetModule,
-    TreeSelectModule
+    TreeSelectModule,
+    ChipModule
   ]
 })
 export class PrimeNgModule { }

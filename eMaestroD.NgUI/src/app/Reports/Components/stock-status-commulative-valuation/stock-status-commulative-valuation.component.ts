@@ -87,13 +87,13 @@ export class StockStatusCommulativeValuationComponent {
 
       this.sharedDataService.getLocations$().subscribe({
         next : (loc:any)=>{
-          this.locations = loc;
-          this.locations.unshift({
-            locID : 0,
-            locName : "---ALL---"
-            }
-          );
-          this.selectedLocation = {locID : this.locations[0].locID, locName : this.locations[0].locName}
+          this.locations = loc.filter(x=>x.LocTypeId == 5);
+            this.locations.unshift({
+              LocationId : 0,
+              LocationName : "---ALL---"
+              }
+            );
+          this.selectedLocation = {LocationId : this.locations[0].LocationId, LocationName : this.locations[0].LocationName};
         }
       })
 
@@ -126,18 +126,7 @@ export class StockStatusCommulativeValuationComponent {
       inputField.select();
   }
 
-  filterLocation(event:any) {
-    //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
-    let filtered: any[] = [];
-    let query = event.query;
-    for (let i = 0; i < this.locations.length; i++) {
-      let loc = this.locations[i];
-      if (loc.locName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-        filtered.push(loc);
-      }
-    }
-    this.LocationList = filtered;
-  }
+
 
   filterProductCategory(event: any) {
     // In a real application, make a request to a remote URL with the query and return filtered results. For demo, we filter at the client-side.
@@ -160,7 +149,7 @@ export class StockStatusCommulativeValuationComponent {
     let d1 = this.datePipe.transform('1900-01-01', "yyyy-MM-dd");
     let d2 =  this.datePipe.transform(this.DateTo, "yyyy-MM-dd");
 
-    this.reportService.runReportWith3Para("StockStatusCumulativeValuation",d1,d2,this.selectedLocation.locID, this.SelectedproductDepartment.depID).subscribe(data => {
+    this.reportService.runReportWith2Para("StockStatusCumulativeValuation",d1,d2,this.selectedLocation.LocationId, this.SelectedproductDepartment.depID).subscribe(data => {
       this.data = (data as { [key: string]: any })["enttityDataSource"];
       this.cols = (data as { [key: string]: any })["entityModel"];
       this.allowBtn = true;

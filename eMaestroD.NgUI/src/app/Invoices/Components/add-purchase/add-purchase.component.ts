@@ -199,8 +199,8 @@ showReportDialog() {
 
     this.locationService.getAllLoc().subscribe({
       next : (loc:any)=>{
-        this.locations = loc;
-        this.selectedLocation = {locID : this.locations[0].locID, locName : this.locations[0].locName};
+        this.locations = loc.filter(x=>x.LocTypeId == 5);
+        this.selectedLocation = {locID : this.locations[0].LocationId, locName : this.locations[0].LocationName};
         this.LocationList = this.locations;
       }
     })
@@ -228,8 +228,8 @@ showReportDialog() {
               let i = -1;
               let j = -1;
               let k = -1;
-              let locName = this.locations.find(x=>x.locID == invoices[0].locID)?.locName;
-              this.selectedLocation = {locID : invoices[0].locID, locName: locName };
+              let locName = this.locations.find(x=>x.LocationId == invoices[0].locID)?.LocationName;
+              this.selectedLocation = {LocationId : invoices[0].locID, LocationName : locName };
               invoices.forEach((elem,index) => {
                 if(elem.relCOAID == 83 )
                 {
@@ -587,7 +587,7 @@ showReportDialog() {
       this.toastr.error("Please select supplier!");
       this.onEnterComplex(1);
     }
-    else if(this.selectedLocation.locID == undefined) {
+    else if(this.selectedLocation.LocationId == undefined) {
       this.toastr.error("Please select location!");
       this.onEnterComplex(2);
     }
@@ -628,7 +628,7 @@ showReportDialog() {
         this.gl[i].txTypeID = 1;
         this.gl[i].voucherNo = this.EditVoucherNo;
         this.gl[i].type = this.SelectedType[0].name;
-        this.gl[i].locID = this.selectedLocation.locID;
+        this.gl[i].locID = this.selectedLocation.LocationId;
         this.gl[i].COAID = 98;
         this.gl[i].relCOAID = 83;
         this.gl[i].vendID = this.selectedCustomerName.vendID;
@@ -779,7 +779,7 @@ showReportDialog() {
     let query = event.query;
     for (let i = 0; i < this.locations.length; i++) {
       let loc = this.locations[i];
-      if (loc.locName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+      if (loc.LocationName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
         filtered.push(loc);
       }
     }

@@ -22,9 +22,19 @@
                 <p-calendar #inputField (keyup.enter)="onEnterComplex(0)"  [maxDate]="maxDate"   [(ngModel)]="selectedDate" [showIcon]="true" dateFormat="dd/mm/yy"></p-calendar>
               </div>
               <div class="col-3">
-                <p-autoComplete #inputField  [(ngModel)]="selectedLocation" [suggestions]="LocationList"  (completeMethod)="filterLocation($event)" (keyup.enter)="onEnterComplex(1)"
-                field="locName" value="locID" [minLength]="1" [dropdown]="true" (ngModelChange)="ChangeProductList()"></p-autoComplete>
-            </div>
+
+                <p-dropdown
+                #inputField
+                styleClass="ReportDropDown"
+                [(ngModel)]="selectedLocation"
+                [options]="locations"
+                optionLabel="LocationName"
+                [filter]="true"
+                [filterBy]="'LocationName'"
+                [showClear]="true"
+                >
+                </p-dropdown>
+              </div>
               <div class="col-3">
                 <p-dropdown
                 #inputField

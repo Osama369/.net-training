@@ -1,7 +1,7 @@
 <div class="card">
   <div class="row">
       <div class="col-6">
-          <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Goods Received Notes
+          <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Purchase Returns
             <a *ngIf="!bookmark"  (click)="UpdateBookmark(true)" title="Add Bookmark"><i class="pi pi-bookmark" style="font-size: 1.5rem;"></i></a>
             <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark"><i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i></a>
           </h4>
@@ -24,7 +24,7 @@
               </div>
               <div class="col-md-6" style="text-align:right !important;">
                 <span class="p-buttonset">
-                  <p-button icon="pi pi-plus" styleClass="p-button p-button-sm btns" [routerLink]="'./../AddNewGRN'" [style]="{'margin-right': '8px'}" title="Add"></p-button>
+                  <p-button icon="pi pi-plus" styleClass="p-button p-button-sm btns" [routerLink]="'./../AddNewPurchase'" [style]="{'margin-right': '8px'}" title="Add"></p-button>
                   <p-button icon="pi pi-file-excel" styleClass="p-button p-button-sm p-button-success btns" (onClick)="exportExcel()" [style]="{'margin-right': '8px'}" title="Export Excel"></p-button>
                   <p-button icon="pi pi-file-pdf" styleClass="p-button p-button-sm p-button-danger btns" [style]="{'margin-right': '8px'}" (onClick)="exportPdf()" title="Export PDF"></p-button>
                   <p-button icon="pi pi-fw pi-cog" styleClass="p-button p-button-sm p-button-secondary btns" (click)="reportSettingVisiblity=true" [style]="{'margin-right': '8px'}" title="Invoice Report Setting"></p-button>
@@ -56,21 +56,16 @@
               <th style="min-width:6rem" translate>
                       Amount
               </th>
-              <th style="min-width:6rem">
-                Status
-              </th>
           </tr>
       </ng-template>
       <ng-template pTemplate="body" let-invoices>
           <tr style="padding:0px">
               <td pFrozenColumn style="text-align: center !important;z-index: 0;">
                   <span class="p-buttonset">
-                    <p-button (onClick)="printView(invoices.invoiceVoucherNo)"  icon="pi pi-file-pdf" styleClass="p-button-rounded p-button-info p-button-text" title="Print"></p-button>
-                    <p-button *ngIf="!invoices.isPaymented && !invoices.convertedInvoiceNo && !invoices.isApproved" (onClick)="editView(invoices.invoiceVoucherNo)" icon="pi pi-pencil" styleClass="p-button-rounded p-button-success p-button-text" title="Edit"></p-button>
-                    <p-button *ngIf="!invoices.isPaymented && !invoices.convertedInvoiceNo && !invoices.isApproved" (onClick)="deleteView(invoices.invoiceVoucherNo)" icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-text" title="Delete"></p-button>
-                    <!-- <p-button (onClick)="printView(invoices.invoiceVoucherNo)"  icon="pi pi-money-bill" styleClass="p-button-rounded p-button-info p-button-text" title="Add Payment"></p-button> -->
-
-                     </span>
+                      <p-button (onClick)="printView(invoices.invoiceVoucherNo)"  icon="pi pi-file-pdf" styleClass="p-button-rounded p-button-info p-button-text" title="Print"></p-button>
+                      <p-button *ngIf="!invoices.isPaymented" (onClick)="editView(invoices.invoiceVoucherNo)" icon="pi pi-pencil" styleClass="p-button-rounded p-button-success p-button-text" title="Edit"></p-button>
+                      <p-button *ngIf="!invoices.isPaymented" (onClick)="deleteView(invoices.invoiceVoucherNo)" icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-text" title="Delete"></p-button>
+                    </span>
               </td>
               <td>
                   {{invoices.invoiceDate | timezoneDate : "dd-MM-yyyy hh:mm:ss"}}
@@ -88,18 +83,6 @@
               <td>
                   {{invoices.netTotal | number : '1.2-2'}}
               </td>
-              <td style="text-align: center;">
-                <p-inputSwitch *ngIf="!invoices.isApproved"
-                [(ngModel)]="invoices.isApproved1"
-                (click)="confirmApproval(invoices)"
-                [disabled]="invoices.isApproved"
-                ></p-inputSwitch>
-
-                <p-chip *ngIf="invoices.isApproved"
-                  [label]="invoices.transactionStatus"
-                  [styleClass]="'green-chip'">
-                </p-chip>
-              </td>
           </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
@@ -109,9 +92,6 @@
       </ng-template>
   </p-table>
 </div>
-
-<p-confirmDialog></p-confirmDialog>
-
 
 
 <p-dialog [modal]="true" [(visible)]="PrintringVisible" [style]="{width: '20vw'}">

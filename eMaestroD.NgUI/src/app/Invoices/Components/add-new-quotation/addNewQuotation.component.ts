@@ -244,8 +244,8 @@ export class QuotationInvoiceComponent implements OnInit{
               this.selectedCustomerName ={cstID: invoices[0].cstID, cstName: invoices[0].cstName};
               const formattedDate=new Date(invoices[0].dtTx);
               this.selectedDate =formattedDate;
-              let locName = this.locations.find(x=>x.locID == invoices[0].locID)?.locName;
-              this.selectedLocation = {locID : invoices[0].locID, locName: locName };
+              let locName = this.locations.find(x=>x.LocationId == invoices[0].locID)?.LocationName;
+              this.selectedLocation = {LocationId : invoices[0].locID, LocationName : locName };
               invoices.forEach(elem => {
                 if(elem.relCOAID == 40)
                 {
@@ -389,8 +389,8 @@ export class QuotationInvoiceComponent implements OnInit{
 
     this.locationService.getAllLoc().subscribe({
       next : (loc:any)=>{
-        this.locations = loc;
-        this.selectedLocation = {locID : this.locations[0].locID, locName : this.locations[0].locName}
+        this.locations = loc.filter(x=>x.LocTypeId == 5);
+        this.selectedLocation = {locID : this.locations[0].LocationId, locName : this.locations[0].LocationName}
         this.LocationList = this.locations;
       }
     })
@@ -1067,7 +1067,7 @@ export class QuotationInvoiceComponent implements OnInit{
       this.toastr.error("Please select customer!");
       this.onEnterComplex(1);
     }
-    else if(this.selectedLocation.locID == undefined) {
+    else if(this.selectedLocation.LocationId == undefined) {
       this.toastr.error("Please select location!");
       this.onEnterComplex(2);
     }
@@ -1162,7 +1162,7 @@ export class QuotationInvoiceComponent implements OnInit{
         this.gl[i].type = this.SelectedType[0].name;
         this.gl[i].COAID = 141;
         this.gl[i].cstID = this.selectedCustomerName.cstID;
-        this.gl[i].locID = this.selectedLocation.locID;
+        this.gl[i].locID = this.selectedLocation.LocationId;
         this.gl[i].isDeposited = false;
         this.gl[i].isVoided = false;
         this.gl[i].isCleared = false;
@@ -1501,7 +1501,7 @@ export class QuotationInvoiceComponent implements OnInit{
     let query = event.query;
     for (let i = 0; i < this.locations.length; i++) {
       let loc = this.locations[i];
-      if (loc.locName.toLowerCase().indexOf(query.trim().toLowerCase()) == 0) {
+      if (loc.LocationName.toLowerCase().indexOf(query.trim().toLowerCase()) == 0) {
         filtered.push(loc);
       }
     }

@@ -30,8 +30,10 @@ namespace eMaestroD.Models.VMModels
         public string? notes { get; set; }
         public string? convertedInvoiceNo { get; set; }
         public bool? isPaymented { get; set; }
+        public bool? isApproved { get; set; }
+        public string? transactionStatus { get; set; }
         public decimal? totalRemainingPayment { get; set; }
         // List of products in the invoice
-        public List<InvoiceProduct> Products { get; set; }
+        public List<InvoiceProduct>? Products { get; set; }
     }
 }

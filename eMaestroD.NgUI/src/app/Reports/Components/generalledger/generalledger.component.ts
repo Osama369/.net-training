@@ -5,7 +5,6 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { COA } from 'src/app/Administration/Models/COA';
-import { ProductsService } from 'src/app/Manage/Services/products.service';
 import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { GenericService } from 'src/app/Shared/Services/generic.service';
@@ -23,10 +22,8 @@ export class GeneralledgerComponent {
   constructor(private authService : AuthService,
     public bookmarkService: BookmarkService,
     public route : ActivatedRoute,
-    private productService:ProductsService,
     private genericService : GenericService,
     private http: HttpClient,
-    private sanitizer: DomSanitizer,
     private datePipe: DatePipe,
     private reportService: ReportService
     ){}

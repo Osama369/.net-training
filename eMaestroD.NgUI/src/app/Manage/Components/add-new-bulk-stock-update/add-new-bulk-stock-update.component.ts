@@ -25,6 +25,7 @@ import { ProductCategoryService } from '../../Services/product-category.service'
 import { ProductsService } from '../../Services/products.service';
 import { Customer } from '../../Models/customer';
 import { Location } from './../../../Administration/Models/location';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 @Component({
   selector: 'app-add-new-bulk-stock-update',
@@ -35,14 +36,10 @@ import { Location } from './../../../Administration/Models/location';
 export class AddNewBulkStockUpdateComponent implements OnInit{
 
   constructor(
-    private productService: ProductsService,
     private productCategoryService: ProductCategoryService,
     private router: Router,
-    private citiesService:CitiesService,
-    private customersService:CustomersService,
-    private genericService:GenericService,
     private invoicesService:InvoicesService,
-    private locationService:LocationService,
+    private sharedDataService:SharedDataService,
     private toastr: ToastrService,
     private el: ElementRef,
     private confirmationService :ConfirmationService,
@@ -211,14 +208,17 @@ export class AddNewBulkStockUpdateComponent implements OnInit{
 
 
 
-    const loc = await lastValueFrom(this.locationService.getAllLoc());
-    this.locations = loc;
-    if (this.locations && this.locations.length > 0) {
-      this.selectedLocation = {
-        locID: this.locations[0].locID,
-        locName: this.locations[0].locName,
-      };
-    }
+    this.sharedDataService.getLocations$().subscribe({
+      next : (loc:any)=>{
+        this.locations = loc.filter(x=>x.LocTypeId == 5);
+          this.locations.unshift({
+            LocationId : 0,
+            LocationName : "---ALL---"
+            }
+          );
+        this.selectedLocation = {LocationId : this.locations[0].LocationId, LocationName : this.locations[0].LocationName};
+      }
+    })
 
     this.invoicelist = [
       this.createNewGLList()
@@ -236,7 +236,7 @@ export class AddNewBulkStockUpdateComponent implements OnInit{
     this.stockList = (reportData as { [key: string]: any })["enttityDataSource"];
     if (this.selectedLocation && this.stockList) {
       this.productlist = this.stockList.filter(
-        (x: any) => x.locID === this.selectedLocation.locID
+        (x: any) => x.locID === this.selectedLocation.LocationId
         );
         this.totalRecords = this.productlist.length;
       this.showPleaseWait = false;
@@ -252,9 +252,9 @@ export class AddNewBulkStockUpdateComponent implements OnInit{
     {
       if(this.selectedCategory.prodGrpID == 0)
       {
-        this.productlist = this.stockList.filter((x:any)=>x.locID == this.selectedLocation.locID);
+        this.productlist = this.stockList.filter((x:any)=>x.locID == this.selectedLocation.LocationId);
       }else{
-        this.productlist = this.stockList.filter((x:any)=>x.prodGrpID == this.selectedCategory.prodGrpID && x.locID == this.selectedLocation.locID);
+        this.productlist = this.stockList.filter((x:any)=>x.prodGrpID == this.selectedCategory.prodGrpID && x.locID == this.selectedLocation.LocationId);
       }
       this.totalRecords = this.productlist.length;
     }
@@ -433,7 +433,7 @@ export class AddNewBulkStockUpdateComponent implements OnInit{
       this.toastr.error("Please select date!");
       this.onEnterComplex(0);
     }
-    else if(this.selectedLocation.locID == undefined) {
+    else if(this.selectedLocation.LocationId == undefined) {
       this.toastr.error("Please select location!");
       this.onEnterComplex(1);
     }
@@ -496,7 +496,7 @@ export class AddNewBulkStockUpdateComponent implements OnInit{
           this.gl[j].depositID = 2018;
           this.gl[j].purchRate = 0;
           this.gl[j].taxName = this.TaxName;
-          this.gl[j].locID = this.selectedLocation.locID;
+          this.gl[j].locID = this.selectedLocation.LocationId;
           this.gl[j].comID = localStorage.getItem('comID');
           j++;
         }
@@ -544,18 +544,7 @@ export class AddNewBulkStockUpdateComponent implements OnInit{
     });
   }
 
-  filterLocation(event:any) {
-    //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
-    let filtered: any[] = [];
-    let query = event.query;
-    for (let i = 0; i < this.locations.length; i++) {
-      let loc = this.locations[i];
-      if (loc.locName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-        filtered.push(loc);
-      }
-    }
-    this.LocationList = filtered;
-  }
+
 
   onPrinterClick()
   {

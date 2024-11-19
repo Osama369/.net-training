@@ -1,4 +1,5 @@
 ﻿using eMaestroD.DataAccess.IRepositories;
+using eMaestroD.InvoiceProcessing.Interfaces;
 using eMaestroD.Models.Models;
 using eMaestroD.Models.VMModels;
 using eMaestroD.Shared.Common;
@@ -15,16 +16,21 @@ namespace eMaestroD.InvoiceProcessing.Handlers
     public class PurchaseOrderHandler : IInvoiceHandler
     {
         private readonly IHelperMethods _helperMethods;
-        public PurchaseOrderHandler(IHelperMethods helperMethods)
+        private readonly IGLService _gLService;
+        public PurchaseOrderHandler(IHelperMethods helperMethods, IGLService gLService)
         {
             _helperMethods = helperMethods;
+            _gLService = gLService;
         }
-        public async Task<List<GL>> ConvertInvoiceToGL(Invoice invoice)
+        public async Task<List<object>> ConvertInvoiceToGL(Invoice invoice)
         {
-
-            GL glMasterEntry = new GL();
-            GL glDetailEntry = new GL();
-            List<GL> glEntries = new List<GL>();
+            if (string.IsNullOrEmpty(invoice.invoiceVoucherNo))
+            {
+                invoice.invoiceVoucherNo = await _gLService.GenerateTempGLVoucherNo((int)invoice.txTypeID, invoice.comID);
+            }
+            TempGL glMasterEntry = new TempGL();
+            TempGL glDetailEntry = new TempGL();
+            List<TempGL> glEntries = new List<TempGL>();
             decimal? totalNetAmount = 0;
 
             var AccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.GoodsReceivable);
@@ -34,9 +40,9 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                 relAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeCreditors);
             }
 
-            glMasterEntry = new GL
+            glMasterEntry = new TempGL
             {
-                GLID = (int)invoice.invoiceID,
+                TempGLID = (int)invoice.invoiceID,
                 txTypeID = (int)invoice.txTypeID,
                 cstID = 0,
                 vendID = (int)invoice.CustomerOrVendorID,
@@ -61,7 +67,8 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                 crtDate = DateTime.Now,
                 modDate = DateTime.Now,
                 isConverted = false,
-                balSum = invoice.invoiceType.ToLower() == "credit" ? (decimal)invoice.netTotal : 0
+                balSum = invoice.invoiceType.ToLower() == "credit" ? (decimal)invoice.netTotal : 0,
+                TransactionStatus = "Pending"
 
             };
 
@@ -70,9 +77,9 @@ namespace eMaestroD.InvoiceProcessing.Handlers
 
             foreach (var product in invoice.Products)
             {
-                GL glEntry1 = new GL
+                TempGL glEntry1 = new TempGL
                 {
-                    GLID = product.prodInvoiceID != null ? (int)product.prodInvoiceID : 0,
+                    TempGLID = product.prodInvoiceID != null ? (int)product.prodInvoiceID : 0,
                     txTypeID = invoice.txTypeID ?? 0,
                     comID = invoice.comID,
                     depositID = (int)invoice.fiscalYear,
@@ -109,13 +116,17 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                     isDeposited = false,
                     isCleared = false,
                     isConverted = false,
-                    gLDetails = product.ProductTaxes.Select(tax => new GLDetail
+                    mrp = product.mrp,
+                    sellPrice = product.sellingPrice,
+                    lastCost = product.lastCost,
+                    tempGLDetails = product.ProductTaxes.Select(tax => new TempGLDetail
                     {
-                        GLDetailID = tax.taxDetailID,
+                        TempGLDetailID = tax.taxDetailID,
                         acctNo = tax.taxAcctNo,
                         GLAmount = tax.taxAmount,
                         rate = tax.taxPercent
-                    }).ToList()
+                    }).ToList(),
+                    TransactionStatus = "Pending"
                 };
 
                 totalNetAmount += product.netAmount;
@@ -124,9 +135,9 @@ namespace eMaestroD.InvoiceProcessing.Handlers
             }
 
 
-            glDetailEntry = new GL
+            glDetailEntry = new TempGL
             {
-                GLID = (int)invoice.invoiceDetailID,
+                TempGLID = (int)invoice.invoiceDetailID,
                 txTypeID = (int)invoice.txTypeID,
                 cstID = 0,
                 vendID = (int)invoice.CustomerOrVendorID,
@@ -152,11 +163,12 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                 crtDate = DateTime.Now,
                 modDate = DateTime.Now,
                 isConverted = false,
-                balSum = invoice.invoiceType.ToLower() == "credit" ? (decimal)invoice.netTotal : 0
+                balSum = invoice.invoiceType.ToLower() == "credit" ? (decimal)invoice.netTotal : 0,
+                TransactionStatus = "Pending"
             };
 
             glEntries.Add(glDetailEntry);
-            return glEntries;
+            return glEntries.Cast<object>().ToList();
         }
     }
 }

@@ -168,7 +168,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
     this.selectedDate = today;
 
     this.sharedDataService.getProducts$().subscribe(products => {
-      this.products = products;
+      this.products = (products as { [key: string]: any })["enttityDataSource"];
       this.Filterproductlist = this.products;
     });
 
@@ -388,7 +388,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
             this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
             this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
             this.productlist[i].taxPercent =this.taxesList[0].taxValue;
-
+            this.productlist[i].lastCost =this.selectedProductList[0].lastCost;
             this.Itemcalculation(i);
             // let el: HTMLElement = this.newRowButton.nativeElement;
             // el.click();
@@ -415,7 +415,8 @@ export class AddNewPurchaseOrderComponent implements OnInit{
 
   Itemcalculation(rowIndex: number) {
     let rowData = this.productlist[rowIndex];
-
+    const fieldName = (event.target as HTMLInputElement).name;
+    console.log(fieldName);
     rowData.qty = rowData.qty || 0;
     rowData.bonusQty = rowData.bonusQty || 0;
     rowData.purchRate = rowData.purchRate || 0;
@@ -436,7 +437,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
     rowData.grossValue = parseFloat((rowData.qty * rowData.purchRate).toFixed(2));
 
     // Determine if discount is based on percentage or amount
-    if (rowData.discount > 0) {
+    if (fieldName == "discount") {
       rowData.discountAmount = parseFloat(((rowData.grossValue * rowData.discount) / 100).toFixed(2)) || 0;
     } else {
       rowData.discount = parseFloat(((rowData.discountAmount / rowData.grossValue) * 100).toFixed(2)) || 0;
@@ -446,28 +447,28 @@ export class AddNewPurchaseOrderComponent implements OnInit{
     rowData.discountedGross = parseFloat((rowData.grossValue - rowData.discountAmount).toFixed(2)) || 0;
 
     // Determine if tax is based on percentage or amount
-    if (rowData.taxPercent > 0) {
+    if (fieldName == "tax") {
       rowData.taxAmount = parseFloat(((rowData.discountedGross * rowData.taxPercent) / 100).toFixed(2)) || 0;
     } else {
       rowData.taxPercent = parseFloat(((rowData.taxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
     }
 
     // Determine if extra discount is based on percentage or amount
-    if (rowData.extraDiscountPercent > 0) {
+    if (fieldName == "extraDiscount") {
       rowData.extraDiscountAmount = parseFloat(((rowData.discountedGross * rowData.extraDiscountPercent) / 100).toFixed(2)) || 0;
     } else {
       rowData.extraDiscountPercent = parseFloat(((rowData.extraDiscountAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
     }
 
     // Calculate advance tax amount
-    if (rowData.advanceTaxPercent > 0) {
+    if (fieldName == "advanceTax") {
       rowData.advanceTaxAmount = parseFloat(((rowData.discountedGross * rowData.advanceTaxPercent) / 100).toFixed(2)) || 0;
     } else {
       rowData.advanceTaxPercent = parseFloat(((rowData.advanceTaxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
     }
 
     // Calculate extra advance tax amount
-    if (rowData.extraAdvanceTaxPercent > 0) {
+    if (fieldName == "extraTax") {
       rowData.extraAdvanceTaxAmount = parseFloat(((rowData.discountedGross * rowData.extraAdvanceTaxPercent) / 100).toFixed(2)) || 0;
     } else {
       rowData.extraAdvanceTaxPercent = parseFloat(((rowData.extraAdvanceTaxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
@@ -475,11 +476,17 @@ export class AddNewPurchaseOrderComponent implements OnInit{
 
     // Calculate net amount before rebate
     rowData.netAmountBeforeRebate = parseFloat(
-      (rowData.discountedGross + rowData.taxAmount - rowData.extraDiscountAmount + rowData.advanceTaxAmount + rowData.extraAdvanceTaxAmount).toFixed(2)
+      (
+        parseFloat(Number(rowData.discountedGross || 0).toFixed(2)) +
+        parseFloat(Number(rowData.taxAmount || 0).toFixed(2)) -
+        parseFloat(Number(rowData.extraDiscountAmount || 0).toFixed(2)) +
+        parseFloat(Number(rowData.advanceTaxAmount || 0).toFixed(2)) +
+        parseFloat(Number(rowData.extraAdvanceTaxAmount || 0).toFixed(2))
+      ).toFixed(2)
     );
 
     // Determine if rebate is based on percentage or amount
-    if (rowData.rebatePercent > 0) {
+    if (fieldName == "rebate") {
       rowData.rebateAmount = parseFloat(((rowData.netAmountBeforeRebate * rowData.rebatePercent) / 100).toFixed(2)) || 0;
     } else {
       rowData.rebatePercent = parseFloat(((rowData.rebateAmount / rowData.netAmountBeforeRebate) * 100).toFixed(2)) || 0;
@@ -492,9 +499,9 @@ export class AddNewPurchaseOrderComponent implements OnInit{
     let totalQty = rowData.qty;
     rowData.netRate = totalQty ? parseFloat((rowData.netAmount / totalQty).toFixed(2)) : 0;
 
-    // Update the UI values with recalculated data
-    this.productlist[rowIndex] = rowData;
+    rowData.diff = parseFloat((rowData.lastCost - rowData.netRate).toFixed(2)) || 0;
 
+    this.productlist[rowIndex] = rowData;
     this.calculateTotalSummary();
   }
 
@@ -948,7 +955,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
           this.productlist[i].purchRate = this.selectedProductList[0].costPrice;
           this.productlist[i].discount = 0;
           this.productlist[i].taxPercent =this.taxesList[0].taxValue;
-
+          this.productlist[i].lastCost =this.selectedProductList[0].lastCost;
           this.productlist[i].currentStock = this.selectedProductList[0].currentStock;
           this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
           this.productlist[i].depName =this.selectedProductList[0].depName;

@@ -12,6 +12,7 @@ import { Vendor } from 'src/app/Manage/Models/vendor';
 import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { ReportService } from '../../Services/report.service';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 
 
@@ -24,7 +25,7 @@ export class PartyledgerComponent {
   constructor(private authService : AuthService,
     public bookmarkService: BookmarkService,
     private cdr: ChangeDetectorRef,
-    public route : ActivatedRoute,private customerService:CustomersService,private vendorService:VendorService,private http: HttpClient, private sanitizer: DomSanitizer, private datePipe: DatePipe,private reportService: ReportService){}
+    public route : ActivatedRoute,private sharedDataService : SharedDataService,private http: HttpClient, private sanitizer: DomSanitizer, private datePipe: DatePipe,private reportService: ReportService){}
   customers: Customer[] = [];
   SelectedCustomer:any;
   customerlist: Customer[];
@@ -55,33 +56,13 @@ export class PartyledgerComponent {
     this.DateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
     this.DateTo = today;
 
-    this.customerService.getAllCustomers().subscribe({
+    this.sharedDataService.getCustomers$().subscribe({
       next: (customers) => {
-        this.customers = (customers as { [key: string]: any })["enttityDataSource"];;
+        this.customers = [...(customers as { [key: string]: any })["enttityDataSource"]];
         this.customers.unshift({
           cstID : -11,
-          regionID : undefined,
-          regionName : undefined,
-          cityID : undefined,
-          cityName : undefined,
-          areasID : undefined,
-          areasName : undefined,
-          cstCode : undefined,
+
           cstName : "---Select Customer---",
-          cstShortName : undefined,
-          isLicence : true,
-          city : undefined,
-          state : undefined,
-          active : true,
-          crtBy : undefined,
-          crtDate : undefined,
-          modby : undefined,
-          modDate : undefined,
-          taxNo : undefined,
-          taxValue : undefined    ,
-          address:undefined,
-          contPhone:undefined,
-          comment : undefined
       });
     //  this.SelectedCustomer = {cstID:  -11, cstName: '---Select Customer---'};
     this.cdr.detectChanges();
@@ -108,10 +89,10 @@ export class PartyledgerComponent {
       },
     });
 
-    this.vendorService.getAllVendor().subscribe({
+    this.sharedDataService.getVendors$().subscribe({
       next: (result) => {
-        this.vendors = (result as { [key: string]: any })["enttityDataSource"];;
-        this.vendors.unshift(this.createNewVendor());
+          this.vendors = [...(result as { [key: string]: any })["enttityDataSource"]];
+          this.vendors.unshift(this.createNewVendor());
 
         this.cdr.detectChanges();
         if(this.vendID != undefined){

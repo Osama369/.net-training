@@ -10,9 +10,10 @@ namespace eMaestroD.Models.Models
     public class VendorProduct
     {
         [Key]
-        public int VendorProductID { get; set; }
-        public int CompanyVendorID { get; set; }
-        public int ProductID { get; set; }
-        public int Preference { get; set; }
+        public int vendProdID {get; set;}
+        public int comVendID {get; set;}
+        public int prodBCID { get; set;}
+        public int comID  {get; set;}
+        public int preference { get; set; }
     }
 }

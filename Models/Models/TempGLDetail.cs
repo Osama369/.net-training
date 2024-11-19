@@ -10,8 +10,8 @@ namespace eMaestroD.Models.Models
     public class TempGLDetail 
     {
         [Key]
-        public int GLDetailID { get; set; }
-        public int? GLID { get; set; }
+        public int TempGLDetailID { get; set; }
+        public int? TempGLID { get; set; }
         public string? acctNo { get; set; }
         public decimal? GLAmount { get; set; }
         public decimal? rate { get; set; }

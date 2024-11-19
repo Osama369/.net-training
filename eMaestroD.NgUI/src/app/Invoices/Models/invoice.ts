@@ -21,6 +21,8 @@ export interface Invoice {
   notes?:string;
   convertedInvoiceNo?:any;
   isPaymented? : boolean;
+  isApproved?:boolean;
+  transactionStatus? : string;
   totalRemainingPayment?:number;
   Products?: InvoiceProduct[];
 }
@@ -49,7 +51,9 @@ export interface InvoiceProduct {
   rebateAmount?:number;
   grossValue?: number;
   netAmount?: number;
-
+  mrp?:number;
+  sellingPrice?:number;
+  lastCost?:number;
   ProductTaxes? : InvoiceProductTax[];
 }
 

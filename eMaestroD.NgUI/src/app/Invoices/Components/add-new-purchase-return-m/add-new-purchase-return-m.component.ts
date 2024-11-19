@@ -170,7 +170,7 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
 
 
     this.sharedDataService.getProducts$().subscribe(products => {
-      this.products = products;
+      this.products = (products as { [key: string]: any })["enttityDataSource"];
       this.Filterproductlist = this.products;
     });
 
@@ -421,7 +421,8 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
 
   Itemcalculation(rowIndex: number) {
     let rowData = this.productlist[rowIndex];
-
+    const fieldName = (event.target as HTMLInputElement).name;
+    console.log(fieldName);
     rowData.qty = rowData.qty || 0;
     rowData.bonusQty = rowData.bonusQty || 0;
     rowData.purchRate = rowData.purchRate || 0;
@@ -442,7 +443,7 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
     rowData.grossValue = parseFloat((rowData.qty * rowData.purchRate).toFixed(2));
 
     // Determine if discount is based on percentage or amount
-    if (rowData.discount > 0) {
+    if (fieldName == "discount") {
       rowData.discountAmount = parseFloat(((rowData.grossValue * rowData.discount) / 100).toFixed(2)) || 0;
     } else {
       rowData.discount = parseFloat(((rowData.discountAmount / rowData.grossValue) * 100).toFixed(2)) || 0;
@@ -452,28 +453,28 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
     rowData.discountedGross = parseFloat((rowData.grossValue - rowData.discountAmount).toFixed(2)) || 0;
 
     // Determine if tax is based on percentage or amount
-    if (rowData.taxPercent > 0) {
+    if (fieldName == "tax") {
       rowData.taxAmount = parseFloat(((rowData.discountedGross * rowData.taxPercent) / 100).toFixed(2)) || 0;
     } else {
       rowData.taxPercent = parseFloat(((rowData.taxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
     }
 
     // Determine if extra discount is based on percentage or amount
-    if (rowData.extraDiscountPercent > 0) {
+    if (fieldName == "extraDiscount") {
       rowData.extraDiscountAmount = parseFloat(((rowData.discountedGross * rowData.extraDiscountPercent) / 100).toFixed(2)) || 0;
     } else {
       rowData.extraDiscountPercent = parseFloat(((rowData.extraDiscountAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
     }
 
     // Calculate advance tax amount
-    if (rowData.advanceTaxPercent > 0) {
+    if (fieldName == "advanceTax") {
       rowData.advanceTaxAmount = parseFloat(((rowData.discountedGross * rowData.advanceTaxPercent) / 100).toFixed(2)) || 0;
     } else {
       rowData.advanceTaxPercent = parseFloat(((rowData.advanceTaxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
     }
 
     // Calculate extra advance tax amount
-    if (rowData.extraAdvanceTaxPercent > 0) {
+    if (fieldName == "extraTax") {
       rowData.extraAdvanceTaxAmount = parseFloat(((rowData.discountedGross * rowData.extraAdvanceTaxPercent) / 100).toFixed(2)) || 0;
     } else {
       rowData.extraAdvanceTaxPercent = parseFloat(((rowData.extraAdvanceTaxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
@@ -481,11 +482,17 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
 
     // Calculate net amount before rebate
     rowData.netAmountBeforeRebate = parseFloat(
-      (rowData.discountedGross + rowData.taxAmount - rowData.extraDiscountAmount + rowData.advanceTaxAmount + rowData.extraAdvanceTaxAmount).toFixed(2)
+      (
+        parseFloat(Number(rowData.discountedGross || 0).toFixed(2)) +
+        parseFloat(Number(rowData.taxAmount || 0).toFixed(2)) -
+        parseFloat(Number(rowData.extraDiscountAmount || 0).toFixed(2)) +
+        parseFloat(Number(rowData.advanceTaxAmount || 0).toFixed(2)) +
+        parseFloat(Number(rowData.extraAdvanceTaxAmount || 0).toFixed(2))
+      ).toFixed(2)
     );
 
     // Determine if rebate is based on percentage or amount
-    if (rowData.rebatePercent > 0) {
+    if (fieldName == "rebate") {
       rowData.rebateAmount = parseFloat(((rowData.netAmountBeforeRebate * rowData.rebatePercent) / 100).toFixed(2)) || 0;
     } else {
       rowData.rebatePercent = parseFloat(((rowData.rebateAmount / rowData.netAmountBeforeRebate) * 100).toFixed(2)) || 0;
@@ -498,9 +505,9 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
     let totalQty = rowData.qty;
     rowData.netRate = totalQty ? parseFloat((rowData.netAmount / totalQty).toFixed(2)) : 0;
 
-    // Update the UI values with recalculated data
-    this.productlist[rowIndex] = rowData;
+    rowData.diff = parseFloat((rowData.lastCost - rowData.netRate).toFixed(2)) || 0;
 
+    this.productlist[rowIndex] = rowData;
     this.calculateTotalSummary();
 
     if(this.totalNetPayable > this.returnTotalAmount)
@@ -1045,7 +1052,7 @@ clear()
       this.invoicesService.GetInvoices(GLTxTypes.PurchaseInvoice,this.selectedCustomerName.vendID).subscribe({
         next:(result)=>{
           console.log(result);
-          this.GRNInvoiceList = result.filter(x=>(x.convertedInvoiceNo == null || x.convertedInvoiceNo == "") && x.isPaymented == false);
+          this.GRNInvoiceList = result.filter(x=> x.isPaymented == false);
           if(this.GRNInvoiceList.length > 0){
             this.GRNInvoiceList.unshift({ invoiceVoucherNo : "Select Invoice No"});
           }else{
@@ -1069,11 +1076,10 @@ clear()
     }
 
     try {
-      const invoiceData = await lastValueFrom(this.invoicesService.GetInvoice(this.selectedVoucherNo));
-
-      this.returnTotalAmount = invoiceData.totalRemainingPayment;
+      const totalRemainingPayment = await lastValueFrom(this.invoicesService.GetInvoiceRemainingAmount(this.selectedVoucherNo));
+      this.returnTotalAmount = totalRemainingPayment;
     } catch (result) {
-      this.toastr.error(result);
+      this.toastr.error(result.error);
     }
   }
 
@@ -1095,7 +1101,6 @@ clear()
     this.totalAdvanceExtraTax = invoiceData.totalAdvanceExtraTax;
     this.totalExtraDiscount = invoiceData.totalExtraDiscount;
     this.totalNetPayable = invoiceData.netTotal;
-
     for (let i = 0; i < this.productlist.length; i++) {
       this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
 
@@ -1112,18 +1117,17 @@ clear()
       {
         this.productlist[i].expiryDate = new Date(invoiceData.Products[i].expiry);
       }
-      this.productlist[i].taxID= invoiceData.Products[i].ProductTaxes[0].taxDetailID || 0,
-      this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0,
-      this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0,
-      this.productlist[i].advanceTaxID= invoiceData.Products[i].ProductTaxes[1].taxDetailID || 0,
-      this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0,
-      this.productlist[i].advanceTaxAmount= invoiceData.Products[i].ProductTaxes[1].taxAmount || 0,
-      this.productlist[i].extraAdvanceTaxID= invoiceData.Products[i].ProductTaxes[2].taxDetailID || 0,
-      this.productlist[i].extraAdvanceTaxPercent= invoiceData.Products[i].ProductTaxes[2].taxPercent || 0,
-      this.productlist[i].extraAdvanceTaxAmount= invoiceData.Products[i].ProductTaxes[2].taxAmount || 0
-       this.Itemcalculation(i)
+      this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0;
+      this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0;
+      this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0;
+      this.productlist[i].advanceTaxAmount= invoiceData.Products[i].ProductTaxes[1].taxAmount || 0;
+      this.productlist[i].extraAdvanceTaxPercent= invoiceData.Products[i].ProductTaxes[2].taxPercent || 0;
+      this.productlist[i].extraAdvanceTaxAmount= invoiceData.Products[i].ProductTaxes[2].taxAmount || 0;
+      this.productlist[i].prodInvoiceID= invoiceData.Products[i].prodInvoiceID || 0;
+      this.Itemcalculation(i)
     }
   }
+
   sumField(field: string): number {
     return parseFloat(this.productlist.reduce((acc, curr) => acc + (Number(curr[field]) || 0), 0).toFixed(2));
   }

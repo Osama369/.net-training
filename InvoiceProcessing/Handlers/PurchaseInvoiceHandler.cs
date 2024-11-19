@@ -1,4 +1,5 @@
 ﻿using eMaestroD.DataAccess.IRepositories;
+using eMaestroD.InvoiceProcessing.Interfaces;
 using eMaestroD.Models.Models;
 using eMaestroD.Models.VMModels;
 using eMaestroD.Shared.Common;
@@ -15,13 +16,18 @@ namespace eMaestroD.InvoiceProcessing.Handlers
     public class PurchaseInvoiceHandler : IInvoiceHandler
     {
         private readonly IHelperMethods _helperMethods;
-        public PurchaseInvoiceHandler(IHelperMethods helperMethods)
+        private readonly IGLService _gLService;
+        public PurchaseInvoiceHandler(IHelperMethods helperMethods, IGLService gLService)
         {
             _helperMethods = helperMethods;
+            _gLService = gLService;
         }
-        public async Task<List<GL>> ConvertInvoiceToGL(Invoice invoice)
+        public async Task<List<object>> ConvertInvoiceToGL(Invoice invoice)
         {
-           
+            if (string.IsNullOrEmpty(invoice.invoiceVoucherNo))
+            {
+                invoice.invoiceVoucherNo = await _gLService.GenerateGLVoucherNo((int)invoice.txTypeID, invoice.comID);
+            }
             GL glMasterEntry = new GL();
             GL glDetailEntry = new GL();
             List<GL> glEntries = new List<GL>();
@@ -33,8 +39,6 @@ namespace eMaestroD.InvoiceProcessing.Handlers
             {
                 relAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeCreditors);
             }
-
-
 
             glMasterEntry = new GL
             {
@@ -70,8 +74,34 @@ namespace eMaestroD.InvoiceProcessing.Handlers
             glEntries.Add(glMasterEntry);
 
 
+            var ProductVendorList = await _gLService.GetVendorProductListAsync((int)invoice.comID);
             foreach (var product in invoice.Products)
             {
+                var existingVendorProducts = ProductVendorList
+                .Where(x => x.prodBCID == product.prodBCID)
+                .OrderBy(x => x.preference)
+                .ToList();
+
+                int newPreference = existingVendorProducts.Any()
+                    ? existingVendorProducts.Max(x => x.preference) + 1
+                    : 1;
+
+                bool isProductVendorExist = existingVendorProducts
+                    .Any(x => x.comVendID == (int)invoice.CustomerOrVendorID);
+
+                if (!isProductVendorExist)
+                {
+                    var vendorProduct = new VendorProduct
+                    {
+                        comID = (int)invoice.comID,
+                        prodBCID = product.prodBCID ?? 0,
+                        comVendID = (int)invoice.CustomerOrVendorID,
+                        preference = newPreference
+                    };
+
+                    await _gLService.InsertVendorProductAsync(vendorProduct);
+                }
+
                 GL glEntry1 = new GL
                 {
                     GLID = product.prodInvoiceID != null ? (int)product.prodInvoiceID : 0,
@@ -111,6 +141,9 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                     isCleared = false,
                     isConverted = false,
                     checkName = invoice.convertedInvoiceNo,
+                    mrp = product.mrp,
+                    sellPrice = product.sellingPrice,
+                    lastCost = product.lastCost,
                     gLDetails = product.ProductTaxes.Select(tax => new GLDetail
                     {
                         GLDetailID = tax.taxDetailID,
@@ -118,8 +151,10 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                         acctNo = tax.taxAcctNo,
                         GLAmount = tax.taxAmount,
                         rate = tax.taxPercent
-                    }).ToList()
+                    }).ToList(),
+                    
                 };
+
 
                 totalNetAmount += product.netAmount;
 
@@ -161,7 +196,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
 
             glEntries.Add(glDetailEntry);
 
-            return glEntries;
+            return glEntries.Cast<object>().ToList();
         }
     }
 }

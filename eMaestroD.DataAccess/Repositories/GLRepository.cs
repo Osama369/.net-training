@@ -4,6 +4,7 @@ using eMaestroD.Models.Models;
 using eMaestroD.Models.VMModels;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +21,22 @@ namespace eMaestroD.DataAccess.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<string> GenerateVoucherNoAsync(int txTypeID, int? comID)
+        public async Task<string> GenerateGLVoucherNoAsync(int txTypeID, int? comID)
         {
-            string sql = "EXEC GenerateVoucherNo @txType, @comID";
+            string sql = "EXEC GenerateGLVoucherNo @txType, @comID";
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                new SqlParameter { ParameterName = "@txType", Value = txTypeID },
+                new SqlParameter { ParameterName = "@comID", Value = comID }
+            };
+
+            var SDL = await _dbContext.invoiceNo.FromSqlRaw(sql, parms.ToArray()).ToListAsync();
+            return SDL?.FirstOrDefault()?.voucherNo;
+        }
+
+        public async Task<string> GenerateTempGLVoucherNoAsync(int txTypeID, int? comID)
+        {
+            string sql = "EXEC GenerateTempGLVoucherNo @txType, @comID";
             List<SqlParameter> parms = new List<SqlParameter>
             {
                 new SqlParameter { ParameterName = "@txType", Value = txTypeID },
@@ -39,6 +53,15 @@ namespace eMaestroD.DataAccess.Repositories
                 .Where(gl => gl.voucherNo == voucherNo)
                 .ToListAsync();
         }
+
+        public async Task<List<TempGL>> GetTempGLEntriesByVoucherNoAsync(string voucherNo)
+        {
+            return await _dbContext.TempGL
+                .Include(gl => gl.tempGLDetails)
+                .Where(gl => gl.voucherNo == voucherNo)
+                .ToListAsync();
+        }
+
 
         public async Task<bool> UpdateGLIsConvertedAsync(string voucherNo, string convertedVoucherNo, bool isDeleted)
         {
@@ -77,7 +100,80 @@ namespace eMaestroD.DataAccess.Repositories
             }
         }
 
-        
+        public async Task InsertEntriesAsync<T>(List<T> items) where T : class
+        {
+            if (items == null || !items.Any()) throw new ArgumentException("No items to process.");
+
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var firstItem = items.First();
+                    var dbSet = _dbContext.Set<T>();
+
+                    await dbSet.AddAsync(firstItem);
+                    await _dbContext.SaveChangesAsync();
+
+                    var primaryKeyProperty = typeof(T).GetProperty("GLID") ?? typeof(T).GetProperty("TempGLID");
+                    var txIDProperty = typeof(T).GetProperty("txID");
+                    var firstItemId = primaryKeyProperty.GetValue(firstItem);
+
+                    foreach (var item in items.Skip(1))
+                    {
+                        txIDProperty?.SetValue(item, firstItemId);
+                    }
+
+                    await dbSet.AddRangeAsync(items.Skip(1));
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+        }
+
+        public async Task UpdateEntriesAsync<T>(List<T> items) where T : class
+        {
+            if (items == null || !items.Any()) throw new ArgumentException("No items to update.");
+
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // Update the first item
+                    var firstItem = items.First();
+                    _dbContext.Set<T>().Update(firstItem);
+                    await _dbContext.SaveChangesAsync();
+
+                    // Set `txID` for the remaining items if applicable
+                    var idProperty = firstItem.GetType().GetProperty("GLID") ?? firstItem.GetType().GetProperty("TempGLID");
+                    var firstItemId = idProperty?.GetValue(firstItem);
+
+                    foreach (var item in items.Skip(1))
+                    {
+                        var txIDProperty = item.GetType().GetProperty("txID");
+                        if (txIDProperty != null && firstItemId != null)
+                        {
+                            txIDProperty.SetValue(item, firstItemId);
+                        }
+                    }
+
+                    _dbContext.Set<T>().UpdateRange(items.Skip(1));
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+        }
+
+
 
         public async Task InsertGLEntriesAsync(List<GL> items)
         {
@@ -174,10 +270,48 @@ namespace eMaestroD.DataAccess.Repositories
                             locID = gl.locID,
                             comID = gl.comID,
                             isPaymented = gl.isPaid ?? false,
+                            isApproved = false,
+                            transactionStatus = "",
                             invoiceType = gl.balSum > 0 ? "Credit" : "Cash"
                         };
 
-            return await query.ToListAsync();
+            var tempGLQuery = from temp in _dbContext.TempGL
+                              join c in _dbContext.Customers on temp.cstID equals c.cstID into customerGroup
+                              from customer in customerGroup.DefaultIfEmpty()
+                              join v in _dbContext.Vendors on temp.vendID equals v.vendID into vendorGroup
+                              from vendor in vendorGroup.DefaultIfEmpty()
+                              where temp.txTypeID == txTypeID &&
+                                    temp.comID == comID &&
+                                    temp.depositID == fiscalYear &&
+                                    (customerOrVendorID == 0 || temp.cstID == customerOrVendorID || temp.vendID == customerOrVendorID) &&
+                                    temp.txID == 0
+                              orderby temp.TempGLID descending
+                              select new Invoice
+                              {
+                                  invoiceID = temp.TempGLID,
+                                  invoiceVoucherNo = temp.voucherNo,
+                                  invoiceDate = temp.dtTx,
+                                  netTotal = temp.creditSum,
+                                  totalDiscount = temp.discountSum,
+                                  totalExtraDiscount = temp.extraDiscountSum ?? 0,
+                                  totalTax = temp.taxSum,
+                                  totalRebate = temp.rebateSum ?? 0,
+                                  convertedInvoiceNo = temp.checkName,
+                                  customerOrVendorName = customer != null ? customer.cstName : vendor.vendName,
+                                  CustomerOrVendorID = customer != null ? customer.cstID : vendor.vendID,
+                                  txTypeID = temp.txTypeID,
+                                  fiscalYear = temp.depositID,
+                                  locID = temp.locID,
+                                  comID = temp.comID,
+                                  isPaymented = temp.isPaid ?? false,
+                                  isApproved = temp.ApprovedDate != null ? true : false,
+                                  transactionStatus = temp.TransactionStatus,
+                                  invoiceType = temp.balSum > 0 ? "Credit" : "Cash"
+                              };
+
+            var combinedQuerry = query.Union(tempGLQuery);
+
+            return await combinedQuerry.OrderByDescending(x=>x.invoiceDate).ToListAsync();
         }
 
         public async Task DeleteGLEntriesAsync(string voucherNo)
@@ -215,6 +349,116 @@ namespace eMaestroD.DataAccess.Repositories
             }
         }
 
+        public async Task ApproveTempGLEntriesAsync(string voucherNo)
+        {
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var email = "";
+                    var entriesToApprove = await this.GetTempGLEntriesByVoucherNoAsync(voucherNo);
+                    if (entriesToApprove.Any())
+                    {
+                        var transactionLog = new TransactionLog
+                        {
+                            voucherNo = entriesToApprove[0].voucherNo,
+                            txTypeID = entriesToApprove[0].txTypeID,
+                            note = "Entry Approved",
+                            prevStatus = entriesToApprove[0].TransactionStatus, // Capture previous status
+                            updatedStatus = "Approved",
+                            crtBy = email,
+                            crtDate = DateTime.Now
+                        };
+
+                        foreach (var item in entriesToApprove)
+                        {
+                            item.ApprovedBy = email;
+                            item.ApprovedDate = DateTime.Now;
+                            item.TransactionStatus = "Approved";
+                        }
+
+                        await _dbContext.Set<TransactionLog>().AddAsync(transactionLog);
+                        _dbContext.Set<TempGL>().UpdateRange(entriesToApprove);
+                        await _dbContext.SaveChangesAsync();
+                    }
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+        }
+
+        public async Task PostTempGLEntriesAsync(string voucherNo)
+        {
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    var email = "";
+                    var entriesToApprove = await this.GetTempGLEntriesByVoucherNoAsync(voucherNo);
+                    if (entriesToApprove.Any())
+                    {
+                        var transactionLog = new TransactionLog
+                        {
+                            voucherNo = entriesToApprove[0].voucherNo,
+                            txTypeID = entriesToApprove[0].txTypeID,
+                            note = "Entry posted",
+                            prevStatus = entriesToApprove[0].TransactionStatus, // Capture previous status
+                            updatedStatus = "Posted",
+                            crtBy = email,
+                            crtDate = DateTime.Now
+                        };
+
+                        foreach (var item in entriesToApprove)
+                        {
+                            item.PostedBy = email;
+                            item.PostedDate = DateTime.Now;
+                            item.TransactionStatus = "Posted";
+                        }
+
+
+
+                        await _dbContext.Set<TransactionLog>().AddAsync(transactionLog);
+                        _dbContext.Set<TempGL>().UpdateRange(entriesToApprove);
+                        await _dbContext.SaveChangesAsync();
+                    }
+
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+        }
+
+        public async Task<List<VendorProduct>> GetVendorProductListAsync(int comID)
+        {
+            return await _dbContext.VendorProducts.Where(x => x.comID == comID).ToListAsync();
+        }
+
+        public async Task InsertVendorProductAsync(VendorProduct vendorProduct)
+        {
+            using (var transaction = await _dbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    _dbContext.Set<VendorProduct>().AddAsync(vendorProduct);
+                    await _dbContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+        }
 
         public async Task<List<InvoiceProduct>> GetItemsBySupplierAndDate(int supplierId, DateTime datefrom, DateTime dateTo)
         {

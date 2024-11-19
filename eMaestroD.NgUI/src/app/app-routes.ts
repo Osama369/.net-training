@@ -45,6 +45,7 @@ export const APP_ROUTES = {
     saleInvoices: 'Invoices/SaleInvoices',
     saleReturn: 'Invoices/SaleReturn',
     serviceInvoices: 'Invoices/ServiceInvoices',
+    invoicePosting: 'Invoices/invoicePosting',
   },
 
   transactions: {

@@ -100,7 +100,10 @@ namespace eMaestroD.Api.Controllers
                 return NotFound();
             }
 
-            return Ok(products);
+            ResponsedGroupListVM vM = new ResponsedGroupListVM();
+            vM.enttityDataSource = products;
+            vM.entityModel = products?.GetEntity_MetaData();
+            return Ok(vM);
         }
 
         [HttpGet]

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using eMaestroD.Models.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Models.VMModels
 {
-    public class ProductViewModel
+    public class ProductViewModel : IEntityBase
     {
         public int? prodID { get; set; }
         public int? prodGrpID { get; set; }
@@ -64,8 +65,8 @@ namespace Models.VMModels
 
         // ProdGroups Table Fields
         public string? prodGrpName { get; set; }
-        public decimal? lastCostPrice { get; set; }
+        public decimal? lastCost { get; set; }
         public decimal? currentStock  { get; set; }
-        public decimal? avgUnitPrice  { get; set; }
+        public decimal? sellPrice { get; set; }
     }
 }

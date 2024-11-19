@@ -11,7 +11,7 @@ namespace eMaestroD.Models.Models
     public class TempGL
     {
         [Key]
-        public int GLID { get; set; }
+        public int TempGLID { get; set; }
         public int txID { get; set; }
         public int? comID { get; set; }
         public int relTxID { get; set; }
@@ -79,6 +79,9 @@ namespace eMaestroD.Models.Models
         public string? Approved1By  {get; set;}
         public DateTime? PostedDate  {get; set;}
         public string? PostedBy { get; set; }
-        public List<GLDetail>? gLDetails { get; set; } = new List<GLDetail>();
+        public decimal? mrp { get; set; }
+        public decimal? sellPrice { get; set; }
+        public decimal? lastCost { get; set; }
+        public List<TempGLDetail>? tempGLDetails { get; set; } = new List<TempGLDetail>();
     }
 }

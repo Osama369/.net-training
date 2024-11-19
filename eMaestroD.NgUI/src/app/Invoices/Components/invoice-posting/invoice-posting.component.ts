@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Table } from 'primeng/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as FileSaver from 'file-saver';
-import { getCurrencySymbol } from '@angular/common';
+import { DatePipe, getCurrencySymbol } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { ReportSettingService } from 'src/app/Reports/Services/report-setting.service';
 import { AuthService } from 'src/app/Shared/Services/auth.service';
@@ -16,14 +16,14 @@ import { Invoice } from '../../Models/invoice';
 import { ConfirmationService } from 'primeng/api';
 
 @Component({
-  selector: 'app-grn',
-  templateUrl: './grn.component.html',
-  styleUrls: ['./grn.component.scss']
+  selector: 'app-invoice-posting',
+  templateUrl: './invoice-posting.component.html',
+  styleUrls: ['./invoice-posting.component.scss']
 })
-
-export class GRNComponent implements OnInit {
+export class InvoicePostingComponent implements OnInit {
 
     invoices: Invoice[] = [];
+    tempinvoices: Invoice[] = [];
     invoiceNo: any;
     loading: boolean = true;
     PrintringVisible: boolean = false;
@@ -38,6 +38,12 @@ export class GRNComponent implements OnInit {
     isArabic: boolean = false;
     reportSettingItemList : any[]=[];
     bookmark : boolean = false;
+    DateFrom : any;
+    DateTo : any;
+    minDateTo: Date;
+    maxDateTo: Date;
+
+    selectedInvoice: Invoice[] = [];
 
     constructor(private invoiceService: InvoicesService,
       private genericService: GenericService,
@@ -47,7 +53,8 @@ export class GRNComponent implements OnInit {
       private reportSettingService : ReportSettingService,
       public bookmarkService: BookmarkService,
       public route : ActivatedRoute,
-      public confirmationService : ConfirmationService
+      public confirmationService : ConfirmationService,
+      private datePipe: DatePipe
       ) { }
 
     async ngOnInit() {
@@ -56,11 +63,13 @@ export class GRNComponent implements OnInit {
         this.reportSettingItemList = rpt.filter(x=>x.screenName.toLowerCase() == "purchase");
       })
 
+      let today = new Date();
+      this.DateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
+      this.DateTo = today;
 
       try{
         var result = await lastValueFrom(this.invoiceService.GetInvoices(GLTxTypes.GoodsReceivedNote,0));
-        this.invoices = result;
-        console.log(this.invoices);
+        this.tempinvoices = result;
         this.loading = false;
       }
       catch(error){
@@ -161,89 +170,60 @@ export class GRNComponent implements OnInit {
       this.router.navigateByUrl('/Invoices/Detail/'+invoiceNo);
      }
 
-     exportExcel() {
-        var date = new Date();
-        var dateFormate = `${date.getMonth()}-${date.getDate()}-${date.getFullYear()}`;
-        let filtercols = this.columns.filter((f) => {
-          return f.isHidden == true;
-        });
-        let filterList = this.invoices;
-        filterList.filter((f: { [x: string]: any; }) => {
-          filtercols.map((m) => {
-            delete f[m.field];
-          });
-        });
-        import('xlsx').then((xlsx) => {
-          const worksheet = xlsx.utils.json_to_sheet(filterList);
-          const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
-          const excelBuffer: any = xlsx.write(workbook, {
-            bookType: 'xlsx',
-            type: 'array',
-          });
-          this.saveAsExcelFile(excelBuffer, "Purchase Invoice");
-        });
-      }
 
-      saveAsExcelFile(buffer: any, fileName: string): void {
-        let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-        let EXCEL_EXTENSION = '.xlsx';
-        const data: Blob = new Blob([buffer], {
-            type: EXCEL_TYPE
-        });
-        FileSaver.saveAs(data, fileName + EXCEL_EXTENSION);
-      }
 
-      exportPdf() {
-        var date = new Date();
-        import('jspdf').then((jsPDF) => {
-          import('jspdf-autotable').then((x) => {
-            const doc = new jsPDF.default('p', 'px', 'a4');
-            (doc as any).autoTable(this.exportColumns, this.invoices);
 
-            doc.save('PurchaseInvoices.pdf');
+     Save()
+     {
+      this.confirmationService.confirm({
+        header: 'Confirm Posting',
+        message: 'Are you sure you want to Post this Invoices? This action can\'t be undone.',
+        accept: async () => {
+         try{
+           await lastValueFrom(this.invoiceService.PostInvoices(this.selectedInvoice));
+           var result = await lastValueFrom(this.invoiceService.GetInvoices(GLTxTypes.GoodsReceivedNote,0));
+           this.tempinvoices = result;
+           this.invoices = [];
+           this.toasterService.success("Invoices Succesfully Posted!");
+          }
+          catch{
+            this.toasterService.error("Something went wrong.");
+          }
 
-          });
-        });
-      }
+        },
+      });
+     }
 
-      handleChildData(data: any) {
 
-        this.reportSettingVisiblity = false;
-        if(typeof(data) != 'boolean')
-        {
-          this.reportSettingItemList = data;
-        }
-
-      }
-
-      ConvertToPurchase(invoiceNo:any)
+      submit()
       {
-        this.router.navigateByUrl('/Invoices/AddNewPurchase/'+invoiceNo);
+        console.log(this.invoices);
+
+        let d1 = this.datePipe.transform(this.DateFrom, "yyyy-MM-dd");
+        let d2 = this.datePipe.transform(this.DateTo, "yyyy-MM-dd");
+
+        this.invoices = this.tempinvoices.filter(x => {
+            // Convert invoiceDate to "yyyy-MM-dd" format
+            const invoiceDate = this.datePipe.transform(new Date(x.invoiceDate), "yyyy-MM-dd");
+            return (
+                invoiceDate >= d1 &&
+                invoiceDate <= d2 &&
+                x.transactionStatus === "Approved"
+            );
+        });
+
+        console.log(this.invoices);
+
       }
 
-      confirmApproval(invoice:any) {
-          this.confirmationService.confirm({
-            header: 'Confirm Approval',
-            message: 'Are you sure you want to approve this GRN? This action can\'t be undone.',
-            accept: async () => {
-             try{
-               await lastValueFrom(this.invoiceService.ApproveInvoice(invoice.invoiceVoucherNo));
-               invoice.transactionStatus = "Approved";
-               invoice.isApproved = true;
-               invoice.isApproved1 = true;
 
-              }
-              catch{
-                this.toasterService.error("Something went wrong.");
-                invoice.isApproved = false;
-                invoice.isApproved1 = false;
-              }
-
-            },
-            reject:()=>{
-              invoice.isApproved = false;
-              invoice.isApproved1 = false;
-            }
-          });
+      onDateFromSelect() {
+        if (this.DateFrom) {
+          const startOfMonth = new Date(this.DateFrom.getFullYear(), this.DateFrom.getMonth(), 1);
+          const endOfMonth = new Date(this.DateFrom.getFullYear(), this.DateFrom.getMonth() + 1, 0);
+          this.minDateTo = startOfMonth;
+          this.maxDateTo = endOfMonth;
+          this.DateTo = endOfMonth;
+        }
       }
 }

@@ -8,6 +8,7 @@ import { ProductsService } from 'src/app/Manage/Services/products.service';
 import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { ReportService } from '../../Services/report.service';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 
 
@@ -20,7 +21,9 @@ import { ReportService } from '../../Services/report.service';
 export class ItemWiseProfitComponent {
   constructor(private authService : AuthService,
     public bookmarkService: BookmarkService,
-    public route : ActivatedRoute,private productService:ProductsService,private http: HttpClient, private sanitizer: DomSanitizer, private datePipe: DatePipe,private reportService: ReportService){}
+    public route : ActivatedRoute,
+    private sharedDataService : SharedDataService,
+    private http: HttpClient, private sanitizer: DomSanitizer, private datePipe: DatePipe,private reportService: ReportService){}
 
   products: Products[] = [];
   SelectedProduct:any;
@@ -40,52 +43,15 @@ export class ItemWiseProfitComponent {
     this.DateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
     this.DateTo = today;
 
-    this.productService.getAllProducts().subscribe({
+    this.sharedDataService.getProducts$().subscribe({
       next: (products) => {
-        this.products = (products as { [key: string]: any })["enttityDataSource"];
+        this.products = [...(products as { [key: string]: any })["enttityDataSource"]];
         this.products.unshift({
-            prodID : 0,
-            prodGrpID : undefined,
-            comID : undefined,
-            comName : undefined,
-            prodGrpName : undefined,
-            prodCode : undefined,
-            shortName : undefined,
+            prodBCID : 0,
             prodName : "---ALL---",
-            descr : undefined,
-            prodUnit : undefined,
-            unitQty : undefined,
-            qty:undefined,
-            tax:undefined,
-            discount:undefined,
-            purchRate : undefined,
-            amount:undefined,
-            sellRate : undefined,
-            batch:undefined,
-            retailprice : undefined,
-            bonusQty:undefined,
-            tP : undefined,
-            isDiscount : false,
-            isTaxable : false,
-            isStore : false,
-            isRaw : false,
-            isBonus : false,
-            minQty : undefined,
-            maxQty : undefined,
-            mega : true,
-            active : true,
-            crtBy : undefined,
-            crtDate : undefined,
-            modby : undefined,
-            modDate : undefined,
-            expirydate : undefined,
-            qtyBal:undefined,
-            GLID:undefined,
-            TxID:undefined,
-            unitPrice:undefined
           }
     );
-    this.SelectedProduct = {prodID:  0, prodName: '---ALL---'};
+    this.SelectedProduct = {prodBCID:  0, prodName: '---ALL---'};
       },
       error: (response) => {
         console.log(response);
@@ -138,7 +104,7 @@ export class ItemWiseProfitComponent {
 
     let d1 = this.datePipe.transform(this.DateFrom, "yyyy-MM-dd");
     let d2 =  this.datePipe.transform(this.DateTo, "yyyy-MM-dd");
-    this.reportService.runReportWith3Para("ItemWiseProfit",d1,d2,this.SelectedProduct.prodID,0).subscribe(data => {
+    this.reportService.runReportWith3Para("ItemWiseProfit",d1,d2,this.SelectedProduct.prodBCID,0).subscribe(data => {
       this.data = (data as { [key: string]: any })["enttityDataSource"];
       this.cols = (data as { [key: string]: any })["entityModel"];
       this.allowBtn = true;

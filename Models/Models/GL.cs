@@ -142,7 +142,9 @@ namespace eMaestroD.Models.Models
         {
             return this;
         }
-
+        public decimal? mrp { get; set; }
+        public decimal? sellPrice { get; set; }
+        public decimal? lastCost { get; set; }
         public int prodBCID { get; set; }
         public decimal? rebateSum { get; set; }
         public bool? isConverted { get; set; }
