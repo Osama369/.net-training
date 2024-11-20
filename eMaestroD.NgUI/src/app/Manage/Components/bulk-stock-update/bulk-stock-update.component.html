@@ -90,8 +90,18 @@
             </div>
             <div class="col-12">
 
-            <p-autoComplete #inputField  [(ngModel)]="selectedLocation" [suggestions]="LocationList"  (completeMethod)="filterLocation($event)"
-              field="locName" value="locID" styleClass="col-4" [minLength]="1" [dropdown]="true"></p-autoComplete>
+              <p-dropdown
+              #inputField
+              styleClass="ReportDropDown"
+              [(ngModel)]="selectedLocation"
+              [options]="locations"
+              optionLabel="LocationName"
+              [filter]="true"
+              [filterBy]="'LocationName'"
+              [showClear]="true"
+              >
+              </p-dropdown>
+              
             <p-dropdown
               #inputField
               styleClass="col-4"

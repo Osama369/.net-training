@@ -100,7 +100,10 @@ namespace eMaestroD.Api.Controllers
                 return NotFound();
             }
 
-            return Ok(products);
+            ResponsedGroupListVM vM = new ResponsedGroupListVM();
+            vM.enttityDataSource = products;
+            vM.entityModel = products?.GetEntity_MetaData();
+            return Ok(vM);
         }
 
         [HttpGet]
@@ -197,6 +200,19 @@ namespace eMaestroD.Api.Controllers
                     product.crtBy = product.modby = username;
                     await _AMDbContext.Products.AddAsync(product);
                     await _AMDbContext.SaveChangesAsync();
+                    
+                    product.ProductBarCodes.Add(new ProductBarCodes
+                    {
+                        Active = true,
+                        BarCode = product.prodCode,
+                        CostPrice = product.purchRate,
+                        SalePrice = product.sellRate,
+                        FOBPrice = product.tP,
+                        TradePrice = product.retailprice,
+                        prodID = product.prodID,
+                        Qty = 1,
+                        Unit = product.prodUnit
+                    });
 
                     foreach (var item in product.ProductBarCodes)
                     {
@@ -222,7 +238,7 @@ namespace eMaestroD.Api.Controllers
                     //    String voucherNo = "";
                     //    decimal totalAmount = 0M;
                     //    decimal totalQty = 0M;
-                    //    string sql = "EXEC GenerateVoucherNo @txType";
+                    //    string sql = "EXEC GenerateGLVoucherNo @txType";
                     //    List<SqlParameter> parms = new List<SqlParameter>
                     //    {
                     //    new SqlParameter { ParameterName = "@txType", Value = 1 },
@@ -502,7 +518,7 @@ namespace eMaestroD.Api.Controllers
                                                 qty = decimal.Parse(worksheet.Cell(i, 10).Value.ToString() == "" ? "0" : worksheet.Cell(i, 10).Value.ToString());
                                                 if (qty > 0)
                                                 {
-                                                    string sql = "EXEC GenerateVoucherNo @txType, @comID";
+                                                    string sql = "EXEC GenerateGLVoucherNo @txType, @comID";
                                                     List<SqlParameter> parms = new List<SqlParameter>
                                                 {
                                                 new SqlParameter { ParameterName = "@txType", Value = 1 },

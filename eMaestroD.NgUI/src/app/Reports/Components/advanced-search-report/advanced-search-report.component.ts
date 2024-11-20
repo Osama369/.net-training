@@ -12,6 +12,7 @@ import { Vendor } from 'src/app/Manage/Models/vendor';
 import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { ReportService } from '../../Services/report.service';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 
 
@@ -45,9 +46,7 @@ export class AdvancedSearchReportComponent {
     private authService : AuthService,
     public bookmarkService: BookmarkService,
     public route : ActivatedRoute,
-    private vendorService:VendorService,
-    private customerService:CustomersService,
-    private productService:ProductsService,
+    private sharedDataService : SharedDataService,
     private http: HttpClient,
     private sanitizer: DomSanitizer,
     private datePipe: DatePipe,
@@ -63,11 +62,11 @@ export class AdvancedSearchReportComponent {
     this.DateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
     this.DateTo = today;
 
-    this.vendorService.getAllVendor().subscribe({
+    this.sharedDataService.getVendors$().subscribe({
       next: (vendors) => {
-        this.vendors = (vendors as { [key: string]: any })["enttityDataSource"];;
+        this.vendors = [...(vendors as { [key: string]: any })["enttityDataSource"]];
         this.vendors.unshift(this.createNewVendor());
-    this.Selectedvendor = {vendID:  0, vendName: '---ALL---'};
+        this.Selectedvendor = {vendID:  0, vendName: '---ALL---'};
       },
       error: (response) => {
         console.log(response);
@@ -75,33 +74,12 @@ export class AdvancedSearchReportComponent {
     });
 
 
-    this.customerService.getAllCustomers().subscribe({
+    this.sharedDataService.getCustomers$().subscribe({
       next: (customers) => {
-        this.customers = (customers as { [key: string]: any })["enttityDataSource"];;
+        this.customers = [...(customers as { [key: string]: any })["enttityDataSource"]];
         this.customers.unshift({
           cstID : 0,
-          regionID : undefined,
-          regionName : undefined,
-          cityID : undefined,
-          cityName : undefined,
-          areasID : undefined,
-          areasName : undefined,
-          cstCode : undefined,
           cstName : "---ALL---",
-          cstShortName : undefined,
-          isLicence : true,
-          city : undefined,
-          state : undefined,
-          active : true,
-          crtBy : undefined,
-          crtDate : undefined,
-          modby : undefined,
-          modDate : undefined,
-          taxNo : undefined,
-          taxValue : undefined    ,
-          address:undefined,
-          contPhone:undefined,
-          comment : undefined
           }
     );
     this.SelectedCustomer = {cstID:  0, cstName: '---ALL---'};
@@ -111,52 +89,17 @@ export class AdvancedSearchReportComponent {
       },
     });
 
-    this.productService.getAllProducts().subscribe({
+    this.sharedDataService.getProducts$().subscribe({
       next: (products) => {
-        this.products = (products as { [key: string]: any })["enttityDataSource"];
+        console.log(products);
+        this.products = [...(products as { [key: string]: any })["enttityDataSource"]];
+        console.log(this.products);
         this.products.unshift({
-            prodID : 0,
-            prodGrpID : undefined,
-            comID : undefined,
-            comName : undefined,
-            prodGrpName : undefined,
-            prodCode : undefined,
-            shortName : undefined,
             prodName : "---ALL---",
-            descr : undefined,
-            prodUnit : undefined,
-            unitQty : undefined,
-            qty:undefined,
-            tax:undefined,
-            discount:undefined,
-            purchRate : undefined,
-            amount:undefined,
-            sellRate : undefined,
-            batch:undefined,
-            retailprice : undefined,
-            bonusQty:undefined,
-            tP : undefined,
-            isDiscount : false,
-            isTaxable : false,
-            isStore : false,
-            isRaw : false,
-            isBonus : false,
-            minQty : undefined,
-            maxQty : undefined,
-            mega : true,
-            active : true,
-            crtBy : undefined,
-            crtDate : undefined,
-            modby : undefined,
-            modDate : undefined,
-            expirydate : undefined,
-            qtyBal:undefined,
-            GLID:undefined,
-            TxID:undefined,
-            unitPrice:undefined
+            prodBCID : 0
           }
     );
-    this.SelectedProduct = {prodID:  0, prodName: '---ALL---'};
+    this.SelectedProduct = {prodBCID:  0, prodName: '---ALL---'};
       },
       error: (response:any) => {
         console.log(response);
@@ -234,7 +177,7 @@ export class AdvancedSearchReportComponent {
     let d1 = this.datePipe.transform(this.DateFrom, "yyyy-MM-dd");
     let d2 =  this.datePipe.transform(this.DateTo, "yyyy-MM-dd");
 
-    this.reportService.runReportWith5Para("AdvancedSearch",d1,d2,this.SelectedCustomer.cstID,this.Selectedvendor.vendID,this.SelectedProduct.prodID,0).subscribe(data => {
+    this.reportService.runReportWith5Para("AdvancedSearch",d1,d2,this.SelectedCustomer.cstID,this.Selectedvendor.vendID,this.SelectedProduct.prodBCID,0).subscribe(data => {
       this.data = (data as { [key: string]: any })["enttityDataSource"];
       this.cols = (data as { [key: string]: any })["entityModel"];
       this.allowBtn = true;
@@ -245,28 +188,6 @@ export class AdvancedSearchReportComponent {
     return {
       vendID : 0,
       vendName : "---ALL---",
-      comID: undefined,
-      comName : undefined,
-      vendCode : undefined,
-      address : undefined,
-      city : undefined,
-      state : undefined,
-      zip : undefined,
-      vendPhone : undefined,
-      vendFax : undefined,
-      contName : undefined,
-      contPhone : undefined,
-      active : undefined,
-      crtBy : undefined,
-      crtDate : undefined,
-      modby : undefined,
-      modDate : undefined,
-      vendTypeID : undefined,
-      vendTypeName : undefined,
-      email : undefined,
-      isEmail : undefined,
-      taxNo : undefined,
-      taxValue : undefined
     };
   }
 }

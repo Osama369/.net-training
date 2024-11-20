@@ -30,7 +30,7 @@
 
             <label class="col-form-label Type-label required col-6"  translate>Company TAX/VAT No</label>
             <label class="col-form-label Type-label required col-6"  translate>Country </label>
-            <input pInputText class="col-5 "  [disabled]="editable" #inputField [(ngModel)]="configurationList[0].productionType" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="15" [minLength]="1" >
+            <input pInputText class="col-5"  [disabled]="editable" #inputField [(ngModel)]="configurationList[0].productionType" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="15" [minLength]="1" >
             <p-autoComplete styleClass="col-5 offset-1" translate #inputField [(ngModel)]="SelectedCountry" [suggestions]="filterCountryList"  (completeMethod)="filterCountry($event)"
             field="" value="" [disabled]="editable" [minLength]="1"  [dropdown]="true" ></p-autoComplete>
             <!-- <label class="col-form-label Type-label required col-6"  translate>   Company Tax % </label>

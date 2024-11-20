@@ -42,10 +42,10 @@ builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<InvoiceValidationService>(); 
 builder.Services.AddScoped<eMaestroD.Api.Common.HelperMethods>();
-builder.Services.AddScoped<InvoiceHandlerFactory>();
 builder.Services.AddScoped<IHelperMethods, eMaestroD.DataAccess.Repositories.HelperMethods>();
 builder.Services.AddScoped<IGLService,eMaestroD.InvoiceProcessing.Services.GLService>();
-builder.Services.AddScoped<eMaestroD.DataAccess.DataSet.AMDbContext>();
+builder.Services.AddScoped<InvoiceHandlerFactory>();
+builder.Services.AddScoped<AMDbContext>();
 builder.Services.AddScoped<NotificationInterceptor>();
 
 builder.Services.AddSingleton<ConnectionStringsDictionary>();

@@ -57,12 +57,17 @@
                 <div class="flex justify-content-center align-items-right" translate>
                     Roles
                 </div>
-            </th>
+              </th>
+              <th style="min-width:10rem" translate>
+                <div class="flex justify-content-center align-items-right" translate>
+                    Areas
+                </div>
+              </th>
             <th style="min-width:12rem" translate>
               <div class="flex justify-content-center align-items-right" translate>
                   Companies
               </div>
-          </th>
+            </th>
               <!-- <th th style="min-width:11rem">
 
               </th> -->
@@ -94,6 +99,9 @@
                   {{user.RoleName}}
               </td>
               <td>
+                {{user.locations}}
+            </td>
+              <td>
                 {{user.Companies}}
             </td>
           </tr>
@@ -108,7 +116,7 @@
 
 
 <p-dialog [modal]="true" #cstDailog [(visible)]="UserVisibility"  [style]="{width: '40vw'}">
-  <app-add-new-user [UserData]="UserList" [title]="title" (dataEvent)="handleChildData($event)"></app-add-new-user>
+  <app-add-new-user [UserData]="UserList" [UsersList]="User" [title]="title" (dataEvent)="handleChildData($event)"></app-add-new-user>
 </p-dialog>
 
 

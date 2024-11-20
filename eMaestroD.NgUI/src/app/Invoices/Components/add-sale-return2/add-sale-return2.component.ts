@@ -24,6 +24,7 @@ import { InvoiceView } from '../../Models/invoice-view';
 import { Location } from './../../../Administration/Models/location';
 import { Customer } from 'src/app/Manage/Models/customer';
 import { ReportSettingService } from 'src/app/Reports/Services/report-setting.service';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 
 @Component({
@@ -173,7 +174,8 @@ export class AddSaleReturn2Component implements OnInit{
     private cdr: ChangeDetectorRef,
     private primengConfig: PrimeNGConfig,
     private route: ActivatedRoute,
-    private reportSettingService : ReportSettingService
+    private reportSettingService : ReportSettingService,
+    private sharedDataService : SharedDataService
   ) { }
 
   ngOnInit(): void {
@@ -212,10 +214,15 @@ export class AddSaleReturn2Component implements OnInit{
       },
     });
 
-    this.locationService.getAllLoc().subscribe({
+    this.sharedDataService.getLocations$().subscribe({
       next : (loc:any)=>{
-        this.locations = loc;
-        this.selectedLocation = {locID : this.locations[0].locID, locName : this.locations[0].locName}
+        this.locations = loc.filter(x=>x.LocTypeId == 5);
+          this.locations.unshift({
+            LocationId : 0,
+            LocationName : "---ALL---"
+            }
+          );
+        this.selectedLocation = {LocationId : this.locations[0].LocationId, LocationName : this.locations[0].LocationName};
       }
     })
 
@@ -291,8 +298,8 @@ export class AddSaleReturn2Component implements OnInit{
               let i = -1;
               let j = -1;
               let k = -1;
-              let locName = this.locations.find(x=>x.locID == invoices[0].locID)?.locName;
-              this.selectedLocation = {locID : invoices[0].locID, locName: locName };
+              let locName = this.locations.find(x=>x.LocationId == invoices[0].locID)?.LocationName;
+              this.selectedLocation = {LocationId : invoices[0].locID, LocationName : locName };
               this.selectedCustomerName ={cstID: invoices[0].cstID, cstName: invoices[0].cstName};
               this.selectedVoucherNo =invoices[0].checkName;
               let totalQty = 0;
@@ -932,7 +939,7 @@ export class AddSaleReturn2Component implements OnInit{
           this.gl[j].depositID = 2018;
           this.gl[j].purchRate = 0;
           this.gl[j].taxName = this.TaxName;
-          this.gl[j].locID = this.selectedLocation.locID;
+          this.gl[j].locID = this.selectedLocation.LocationId;
           this.gl[j].comID = localStorage.getItem('comID');
           j++;
         }
@@ -1000,7 +1007,7 @@ export class AddSaleReturn2Component implements OnInit{
     this.productlist = [this.createNewProduct()];
     if(list.length > 0)
     {
-      this.selectedLocation.locID = list[0].locID;
+      this.selectedLocation.LocationId = list[0].locID;
       let i=0;
       console.log(list);
       list.forEach(elem => {
@@ -1063,7 +1070,7 @@ export class AddSaleReturn2Component implements OnInit{
   let query = event.query;
   for (let i = 0; i < this.locations.length; i++) {
     let loc = this.locations[i];
-    if (loc.locName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+    if (loc.LocationName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
       filtered.push(loc);
     }
   }

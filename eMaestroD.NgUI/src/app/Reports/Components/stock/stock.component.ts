@@ -52,12 +52,12 @@ export class StockComponent {
 
 
   ngOnInit(): void {
-    this.productService.getAllProducts().subscribe({
+    this.sharedDataService.getProducts$().subscribe({
       next: (products) => {
-        this.products = (products as { [key: string]: any })["enttityDataSource"];
+        this.products = [...(products as { [key: string]: any })["enttityDataSource"]];
         this.allProductlist = (products as { [key: string]: any })["enttityDataSource"];
         this.products.unshift({
-            prodID : 0,
+            prodBCID : 0,
             prodGrpID : undefined,
             comID : undefined,
             comName : undefined,
@@ -99,7 +99,7 @@ export class StockComponent {
           }
     );
 
-    this.SelectedProduct = {prodID:  0, prodName: '---ALL---'};
+    this.SelectedProduct = {prodBCID:  0, prodName: '---ALL---'};
       },
       error: (response) => {
         console.log(response);
@@ -122,19 +122,19 @@ export class StockComponent {
 
     this.sharedDataService.getLocations$().subscribe({
       next : (loc:any)=>{
-        this.locations = loc;
-        this.locations.unshift({
-          locID : 0,
-          locName : "---ALL---"
-          }
-        );
-        this.selectedLocation = {locID : this.locations[0].locID, locName : this.locations[0].locName}
+        this.locations = loc.filter(x=>x.LocTypeId == 5);
+          this.locations.unshift({
+            LocationId : 0,
+            LocationName : "---ALL---"
+            }
+          );
+        this.selectedLocation = {LocationId : this.locations[0].LocationId, LocationName : this.locations[0].LocationName};
       }
     })
 
     this.sharedDataService.getVendors$().subscribe({
       next: (vnd) => {
-        this.Vendor = (vnd as { [key: string]: any })["enttityDataSource"];;
+        this.Vendor = [...(vnd as { [key: string]: any })["enttityDataSource"]];
         this.Vendor.unshift({
           vendID : 0,
           vendName : "---ALL---",
@@ -157,18 +157,6 @@ export class StockComponent {
   });;
 }
 
-  filterLocation(event:any) {
-    //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
-    let filtered: any[] = [];
-    let query = event.query;
-    for (let i = 0; i < this.locations.length; i++) {
-      let loc = this.locations[i];
-      if (loc.locName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-        filtered.push(loc);
-      }
-    }
-    this.LocationList = filtered;
-  }
 
 
   filterProductCategory(event: any) {
@@ -189,7 +177,7 @@ export class StockComponent {
     {
       this.products = this.allProductlist.filter(x=>x.prodGrpID == this.SelectedproductGrouplist.prodGrpID);
       this.products.unshift({
-        prodID : 0,
+        prodBCID : 0,
         prodGrpID : undefined,
         comID : undefined,
         comName : undefined,
@@ -234,7 +222,7 @@ export class StockComponent {
     }else{
       this.products = this.allProductlist;
     }
-    this.SelectedProduct = {prodID:  0, prodName: '---ALL---'};
+    this.SelectedProduct = {prodBCID:  0, prodName: '---ALL---'};
 
   }
 
@@ -252,7 +240,7 @@ export class StockComponent {
 
   submit()
   {
-    this.reportService.runReportWith1Para("StockList",this.SelectedProduct.prodID,this.selectedLocation.locID, this.SelectedproductGrouplist.prodGrpID,this.SelectedVendor.vendID).subscribe(data => {
+    this.reportService.runReportWith1Para("StockList",this.SelectedProduct.prodBCID,this.selectedLocation.LocationId, this.SelectedproductGrouplist.prodGrpID,this.SelectedVendor.vendID).subscribe(data => {
       this.data = (data as { [key: string]: any })["enttityDataSource"];
       this.cols = (data as { [key: string]: any })["entityModel"];
       this.allowBtn = true;

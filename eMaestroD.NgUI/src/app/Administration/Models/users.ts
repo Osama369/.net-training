@@ -25,5 +25,7 @@ export class Users {
    password?:any;
    CompaniesID?:any;
    Companies?:any;
+   locations?:any;
+   locID?:any;
    userName?:any;
 }

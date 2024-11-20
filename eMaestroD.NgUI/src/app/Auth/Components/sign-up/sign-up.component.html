@@ -54,6 +54,12 @@
         </div>
         <div class="col-12">
           <br>
+          <label class="col-form-label Type-label required col-3" translate>Point Of Sale?</label>
+          <p-inputSwitch [(ngModel)]="List[0].isPOS" styleClass="offset-1"></p-inputSwitch>
+        </div>
+
+        <div class="col-12">
+          <br>
           <p-checkbox class="col-11" [(ngModel)]="privacyCheck" translate label="I Accept the Terms of Use and Privacy Policy." [binary]="true" inputId="binary"></p-checkbox>
         </div>
         <!-- <div class="col-12">

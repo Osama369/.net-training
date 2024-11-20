@@ -183,7 +183,7 @@ namespace eMaestroD.Api.Controllers
                     var fiscalYearList = _AMDbContext.FiscalYear.Where(x => x.comID == int.Parse(comID)).ToList();
                     objFY = fiscalYearList.Find(x => x.active == true);
 
-                    string sqlQuerry = "EXEC GenerateVoucherNo @txType, @comID";
+                    string sqlQuerry = "EXEC GenerateGLVoucherNo @txType, @comID";
                     List<SqlParameter> parameters = new List<SqlParameter>
                     {
                         new SqlParameter { ParameterName = "@txType", Value = 40 },
@@ -516,7 +516,7 @@ namespace eMaestroD.Api.Controllers
                     }
 
 
-                    string sql2 = "EXEC GenerateVoucherNo @txType, @comID";
+                    string sql2 = "EXEC GenerateGLVoucherNo @txType, @comID";
                     List<SqlParameter> parms2 = new List<SqlParameter>
                     {
                         new SqlParameter { ParameterName = "@txType", Value = 41 },

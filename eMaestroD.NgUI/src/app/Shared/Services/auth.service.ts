@@ -120,6 +120,7 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('comID');
     localStorage.removeItem('comName');
+    localStorage.removeItem("isPos");
   }
 
 

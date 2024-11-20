@@ -323,8 +323,8 @@ export class AddQuotationToSaleComponent implements OnInit{
 
     this.locationService.getAllLoc().subscribe({
       next : (loc:any)=>{
-        this.locations = loc;
-        this.selectedLocation = {locID : this.locations[0].locID, locName : this.locations[0].locName};
+        this.locations = loc.filter(x=>x.LocTypeId == 5);
+        this.selectedLocation = {locID : this.locations[0].LocationId, locName : this.locations[0].LocationName};
         this.LocationList = this.locations;
       }
     })
@@ -404,8 +404,8 @@ export class AddQuotationToSaleComponent implements OnInit{
               let i = -1;
               let j = -1;
               let k = -1;
-              let locName = this.locations.find(x=>x.locID == invoices[0].locID)?.locName;
-              this.selectedLocation = {locID : invoices[0].locID, locName: locName };
+              let locName = this.locations.find(x=>x.LocationId == invoices[0].locID)?.LocationName;
+              this.selectedLocation = {LocationId : invoices[0].locID, LocationName : locName };
               this.selectedCustomerName ={cstID: invoices[0].cstID, cstName: invoices[0].cstName};
               if(this.selectedCustomerName.cstName.toLowerCase() == "walk in"){
                 this.typeDisabled = true;
@@ -1200,7 +1200,7 @@ export class AddQuotationToSaleComponent implements OnInit{
       this.toastr.error("Please select customer!");
       this.onEnterComplex(1);
     }
-    else if(this.selectedLocation.locID == undefined) {
+    else if(this.selectedLocation.LocationId == undefined) {
       this.toastr.error("Please select location!");
       this.onEnterComplex(2);
     }
@@ -1291,7 +1291,7 @@ export class AddQuotationToSaleComponent implements OnInit{
         this.gl[i].depositID = 2018;
         this.gl[i].purchRate = parseFloat(this.productlist[i].purchRate);
         this.gl[i].taxName = this.TaxName;
-        this.gl[i].locID = this.selectedLocation.locID;
+        this.gl[i].locID = this.selectedLocation.LocationId;
         this.gl[i].comID = localStorage.getItem('comID');
         this.gl[i].paidSum = (this.productlist[i].sellRate/100*this.productlist[i].discount)*this.productlist[i].qty;
         this.gl[i].checkNo = this.productlist[i].discount;
@@ -1327,7 +1327,7 @@ export class AddQuotationToSaleComponent implements OnInit{
       this.toastr.error("Please select customer!");
       this.onEnterComplex(1);
     }
-    else if(this.selectedLocation.locID == undefined) {
+    else if(this.selectedLocation.LocationId == undefined) {
       this.toastr.error("Please select location!");
       this.onEnterComplex(2);
     }
@@ -1402,7 +1402,7 @@ export class AddQuotationToSaleComponent implements OnInit{
           this.gl[i].depositID = 2018;
           this.gl[i].purchRate = parseFloat(this.productlist[i].purchRate);
           this.gl[i].taxName = this.TaxName;
-          this.gl[i].locID = this.selectedLocation.locID;
+          this.gl[i].locID = this.selectedLocation.LocationId;
           this.gl[i].comID = localStorage.getItem('comID');
           this.gl[i].paidSum = (this.productlist[i].sellRate/100*this.productlist[i].discount)*this.productlist[i].qty;
           this.gl[i].checkNo = this.productlist[i].discount;
@@ -1497,7 +1497,7 @@ export class AddQuotationToSaleComponent implements OnInit{
     let query = event.query;
     for (let i = 0; i < this.locations.length; i++) {
       let loc = this.locations[i];
-      if (loc.locName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+      if (loc.LocationName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
         filtered.push(loc);
       }
     }

@@ -194,7 +194,7 @@ export class AddNewSaleMComponent implements OnInit{
   async ngOnInit(): Promise<void> {
 
   this.sharedDataService.getProducts$().subscribe(products => {
-    this.products = products;
+    this.products = (products as { [key: string]: any })["enttityDataSource"];
     this.Filterproductlist = this.products;
   });
 
@@ -454,7 +454,8 @@ export class AddNewSaleMComponent implements OnInit{
       {
         this.onEnterComplexInternal(this.inputFields.length-3);
       }
-}
+  }
+
   focusOnSaveButton()
   {
     let el: HTMLElement = this.savebtn.nativeElement;
@@ -549,11 +550,11 @@ export class AddNewSaleMComponent implements OnInit{
             this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
             this.productlist[i].unitQty = this.selectedProductList[0].unitQty;
             this.productlist[i].qty = 1;
-            this.productlist[i].sellRate = this.selectedProductList[0].sellRate;
+            this.productlist[i].sellRate = this.selectedProductList[0].sellPrice;
             this.productlist[i].isStore = this.selectedProductList[0].isStore;
 
             this.productlist[i].qtyBal = this.selectedProductList[0].currentStock;
-            this.productlist[i].purchRate = this.selectedProductList[0].purchRate;
+            this.productlist[i].purchRate = this.selectedProductList[0].lastCost;
 
             this.productlist[i].discount = 0;
             this.Itemcalculation(i);
@@ -840,11 +841,11 @@ export class AddNewSaleMComponent implements OnInit{
             this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
             this.productlist[i].unitQty = this.selectedProductList[0].unitQty;
             this.productlist[i].qty = 1;
-            this.productlist[i].sellRate = this.selectedProductList[0].sellRate;
+            this.productlist[i].sellRate = this.selectedProductList[0].sellPrice;
             this.productlist[i].isStore = this.selectedProductList[0].isStore;
 
             this.productlist[i].qtyBal = this.selectedProductList[0].currentStock;
-            this.productlist[i].purchRate = this.selectedProductList[0].purchRate;
+            this.productlist[i].purchRate = this.selectedProductList[0].lastCost;
 
             this.productlist[i].discount = 0;
             this.Itemcalculation(i);

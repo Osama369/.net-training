@@ -150,7 +150,7 @@ namespace eMaestroD.Api.Controllers
             vendor.vendCode = vendor.vendCode.Trim();
             vendor.vendName = vendor.vendName.Trim();
             var message = "";
-            string sql = "EXEC GenerateVoucherNo @txType, @comID";
+            string sql = "EXEC GenerateGLVoucherNo @txType, @comID";
             List<SqlParameter> parms = new List<SqlParameter>
             {
                 new SqlParameter { ParameterName = "@txType", Value = 40 },
@@ -556,7 +556,7 @@ namespace eMaestroD.Api.Controllers
                 string ExistRowNumber = "";
                 string EmptyRowNumber = "";
                 string EmptyRowNumberForCompany = "";
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
+                string sql = "EXEC GenerateGLVoucherNo @txType, @comID";
                 List<SqlParameter> parms = new List<SqlParameter>
                 {
                     new SqlParameter { ParameterName = "@txType", Value = 40 },

@@ -8,8 +8,5 @@ export interface Location {
   crtDate? : any;
   modBy? : any;
   modDate? : any;
-   comID?:any;
-   locID?:any;
-   locName?:any;
-   locTypeID?:any;
+  comID?:any;
 }

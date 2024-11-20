@@ -10,6 +10,6 @@ namespace InvoiceProcessing.Interfaces
 {
     public interface IInvoiceHandler
     {
-        Task<List<GL>> ConvertInvoiceToGL(Invoice invoice);
+        Task<List<object>> ConvertInvoiceToGL(Invoice invoice);
     }
 }

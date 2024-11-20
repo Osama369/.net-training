@@ -47,9 +47,9 @@ export interface ProductViewModel {
   categoryName?: string | null;
   prodGrpName?: string | null;
 
-  lastCostPrice? : number | null;
+  lastCost? : number | null;
   currentStock? : number | null;
-  avgUnitPrice? : number | null;
+  sellPrice? : number | null;
 
 
 
@@ -82,4 +82,7 @@ export interface ProductViewModel {
   notes?:string;
   expiryDate?:Date;
   prodInvoiceID?:number | 0;
+  sellingPrice?:number;
+  mrp?:number;
+  diff?:number | 0;
 }

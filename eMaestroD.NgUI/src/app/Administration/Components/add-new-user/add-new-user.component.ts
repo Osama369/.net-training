@@ -7,6 +7,8 @@ import { ConnectedOverlayScrollHandler } from 'primeng/dom';
 import { UserService } from '../../Services/user.service';
 import { Users } from '../../Models/users';
 import { GenericService } from 'src/app/Shared/Services/generic.service';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
+import { Location } from '../../Models/location';
 
 @Component({
   selector: 'app-add-new-user',
@@ -20,10 +22,12 @@ export class AddNewUserComponent {
     private el: ElementRef,
     private userService : UserService,
     private genericService : GenericService,
+    private sharedDataService: SharedDataService
     ) {}
 
   @Input() UserVisible : boolean;
   UserList: Users[];
+  @Input() UsersList : Users[];
   @ViewChildren('inputFieldTable') inputFieldTable: QueryList<any>;
   @ViewChild('savebtn') savebtn: ElementRef<HTMLElement>;
   @Output() dataEvent = new EventEmitter<any>();
@@ -33,9 +37,11 @@ export class AddNewUserComponent {
   filterRole:any[]=[];
   roleList : any[] = [];
   SelectedRole :any;
+  SelectedLocation :any = {};
   cols: any[] = [];
 	_selectedColumns: any[];
   exportColumns : any[] =[];
+  locations:Location[];
 
   sendDataToParent() {
     this.dataEvent.emit({type:'',value:false});
@@ -52,6 +58,8 @@ export class AddNewUserComponent {
       RoleID : "",
       RoleName : "",
       UserID : "",
+      locID: "",
+      locations: ""
     }];
 
     this.genericService.getAllRoles().subscribe(lst=>{
@@ -61,6 +69,12 @@ export class AddNewUserComponent {
 
     this.genericService.getCompanylist().subscribe(lst=>{
       this.cols = lst;
+    })
+
+    this.sharedDataService.getLocations$().subscribe({
+      next : (loc:any)=>{
+        this.locations = loc.filter(x=>x.LocTypeId == 5);
+      }
     })
   }
 
@@ -74,6 +88,7 @@ export class AddNewUserComponent {
       this.selectedColumns = [];
       this.UserList[0] = this.UserData;
       this.SelectedRole = {RoleID : this.UserList[0].RoleID,RoleName : this.UserList[0].RoleName};
+      this.SelectedLocation = this.locations.find(x=>x.LocationId == this.UserList[0].locID);
       let comList = this.UserList[0].CompaniesID.split(',');
       comList.forEach((elem:any) => {
         this.selectedColumns = this.selectedColumns.concat(this.cols.filter(x => x.comID == elem));
@@ -109,8 +124,11 @@ export class AddNewUserComponent {
       RoleID : "",
       RoleName : "",
       UserID : "",
+      locID: "",
+      locations: ""
     }];
     this.SelectedRole = [];
+    this.SelectedLocation = [{}];
     this.selectedColumns = [];
   }
   saveUser()
@@ -136,6 +154,14 @@ export class AddNewUserComponent {
         this.toastr.error("Please select user role");
         this.onEnterTableInputCst(4);
       }
+      else if(this.SelectedLocation.LocationId == undefined || this.SelectedRole.LocationId == ""){
+        this.toastr.error("Please select user location");
+        this.onEnterTableInputCst(5);
+      }
+      else if(this.UsersList.find(x=>x.locID == this.SelectedLocation.LocationId)){
+        this.toastr.error("This location already assign to some other users, Please select other location");
+        this.onEnterTableInputCst(5);
+      }
       else if(this.selectedColumns.length == 0)
       {
         this.toastr.error("Please atleast select one company");
@@ -144,6 +170,8 @@ export class AddNewUserComponent {
         this.UserList[0].Active = true;
         this.UserList[0].RoleID = this.SelectedRole.RoleID;
         this.UserList[0].RoleName = this.SelectedRole.RoleName;
+        this.UserList[0].locID = this.SelectedLocation.LocationId;
+        this.UserList[0].locations = this.SelectedLocation.LocationName;
 
         this.userService.saveUserInMaster(this.UserList[0]).subscribe({
           next: (user) => {

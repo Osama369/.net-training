@@ -1,14 +1,19 @@
 import { Component, OnInit } from '@angular/core';
+import { Table } from 'primeng/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as FileSaver from 'file-saver';
+import { getCurrencySymbol } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
-import { Table } from 'primeng/table';
 import { ReportSettingService } from 'src/app/Reports/Services/report-setting.service';
 import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { GenericService } from 'src/app/Shared/Services/generic.service';
 import { InvoicesService } from '../../Services/invoices.service';
 import { InvoiceView } from '../../Models/invoice-view';
+import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
+import { lastValueFrom } from 'rxjs';
+import { Invoice } from '../../Models/invoice';
+
 
 
 @Component({
@@ -18,7 +23,7 @@ import { InvoiceView } from '../../Models/invoice-view';
 })
 export class PurchaseOrderComponent implements OnInit {
 
-    invoices: InvoiceView[];
+    invoices: Invoice[] = [];
     invoiceNo: any;
     loading: boolean = true;
     PrintringVisible: boolean = false;
@@ -28,11 +33,10 @@ export class PurchaseOrderComponent implements OnInit {
     columns : any[] = [];
     exportColumns : any[] =[];
     CurrencyCode : any;
-
     reportSettingVisiblity : boolean = false;
-    reportSettingItemList : any[]=[];
-    isProductCode: boolean = false;
+    isProductCode : boolean = false;
     isArabic: boolean = false;
+    reportSettingItemList : any[]=[];
     bookmark : boolean = false;
 
     constructor(private invoiceService: InvoicesService,
@@ -44,30 +48,38 @@ export class PurchaseOrderComponent implements OnInit {
       public bookmarkService: BookmarkService,
       public route : ActivatedRoute
       ) { }
-    ngOnInit() {
 
-      // this.genericService.getCurrency().subscribe(c =>{
-      //   this.CurrencyCode = c[0].CurrencyCode;
-      // })
+    async ngOnInit() {
+
       this.reportSettingService.GetInvoiceReportSettings().subscribe(rpt=>{
-        this.reportSettingItemList = rpt.filter(x=>x.screenName.toLowerCase() == "purchase order");
+        this.reportSettingItemList = rpt.filter(x=>x.screenName.toLowerCase() == "purchase");
       })
 
-      this.invoiceService.getInvoicesList(3).subscribe(invoices => {
-        this.invoices = invoices;
+
+      try{
+        var result = await lastValueFrom(this.invoiceService.GetInvoices(GLTxTypes.PurchaseOrder,0));
+        this.invoices = result;
         console.log(this.invoices);
         this.loading = false;
-        this.exportColumns.push(new Object({title: "Date",dataKey: "dtTx"}));
-        this.exportColumns.push(new Object({title: "Invoice No",dataKey: "voucherNo"}));
-        this.exportColumns.push(new Object({title: "Name",dataKey: "cstName"}));
-        this.exportColumns.push(new Object({title: "Comments",dataKey: "glComments"}));
-        this.exportColumns.push(new Object({title: "Total",dataKey: "amount"}));
-    });
+      }
+      catch(error){
+        this.toasterService.error(error);
+      }
 
-      this.authService.GetBookmarkScreen(this.route.snapshot?.data['requiredPermission']).subscribe(x=>{
-        this.bookmark = x;
+
+        // this.invoiceService.getInvoicesList(12).subscribe(invoices => {
+        //     this.invoices = invoices;
+        //     this.loading = false;
+        //     this.exportColumns.push(new Object({title: "Date",dataKey: "dtTx"}));
+        //     this.exportColumns.push(new Object({title: "Invoice No",dataKey: "voucherNo"}));
+        //     this.exportColumns.push(new Object({title: "Name",dataKey: "cstName"}));
+        //     this.exportColumns.push(new Object({title: "Comments",dataKey: "glComments"}));
+        //     this.exportColumns.push(new Object({title: "Total",dataKey: "amount"}));
+        // });
+
+        this.authService.GetBookmarkScreen(this.route.snapshot?.data['requiredPermission']).subscribe(x=>{
+          this.bookmark = x;
       });
-
 
     }
 
@@ -78,6 +90,7 @@ export class PurchaseOrderComponent implements OnInit {
         },
       });;
     }
+
 
     clear(table: Table) {
         table.clear();
@@ -107,38 +120,29 @@ export class PurchaseOrderComponent implements OnInit {
     {
         this.router.navigateByUrl('/Invoices/AddNewPurchaseOrder/'+invoiceNo);
     }
-    ConvertToSale(invoiceNo:any,comment:any)
-    {
-        if(comment == "Convert To Purchase")
-        {
-            this.router.navigateByUrl('/Invoices/AddNewPurchases/'+invoiceNo);
-        }
-    }
 
     deleteView(invoiceNo:any)
     {
       this.authService.checkPermission('PurchaseOrderDelete').subscribe((x:any)=>{
         if(x)
         {
-          if (confirm("Are you sure you want to delete this invoice?") == true) {
-              this.loading = true;
-              this.invoiceService.deleteInvoice(invoiceNo).subscribe(asd => {
-                this.toasterService.success("Purchase order has been successfully deleted!");
-                  this.invoiceService.getInvoicesList(3).subscribe(invoices => {
-                      this.invoices = invoices;
-                      this.loading = false;
-                  });
-                },
-                  responce =>{
-                    this.toasterService.error(responce.error);
-                    this.loading = false;
-                  }
-                );
-          }
-                }
-        else{
-          this.toasterService.error("Unauthorized Access! You don't have permission to access.");
-        }
+        if (confirm("Are you sure you want to delete this invoice?") == true) {
+            this.loading = true;
+            this.invoiceService.DeleteInvoice(invoiceNo).subscribe(asd => {
+              this.toasterService.success("PO has been successfully deleted!");
+                this.invoices = this.invoices.filter(x=>x.invoiceVoucherNo != invoiceNo);
+                this.loading = false;
+              },
+              responce =>{
+                this.toasterService.error(responce.error);
+                this.loading = false;
+              }
+            );
+      }
+      }
+      else{
+        this.toasterService.error("Unauthorized Access! You don't have permission to access.");
+      }
       });
     }
 
@@ -154,8 +158,6 @@ export class PurchaseOrderComponent implements OnInit {
      viewInvoiceDetail(invoiceNo:any)
      {
       this.router.navigateByUrl('/Invoices/Detail/'+invoiceNo);
-        // this.invoiceNo = invoiceNo;
-        // this.InvoiceDetailvisible = true;
      }
 
      exportExcel() {
@@ -177,7 +179,7 @@ export class PurchaseOrderComponent implements OnInit {
             bookType: 'xlsx',
             type: 'array',
           });
-          this.saveAsExcelFile(excelBuffer, "PurchaseOrder");
+          this.saveAsExcelFile(excelBuffer, "Purchase Order");
         });
       }
 
@@ -197,7 +199,7 @@ export class PurchaseOrderComponent implements OnInit {
             const doc = new jsPDF.default('p', 'px', 'a4');
             (doc as any).autoTable(this.exportColumns, this.invoices);
 
-            doc.save('PurchaseOrder.pdf');
+            doc.save('PurchaseInvoices.pdf');
 
           });
         });
@@ -212,4 +214,10 @@ export class PurchaseOrderComponent implements OnInit {
         }
 
       }
+
+      ConvertToGRN(invoiceNo:any)
+      {
+        this.router.navigateByUrl('/Invoices/AddNewGRN/'+invoiceNo);
+      }
 }
+

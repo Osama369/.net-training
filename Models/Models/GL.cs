@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ namespace eMaestroD.Models.Models
 {
     public class GL
     {
+        [Key]
         public int GLID { get; set; }
 
         public int txID { get; set; }
@@ -140,7 +142,9 @@ namespace eMaestroD.Models.Models
         {
             return this;
         }
-
+        public decimal? mrp { get; set; }
+        public decimal? sellPrice { get; set; }
+        public decimal? lastCost { get; set; }
         public int prodBCID { get; set; }
         public decimal? rebateSum { get; set; }
         public bool? isConverted { get; set; }

@@ -47,10 +47,8 @@ export class SharedDataService {
   loadAllData(): Observable<any> {
     console.log("in");
 
-     // Get stored values from localStorage
      const currentComID = localStorage.getItem('comID');
      const currentTenantID = localStorage.getItem('tenantID');
-  // Check if data is already loaded and if comID and tenantID match
   if (this.isLoaded && this.storedComID === currentComID && this.storedTenantID === currentTenantID) {
     console.log("Data is already loaded and comID and tenantID match");
     return of(true);

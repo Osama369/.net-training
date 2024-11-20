@@ -11,6 +11,7 @@ import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { ReportService } from '../../Services/report.service';
 import { Location } from './../../../Administration/Models/location';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 
 @Component({
@@ -21,7 +22,9 @@ import { Location } from './../../../Administration/Models/location';
 export class StocksaleandreturnComponent {
   constructor(private authService : AuthService,
     public bookmarkService: BookmarkService,
-    public route : ActivatedRoute,private productService : ProductsService,private locationService:LocationService,private productCategoryService : ProductCategoryService,private http: HttpClient, private sanitizer: DomSanitizer, private datePipe: DatePipe,private reportService: ReportService){}
+    public route : ActivatedRoute,
+    private sharedDataService:SharedDataService,
+    private productCategoryService : ProductCategoryService,private http: HttpClient, private sanitizer: DomSanitizer, private datePipe: DatePipe,private reportService: ReportService){}
 
   @ViewChildren('inputField') inputFields: QueryList<any>;
   DateFrom :any;
@@ -58,15 +61,15 @@ export class StocksaleandreturnComponent {
       },
     });
 
-    this.locationService.getAllLoc().subscribe({
+    this.sharedDataService.getLocations$().subscribe({
       next : (loc:any)=>{
-        this.locations = loc;
-    	this.locations.unshift({
-          locID : 0,
-          locName : "---ALL---"
-          }
-        );
-        this.selectedLocation = {locID : this.locations[0].locID, locName : this.locations[0].locName}
+        this.locations = loc.filter(x=>x.LocTypeId == 5);
+          this.locations.unshift({
+            LocationId : 0,
+            LocationName : "---ALL---"
+            }
+          );
+        this.selectedLocation = {LocationId : this.locations[0].LocationId, LocationName : this.locations[0].LocationName};
       }
     })
     this.authService.GetBookmarkScreen(this.route.snapshot?.data['requiredPermission']).subscribe(x=>{
@@ -111,18 +114,7 @@ export class StocksaleandreturnComponent {
     this.FilterProductGrouplist = filtered;
   }
 
-  filterLocation(event:any) {
-    //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
-    let filtered: any[] = [];
-    let query = event.query;
-    for (let i = 0; i < this.locations.length; i++) {
-      let loc = this.locations[i];
-      if (loc.locName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-        filtered.push(loc);
-      }
-    }
-    this.LocationList = filtered;
-  }
+
 
   submit()
   {
@@ -130,7 +122,7 @@ export class StocksaleandreturnComponent {
     let d1 = this.datePipe.transform(this.DateFrom, "yyyy-MM-dd");
     let d2 =  this.datePipe.transform(this.DateTo, "yyyy-MM-dd");
 
-    this.reportService.runReportWith3Para("StockSaleAndReturn",d1,d2,this.SelectedproductGrouplist.prodGrpID,this.selectedLocation.locID).subscribe(data => {
+    this.reportService.runReportWith3Para("StockSaleAndReturn",d1,d2,this.SelectedproductGrouplist.prodGrpID,this.selectedLocation.LocationId).subscribe(data => {
       this.data = (data as { [key: string]: any })["enttityDataSource"];
       this.cols = (data as { [key: string]: any })["entityModel"];
       this.allowBtn = true;

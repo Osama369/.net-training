@@ -9,6 +9,7 @@ import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { ReportService } from '../../Services/report.service';
 import { Location } from './../../../Administration/Models/location';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 
 
@@ -28,7 +29,8 @@ export class VendorledgerComponent {
   DateTo :any;
   pdfUrl: SafeResourceUrl;
   bookmark : boolean = false;
-  constructor(private vendorService:VendorService,
+  constructor(
+    private sharedDataService:SharedDataService,
     private http: HttpClient, private sanitizer: DomSanitizer,
     private datePipe: DatePipe,
     private reportService: ReportService,
@@ -53,9 +55,9 @@ export class VendorledgerComponent {
     this.DateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
     this.DateTo = today;
 
-    this.vendorService.getAllVendor().subscribe({
+    this.sharedDataService.getVendors$().subscribe({
       next: (products) => {
-        this.products = (products as { [key: string]: any })["enttityDataSource"];;
+        this.products  = [...(products as { [key: string]: any })["enttityDataSource"]];
         this.products.unshift(this.createNewVendor());
 
         this.cdr.detectChanges();

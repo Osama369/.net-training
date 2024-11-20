@@ -6,8 +6,8 @@ import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { ReportService } from '../../Services/report.service';
 import { ActivatedRoute } from '@angular/router';
-import { CustomersService } from 'src/app/Manage/Services/customers.service';
 import { Customer } from 'src/app/Manage/Models/customer';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 @Component({
   selector: 'app-accounts-receivable',
@@ -18,7 +18,7 @@ export class AccountsReceivableComponent {
   constructor( private authService : AuthService,
     public bookmarkService: BookmarkService,
     public route : ActivatedRoute,
-private customerService:CustomersService,private http: HttpClient, private sanitizer: DomSanitizer, private datePipe: DatePipe,private reportService: ReportService){}
+    private sharedDataService : SharedDataService,private http: HttpClient, private sanitizer: DomSanitizer, private datePipe: DatePipe,private reportService: ReportService){}
   customers: Customer[] = [];
   SelectedCustomer:any;
   customerlist: Customer[];
@@ -37,9 +37,9 @@ private customerService:CustomersService,private http: HttpClient, private sanit
     this.DateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
     this.DateTo = today;
 
-    this.customerService.getAllCustomers().subscribe({
+    this.sharedDataService.getCustomers$().subscribe({
       next: (customers) => {
-        this.customers = (customers as { [key: string]: any })["enttityDataSource"];;
+        this.customers = [...(customers as { [key: string]: any })["enttityDataSource"]];
         this.customers.unshift({
           cstID : 0,
           regionID : undefined,

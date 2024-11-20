@@ -1142,7 +1142,7 @@ namespace eMaestroD.Api.Controllers
                 await _AMDbContext.SaveChangesAsync();
 
 
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
+                string sql = "EXEC GenerateGLVoucherNo @txType, @comID";
                 List<SqlParameter> parms = new List<SqlParameter>
                 {
                     new SqlParameter { ParameterName = "@txType", Value = 6 },
@@ -1297,7 +1297,7 @@ namespace eMaestroD.Api.Controllers
             if (gl[0].GLID == 0)
             {
 
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
+                string sql = "EXEC GenerateGLVoucherNo @txType, @comID";
                 List<SqlParameter> parms = new List<SqlParameter>
                 {
                     new SqlParameter { ParameterName = "@txType", Value = 8 },
@@ -1425,7 +1425,7 @@ namespace eMaestroD.Api.Controllers
             if (gl[0].GLID == 0)
             {
 
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
+                string sql = "EXEC GenerateGLVoucherNo @txType, @comID";
                 List<SqlParameter> parms = new List<SqlParameter>
                 {
                     new SqlParameter { ParameterName = "@txType", Value = 42 },
@@ -1595,7 +1595,7 @@ namespace eMaestroD.Api.Controllers
 
 
 
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
+                string sql = "EXEC GenerateGLVoucherNo @txType, @comID";
                 List<SqlParameter> parms = new List<SqlParameter>
                 {
                      new SqlParameter { ParameterName = "@txType", Value = 7 },
@@ -4218,14 +4218,10 @@ namespace eMaestroD.Api.Controllers
             gltxLnks = new GLTxLinks();
             gltxLinksUpdated = new List<GLTxLinks>();
             gltxLinksDelete = new List<GLTxLinks>();
-            //141
-            var saleLocalAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.SaleLocal);
             //80 OR 83
             var cashOrCreditAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeCreditors);
             //98
             var stockInTradeAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.StockInTrade);
-            //81
-            var costOfGoodsAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CostOfGoodsSold);
             int accountID = 83;
             if (obj1[0].type == "Cash")
             {

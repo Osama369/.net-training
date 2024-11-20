@@ -8,6 +8,7 @@ import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { Products } from '../../Models/products';
 import { ProductsService } from '../../Services/products.service';
 import { prodGroups } from '../../Models/prodGroups';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 @Component({
   selector: 'app-products',
@@ -35,6 +36,7 @@ export class ProductsComponent implements OnInit {
 
     constructor(
         private productService: ProductsService,
+        private sharedDataResolver: SharedDataService,
         private router: Router,
         private confirmationService: ConfirmationService,
         private messageService: MessageService,
@@ -44,7 +46,7 @@ export class ProductsComponent implements OnInit {
         )
     { }
     ngOnInit() {
-        this.productService.getAllProductsWithCategory().subscribe(prd => {
+        this.sharedDataResolver.getProducts$().subscribe(prd => {
             this.products = (prd as { [key: string]: any })["enttityDataSource"];
             if(this.products[0].prodID == 0)
             {

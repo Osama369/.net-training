@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AutoComplete } from 'primeng/autocomplete';
 import { ScreenService } from '../Administration/Services/screen.service';
 import { APP_ROUTES } from '../app-routes';
+import { SharedDataService } from '../Shared/Services/shared-data.service';
 
 @Component({
     selector: 'app-menu',
@@ -18,9 +19,15 @@ export class AppMenuComponent implements OnInit {
 
     searchText: string = '';
     filteredItems: any[]=[];
+
+    isShowPurchase:any;
     @ViewChild('autoComplete') autoComplete!: AutoComplete | undefined;
 
-    constructor(public layoutService: LayoutService,public ScreenService: ScreenService,private router: Router) {
+    constructor(public layoutService: LayoutService,
+      public ScreenService: ScreenService,
+      private router: Router,
+      private sharedDataService: SharedDataService
+    ) {
      }
 
      filterItems(event: any) {
@@ -45,6 +52,12 @@ export class AppMenuComponent implements OnInit {
     }
 
     ngOnInit() {
+      this.sharedDataService.getConfigSettings$().subscribe({
+        next : (result:any[])=>{
+          this.isShowPurchase = result.find(x=>x.key === "Purchase Through GRN").value;
+        }
+      })
+
       this.model = [
         {
           label: '',
@@ -80,12 +93,13 @@ export class AppMenuComponent implements OnInit {
               items: [
                 { label: 'Purchase Order', routerLink: [APP_ROUTES.invoices.purchaseOrder] },
                 { label: 'Goods Received Note', routerLink: [APP_ROUTES.invoices.grn] },
-                { label: 'Purchase', routerLink: [APP_ROUTES.invoices.purchase] },
+                ...(!this.isShowPurchase ? [{ label: 'Purchase', routerLink: [APP_ROUTES.invoices.purchase] }] : []),
                 { label: 'Purchase Return', routerLink: [APP_ROUTES.invoices.purchaseReturn] },
                 { label: 'Quotations', routerLink: [APP_ROUTES.invoices.quotations] },
                 { label: 'Sale Invoices', routerLink: [APP_ROUTES.invoices.saleInvoices] },
                 { label: 'Sale Return', routerLink: [APP_ROUTES.invoices.saleReturn] },
                 { label: 'Service Invoices', routerLink: [APP_ROUTES.invoices.serviceInvoices] },
+                { label: 'Invoice Posting', routerLink: [APP_ROUTES.invoices.invoicePosting] },
                 // { label: 'Stock Shortage', routerLink: [APP_ROUTES.invoices.stockShortage] },
               ],
             },

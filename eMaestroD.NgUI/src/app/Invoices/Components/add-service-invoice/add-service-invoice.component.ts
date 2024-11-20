@@ -27,6 +27,7 @@ import { ReportSettingService } from 'src/app/Reports/Services/report-setting.se
 import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { GenericService } from 'src/app/Shared/Services/generic.service';
 import { JournalVoucher } from 'src/app/Transaction/Models/journal-voucher';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 @Component({
   selector: 'app-add-service-invoice',
@@ -181,7 +182,7 @@ showReportDialog() {
     private citiesService:CitiesService,
     private customersService:CustomersService,
     private invoicesService:InvoicesService,
-    private locationService:LocationService,
+    private sharedDataService:SharedDataService,
     private genericService:GenericService,
     private toastr: ToastrService,
     private el: ElementRef,
@@ -228,13 +229,17 @@ showReportDialog() {
       },
     });
 
-    this.locationService.getAllLoc().subscribe({
+    this.sharedDataService.getLocations$().subscribe({
       next : (loc:any)=>{
-        this.locations = loc;
-        this.selectedLocation = {locID : this.locations[0].locID, locName : this.locations[0].locName}
-        this.LocationList = this.selectedLocation;
+        this.locations = loc.filter(x=>x.LocTypeId == 5);
+          this.locations.unshift({
+            LocationId : 0,
+            LocationName : "---ALL---"
+            }
+          );
+        this.selectedLocation = {LocationId : this.locations[0].LocationId, LocationName : this.locations[0].LocationName};
       }
-    });
+    })
 
     this.invoicelist = [
       this.createNewGLList()
@@ -310,8 +315,8 @@ showReportDialog() {
                   let i = -1;
                   let j = -1;
                   let k = -1;
-                  let locName = this.locations.find(x=>x.locID == invoices[0].locID)?.locName;
-                  this.selectedLocation = {locID : invoices[0].locID, locName: locName };
+                  let locName = this.locations.find(x=>x.LocationId == invoices[0].locID)?.LocationName;
+                  this.selectedLocation = {LocationId : invoices[0].locID, LocationName : locName };
                   this.selectedCustomerName ={cstID: invoices[0].cstID, cstName: invoices[0].cstName};
                   invoices.forEach((elem,index) => {
                     if(elem.COAID == 40 )
@@ -828,7 +833,7 @@ showReportDialog() {
       this.toastr.error("Please select customer!");
       this.onEnterComplex(1);
     }
-    else if(this.selectedLocation.locID == undefined) {
+    else if(this.selectedLocation.LocationId == undefined) {
       this.toastr.error("Please select location!");
       this.onEnterComplex(2);
     }
@@ -889,7 +894,7 @@ showReportDialog() {
         this.gl[i].depositID = 2018;
         this.gl[i].purchRate = 0;
         this.gl[i].taxName = this.TaxName;
-        this.gl[i].locID = this.selectedLocation.locID;
+        this.gl[i].locID = this.selectedLocation.LocationId;
         this.gl[i].comID = localStorage.getItem('comID');
       }
         this.invoicesService.saveServiceInvoice(this.gl).subscribe({
@@ -1210,7 +1215,7 @@ showReportDialog() {
     let query = event.query;
     for (let i = 0; i < this.locations.length; i++) {
       let loc = this.locations[i];
-      if (loc.locName.toLowerCase().indexOf(query.trim().toLowerCase()) == 0) {
+      if (loc.LocationName.toLowerCase().indexOf(query.trim().toLowerCase()) == 0) {
         filtered.push(loc);
       }
     }

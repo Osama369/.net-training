@@ -56,8 +56,8 @@
               <th style="min-width:6rem" translate>
                       Amount
               </th>
-              <th style="min-width:14rem">
-
+              <th style="min-width:6rem">
+                Status
               </th>
           </tr>
       </ng-template>
@@ -66,8 +66,8 @@
               <td pFrozenColumn style="text-align: center !important;z-index: 0;">
                   <span class="p-buttonset">
                     <p-button (onClick)="printView(invoices.invoiceVoucherNo)"  icon="pi pi-file-pdf" styleClass="p-button-rounded p-button-info p-button-text" title="Print"></p-button>
-                    <p-button *ngIf="!invoices.isPaymented && !invoices.convertedInvoiceNo" (onClick)="editView(invoices.invoiceVoucherNo)" icon="pi pi-pencil" styleClass="p-button-rounded p-button-success p-button-text" title="Edit"></p-button>
-                    <p-button *ngIf="!invoices.isPaymented && !invoices.convertedInvoiceNo" (onClick)="deleteView(invoices.invoiceVoucherNo)" icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-text" title="Delete"></p-button>
+                    <p-button *ngIf="!invoices.isPaymented && !invoices.convertedInvoiceNo && !invoices.isApproved" (onClick)="editView(invoices.invoiceVoucherNo)" icon="pi pi-pencil" styleClass="p-button-rounded p-button-success p-button-text" title="Edit"></p-button>
+                    <p-button *ngIf="!invoices.isPaymented && !invoices.convertedInvoiceNo && !invoices.isApproved" (onClick)="deleteView(invoices.invoiceVoucherNo)" icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-text" title="Delete"></p-button>
                     <!-- <p-button (onClick)="printView(invoices.invoiceVoucherNo)"  icon="pi pi-money-bill" styleClass="p-button-rounded p-button-info p-button-text" title="Add Payment"></p-button> -->
 
                      </span>
@@ -88,10 +88,18 @@
               <td>
                   {{invoices.netTotal | number : '1.2-2'}}
               </td>
-              <td>
-                <button pButton type="button" style="padding: 5px !important; font-size: 12px !important" *ngIf="!invoices.convertedInvoiceNo" translate (click)="ConvertToPurchase(invoices.invoiceVoucherNo)" class="p-button-danger">Convert to Purchase</button>
-                <button pButton type="button" style="padding: 5px !important; font-size: 12px !important;" *ngIf="invoices.convertedInvoiceNo" translate  class="p-button-success">Created At : {{invoices.convertedInvoiceNo}}</button>
-            </td>
+              <td style="text-align: center;">
+                <p-inputSwitch *ngIf="!invoices.isApproved"
+                [(ngModel)]="invoices.isApproved1"
+                (click)="confirmApproval(invoices)"
+                [disabled]="invoices.isApproved"
+                ></p-inputSwitch>
+
+                <p-chip *ngIf="invoices.isApproved"
+                  [label]="invoices.transactionStatus"
+                  [styleClass]="'green-chip'">
+                </p-chip>
+              </td>
           </tr>
       </ng-template>
       <ng-template pTemplate="emptymessage">
@@ -101,6 +109,9 @@
       </ng-template>
   </p-table>
 </div>
+
+<p-confirmDialog></p-confirmDialog>
+
 
 
 <p-dialog [modal]="true" [(visible)]="PrintringVisible" [style]="{width: '20vw'}">

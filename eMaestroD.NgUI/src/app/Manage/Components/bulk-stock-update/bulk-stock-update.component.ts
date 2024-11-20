@@ -14,6 +14,7 @@ import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { GenericService } from 'src/app/Shared/Services/generic.service';
 import { ProductCategoryService } from '../../Services/product-category.service';
 import { Location } from './../../../Administration/Models/location';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 @Component({
   selector: 'app-bulk-stock-update',
@@ -67,7 +68,7 @@ export class BulkStockUpdateComponent implements OnInit {
       private reportSettingService : ReportSettingService,
       private reportService : ReportService,
       private productCategoryService : ProductCategoryService,
-      private locationService : LocationService,
+      private sharedDataService:SharedDataService,
       public bookmarkService: BookmarkService,
       public route : ActivatedRoute
       ) { }
@@ -109,21 +110,25 @@ export class BulkStockUpdateComponent implements OnInit {
 
 
 
-  const loc = await lastValueFrom(this.locationService.getAllLoc());
-    this.locations = loc;
-    if (this.locations && this.locations.length > 0) {
-      this.selectedLocation = {
-        locID: this.locations[0].locID,
-        locName: this.locations[0].locName,
-      };
-    }
+    this.sharedDataService.getLocations$().subscribe({
+      next : (loc:any)=>{
+        this.locations = loc.filter(x=>x.LocTypeId == 5);
+          this.locations.unshift({
+            LocationId : 0,
+            LocationName : "---ALL---"
+            }
+          );
+        this.selectedLocation = {LocationId : this.locations[0].LocationId, LocationName : this.locations[0].LocationName};
+      }
+    })
+
     const reportData = await lastValueFrom(
       this.reportService.runReportWith1Para("StockList", 0, 0, 0)
     );
     this.stockList = (reportData as { [key: string]: any })["enttityDataSource"];
       if (this.selectedLocation && this.stockList) {
         this.productlist = this.stockList.filter(
-          (x: any) => x.locID === this.selectedLocation.locID
+          (x: any) => x.locID === this.selectedLocation.LocationId
           );
       }
     }
@@ -362,27 +367,16 @@ export class BulkStockUpdateComponent implements OnInit {
     });
   }
 
-  filterLocation(event:any) {
-    //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
-    let filtered: any[] = [];
-    let query = event.query;
-    for (let i = 0; i < this.locations.length; i++) {
-      let loc = this.locations[i];
-      if (loc.locName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
-        filtered.push(loc);
-      }
-    }
-    this.LocationList = filtered;
-  }
+
 
   ChangeProductList(){
     if(this.stockList)
     {
       if(this.selectedCategory.prodGrpID == 0)
       {
-        this.productlist = this.stockList.filter((x:any)=>x.locID == this.selectedLocation.locID);
+        this.productlist = this.stockList.filter((x:any)=>x.locID == this.selectedLocation.LocationId);
       }else{
-        this.productlist = this.stockList.filter((x:any)=>x.prodGrpID == this.selectedCategory.prodGrpID && x.locID == this.selectedLocation.locID);
+        this.productlist = this.stockList.filter((x:any)=>x.prodGrpID == this.selectedCategory.prodGrpID && x.locID == this.selectedLocation.LocationId);
       }
     }
   }

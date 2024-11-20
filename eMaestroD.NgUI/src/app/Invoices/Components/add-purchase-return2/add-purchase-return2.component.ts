@@ -192,8 +192,8 @@ export class AddPurchaseReturn2Component implements OnInit{
 
     this.locationService.getAllLoc().subscribe({
       next : (loc:any)=>{
-        this.locations = loc;
-        this.selectedLocation = {locID : this.locations[0].locID, locName : this.locations[0].locName}
+        this.locations = loc.filter(x=>x.LocTypeId == 5);
+        this.selectedLocation = {locID : this.locations[0].LocationId, locName : this.locations[0].LocationName}
       }
     })
 
@@ -219,8 +219,8 @@ export class AddPurchaseReturn2Component implements OnInit{
               let i = -1;
               let j = -1;
               let k = -1;
-              let locName = this.locations.find(x=>x.locID == invoices[0].locID)?.locName;
-              this.selectedLocation = {locID : invoices[0].locID, locName: locName };
+              let locName = this.locations.find(x=>x.LocationId == invoices[0].locID)?.LocationName;
+              this.selectedLocation = {LocationId : invoices[0].locID, LocationName : locName };
               let totalQty = 0;
               invoices.forEach((elem,index) => {
                 if(elem.relCOAID == 83 )
@@ -476,7 +476,7 @@ export class AddPurchaseReturn2Component implements OnInit{
     let query = event.query;
     for (let i = 0; i < this.locations.length; i++) {
       let loc = this.locations[i];
-      if (loc.locName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+      if (loc.LocationName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
         filtered.push(loc);
       }
     }
@@ -610,7 +610,7 @@ export class AddPurchaseReturn2Component implements OnInit{
           this.gl[j].crtDate = this.productlist[i].crtDate;
           this.gl[j].modBy = "";
           this.gl[j].taxName = this.TaxName
-          this.gl[j].locID = this.selectedLocation.locID;
+          this.gl[j].locID = this.selectedLocation.LocationId;
           this.gl[j].comID = localStorage.getItem('comID');
           j++;
         }
@@ -958,7 +958,7 @@ export class AddPurchaseReturn2Component implements OnInit{
     this.productlist = [this.createNewProduct()];
     if(list.length > 0)
     {
-      this.selectedLocation.locID = list[0].locID;
+      this.selectedLocation.LocationId = list[0].locID;
       this.TotalDiscount = 0;
       let i=0;
       list.forEach(elem => {

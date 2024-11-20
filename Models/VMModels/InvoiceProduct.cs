@@ -30,6 +30,9 @@ namespace eMaestroD.Models.VMModels
         public decimal? rebateAmount { get; set; }
         public decimal? grossValue { get; set; }
         public decimal? netAmount { get; set; }
+        public decimal? mrp { get; set; }
+        public decimal? sellingPrice { get; set; }
+        public decimal? lastCost { get; set; }
         public List<InvoiceProductTax> ProductTaxes { get; set; }
     }
 }

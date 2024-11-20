@@ -13,6 +13,7 @@ import { InvoiceView } from '../../Models/invoice-view';
 import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
 import { lastValueFrom } from 'rxjs';
 import { Invoice } from '../../Models/invoice';
+import { ConfirmationService } from 'primeng/api';
 
 @Component({
   selector: 'app-grn',
@@ -45,7 +46,8 @@ export class GRNComponent implements OnInit {
       private authService : AuthService,
       private reportSettingService : ReportSettingService,
       public bookmarkService: BookmarkService,
-      public route : ActivatedRoute
+      public route : ActivatedRoute,
+      public confirmationService : ConfirmationService
       ) { }
 
     async ngOnInit() {
@@ -217,5 +219,31 @@ export class GRNComponent implements OnInit {
       ConvertToPurchase(invoiceNo:any)
       {
         this.router.navigateByUrl('/Invoices/AddNewPurchase/'+invoiceNo);
+      }
+
+      confirmApproval(invoice:any) {
+          this.confirmationService.confirm({
+            header: 'Confirm Approval',
+            message: 'Are you sure you want to approve this GRN? This action can\'t be undone.',
+            accept: async () => {
+             try{
+               await lastValueFrom(this.invoiceService.ApproveInvoice(invoice.invoiceVoucherNo));
+               invoice.transactionStatus = "Approved";
+               invoice.isApproved = true;
+               invoice.isApproved1 = true;
+
+              }
+              catch{
+                this.toasterService.error("Something went wrong.");
+                invoice.isApproved = false;
+                invoice.isApproved1 = false;
+              }
+
+            },
+            reject:()=>{
+              invoice.isApproved = false;
+              invoice.isApproved1 = false;
+            }
+          });
       }
 }

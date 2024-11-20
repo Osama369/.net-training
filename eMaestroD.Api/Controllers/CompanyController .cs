@@ -174,6 +174,7 @@ namespace eMaestroD.Api.Controllers
                                 company.crtBy = oldCompany.language;
                                 company.modBy = oldCompany.language;
                                 company.timeZoneID = oldCompany.timeZoneID;
+                                company.isPos = oldCompany.isPos;
                                 company.isMultiPayment = false;
                                 _AMDbContext.Companies.Add(company);
                                 await _AMDbContext.SaveChangesAsync();
