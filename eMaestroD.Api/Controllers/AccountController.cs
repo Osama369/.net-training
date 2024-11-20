@@ -126,7 +126,6 @@ namespace eMaestroD.Api.Controllers
                         tenants.subscriptionDate = DateTime.Now;
                         tenants.subscriptionEndDate = DateTime.Today.AddDays(90).AddHours(23).AddMinutes(59).AddSeconds(59);
                         tenants.allowExport = true;
-                        tenants.isPOS = true;
                         tenants.isMultiCompany = true;
                         tenants.isMultilingual = true;
                         tenants.isMultiLocation = true;
@@ -173,7 +172,6 @@ namespace eMaestroD.Api.Controllers
                     tenants.subscriptionDate = DateTime.Now;
                     tenants.subscriptionEndDate = DateTime.Today.AddDays(90).AddHours(23).AddMinutes(59).AddSeconds(59);
                     tenants.allowExport = true;
-                    tenants.isPOS = true;
                     tenants.isMultiCompany = true;
                     tenants.isMultilingual = true;
                     tenants.isMultiLocation = true;
