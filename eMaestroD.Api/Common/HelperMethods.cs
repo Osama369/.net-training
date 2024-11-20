@@ -73,7 +73,7 @@ namespace eMaestroD.Api.Common
 
         public async Task<string> GenerateVoucherNoAsync(int txTypeID, int? comID)
         {
-            string sql = "EXEC GenerateVoucherNo @txType, @comID";
+            string sql = "EXEC GenerateGLVoucherNo @txType, @comID";
             List<SqlParameter> parms = new List<SqlParameter>
             {
                 new SqlParameter { ParameterName = "@txType", Value = txTypeID },

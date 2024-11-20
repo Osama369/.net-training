@@ -15,6 +15,7 @@ using eMaestroD.Models.Models;
 using eMaestroD.Api.Common;
 using eMaestroD.Api.Data;
 using eMaestroD.DataAccess.DataSet;
+using eMaestroD.Models.VMModels;
 
 namespace eMaestroD.Api.Controllers
 {
@@ -65,97 +66,11 @@ namespace eMaestroD.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> getAllUsers()
         {
-            var usersWithRoles = await _AMDbContext.Users
-      .Join(
-          _AMDbContext.Roles,
-          user => user.RoleID,
-          role => role.RoleID,
-          (user, role) => new
-          {
-              user.UserID,
-              user.FirstName,
-              user.LastName,
-              user.Mobile,
-              user.Email,
-              user.userName,
-              // Other user properties...
-              role.RoleID,
-              role.RoleName
-          }
-      )
-      .Join(
-          _AMDbContext.UserCompanies,
-          combined => combined.UserID,
-          userCompany => userCompany.UserID,
-          (combined, userCompany) => new
-          {
-              combined.UserID,
-              combined.FirstName,
-              combined.LastName,
-              combined.Mobile,
-              combined.Email,
-              combined.RoleID,
-              combined.RoleName,
-              combined.userName,
-              // Other user properties...
-              comID = userCompany.ComID,
-              // Add more properties from UserCompanies as needed
-          }
-      )
-      .GroupJoin(
-          _AMDbContext.Companies,
-          userCompany => userCompany.comID,
-          company => company.comID,
-          (userCompany, companies) => new
-          {
-              userCompany.UserID,
-              userCompany.FirstName,
-              userCompany.LastName,
-              userCompany.Mobile,
-              userCompany.Email,
-              userCompany.RoleID,
-              userCompany.RoleName,
-              userCompany.userName,
-              userCompany.comID,
-              companies // GroupJoin produces a collection of related items
-          }
-      )
-      .SelectMany(
-          userCompany => userCompany.companies.DefaultIfEmpty(), // Use DefaultIfEmpty to perform left join
-          (userCompany, company) => new
-          {
-              userCompany.UserID,
-              userCompany.FirstName,
-              userCompany.LastName,
-              userCompany.Mobile,
-              userCompany.Email,
-              userCompany.RoleID,
-              userCompany.RoleName,
-              userCompany.userName,
-              userCompany.comID,
-              companyName = company != null ? company.companyName : null // Select company name or null if no company is found
-          }
-      )
-      .ToListAsync();
+            var usersWithDetails = await _AMDbContext.Set<UserDetailsViewModel>()
+            .FromSqlRaw("EXEC GetAllUsersWithDetails")
+            .ToListAsync();
 
-            var groupedUsers = usersWithRoles
-                .GroupBy(u => new { u.UserID, u.FirstName, u.LastName, u.Email, u.Mobile, u.RoleID, u.RoleName, u.userName /* Add other user properties here */ })
-                .Select(group => new
-                {
-                    group.Key.UserID,
-                    group.Key.FirstName,
-                    group.Key.LastName,
-                    group.Key.Mobile,
-                    group.Key.Email,
-                    group.Key.RoleID,
-                    group.Key.RoleName,
-                    group.Key.userName,
-                    // Other user properties...
-                    CompaniesID = string.Join(",", group.Select(u => u.comID).Distinct()),
-                    Companies = string.Join(",", group.Select(u => u.companyName).Distinct())
-                })
-                .ToList();
-            return Ok(groupedUsers);
+            return Ok(usersWithDetails);
         }
 
         [HttpPost]
@@ -261,6 +176,14 @@ namespace eMaestroD.Api.Controllers
                 await _AMDbContext.UserCompanies.AddRangeAsync(uc);
                 await _AMDbContext.SaveChangesAsync();
 
+                UserLocation ul = new UserLocation()
+                {
+                    userID = (int)user[0].UserID,
+                    locID = (int)user[0].locID
+                };
+                await _AMDbContext.UserLocations.AddAsync(ul);
+                await _AMDbContext.SaveChangesAsync();
+
                 var AuthList = _Context.AuthorizationsTemplate.Where(x => x.roleID == user[0].RoleID).ToList();
                 List<Authorizations> authorizations = new List<Authorizations>();
                 foreach (var item in AuthList)
@@ -304,6 +227,16 @@ namespace eMaestroD.Api.Controllers
                 await _AMDbContext.UserCompanies.AddRangeAsync(uc);
                 await _AMDbContext.SaveChangesAsync();
 
+                var userLocationList = await _AMDbContext.UserLocations.FirstOrDefaultAsync(x => x.userID == user[0].UserID);
+                UserLocation ul = new UserLocation()
+                {
+                    userLocID = userLocationList == null ? 0 : userLocationList.userLocID, 
+                    userID = (int)user[0].UserID,
+                    locID = (int)user[0].locID
+                };
+                _AMDbContext.UserLocations.Update(ul);
+                await _AMDbContext.SaveChangesAsync();
+
                 _notificationInterceptor.SaveNotification("UsersEdit", user[0].ComID, "");
             }
             return Ok(user[0]);
@@ -327,6 +260,7 @@ namespace eMaestroD.Api.Controllers
                 {
                     _AMDbContext.RemoveRange(_AMDbContext.Users.Where(x => x.UserID == userID));
                     _AMDbContext.RemoveRange(_AMDbContext.UserCompanies.Where(x => x.UserID == userID));
+                    _AMDbContext.RemoveRange(_AMDbContext.UserLocations.Where(x => x.userID == userID));
                     _AMDbContext.RemoveRange(_AMDbContext.Authorizations.Where(x => x.userID == userID));
                     await _AMDbContext.SaveChangesAsync();
 

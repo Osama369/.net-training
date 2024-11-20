@@ -1142,7 +1142,7 @@ namespace eMaestroD.Api.Controllers
                 await _AMDbContext.SaveChangesAsync();
 
 
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
+                string sql = "EXEC GenerateGLVoucherNo @txType, @comID";
                 List<SqlParameter> parms = new List<SqlParameter>
                 {
                     new SqlParameter { ParameterName = "@txType", Value = 6 },
@@ -1297,7 +1297,7 @@ namespace eMaestroD.Api.Controllers
             if (gl[0].GLID == 0)
             {
 
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
+                string sql = "EXEC GenerateGLVoucherNo @txType, @comID";
                 List<SqlParameter> parms = new List<SqlParameter>
                 {
                     new SqlParameter { ParameterName = "@txType", Value = 8 },
@@ -1425,7 +1425,7 @@ namespace eMaestroD.Api.Controllers
             if (gl[0].GLID == 0)
             {
 
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
+                string sql = "EXEC GenerateGLVoucherNo @txType, @comID";
                 List<SqlParameter> parms = new List<SqlParameter>
                 {
                     new SqlParameter { ParameterName = "@txType", Value = 42 },
@@ -1595,7 +1595,7 @@ namespace eMaestroD.Api.Controllers
 
 
 
-                string sql = "EXEC GenerateVoucherNo @txType, @comID";
+                string sql = "EXEC GenerateGLVoucherNo @txType, @comID";
                 List<SqlParameter> parms = new List<SqlParameter>
                 {
                      new SqlParameter { ParameterName = "@txType", Value = 7 },

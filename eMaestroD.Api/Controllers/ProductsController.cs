@@ -238,7 +238,7 @@ namespace eMaestroD.Api.Controllers
                     //    String voucherNo = "";
                     //    decimal totalAmount = 0M;
                     //    decimal totalQty = 0M;
-                    //    string sql = "EXEC GenerateVoucherNo @txType";
+                    //    string sql = "EXEC GenerateGLVoucherNo @txType";
                     //    List<SqlParameter> parms = new List<SqlParameter>
                     //    {
                     //    new SqlParameter { ParameterName = "@txType", Value = 1 },
@@ -518,7 +518,7 @@ namespace eMaestroD.Api.Controllers
                                                 qty = decimal.Parse(worksheet.Cell(i, 10).Value.ToString() == "" ? "0" : worksheet.Cell(i, 10).Value.ToString());
                                                 if (qty > 0)
                                                 {
-                                                    string sql = "EXEC GenerateVoucherNo @txType, @comID";
+                                                    string sql = "EXEC GenerateGLVoucherNo @txType, @comID";
                                                     List<SqlParameter> parms = new List<SqlParameter>
                                                 {
                                                 new SqlParameter { ParameterName = "@txType", Value = 1 },

@@ -11,6 +11,9 @@ namespace eMaestroD.Models.Models
         public int? ComID { get; set; }
         public int? RoleID { get; set; }
         [NotMapped]
+        public int? locID { get; set; }
+        
+        [NotMapped]
         public string? RoleName { get; set; }
         [NotMapped]
         public string? password { get; set; }
@@ -36,6 +39,7 @@ namespace eMaestroD.Models.Models
         public string? modBy { get; set; }
         public bool? AllowExport { get; set; }
         public bool? IsMultiLogin { get; set; }
+
 
         [NotMapped]
         public string? userName { get { return FirstName + " " + LastName; } }

@@ -38,6 +38,7 @@ export class UsersComponent implements OnInit {
 
     ngOnInit() {
         this.userService.getAllUsers().subscribe(user => {
+          console.log(this.User);
           if(user.length >0)
           {
             this.User = user;

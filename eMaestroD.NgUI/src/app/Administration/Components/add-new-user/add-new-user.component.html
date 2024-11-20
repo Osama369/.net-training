@@ -25,10 +25,24 @@
           </div>
 
           <div class="col-12">
-            <label class="col-form-label date-label col-12 required" translate>Roles</label>
+            <label class="col-form-label date-label col-6 required" translate>Roles</label>
+            <label class="col-form-label Vendor-label col-6 required" translate>Location<span>:</span>&nbsp;</label>
             <p-autoComplete #inputField pAutoFocus [autofocus]="true" [(ngModel)]="SelectedRole" [suggestions]="filterRole"  (completeMethod)="filtersRole($event)" (keyup.enter)="onEnterTableInputCst(5)"
-            field="RoleName" value="RoleID" styleClass="col-12" [minLength]="1" [dropdown]="true" #autoComplete (onFocus)="autoComplete.show()"></p-autoComplete>
+            field="RoleName" value="RoleID" styleClass="col-5" [minLength]="1" [dropdown]="true" #autoComplete (onFocus)="autoComplete.show()"></p-autoComplete>
+            <p-dropdown
+            #inputField
+            styleClass="offset-1 col-6"
+            [(ngModel)]="SelectedLocation"
+            [options]="locations"
+            optionLabel="LocationName"
+            [filter]="true"
+            [filterBy]="'LocationName'"
+            appendTo="body"
+            [showClear]="true"
+            >
+            </p-dropdown>
           </div>
+
 
           <div class="col-12">
             <label class="col-form-label date-label col-12 required" translate>Companies</label>

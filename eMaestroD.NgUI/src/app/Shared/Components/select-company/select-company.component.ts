@@ -135,6 +135,7 @@ export class SelectCompanyComponent implements OnInit {
       localStorage.setItem("comID",row.comID);
       localStorage.setItem("comName",row.companyName);
       localStorage.setItem("timeZone",row.timeZone);
+      localStorage.setItem("isPos",row.isPos);
       this.auth.canAuthenticate();
       this.themeService.switchTheme(row.theme);
       this.translateService.use(row.language);

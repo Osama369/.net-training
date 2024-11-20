@@ -102,10 +102,8 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<TempGL> TempGL { get; set; }
         public DbSet<TempGLDetail> TempGLDetails { get; set; }
         public DbSet<TransactionLog> TransactionLogs { get; set; }
-
-
-
-
+        public DbSet<UserLocation> UserLocations { get; set; }
+        public DbSet<UserDetailsViewModel> UserDetailsViewModel { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
