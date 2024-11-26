@@ -27,6 +27,7 @@ namespace eMaestroD.InvoiceProcessing.Factories
                 3 => new PurchaseOrderHandler(_helperMethods, _glService),
                 4 => new SaleInvoiceHandler(_helperMethods, _glService),
                 12 => new GRNInvoiceHandler(_helperMethods, _glService),
+                16 => new SaleOrderHandler(_helperMethods, _glService),
                 _ => throw new NotSupportedException($"Invoice type with txTypeID {txTypeID} is not supported.")
             };
         }

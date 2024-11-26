@@ -39,7 +39,7 @@
 
               <div class="col-3">
                   <p-autoComplete #inputField  [(ngModel)]="selectedCustomerName" [suggestions]="customerList" (keydown)="VendorsVisible($event)"  (completeMethod)="filterCustomer($event)" (keyup.enter)="onEnterComplex(2)"
-                  field="vendName" value="vendID" [minLength]="1" [disabled]="disable" [dropdown]="true" >
+                  field="vendName" value="vendID" [minLength]="1" [disabled]="disable" [dropdown]="true" (onSelect)="showOnlyVendorProduct()" >
                   <ng-template let-vendor pTemplate="item">
                     <div>{{vendor.vendCode}} - {{vendor.vendName}}</div>
                   </ng-template>
@@ -108,10 +108,10 @@
               <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
                 <tr (click)="activeAllModule(ri)" [style.background-color]="ri == rowNmb ? 'gray' : ''">
                     <td pFrozenColumn style="z-index: 1;">
-                        <p-autoComplete  #inputField [(ngModel)]="rowData.barCode" [minLength]="1" (keyup.enter)="onCodeChange(rowData.barCode, ri, $event)" (onBlur)="onCodeChange(rowData.barCode, ri, $event)" class="girdRow girdRowCode codeInput" [style]="{ 'width':'100%'}"></p-autoComplete>
+                        <p-autoComplete  #inputField [(ngModel)]="rowData.barCode" [minLength]="1" [disabled]="!selectedCustomerName" (keyup.enter)="onCodeChange(rowData.barCode, ri, $event)" (onBlur)="onCodeChange(rowData.barCode, ri, $event)" class="girdRow girdRowCode codeInput" [style]="{ 'width':'100%'}"></p-autoComplete>
                     </td>
                     <td pFrozenColumn style="z-index: 1;">
-                      <p-autoComplete #inputField styleClass="myclass"  appendTo="body" [(ngModel)]="rowData.prodName" [suggestions]="Filterproductlist" (completeMethod)="filterProduct($event)"
+                      <p-autoComplete #inputField styleClass="myclass"  appendTo="body" [disabled]="!selectedCustomerName" [(ngModel)]="rowData.prodName" [suggestions]="Filterproductlist" (completeMethod)="filterProduct($event)"
                       field="prodName" value="prodBCID" [minLength]="1" (keydown)="productVisible($event)" (keyup.enter)="onEnterTableInput(-1,ri)" (onBlur)="onChange(rowData.prodName,ri, autoComplete3)" class="myClass girdRow" [style]="{ 'width':'100% !important','min-width':'100%'}" #autoComplete3 (onFocus)="autoComplete3.show()" ></p-autoComplete>
                     </td>
                     <td>

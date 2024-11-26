@@ -158,7 +158,7 @@ export class AddNewUserComponent {
         this.toastr.error("Please select user location");
         this.onEnterTableInputCst(5);
       }
-      else if(this.UsersList.find(x=>x.locID == this.SelectedLocation.LocationId)){
+      else if(this.UsersList.find(x=>x.locID == this.SelectedLocation.LocationId && x.RoleID == this.SelectedRole.RoleID)){
         this.toastr.error("This location already assign to some other users, Please select other location");
         this.onEnterTableInputCst(5);
       }
@@ -191,7 +191,6 @@ export class AddNewUserComponent {
                   });
                 this.UserList.splice(this.UserList.length-1,1);
                 this.userService.saveUser(this.UserList).subscribe(us=>{
-
                         if(this.title == "User Registration")
                         {
                           this.toastr.success("User has been successfully added!");

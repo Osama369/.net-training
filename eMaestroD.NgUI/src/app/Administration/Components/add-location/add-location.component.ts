@@ -61,6 +61,7 @@ export class AddLocationComponent {
        this.locationList[0].ParentLocationId = this.LocData.id;
        this.locationList[0].LocTypeId = this.LocData.level + 1;
        this.parentLocationName = this.LocData.name;
+       this.locationList[0].LocationName = "";
       }
     }
     else
@@ -71,6 +72,7 @@ export class AddLocationComponent {
   clear()
   {
     this.locationList = [{
+      LocationName : ""
     }]
   }
   saveLoc()

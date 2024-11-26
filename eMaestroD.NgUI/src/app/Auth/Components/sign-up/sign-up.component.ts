@@ -274,6 +274,7 @@ export class SignUpComponent implements OnInit {
      || this.List[0].businessPhone == ""
      || this.SelectedCountry == ""
      || this.privacyCheck != true
+      || this.List[0].isPOS == null
     )
     {
       this.toastr.error("Please Fill All Blanks!")

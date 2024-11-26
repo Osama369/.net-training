@@ -7,6 +7,7 @@ import { Vendor } from 'src/app/Manage/Models/vendor';
 import { CitiesService } from 'src/app/Manage/Services/cities.service';
 import { CustomersService } from 'src/app/Manage/Services/customers.service';
 import { VendorService } from 'src/app/Manage/Services/vendor.service';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 
 @Component({
@@ -15,6 +16,15 @@ import { VendorService } from 'src/app/Manage/Services/vendor.service';
   styleUrls: ['./add-new-customer.component.css']
 })
 export class AddNewCustomerComponent {
+  constructor(
+    private router: Router,
+    private sharedDataService: SharedDataService,
+    private customersService:CustomersService,
+    private vendorService:VendorService,
+    private toastr: ToastrService,
+    private el: ElementRef,
+  ) {}
+
   customerList: Customer[];
   vendorList: Vendor[];
 
@@ -24,6 +34,14 @@ export class AddNewCustomerComponent {
   @Input() cstData : any;
   @Input() title : any;
   isCstSupp : boolean = false;
+
+  allLocation:any;
+  regionList : any;
+  cityList : any;
+  areaList : any;
+  selectedRegion:any;
+  selectedCity:any;
+  selectedArea:any;
 
   sendDataToParent() {
     this.dataEvent.emit({type:'',value:false});
@@ -66,7 +84,21 @@ export class AddNewCustomerComponent {
     this.customersService.GetCstCode().subscribe(nmb=>{
       this.customerList[0].cstCode = nmb;
     });
+
+    this.sharedDataService.getLocations$().subscribe(loc=>{
+      this.allLocation = loc;
+      this.regionList = loc.filter(x=>x.LocTypeId == 3);
+    });
   }
+
+  ChangeRegion(){
+      this.cityList = this.allLocation.filter(x=>x.LocTypeId == 4 && x.ParentLocationId == this.selectedRegion);
+    }
+
+  ChangeCity(){
+    this.areaList = this.allLocation.filter(x=>x.LocTypeId == 5 && x.ParentLocationId == this.selectedCity);
+  }
+
   ngOnChanges(changes: SimpleChanges) {
     if(this.cstData != undefined && this.cstData.length != 0)
     {
@@ -77,23 +109,25 @@ export class AddNewCustomerComponent {
         this.isCstSupp = false;
       }
       this.customerList[0] = this.cstData;
+
+      // this.selectedArea = {LocationId : this.customerList[0].cityID, LocationName : this.customerList[0].city};
+
+
     }
     else
     {
       this.clear();
     }
 }
-  constructor(
-    private router: Router,
-    private citiesService:CitiesService,
-    private customersService:CustomersService,
-    private vendorService:VendorService,
-    private toastr: ToastrService,
-    private el: ElementRef,
-  ) {}
+
 
   clear()
   {
+
+    this.selectedRegion = null;
+    this.selectedCity = null;
+    this.selectedArea = null;
+
     this.customerList = [
       {
         cstID : undefined,
@@ -171,7 +205,13 @@ export class AddNewCustomerComponent {
       this.toastr.error("Please write customer name");
       this.onEnterTableInputCst(0);
     }
+    else if(this.selectedArea == undefined){
+      this.toastr.error("Please select area");
+      this.onEnterTableInputCst(0);
+    }
     else{
+      this.customerList[0].cityID = this.selectedArea.LocationId;
+      this.customerList[0].city = this.selectedArea.LocationName;
       if(!this.isCstSupp)
       {
         this.customerList[0].active = true;

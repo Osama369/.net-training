@@ -85,4 +85,6 @@ export interface ProductViewModel {
   sellingPrice?:number;
   mrp?:number;
   diff?:number | 0;
+  vendID?:number | 0;
+  sharePercentage?:number | 0;
 }

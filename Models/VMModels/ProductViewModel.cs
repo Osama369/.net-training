@@ -110,6 +110,13 @@ namespace Models.VMModels
         public decimal? fobPrice { get; set; }
         [HiddenOnRender]
         public decimal? lastCost { get; set; }
-
+        [HiddenOnRender]
+        public int? vendID { get; set; }
+        [HiddenOnRender]
+        public string? vendName { get; set; }
+        [HiddenOnRender]
+        public int? preference { get; set; }
+        [HiddenOnRender]
+        public decimal? sharePercentage { get; set; }
     }
 }

@@ -19,6 +19,34 @@
       <div style="width: 100%; margin: auto;">
         <div>
 
+          <div class="col-12">
+            <div>
+              <label class="col-form-label Type-label required col-4" translate>Registration Type</label>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  id="distribution"
+                  name="type"
+                  [(ngModel)]="List[0].isPOS"
+                  [value]="false"
+                />
+                <label class="form-check-label" for="distribution" translate>Distribution</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  id="pointOfSale"
+                  name="type"
+                  [(ngModel)]="List[0].isPOS"
+                  [value]="true"
+                />
+                <label class="form-check-label" for="pointOfSale" translate>Point of Sale</label>
+              </div>
+            </div>
+          </div>
+
         <div class="col-12">
           <label class="col-form-label Type-label required col-11" translate>Company Name &nbsp;</label>
           <input pInputText class="col-11"  #inputField [(ngModel)]="List[0].tenantName" [minLength]="1" >
@@ -52,11 +80,8 @@
           field="" value="" [minLength]="1"  [dropdown]="true" ></p-autoComplete>
 
         </div>
-        <div class="col-12">
-          <br>
-          <label class="col-form-label Type-label required col-3" translate>Point Of Sale?</label>
-          <p-inputSwitch [(ngModel)]="List[0].isPOS" styleClass="offset-1"></p-inputSwitch>
-        </div>
+
+
 
         <div class="col-12">
           <br>

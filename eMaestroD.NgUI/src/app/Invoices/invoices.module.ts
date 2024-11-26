@@ -36,6 +36,9 @@ import { AddNewSaleMComponent } from './Components/add-new-sale-m/add-new-sale-m
 import { AddNewPurchaseReturnMComponent } from './Components/add-new-purchase-return-m/add-new-purchase-return-m.component';
 import { InvoicePostingComponent } from './Components/invoice-posting/invoice-posting.component';
 import { PurchaseReturnMComponent } from './Components/purchase-return-m/purchase-return-m.component';
+import { SaleOrderComponent } from './Components/sale-order/sale-order.component';
+import { AddNewSaleOrderComponent } from './Components/add-new-sale-order/add-new-sale-order.component';
+import { AddNewSaleDComponent } from './Components/add-new-sale-d/add-new-sale-d.component';
 
 
 
@@ -74,7 +77,10 @@ import { PurchaseReturnMComponent } from './Components/purchase-return-m/purchas
     AddNewSaleMComponent,
     AddNewPurchaseReturnMComponent,
     InvoicePostingComponent,
-    PurchaseReturnMComponent
+    PurchaseReturnMComponent,
+    SaleOrderComponent,
+    AddNewSaleOrderComponent,
+    AddNewSaleDComponent
   ],
   imports: [
     CommonModule,

@@ -1,4 +1,4 @@
-<div class="card container">
+<div class="card">
   <div class="row">
     <div class="col-6">
         <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Product Registration
@@ -44,18 +44,8 @@
                       styleClass="p-button col-1" (onClick)="openAddSupplier()">
                     </p-button>
               </div> -->
-<!--
-              <div class="col-3">
-                <label class="col-form-label date-label required" translate>Supplier Name&nbsp;</label>
-                <p-dropdown #inputField (keyup.enter)="onEnterTableInput(0)"  styleClass="myclass col-11" [style]="{'border-radius':'6px 0px 0px 6px'}" [(ngModel)]="productlist[0].vendID"
-                    placeholder="Select a Supplier" [options]="Supplierlist"
-                    optionLabel="vendName" optionValue="vendID" [filter]="true" [filterBy]="'vendName'"
-                    [showClear]="true">
-                  </p-dropdown>
-                  <p-button  icon="pi pi-plus" title="Add New Supplier"
-                    styleClass="p-button col-1" (onClick)="openAddSupplier()">
-                  </p-button>
-            </div> -->
+
+
 
               <div class="col-3">
                   <label class="col-form-label date-label required" translate>Product Code&nbsp;</label>
@@ -73,6 +63,24 @@
                 <label class="col-form-label date-label required" translate>Short Name&nbsp;</label>
                 <input pInputText id="shortName" #inputFieldTableCst (keyup.enter)="onEnterTableInput(2)"
                     maxlength="95" class="col-form-label col-12" name="shortName" [(ngModel)]="productlist[0].shortName">
+            </div>
+
+            <div class="col-3">
+              <label class="col-form-label date-label required" translate>Supplier Name&nbsp;</label>
+              <p-dropdown #inputField (keyup.enter)="onEnterTableInput(3)"  styleClass="myclass col-11" [style]="{'border-radius':'6px 0px 0px 6px'}" [(ngModel)]="productlist[0].vendID"
+                  placeholder="Select a Supplier" [options]="Supplierlist"
+                  optionLabel="vendName" optionValue="vendID" [filter]="true" [filterBy]="'vendName'" (onChange)="showSharePercentage()"
+                  [showClear]="true">
+                </p-dropdown>
+                <!-- <p-button  icon="pi pi-plus" title="Add New Supplier"
+                  styleClass="p-button col-1" (onClick)="openAddSupplier()">
+                </p-button> -->
+            </div>
+
+            <div class="col-3" *ngIf="!isPos">
+              <label class="col-form-label date-label required" translate>Share Percentage&nbsp;</label>
+              <input pInputText id="shortName" #inputFieldTableCst (keyup.enter)="onEnterTableInput(4)"
+                  maxlength="95" class="col-form-label col-12" name="shortName" [(ngModel)]="productlist[0].sharePercentage">
             </div>
 
           </div>
@@ -104,14 +112,14 @@
 
                     </div>
 
-                    <div class="col-12 mt-2">
+                    <div class="col-12 mt-2" *ngIf="isPos">
                       <label class="col-4 col-form-label date-label required" translate>Brand&nbsp;</label>
                       <p-dropdown [options]="productGrouplist" styleClass="col-8"  [(ngModel)]="productlist[0].prodGrpID"
                         optionLabel="prodGrpName" optionValue="prodGrpID" placeholder="Select a Brand" class="col-form-label col-12" [filter]="true" [filterBy]="'prodGrpName'"
                         [showClear]="true"></p-dropdown>
                     </div>
 
-                    <div class="col-12 mt-2">
+                    <div class="col-12 mt-2" *ngIf="isPos">
                       <label class="col-4 col-form-label date-label required" translate>Manufacturer&nbsp;</label>
                       <p-dropdown [options]="prodManufactureList"  styleClass="col-8"   [(ngModel)]="productlist[0].prodManuID"
                         optionLabel="prodManuName" optionValue="prodManuID" placeholder="Select a Manufacturer" class="col-form-label col-12" [filter]="true" [filterBy]="'prodManuName'"
@@ -121,27 +129,27 @@
 
                 <div class="col-4">
                   <div class="row" *ngIf="hiddenField">
-                      <div class="col-6">
+                      <div class="col-6" *ngIf="false">
                           <label class="col-form-label date-label required" translate>Cost&nbsp;</label>
                           <input pInputText id="purchRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"
                               #inputFieldTableCst (keyup.enter)="onEnterTableInput(4)" class="col-form-label col-12"
                               name="purchRate" [(ngModel)]="productlist[0].purchRate" />
                       </div>
 
-                      <div class="col-6">
+                      <div class="col-6" *ngIf="false">
                           <label class="col-form-label date-label required" translate>Trade&nbsp;</label>
                           <input pInputText id="sellRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"
                               #inputFieldTableCst (keyup.enter)="onEnterTableInput(5)" class="col-form-label col-12"
                               name="sellRate" [(ngModel)]="productlist[0].sellRate" />
                       </div>
-                      <div class="col-6">
+                      <div class="col-6" *ngIf="false">
                         <label class="col-form-label date-label required" translate>MRP&nbsp;</label>
                         <input pInputText id="purchRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"
                             #inputFieldTableCst (keyup.enter)="onEnterTableInput(4)" class="col-form-label col-12"
                             name="purchRate" [(ngModel)]="productlist[0].retailprice" />
                     </div>
 
-                    <div class="col-6">
+                    <div class="col-6" *ngIf="false">
                         <label class="col-form-label date-label required" translate>F.O.B&nbsp;</label>
                         <input pInputText id="sellRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"
                             #inputFieldTableCst (keyup.enter)="onEnterTableInput(5)" class="col-form-label col-12"
@@ -164,17 +172,17 @@
                 </div>
                   <div class="col-4">
                     <div class="row" *ngIf="hiddenField">
-                      <div class="col-6">
+                      <div class="col-6" *ngIf="isPos">
                         <label class="col-form-label date-label required" translate>Size&nbsp;</label>
                         <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInput(4)" maxlength="25"
                             id="code" class="col-form-label col-12" name="code" [(ngModel)]="productlist[0].prodSize" />
                       </div>
-                      <div class="col-6">
+                      <div class="col-6" *ngIf="isPos">
                         <label class="col-form-label date-label required" translate>Color&nbsp;</label>
                         <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInput(5)" maxlength="25"
                             id="code" class="col-form-label col-12" name="code" [(ngModel)]="productlist[0].prodColor" />
                       </div>
-                      <div class="col-6">
+                      <div class="col-6" *ngIf="isPos">
                         <label class="col-form-label date-label required" translate>Is Imported?</label>
                         <p-inputSwitch [(ngModel)]="productlist[0].isImported" [style]="{'vertical-align': 'middle'}" styleClass="offset-1"></p-inputSwitch>
                       </div>
@@ -186,7 +194,10 @@
                         <label class="col-form-label date-label required" translate>Has Discount?</label>
                         <p-inputSwitch [(ngModel)]="productlist[0].isDiscount" [style]="{'vertical-align': 'middle'}" styleClass="offset-1"></p-inputSwitch>
                       </div>
-
+                      <div class="col-6">
+                        <label class="col-form-label date-label required" translate>Is Bonus?</label>
+                        <p-inputSwitch [(ngModel)]="productlist[0].isBonus" [style]="{'vertical-align': 'middle'}" styleClass="offset-1"></p-inputSwitch>
+                      </div>
 
                     </div>
                 </div>
@@ -203,10 +214,10 @@
                           <th>Barcode</th>
                           <th>Unit</th>
                           <th>Base Qty</th>
-                          <th>Cost Price</th>
-                          <th>Sale Price</th>
-                          <th>Trade Price</th>
-                          <th>FOB Price</th>
+                          <th *ngIf="false">Cost Price</th>
+                          <th *ngIf="false">Sale Price</th>
+                          <th *ngIf="false">Trade Price</th>
+                          <th *ngIf="false">FOB Price</th>
                           <th>Active</th>
                         </tr>
                       </ng-template>
@@ -221,16 +232,16 @@
                           <td>
                             <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.Qty">
                           </td>
-                          <td>
+                          <td *ngIf="false">
                             <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.CostPrice">
                           </td>
-                          <td>
+                          <td *ngIf="false">
                             <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.SalePrice">
                           </td>
-                          <td>
+                          <td *ngIf="false">
                             <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.TradePrice">
                           </td>
-                          <td>
+                          <td *ngIf="false">
                             <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.FOBPrice">
                           </td>
                           <td>

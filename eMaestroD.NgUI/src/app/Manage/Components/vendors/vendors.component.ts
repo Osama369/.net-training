@@ -43,6 +43,7 @@ export class VendorsComponent implements OnInit {
         });
     }
 
+
     clear(table: Table) {
         table.clear();
     }

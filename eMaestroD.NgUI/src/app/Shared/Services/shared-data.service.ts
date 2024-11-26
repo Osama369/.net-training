@@ -1,3 +1,4 @@
+import { Users } from './../../Administration/Models/users';
 import { ProductsService } from 'src/app/Manage/Services/products.service';
 import { Injectable } from '@angular/core';
 import { ProductViewModel } from 'src/app/Manage/Models/product-view-model';
@@ -14,6 +15,7 @@ import { Taxes } from 'src/app/Administration/Models/taxes';
 import { TaxesService } from 'src/app/Administration/Services/taxes.service';
 import { ConfigSetting } from '../Models/config-setting';
 import { AppConfigService } from './app-config.service';
+import { UserService } from 'src/app/Administration/Services/user.service';
 
 @Injectable()
 export class SharedDataService {
@@ -28,6 +30,7 @@ export class SharedDataService {
   private reportSettingItemSubject: BehaviorSubject<InvoiceReportSettings[]> = new BehaviorSubject<InvoiceReportSettings[]>([]);
   private taxesSubject: BehaviorSubject<Taxes[]> = new BehaviorSubject<Taxes[]>([]);
   private configSettingSubject: BehaviorSubject<ConfigSetting[]> = new BehaviorSubject<ConfigSetting[]>([]);
+  private usersSubject: BehaviorSubject<Users[]> = new BehaviorSubject<Users[]>([]);
 
   constructor(
     private _productsService: ProductsService,
@@ -36,7 +39,8 @@ export class SharedDataService {
     private _vendorService: VendorService,
     private _reportSettingService: ReportSettingService,
     private _taxesService: TaxesService,
-    private _appConfigService: AppConfigService
+    private _appConfigService: AppConfigService,
+    private _userService : UserService
   ) {
     this.storedComID = localStorage.getItem('comID');
     this.storedTenantID = localStorage.getItem('tenantID');
@@ -63,6 +67,7 @@ export class SharedDataService {
     reportSettings: this._reportSettingService.GetInvoiceReportSettings().pipe(defaultIfEmpty([])),
     taxes: this._taxesService.getAllTaxes().pipe(defaultIfEmpty([])),
     config: this._appConfigService.GetConfigSettings().pipe(defaultIfEmpty([])),
+    users : this._userService.getAllUsers().pipe(defaultIfEmpty([]))
   }).pipe(
     tap(result => {
       this.productsSubject.next(result.products || []);
@@ -72,6 +77,7 @@ export class SharedDataService {
       this.reportSettingItemSubject.next(result.reportSettings || []);
       this.taxesSubject.next(result.taxes || []);
       this.configSettingSubject.next(result.config || []);
+      this.usersSubject.next(result.users || []);
 
       this.isLoaded = true;
       this.storedComID = localStorage.getItem('comID');
@@ -106,6 +112,10 @@ export class SharedDataService {
 
   getConfigSettings$(): Observable<ConfigSetting[]> {
     return this.configSettingSubject.asObservable();
+  }
+
+  getUsers$(): Observable<Users[]> {
+    return this.usersSubject.asObservable();
   }
 
   updateConfigSettings$(data:ConfigSetting[]) {

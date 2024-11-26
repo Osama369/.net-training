@@ -10,6 +10,8 @@ namespace eMaestroD.Models.VMModels
     {
         public int? invoiceID { get; set; }
         public int? invoiceDetailID { get; set; }
+        public int? bookerID { get; set; }
+        public int? salesmanID { get; set; }
         public DateTime? invoiceDate { get; set; }
         public string? invoiceVoucherNo { get; set; }
         public string? invoiceType { get; set; }

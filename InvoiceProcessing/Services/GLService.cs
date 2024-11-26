@@ -125,6 +125,8 @@ namespace eMaestroD.InvoiceProcessing.Services
                     invoiceType = masterEntry.balSum > 0 ? "Credit" : "Cash",
                     isPaymented = masterEntry.isPaid,
                     totalRemainingPayment = entry.balSum,
+                    bookerID = masterEntry.bookerID,
+                    salesmanID = masterEntry.salesManID,
                     Products = new List<InvoiceProduct>()
                 };
 
@@ -223,7 +225,9 @@ namespace eMaestroD.InvoiceProcessing.Services
                     invoiceType = masterEntry.balSum > 0 ? "Credit" : "Cash",
                     isPaymented = masterEntry.isPaid,
                     totalRemainingPayment = entry.balSum,
-                    isApproved = masterEntry.ApprovedDate != null ? true : false, 
+                    isApproved = masterEntry.ApprovedDate != null ? true : false,
+                    bookerID = masterEntry.bookerID,
+                    salesmanID = masterEntry.salesManID,
                     Products = new List<InvoiceProduct>()
                 };
 

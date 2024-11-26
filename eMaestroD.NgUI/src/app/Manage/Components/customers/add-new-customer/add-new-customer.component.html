@@ -44,21 +44,64 @@
 
 
             <div class="col-12">
-                <label class="col-form-label date-label col-12 required" translate>Code</label>
-                <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(0)" maxlength="10" name="code" [(ngModel)]="customerList[0].cstCode" class="col-form-label col-12"/>
+                <label class="col-form-label date-label col-4 required" translate>Code</label>
+                <label class="col-form-label date-label col-8 required" translate>Name</label>
+                <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(0)" maxlength="10" name="code" [(ngModel)]="customerList[0].cstCode" class="col-form-label col-3"/>
+                <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(1)" id="name" class="col-form-label offset-1 col-8"  name="name" autofocus  [(ngModel)]="customerList[0].cstName"/>
             </div>
             <div class="col-12">
-                <label class="col-form-label date-label col-12 required" translate>Name</label>
-                <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(1)" id="name" class="col-form-label col-12"  name="name" autofocus  [(ngModel)]="customerList[0].cstName"/>
+              <label class="col-form-label date-label col-5 required" translate>Region</label>
+              <label class="col-form-label date-label col-4 required" translate>City</label>
+              <label class="col-form-label date-label col-3 required" translate>Area</label>
+              <p-dropdown
+              #inputFieldTableCst
+              styleClass="col-4"
+              [(ngModel)]="selectedRegion"
+              [options]="regionList"
+              optionValue="LocationId"
+              optionLabel="LocationName"
+              [filter]="true"
+              [filterBy]="'LocationName'"
+              appendTo="body"
+              [showClear]="true"
+              (onChange)="ChangeRegion()"
+              placeholder="Select a region"
+              >
+            </p-dropdown>
+              <p-dropdown
+              #inputFieldTableCst
+              styleClass="offset-1 col-3"
+              [(ngModel)]="selectedCity"
+              [options]="cityList"
+              optionValue="LocationId"
+              optionLabel="LocationName"
+              [filter]="true"
+              [filterBy]="'LocationName'"
+              appendTo="body"
+              [showClear]="true"
+              (onChange)="ChangeCity()"
+              [placeholder]="selectedRegion ? 'Select a City' : 'Select Region First' "
+              >
+              </p-dropdown>
+              <p-dropdown
+              #inputFieldTableCst
+              styleClass="offset-1 col-3"
+              [(ngModel)]="selectedArea"
+              [options]="areaList"
+              optionLabel="LocationName"
+              [filter]="true"
+              [filterBy]="'LocationName'"
+              appendTo="body"
+              [showClear]="true"
+              [placeholder]="selectedCity ? 'Select a Area' : 'Select City First' "
+              >
+            </p-dropdown>
             </div>
             <div class="col-12">
-                <label class="col-form-label date-label col-12 required" translate>Address</label>
-                    <input pInputText id="shortName" #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(2)" class="col-form-label col-12" name="Address"  [(ngModel)]="customerList[0].address">
-            </div>
-            <div class="col-12">
-                <label class="col-form-label date-label col-12 required" translate>Phone</label>
-                <p-inputMask pInputMask mask="+99 999 999 9999"  #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(3)" styleClass="col-form-label col-12"  [(ngModel)]="customerList[0].contPhone" ></p-inputMask>
-                <!-- <input pInputText id="region" #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(3)" class="col-form-label col-12"  name="phone"  [(ngModel)]="customerList[0].contPhone"/> -->
+                <label class="col-form-label date-label col-7 required" translate>Address</label>
+                <label class="col-form-label date-label col-5 required" translate>Phone</label>
+                    <input pInputText id="shortName" #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(2)" class="col-form-label col-7" name="Address"  [(ngModel)]="customerList[0].address">
+                    <p-inputMask pInputMask mask="+99 999 999 9999"  #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(3)" styleClass="col-form-label offset-1 col-4"  [(ngModel)]="customerList[0].contPhone" ></p-inputMask>
             </div>
             <div class="col-12">
               <label class="col-form-label date-label col-7 required" translate>Customer Opening Balance</label>
@@ -67,8 +110,8 @@
               <input *ngIf="isCstSupp" pInputText id="vendbal" #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(5)" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="10" class="col-form-label offset-2 col-5" name="vat"   [(ngModel)]="customerList[0].vendorBal" />
             </div>
             <div class="col-12">
-                <label class="col-form-label date-label col-7 required" translate>VAT No</label>
-                <label class="col-form-label date-label col-5 required" translate>VAT %</label>
+                <label class="col-form-label date-label col-7 required" translate>Tax No</label>
+                <label class="col-form-label date-label col-5 required" translate>Tax %</label>
                 <input pInputText #inputFieldTableCst (keyup.enter)="isCstSupp? onEnterTableInputCst(6) : onEnterTableInputCst(5)" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="15" class="col-form-label col-5" name="vat"   [(ngModel)]="customerList[0].taxNo" />
                 <label class="col-2"></label>
                 <input pInputText (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="2" #inputFieldTableCst (keyup.enter)="isCstSupp? onEnterTableInputCst(7) : onEnterTableInputCst(6)" class="col-form-label col-5" name="taxValue"  [(ngModel)]="customerList[0].taxValue" />

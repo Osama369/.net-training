@@ -74,9 +74,14 @@ namespace eMaestroD.Api.Controllers
                                     address = vend.address,
                                     active = vend.active,
                                     taxNo = vend.taxNo,
+                                    sharePercentage = vend.sharePercentage,
+                                    licence = vend.licence,
+                                    expiry = vend.expiry,
                                     taxValue = vend.taxValue,
                                     comment = vend.comment,
                                     opnBal = coa.openBal,
+                                    city = vend.city,
+                                    cityID = vend.cityID,
                                     isActionBtn = false
                                 }).ToListAsync();
             ResponsedGroupListVM vM = new ResponsedGroupListVM();
