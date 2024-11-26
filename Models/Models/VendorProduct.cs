@@ -12,8 +12,9 @@ namespace eMaestroD.Models.Models
         [Key]
         public int vendProdID {get; set;}
         public int comVendID {get; set;}
-        public int prodBCID { get; set;}
+        public int prodID { get; set;}
         public int comID  {get; set;}
         public int preference { get; set; }
+        public decimal? sharePercentage { get; set; }
     }
 }

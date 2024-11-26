@@ -34,7 +34,7 @@
 
 
 
-<p-dialog [modal]="true" #cstDailog [(visible)]="VendorVisible" [style]="{width: '40vw'}" (onHide)="closeVendorRegistration()">
+<p-dialog [modal]="true" #cstDailog [(visible)]="VendorVisible" [style]="{width: '60vw'}" (onHide)="closeVendorRegistration()">
   <app-add-new-vendor [vndData]="vndList" [title]="title" (dataEvent)="handleChildData($event)"></app-add-new-vendor>
 </p-dialog>
 

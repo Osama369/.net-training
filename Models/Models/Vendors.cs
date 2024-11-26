@@ -29,7 +29,7 @@ namespace eMaestroD.Models.Models
         public string? comName { get; set; }
         public string? address { get; set; }
 
-        [HiddenOnRender]
+        [DisplayName(Name = "Area")]
         public string? city { get; set; }
         [HiddenOnRender]
         public string? state { get; set; }
@@ -38,6 +38,14 @@ namespace eMaestroD.Models.Models
 
         [DisplayName(Name = "Phone")]
         public string? vendPhone { get; set; }
+        
+        [DisplayName(Name = "Share Percentage")]
+        public decimal? sharePercentage { get; set; }
+        [DisplayName(Name = "Licence No")]
+        public string? licence { get; set; }
+        [DisplayName(Name = "Expiry")]
+        public DateTime? expiry { get; set; }
+
         [HiddenOnRender]
         public string? vendFax { get; set; }
         [HiddenOnRender]
@@ -60,9 +68,9 @@ namespace eMaestroD.Models.Models
         public string? email { get; set; }
         [HiddenOnRender]
         public bool? isEmail { get; set; }
-        [DisplayName(Name = "VAT No")]
+        [DisplayName(Name = "TAX No")]
         public string? taxNo { get; set; }
-        [DisplayName(Name = "VAT %")]
+        [DisplayName(Name = "TAX %")]
         public decimal? taxValue { get; set; }
 
         [HiddenOnRender]
@@ -77,6 +85,8 @@ namespace eMaestroD.Models.Models
         [HiddenOnRender]
         [NotMapped]
         public bool isActionBtn { get; set; }
+        [HiddenOnRender]
+        public int? cityID { get; set; }
 
     }
 }

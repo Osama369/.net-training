@@ -22,4 +22,8 @@ export interface Vendor {
     opnBal?:any;
     message?:any;
     isActionBtn?:any;
+    sharePercentage?:any;
+    licence?:any;
+    expiry?:any;
+    cityID?:any;
 }

@@ -16,7 +16,7 @@
 
   </div>
 
-<p-dialog #cstDailog [(visible)]="CustomerVisible" [modal]="true" [style]="{width: '40vw'}" (onHide)="closeCustomerRegistration()">
+<p-dialog #cstDailog [(visible)]="CustomerVisible" [modal]="true" [style]="{width: '60vw'}" (onHide)="closeCustomerRegistration()">
     <app-add-new-customer [cstData]="cstList" [title]="title" (dataEvent)="handleChildData($event)"></app-add-new-customer>
 </p-dialog>
 

@@ -50,7 +50,7 @@ namespace eMaestroD.Api.Controllers
                                 join coa in _AMDbContext.COA
                                 on cst.cstID equals coa.COANo
                                 where cst.comID == comID && cst.active == true && coa.parentCOAID == 40
-                                select new Customer // Projecting into the extended Customer model
+                                select new Customer
                                 {
                                     cstID = cst.cstID,
                                     comID = cst.comID,
@@ -64,6 +64,8 @@ namespace eMaestroD.Api.Controllers
                                     taxValue = cst.taxValue,
                                     comment = cst.comment,
                                     opnBal = coa.openBal,
+                                    city = cst.city,
+                                    cityID = cst.cityID,
                                     vendorBal = _AMDbContext.COA.FirstOrDefault(x => x.parentCOAID == 83 && x.COANo == cst.empID) == null ? 0 : _AMDbContext.COA.FirstOrDefault(x => x.parentCOAID == 83 && x.COANo == cst.empID).openBal,
                                     isActionBtn = false
                                 }).ToListAsync();

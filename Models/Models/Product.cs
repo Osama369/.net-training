@@ -66,7 +66,8 @@ namespace eMaestroD.Models.Models
 
         //public Boolean isRaw { get; set; }
 
-        //public Boolean isBonus { get; set; }
+        [HiddenOnRender]
+        public bool? isBonus { get; set; }
         [DisplayName(Name = "Min Qty")]
         public decimal? minQty { get; set; }
         [DisplayName(Name = "Max Qty")]
@@ -131,6 +132,14 @@ namespace eMaestroD.Models.Models
         public string? prodColor { get; set; }
         [HiddenOnRender]
         public bool? isDiscount { get; set; }
+        [HiddenOnRender]
+        [NotMapped]
+        public int? vendID { get; set; }
+        [HiddenOnRender]
+        [NotMapped]
+        public decimal? sharePercentage { get; set; }
+
+        
     }
 
     public class Stock

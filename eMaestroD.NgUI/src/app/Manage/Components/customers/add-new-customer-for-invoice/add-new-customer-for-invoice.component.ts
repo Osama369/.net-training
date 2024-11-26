@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { CitiesService } from 'src/app/Manage/Services/cities.service';
 import { CustomersService } from 'src/app/Manage/Services/customers.service';
 import { Customer } from 'src/app/Manage/Models/customer';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 
 @Component({
@@ -15,7 +16,7 @@ import { Customer } from 'src/app/Manage/Models/customer';
 export class AddNewCustomerForInvoiceComponent {
   constructor(
     private router: Router,
-    private citiesService:CitiesService,
+    private sharedDataService: SharedDataService,
     private customersService:CustomersService,
     private toastr: ToastrService,
     private el: ElementRef,
@@ -33,9 +34,26 @@ export class AddNewCustomerForInvoiceComponent {
   isSave : boolean = true;
   isRegular : boolean = true;
   isDisable : boolean = true;
+
+  allLocation:any;
+  regionList : any;
+  cityList : any;
+  areaList : any;
+  selectedRegion:any;
+  selectedCity:any;
+  selectedArea:any;
+
   sendDataToParent() {
     this.clear();
     this.dataEvent.emit({type:'',value:false});
+  }
+
+  ChangeRegion(){
+    this.cityList = this.allLocation.filter(x=>x.LocTypeId == 4 && x.ParentLocationId == this.selectedRegion);
+  }
+
+  ChangeCity(){
+    this.areaList = this.allLocation.filter(x=>x.LocTypeId == 5 && x.ParentLocationId == this.selectedCity);
   }
 
   ngOnInit(): void {
@@ -72,6 +90,11 @@ export class AddNewCustomerForInvoiceComponent {
 
     this.customersService.GetCstCode().subscribe(nmb=>{
       this.customerList[0].cstCode = nmb;
+    });
+
+    this.sharedDataService.getLocations$().subscribe(loc=>{
+      this.allLocation = loc;
+      this.regionList = loc.filter(x=>x.LocTypeId == 3);
     });
   }
   ngOnChanges(changes: SimpleChanges) {
@@ -120,6 +143,10 @@ CheckCustomerExistByVAT()
 
   clear()
   {
+    this.selectedRegion = null;
+    this.selectedCity = null;
+    this.selectedArea = null;
+
     this.customerList = [
       {
         cstID : undefined,
@@ -168,9 +195,13 @@ CheckCustomerExistByVAT()
     {
       this.toastr.error("Please write customer name");
         this.onEnterTableInputCst(0);
-
+    }else if(this.isRegular && this.selectedArea == undefined){
+      this.toastr.error("Please select area");
+      this.onEnterTableInputCst(0);
     }
     else if(this.isRegular){
+      this.customerList[0].cityID = this.selectedArea.LocationId;
+      this.customerList[0].city = this.selectedArea.LocationName;
       this.customerList[0].active = true;
       this.customerList[0].comID = localStorage.getItem("comID");
       this.customerList[0].comment = this.isRegular;

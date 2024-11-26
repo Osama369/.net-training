@@ -43,16 +43,6 @@ namespace eMaestroD.Api.Controllers
 
             try
             {
-                //List<GL> glEntries = await _glService.ConvertInvoiceToGL(invoice);
-                //if(invoice.invoiceID == 0)
-                //{
-                //    await _glService.InsertInvoice(glEntries);
-                //}
-                //else
-                //{
-                //    await _glService.UpdateInvoice(glEntries);
-                //}
-
                 var entries = await _glService.ConvertInvoiceToGL(invoice);
                 if (entries.FirstOrDefault() is TempGL)
                 {

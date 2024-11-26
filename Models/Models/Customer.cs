@@ -25,6 +25,8 @@ namespace eMaestroD.Models.Models
         [DisplayName(Name = "Name")]
         [UpperCase]
         public string? cstName { get; set; }
+        [DisplayName(Name = "Area")]
+        public string? city { get; set; }
         public string? address { get; set; }
         [DisplayName(Name = "Phone")]
         public string? contPhone { get; set; }
@@ -57,6 +59,9 @@ namespace eMaestroD.Models.Models
         [HiddenOnRender]
         [NotMapped]
         public bool isActionBtn { get; set; }
+        [HiddenOnRender]
+        public int? cityID { get; set; }
+
 
     }
 }

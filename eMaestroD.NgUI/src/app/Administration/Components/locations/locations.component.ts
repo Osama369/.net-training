@@ -65,6 +65,7 @@ export class LocationsComponent implements OnInit {
     this.locationService.getAllLoc().subscribe(loc => {
       this.locList = this.AlllocList = loc;
       this.files = this.convertToTree(loc);
+      this.expandAll();
     });
   }
 
@@ -181,7 +182,6 @@ export class LocationsComponent implements OnInit {
               }
 
               if (confirm("Are you sure you want to delete this Location?")) {
-                if (selectedLocation.active !== true) {
                   this.locationService.deleteLoc(selectedLocation.LocationId).subscribe({
                     next: x => {
                       this.toastr.success("Location has been successfully deleted!");
@@ -191,9 +191,6 @@ export class LocationsComponent implements OnInit {
                       this.toastr.error(err.error);
                     }
                   });
-                } else {
-                  this.toastr.error("Can't Delete System Account.");
-                }
               }
             } else {
               this.toastr.error("You can only delete locations at level 2 or 5.");

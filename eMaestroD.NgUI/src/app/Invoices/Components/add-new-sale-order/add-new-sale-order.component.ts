@@ -1,6 +1,6 @@
 import { ConfigSetting } from './../../../Shared/Models/config-setting';
 import { SharedDataService } from './../../../Shared/Services/shared-data.service';
-import { ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, AfterViewInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, AfterViewInit, NgModule } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService,MessageService } from 'primeng/api';
 import { ToastrService } from 'ngx-toastr';
@@ -22,20 +22,19 @@ import { Taxes } from 'src/app/Administration/Models/taxes';
 import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
 import { APP_ROUTES } from 'src/app/app-routes';
 import { lastValueFrom } from 'rxjs';
-import { DatePipe } from '@angular/common';
+import { Customer } from 'src/app/Manage/Models/customer';
 
 @Component({
-  selector: 'app-add-new-purchase-order',
-  templateUrl: './add-new-purchase-order.component.html',
-  styleUrls: ['./add-new-purchase-order.component.css'],
+  selector: 'app-add-new-sale-order',
+  templateUrl: './add-new-sale-order.component.html',
+  styleUrls: ['./add-new-sale-order.component.scss'],
   providers:[ConfirmationService,MessageService]
 })
-export class AddNewPurchaseOrderComponent implements OnInit{
+export class AddNewSaleOrderComponent implements OnInit{
   constructor(
     private router: Router,
     private vendorService:VendorService,
     private invoicesService:InvoicesService,
-    private datePipe: DatePipe,
     private toastr: ToastrService,
     private el: ElementRef,
     private confirmationService :ConfirmationService,
@@ -71,9 +70,8 @@ export class AddNewPurchaseOrderComponent implements OnInit{
   SelectedType : type[] = [];
   filterType :any[] = [];
   products: ProductViewModel[] = [];
-  productsDuplicate: ProductViewModel[] = [];
-  customers: Vendor[] = [];
-  customerList: Vendor[] = [];
+  customers: Customer[] = [];
+  customerList: Customer[] = [];
 
   SelectedProduct:any;
   selectedProductList:any;
@@ -96,7 +94,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
   clonedProduct: { [s: string]: ProductViewModel } = {};
   Reportvisible: boolean = false;
   voucherNo: string = "";
-  VendorVisible: boolean = false;
+  CustomersVisible: boolean = false;
   ProductsVisible: boolean = false;
   rowNmb : any=0;
   eyeOpen : any= false;
@@ -124,7 +122,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
 
   isProductCode: boolean = false;
   isArabic: boolean = false;
-  txTypeID : any = GLTxTypes.PurchaseOrder;
+  txTypeID : any = GLTxTypes.Quotation;
 
   vatInclude : boolean = true;
   showPleaseWait: boolean = false;
@@ -134,10 +132,13 @@ export class AddNewPurchaseOrderComponent implements OnInit{
   invoiceDetailID : number = 0;
   fiscalYear : number = 0;
 
-  displayDialog: boolean = false;
-  fromDate: Date;
-  toDate: Date;
-  showVendorProductsOnly: boolean = false;
+  userList : any;
+  bookerList : any;
+  salesManList : any;
+
+  selectedBooker :any;
+  selectedSalesman :any;
+
   showReportDialog() {
     if(this.reportSettingItemList.find(x=>x.key == "A4" && x.value == true) != undefined){
       this.printtype = "A4"
@@ -170,7 +171,6 @@ export class AddNewPurchaseOrderComponent implements OnInit{
 
     this.sharedDataService.getProducts$().subscribe(products => {
       this.products = (products as { [key: string]: any })["enttityDataSource"];
-      this.productsDuplicate = this.products;
       this.Filterproductlist = this.products;
     });
 
@@ -179,21 +179,31 @@ export class AddNewPurchaseOrderComponent implements OnInit{
     this.reportSettingItemList = rpt.filter(x=>x.screenName.toLowerCase() == 	"purchase");
     })
 
-    this.sharedDataService.getVendors$().subscribe({
+    this.sharedDataService.getCustomers$().subscribe({
       next: (customers) => {
         this.customers = (customers as { [key: string]: any })["enttityDataSource"];
-        this.customers = this.customers.sort((a, b) =>  a.vendName.localeCompare(b.vendName));
+        this.customers = this.customers.sort((a, b) =>  a.cstName.localeCompare(b.cstName));
         this.customerList = this.customers;
       },
     });
 
-
+    this.sharedDataService.getUsers$().subscribe({
+      next : (result:any)=>{
+        this.userList = result;
+        this.bookerList = this.userList.filter(x=>x.RoleName == 'Booker');
+        this.salesManList = this.userList.filter(x=>x.RoleName == 'Salesman');
+        console.log(result);
+      }
+    })
 
     this.sharedDataService.getLocations$().subscribe({
       next : (loc:any)=>{
         this.locations = loc.filter(x=>x.LocTypeId == 5);
         this.selectedLocation = {LocationId : this.locations[0].LocationId, LocationName : this.locations[0].LocationName};
         this.LocationList = this.locations;
+        this.customerList = this.customers.filter(x=>x.cityID == this.selectedLocation.LocationId);
+        this.selectedBooker = this.bookerList.find(x=>x.locID == this.selectedLocation.LocationId);
+        this.selectedSalesman = this.salesManList.find(x=>x.locID == this.selectedLocation.LocationId);
       }
     })
 
@@ -204,10 +214,11 @@ export class AddNewPurchaseOrderComponent implements OnInit{
       }
     })
 
+
+
     this.sharedDataService.getConfigSettings$().subscribe({
       next : (result:ConfigSetting[])=>{
-        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on PO").value;
-        this.showVendorProductsOnly = result.find(x=>x.key === "Show Vendor Products Only").value
+        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on GRN").value;
         console.log(result);
       }
     })
@@ -223,6 +234,17 @@ export class AddNewPurchaseOrderComponent implements OnInit{
       }
    });
 
+  }
+
+  locatonChange()
+  {
+    if(this.selectedLocation)
+    {
+      this.selectedBooker = this.bookerList.find(x=>x.locID == this.selectedLocation.LocationId);
+      this.selectedSalesman = this.salesManList.find(x=>x.locID == this.selectedLocation.LocationId);
+      this.customerList = this.customers.filter(x=>x.cityID == this.selectedLocation.LocationId);
+      this.selectedCustomerName = null;
+    }
   }
 
   onEnterComplex(index: number) {
@@ -288,7 +310,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
         el.focus();
       }
 
-      index = index + (rownumber*27);
+      index = index + (rownumber*12);
       if (index < this.inputFieldsTable.length-1) {
         this.focusOnTableInput(index + 1);
       }
@@ -359,16 +381,15 @@ export class AddNewPurchaseOrderComponent implements OnInit{
       if(newObj != undefined && newObj != '' && typeof(newObj) != 'string')
       {
         this.rowNmb = i;
-        this.selectedProductList = this.productsDuplicate.filter(f => f.prodBCID == newObj.prodBCID);
+        this.selectedProductList = this.products.filter(f => f.prodBCID == newObj.prodBCID);
         this.filteredProduct = this.productlist.filter(f => f.prodBCID == newObj.prodBCID);
         if(this.filteredProduct.length > 0)
         {
           this.productlist[i].prodName = "";
           let index = this.productlist.findIndex(f => f.prodBCID == newObj.prodBCID);
           this.productlist[index].qty = this.productlist[index].qty+1;
-          // this.productlist[index].qtyBal = parseFloat(this.productlist[index].qtyBal)+1;
           this.Itemcalculation(index);
-          this.onEnterComplexInternal(this.inputFields.length-3);
+          this.onEnterComplexInternal(this.inputFields.length-5);
         }
         else
         {
@@ -383,15 +404,17 @@ export class AddNewPurchaseOrderComponent implements OnInit{
             this.productlist[i].unitQty = this.selectedProductList[0].unitQty;
             this.productlist[i].qty = 1;
             this.productlist[i].qtyBal = 1;
-            this.productlist[i].purchRate = this.selectedProductList[0].costPrice;
-            this.productlist[i].discount = 0;
+            this.productlist[i].sellRate = this.selectedProductList[0].sellPrice;
             this.productlist[i].currentStock = this.selectedProductList[0].currentStock;
-            this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
-            this.productlist[i].depName =this.selectedProductList[0].depName;
-            this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
-            this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
-            this.productlist[i].taxPercent =this.taxesList[0].taxValue;
-            this.productlist[i].lastCost =this.selectedProductList[0].lastCost;
+            this.productlist[i].categoryName = this.selectedProductList[0].categoryName;
+            this.productlist[i].depName = this.selectedProductList[0].depName;
+            this.productlist[i].prodManuName = this.selectedProductList[0].prodManuName;
+            this.productlist[i].prodGrpName = this.selectedProductList[0].prodGrpName;
+            this.productlist[i].lastCost = this.selectedProductList[0].lastCost;
+            this.productlist[i].taxPercent = this.taxesList[0].taxValue;
+            this.productlist[i].discount = this.selectedProductList[0].sharePercentage;
+            this.productlist[i].isTaxable = this.selectedProductList[0].isTaxable;
+
             this.Itemcalculation(i);
             // let el: HTMLElement = this.newRowButton.nativeElement;
             // el.click();
@@ -419,10 +442,11 @@ export class AddNewPurchaseOrderComponent implements OnInit{
   Itemcalculation(rowIndex: number) {
     let rowData = this.productlist[rowIndex];
     const fieldName = (event.target as HTMLInputElement).name;
-    console.log(fieldName);
+
+
     rowData.qty = rowData.qty || 0;
     rowData.bonusQty = rowData.bonusQty || 0;
-    rowData.purchRate = rowData.purchRate || 0;
+    rowData.sellRate = rowData.sellRate || 0;
     rowData.discount = rowData.discount || 0;
     rowData.discountAmount = rowData.discountAmount || 0;
     rowData.taxPercent = rowData.taxPercent || 0;
@@ -437,10 +461,10 @@ export class AddNewPurchaseOrderComponent implements OnInit{
     rowData.rebateAmount = rowData.rebateAmount || 0;
 
     // Calculate gross value based on quantity and purchase rate
-    rowData.grossValue = parseFloat((rowData.qty * rowData.purchRate).toFixed(2));
+    rowData.grossValue = parseFloat((rowData.qty * rowData.sellRate).toFixed(2));
 
     // Determine if discount is based on percentage or amount
-    if (fieldName == "discount") {
+    if (fieldName == "" || fieldName == "discount") {
       rowData.discountAmount = parseFloat(((rowData.grossValue * rowData.discount) / 100).toFixed(2)) || 0;
     } else {
       rowData.discount = parseFloat(((rowData.discountAmount / rowData.grossValue) * 100).toFixed(2)) || 0;
@@ -546,11 +570,10 @@ export class AddNewPurchaseOrderComponent implements OnInit{
   {
     if(this.EditVoucherNo != undefined)
     {
-      this.router.navigateByUrl(APP_ROUTES.invoices.purchaseOrder);
+      this.router.navigateByUrl(APP_ROUTES.invoices.grn);
     }
     else
     {
-      // this.selectedCustomerName = undefined;
       this.TotalDiscount = 0;
       let today = new Date();
       this.selectedDate = today;
@@ -561,7 +584,6 @@ export class AddNewPurchaseOrderComponent implements OnInit{
       this.onEnterComplex(0);
       this.savebtnDisable = false;
     }
-
   }
 
 
@@ -594,10 +616,16 @@ export class AddNewPurchaseOrderComponent implements OnInit{
       this.toastr.error("Please select type!");
     }
     else if(this.selectedCustomerName == undefined) {
-      this.toastr.error("Please select supplier!");
+      this.toastr.error("Please select customer!");
     }
-    else if(this.selectedCustomerName.vendID == undefined) {
-      this.toastr.error("Please select supplier!");
+    else if(this.selectedBooker == undefined) {
+      this.toastr.error("Please add alteast one booker on this location!");
+    }
+    else if(this.selectedSalesman == undefined) {
+      this.toastr.error("Please add alteast one salesman on this location!");
+    }
+    else if(this.selectedCustomerName.cstID == undefined) {
+      this.toastr.error("Please select customer!");
     }
     else if(this.selectedLocation.LocationId == undefined) {
       this.toastr.error("Please select location!");
@@ -622,7 +650,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
             this.voucherNo,
             this.SelectedType,
             this.txTypeID,
-            this.selectedCustomerName.vendID,
+            this.selectedCustomerName.cstID,
             this.selectedLocation,
             this.productlist,
             this.totalGross,
@@ -634,16 +662,18 @@ export class AddNewPurchaseOrderComponent implements OnInit{
             this.totalExtraDiscount,
             this.totalNetPayable,
             this.taxesList,
-            null
+            null,
+            this.selectedBooker.UserID,
+            this.selectedSalesman.UserID
           );
           console.log(this.invoice);
           const result = await lastValueFrom(this.invoicesService.SaveInvoice(this.invoice));
           console.log(result);
-          this.toastr.success("PO has been successfully Created!");
-          this.router.navigateByUrl(APP_ROUTES.invoices.purchaseOrder);
+          this.toastr.success("Sale Order has been successfully Created!");
+          this.router.navigateByUrl(APP_ROUTES.invoices.quotations);
         } catch (result) {
           this.toastr.error(result.error);
-      }
+        }
     }
   }
 
@@ -686,7 +716,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
                 enterAmount : undefined,
                 cstID: undefined,
                 COAID : undefined,
-                glComments : undefined
+              glComments : undefined
                 }
               ]
               this.RemoveItemGLID2.push(this.RemoveItemGLID1[0]);
@@ -717,7 +747,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
 
   close()
   {
-    this.router.navigateByUrl(APP_ROUTES.invoices.purchaseOrder);
+    this.router.navigateByUrl(APP_ROUTES.invoices.quotations);
   }
   focusing(){
     this.cdr.detectChanges();
@@ -738,7 +768,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
       for (let i = 0; i < this.productlist.length; i++) {
         if(this.productlist[i].prodID != undefined && this.productlist[i].prodID != 0)
         {
-          let stotal = this.productlist[i].purchRate * this.productlist[i].qty;
+          let stotal = this.productlist[i].sellRate * this.productlist[i].qty;
           stotal =  (stotal - (stotal/100)*this.productlist[i].discount);
           let tTax = 0
           if(this.vatInclude)
@@ -772,13 +802,13 @@ export class AddNewPurchaseOrderComponent implements OnInit{
 
   }
 
-  VendorsVisible(event:KeyboardEvent)
+  customerVisible(event:KeyboardEvent)
   {
     if (event.altKey && event.key.toLowerCase() === 'c') {
-      this.authService.checkPermission('SuppliersCreate').subscribe(x=>{
+      this.authService.checkPermission('CustomersCreate').subscribe(x=>{
         if(x)
         {
-          this.VendorVisible = true;
+          this.CustomersVisible = true;
         }
         else{
           this.toastr.error("Unauthorized Access! You don't have permission to access.");
@@ -786,6 +816,19 @@ export class AddNewPurchaseOrderComponent implements OnInit{
       });
     }
   }
+  customerVisible1()
+  {
+    this.authService.checkPermission('CustomersCreate').subscribe(x=>{
+      if(x)
+      {
+        this.CustomersVisible = true;
+      }
+      else{
+        this.toastr.error("Unauthorized Access! You don't have permission to access.");
+      }
+    });
+  }
+
 
   productVisible(event:KeyboardEvent)
   {
@@ -804,20 +847,20 @@ export class AddNewPurchaseOrderComponent implements OnInit{
 
   closeVendorRegistration()
   {
-    this.vendorService.getAllVendor().subscribe({
-      next: (vendors) => {
-        let count = (vendors as { [key: string]: any })["enttityDataSource"];
-        if(this.customers.length != count.length)
-        {
-          this.customers = (vendors as { [key: string]: any })["enttityDataSource"];
-          this.selectedCustomerId = this.customers[this.customers.length-1].vendID;
-          this.selectedCustomerName = this.customers[this.customers.length-1].vendName;
-          this.selectedCustomerName = {vendID:this.selectedCustomerId,vendName:this.selectedCustomerName};
-        }
-        },
-      error: (response) => {
-      },
-    });
+    // this.vendorService.getAllVendor().subscribe({
+    //   next: (vendors) => {
+    //     let count = (vendors as { [key: string]: any })["enttityDataSource"];
+    //     if(this.customers.length != count.length)
+    //     {
+    //       this.customers = (vendors as { [key: string]: any })["enttityDataSource"];
+    //       this.selectedCustomerId = this.customers[this.customers.length-1].cstID;
+    //       this.selectedCustomerName = this.customers[this.customers.length-1].cstName;
+    //       this.selectedCustomerName = {cst:this.selectedCustomerId,cstName:this.selectedCustomerName};
+    //     }
+    //     },
+    //   error: (response) => {
+    //   },
+    // });
     this.onEnterComplex(1);
   }
 
@@ -840,7 +883,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
     //       this.productlist[this.productlist.length-1].prodID = this.products[this.products.length-1].prodID;
     //       this.productlist[this.productlist.length-1].prodCode = this.products[this.products.length-1].prodCode;
     //       this.productlist[this.productlist.length-1].prodName = this.products[this.products.length-1].prodName;
-    //       this.productlist[this.productlist.length-1].purchRate = this.products[this.products.length-1].purchRate;
+    //       this.productlist[this.productlist.length-1].sellRate = this.products[this.products.length-1].sellRate;
     //       this.productlist[this.productlist.length-1].qty = 1;
     //       this.productlist[this.productlist.length-1].sellRate = this.products[this.products.length-1].sellRate;
     //       this.productlist[this.productlist.length-1].prodName = {prodName : this.productlist[this.productlist.length-1].prodName, prodID : this.productlist[this.productlist.length-1].prodID};
@@ -856,9 +899,9 @@ export class AddNewPurchaseOrderComponent implements OnInit{
   filterCustomer(event:any) {
     let filtered: any[] = [];
     let query = event.query;
-    for (let i = 0; i < this.customers.length; i++) {
-      let country = this.customers[i];
-      if (country.vendName.toLowerCase().indexOf(query.trim().toLowerCase()) == 0) {
+    for (let i = 0; i < this.customerList.length; i++) {
+      let country = this.customerList[i];
+      if (country.cstName.toLowerCase().indexOf(query.trim().toLowerCase()) == 0) {
         filtered.push(country);
       }
     }
@@ -867,7 +910,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
 
   filterProduct(event: any) {
     const query = event.query.toLowerCase().trim();
-    this.Filterproductlist = this.productsDuplicate
+    this.Filterproductlist = this.products
         .filter(product => product.prodName.toLowerCase().includes(query))
         .slice(0, 20);
   }
@@ -908,7 +951,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
 
   CustomerOnChange()
   {
-    if(!this.VendorVisible)
+    if(!this.CustomersVisible)
     {
       if (!this.selectedCustomerName.cstID) {
         this.toastr.error("Please Select Customer.");
@@ -916,6 +959,8 @@ export class AddNewPurchaseOrderComponent implements OnInit{
       }
     }
   }
+
+
 
   typeOnChange()
   {
@@ -931,7 +976,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
     if(newObj != '' && newObj != undefined)
     {
       this.rowNmb = i;
-      this.selectedProductList = this.productsDuplicate.filter(f => f.barCode == newObj);
+      this.selectedProductList = this.products.filter(f => f.barCode == newObj);
       this.filteredProduct = this.productlist.filter(f => f.barCode == newObj);
       if(this.filteredProduct.length > 1)
       {
@@ -955,8 +1000,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
           this.productlist[i].unitQty = this.selectedProductList[0].unitQty;
           this.productlist[i].qty = 1;
           this.productlist[i].qtyBal = 1;
-          this.productlist[i].purchRate = this.selectedProductList[0].costPrice;
-          this.productlist[i].discount = 0;
+          this.productlist[i].sellRate = this.selectedProductList[0].sellPrice;
           this.productlist[i].taxPercent =this.taxesList[0].taxValue;
           this.productlist[i].lastCost =this.selectedProductList[0].lastCost;
           this.productlist[i].currentStock = this.selectedProductList[0].currentStock;
@@ -964,7 +1008,9 @@ export class AddNewPurchaseOrderComponent implements OnInit{
           this.productlist[i].depName =this.selectedProductList[0].depName;
           this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
           this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
-
+          this.productlist[i].discount = this.selectedProductList[0].sharePercentage;
+          this.productlist[i].isTaxable = this.selectedProductList[0].isTaxable;
+            console.log(this.productlist[i].isTaxable);
           this.Itemcalculation(i);
           let el: HTMLElement = this.newRowButton.nativeElement;
           el.click();
@@ -973,13 +1019,32 @@ export class AddNewPurchaseOrderComponent implements OnInit{
           }
           else
           {
+            // this.productlist[i].prodID = "";
+            // this.productlist[i].prodName = "";
+            // this.productlist[i].unitQty = "";
+            // this.productlist[i].qty = "";
+            // this.productlist[i].qtyBal = "";
+            // this.productlist[i].sellRate = "";
+            // this.productlist[i].sellRate = "";
+            // this.productlist[i].discount = "";
+            // this.productlist[i].amount = "";
             this.Itemcalculation(i);
+
           }
 
         }
       }
       else
       {
+        // this.productlist[i].prodID = "";
+        // this.productlist[i].prodName = "";
+        // this.productlist[i].unitQty = "";
+        // this.productlist[i].qty = 1;
+        // this.productlist[i].qtyBal = "";
+        // this.productlist[i].sellRate = "";
+        // this.productlist[i].sellRate = "";
+        // this.productlist[i].discount = "";
+        // this.productlist[i].amount = "";
         this.Itemcalculation(i);
         if (event.key === "Enter" || event.key === "Tab") {
           this.onEnterComplexInternal(this.inputFields.length-2);
@@ -1001,7 +1066,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
 
  handleChildData() {
   this.ProductsVisible = false;
-  this.VendorVisible = false;
+  this.CustomersVisible = false;
 }
 
   async RenderEditItem()
@@ -1013,7 +1078,10 @@ export class AddNewPurchaseOrderComponent implements OnInit{
     this.fiscalYear = invoiceData.fiscalYear;
     this.voucherNo = invoiceData.invoiceVoucherNo;
     this.productlist = invoiceData.Products;
-    this.selectedCustomerName = {vendID:invoiceData.CustomerOrVendorID,vendName:invoiceData.customerOrVendorName};
+    this.selectedCustomerName = {cstID:invoiceData.CustomerOrVendorID,cstName:invoiceData.customerOrVendorName};
+    this.selectedLocation = this.locations.find(x=>x.LocationId == invoiceData.locID);
+    this.selectedBooker = this.bookerList.find(x=>x.UserID == invoiceData.bookerID);
+    this.selectedSalesman = this.salesManList.find(x=>x.UserID == invoiceData.salesmanID);
     this.totalGross = invoiceData.grossTotal;
     this.totalDiscount = invoiceData.totalDiscount;
     this.totalTax = invoiceData.totalTax;
@@ -1028,6 +1096,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
       this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
       this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
       this.productlist[i].barCode = this.selectedProductList[0].barCode;
+      this.productlist[i].isTaxable = this.selectedProductList[0].isTaxable;
 
       this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
       this.productlist[i].depName =this.selectedProductList[0].depName;
@@ -1053,48 +1122,6 @@ export class AddNewPurchaseOrderComponent implements OnInit{
     return parseFloat(this.productlist.reduce((acc, curr) => acc + (Number(curr[field]) || 0), 0).toFixed(2));
   }
 
-  async onSubmit() {
 
-    this.displayDialog = false;
-    this.showPleaseWait = true;
-
-    let d1 = this.datePipe.transform(this.fromDate, "yyyy-MM-dd");
-    let d2 =  this.datePipe.transform(this.toDate, "yyyy-MM-dd");
-
-    const invoiceData = await lastValueFrom(this.invoicesService.GetItemsBySupplierAndDate(this.selectedCustomerName.vendID,d1,d2));
-    this.productlist = invoiceData;
-
-    for (let i = 0; i < this.productlist.length; i++) {
-      this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
-
-      this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
-      this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
-      this.productlist[i].barCode = this.selectedProductList[0].barCode;
-
-      this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
-      this.productlist[i].depName =this.selectedProductList[0].depName;
-      this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
-      this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
-
-      this.Itemcalculation(i)
-    }
-    this.showPleaseWait = false;
-
-    console.log('From Date:', d1);
-    console.log('To Date:', d2);
-    console.log('Selected Supplier:', this.selectedCustomerName);
-  }
-
-  showOnlyVendorProduct(){
-    console.log(this.showVendorProductsOnly);
-    if(this.showVendorProductsOnly){
-      this.productlist = [{}];
-      this.productsDuplicate = this.products.filter(x=>x.vendID == this.selectedCustomerName.vendID);
-      this.Filterproductlist = this.productsDuplicate ;
-    }else{
-      this.productsDuplicate = this.products;
-      this.Filterproductlist = this.productsDuplicate ;
-    }
-  }
 }
 

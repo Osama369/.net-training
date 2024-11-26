@@ -35,20 +35,30 @@ import { AddNewSaleMComponent } from './Components/add-new-sale-m/add-new-sale-m
 import { AddNewPurchaseReturnMComponent } from './Components/add-new-purchase-return-m/add-new-purchase-return-m.component';
 import { InvoicePostingComponent } from './Components/invoice-posting/invoice-posting.component';
 import { PurchaseReturnMComponent } from './Components/purchase-return-m/purchase-return-m.component';
+import { AddNewSaleOrderComponent } from './Components/add-new-sale-order/add-new-sale-order.component';
+import { SaleOrderComponent } from './Components/sale-order/sale-order.component';
+import { AddNewSaleDComponent } from './Components/add-new-sale-d/add-new-sale-d.component';
+
+function getDynamicComponent(componentForPos: any, componentForDistribution: any): any {
+  const isPos = localStorage.getItem('isPos') === 'true';
+  return isPos ? componentForPos : componentForDistribution;
+}
 
 
 const routes: Routes = [
   // { path: 'AddNewSale', component: NewInvoiceComponent , canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleInvoicesCreate' }  },
   // { path: 'AddNewSale/:id', component: NewInvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleInvoicesEdit' }  },
-  { path: 'AddNewSale', component: AddNewSaleMComponent , canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleInvoicesCreate' }  },
-  { path: 'AddNewSale/:id', component: AddNewSaleMComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleInvoicesEdit' }  },
+  { path: 'AddNewSale', component: getDynamicComponent(AddNewSaleMComponent, AddNewSaleDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleInvoicesCreate' }  },
+  { path: 'AddNewSale/:id', component: getDynamicComponent(AddNewSaleMComponent, AddNewSaleDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleInvoicesEdit' }  },
 
   { path: 'AddNewSales/:id', component: AddQuotationToSaleComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleInvoicesCreate' }  },
-  { path: 'AddNewQuotation', component: QuotationInvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'QuotationsCreate' }  },
-  { path: 'AddNewQuotation/:id', component: QuotationInvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'QuotationsEdit' }  },
+  { path: 'AddNewQuotation', component: getDynamicComponent(QuotationInvoiceComponent, AddNewSaleOrderComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'QuotationsCreate' }  },
+  { path: 'AddNewQuotation/:id', component: getDynamicComponent(QuotationInvoiceComponent, AddNewSaleOrderComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'QuotationsEdit' }  },
+  { path: 'Quotations', component: getDynamicComponent(QuotationComponent, SaleOrderComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Quotations' }  },
+
+
   { path: 'inoviceDetail/:voucher', component: InvoicesComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'InvoiceDetail' }  },
   { path: 'SaleInvoices', component: SaleInvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleInvoices' }  },
-  { path: 'Quotations', component: QuotationComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Quotations' }  },
   // { path: 'Purchase', component: PurchaseComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Purchase' }  },
   // { path: 'AddNewPurchase', component: AddPurchaseComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseCreate' }  },
   { path: 'Purchase', component: PurchaseMComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Purchase' }  },

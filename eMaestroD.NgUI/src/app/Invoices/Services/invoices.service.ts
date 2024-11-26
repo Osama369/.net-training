@@ -205,7 +205,7 @@ export class InvoicesService {
 
 
 
-    createInvoice(invoiceID:number,invoiceDetailID:number,fiscalYear:number,voucherNo: string, selectedType: any[], txTypeID: number, CustomerOrVendorID: any, selectedLocation: any, productList: ProductViewModel[], totalGross: number, totalDiscount: number, totalTax: number, totalRebate: number, totalExtraTax: number, totalAdvanceExtraTax: number, totalExtraDiscount: number, totalNetPayable: number, taxesList: any[], convertedInvoice : string): Invoice {
+    createInvoice(invoiceID:number,invoiceDetailID:number,fiscalYear:number,voucherNo: string, selectedType: any[], txTypeID: number, CustomerOrVendorID: any, selectedLocation: any, productList: ProductViewModel[], totalGross: number, totalDiscount: number, totalTax: number, totalRebate: number, totalExtraTax: number, totalAdvanceExtraTax: number, totalExtraDiscount: number, totalNetPayable: number, taxesList: any[], convertedInvoice : string, bookerID? : number, salesmanID? : number): Invoice {
     return {
       invoiceID: invoiceID,
       invoiceDetailID : invoiceDetailID,
@@ -217,7 +217,8 @@ export class InvoicesService {
       CustomerOrVendorID: CustomerOrVendorID,
       comID: parseInt(localStorage.getItem('comID')!),
       locID: selectedLocation?.LocationId,
-
+      bookerID : bookerID || 0,
+      salesmanID : salesmanID || 0,
       grossTotal: totalGross,
       totalDiscount: totalDiscount,
       totalTax: totalTax,

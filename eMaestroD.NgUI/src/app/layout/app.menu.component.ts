@@ -19,7 +19,7 @@ export class AppMenuComponent implements OnInit {
 
     searchText: string = '';
     filteredItems: any[]=[];
-
+    isPos: boolean = localStorage.getItem("isPos") === 'true';
     isShowPurchase:any;
     @ViewChild('autoComplete') autoComplete!: AutoComplete | undefined;
 
@@ -95,7 +95,7 @@ export class AppMenuComponent implements OnInit {
                 { label: 'Goods Received Note', routerLink: [APP_ROUTES.invoices.grn] },
                 ...(!this.isShowPurchase ? [{ label: 'Purchase', routerLink: [APP_ROUTES.invoices.purchase] }] : []),
                 { label: 'Purchase Return', routerLink: [APP_ROUTES.invoices.purchaseReturn] },
-                { label: 'Quotations', routerLink: [APP_ROUTES.invoices.quotations] },
+                { label: this.getDynamicLabel(this.isPos, 'Quotations', 'Sale Order'), routerLink: [APP_ROUTES.invoices.quotations] },
                 { label: 'Sale Invoices', routerLink: [APP_ROUTES.invoices.saleInvoices] },
                 { label: 'Sale Return', routerLink: [APP_ROUTES.invoices.saleReturn] },
                 { label: 'Service Invoices', routerLink: [APP_ROUTES.invoices.serviceInvoices] },
@@ -189,5 +189,9 @@ export class AppMenuComponent implements OnInit {
           ],
         },
       ];
+    }
+
+    getDynamicLabel(condition: boolean, trueLabel: string, falseLabel: string): string {
+      return condition ? trueLabel : falseLabel;
     }
 }

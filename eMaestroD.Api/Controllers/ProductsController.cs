@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Authorization;
 using Models.VMModels;
 using eMaestroD.DataAccess.DataSet;
 using eMaestroD.Shared.Common;
+using eMaestroD.InvoiceProcessing.Interfaces;
 
 namespace eMaestroD.Api.Controllers
 {
@@ -39,8 +40,9 @@ namespace eMaestroD.Api.Controllers
         private readonly NotificationInterceptor _notificationInterceptor;
         private CustomMethod cm = new CustomMethod();
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IGLService _glService;
         string username = "";
-        public ProductsController(AMDbContext aMDbContext, IWebHostEnvironment webHostEnvironment, NotificationInterceptor notificationInterceptor, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ProductsController(AMDbContext aMDbContext, IWebHostEnvironment webHostEnvironment, NotificationInterceptor notificationInterceptor, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IGLService glService)
         {
             _AMDbContext = aMDbContext;
             _webHostEnvironment = webHostEnvironment;
@@ -48,6 +50,7 @@ namespace eMaestroD.Api.Controllers
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
             username = GetUsername();
+            _glService = glService;
         }
 
         [NonAction]
@@ -94,11 +97,6 @@ namespace eMaestroD.Api.Controllers
             var products = await _AMDbContext.Set<ProductViewModel>()
                 .FromSqlRaw("EXEC GetProducts @comID = {0}, @prodBCID = {1}", comID, prodBCID)
                 .ToListAsync();
-
-            if (products == null || !products.Any())
-            {
-                return NotFound();
-            }
 
             ResponsedGroupListVM vM = new ResponsedGroupListVM();
             vM.enttityDataSource = products;
@@ -161,6 +159,10 @@ namespace eMaestroD.Api.Controllers
                 .Where(x => x.prodID == prodID)
                 .ToListAsync();
 
+            var vendProduct = await _AMDbContext.VendorProducts.Where(x => x.prodID == prodID).FirstOrDefaultAsync();
+            product.vendID = vendProduct == null ? 0 : vendProduct.comVendID;
+            product.sharePercentage = vendProduct == null ? 0 : vendProduct.sharePercentage;
+
             product.ProductBarCodes = productBarCodes;
             return Ok(product);
         }
@@ -183,6 +185,36 @@ namespace eMaestroD.Api.Controllers
 
                     _AMDbContext.ProductBarCodes.UpdateRange(product.ProductBarCodes);
                     await _AMDbContext.SaveChangesAsync();
+
+                    if (product.vendID != null && product.vendID != 0)
+                    {
+                        var ProductVendorList = await _glService.GetVendorProductListAsync((int)product.comID);
+                        var existingVendorProducts = ProductVendorList
+                       .Where(x => x.prodID == product.prodID)
+                       .OrderBy(x => x.preference)
+                       .ToList();
+
+                        int newPreference = existingVendorProducts.Any()
+                            ? existingVendorProducts.Max(x => x.preference) + 1
+                            : 1;
+
+                        bool isProductVendorExist = existingVendorProducts
+                            .Any(x => x.comVendID == (int)product.vendID);
+
+                        if (!isProductVendorExist)
+                        {
+                            var vendorProduct = new VendorProduct
+                            {
+                                comID = (int)product.comID,
+                                prodID = product.prodID,
+                                comVendID = (int)product.vendID,
+                                preference = newPreference,
+                                sharePercentage = product.sharePercentage
+                            };
+
+                            await _glService.InsertVendorProductAsync(vendorProduct);
+                        }
+                    }
 
                     _notificationInterceptor.SaveNotification("ProductsEdit", product.comID, "");
                 }
@@ -218,122 +250,39 @@ namespace eMaestroD.Api.Controllers
                     {
                         item.prodID = product.prodID;
                     }
-                    //ProductBarCodes pd = new ProductBarCodes()
-                    //{
-                    //    prodID = product.prodID,
-                    //    BarCode = product.prodCode,
-                    //    Qty = 1,
-                    //    Unit = product.prodUnit,
-                    //    Active = true,
-                    //};
+                   
                     await _AMDbContext.ProductBarCodes.AddRangeAsync(product.ProductBarCodes);
                     await _AMDbContext.SaveChangesAsync();
 
+                    if(product.vendID != null && product.vendID != 0)
+                    {
+                        var ProductVendorList = await _glService.GetVendorProductListAsync((int)product.comID);
+                        var existingVendorProducts = ProductVendorList
+                       .Where(x => x.prodID == product.prodID)
+                       .OrderBy(x => x.preference)
+                       .ToList();
 
+                        int newPreference = existingVendorProducts.Any()
+                            ? existingVendorProducts.Max(x => x.preference) + 1
+                            : 1;
 
-                    //if (product.qty > 0)
-                    //{
-                    //    Int32 fiscalYear = _AMDbContext.FiscalYear.Where(x => x.active == true).FirstOrDefault().period;
-                    //    Int32 VendID = _AMDbContext.Vendors.Where(x => x.vendName.ToUpper() == "OPENING STOCK").FirstOrDefault().vendID;
-                    //    String voucherNo = "";
-                    //    decimal totalAmount = 0M;
-                    //    decimal totalQty = 0M;
-                    //    string sql = "EXEC GenerateGLVoucherNo @txType";
-                    //    List<SqlParameter> parms = new List<SqlParameter>
-                    //    {
-                    //    new SqlParameter { ParameterName = "@txType", Value = 1 },
-                    //    };
-                    //    voucherNo = _AMDbContext.invoiceNo.FromSqlRaw<invoiceNo>(sql, parms.ToArray()).ToList().FirstOrDefault().voucherNo;
+                        bool isProductVendorExist = existingVendorProducts
+                            .Any(x => x.comVendID == (int)product.vendID);
 
-                    //    #region MasterEntryForPurchaseInvoice
-                    //    GL msterEntry = new GL()
-                    //    {
-                    //        relCOAID = 83,
-                    //        crtDate = DateTime.Now,
-                    //        modDate = DateTime.Now,
-                    //        COAID = 98,
-                    //        depositID = fiscalYear,
-                    //        txTypeID = 1,
-                    //        vendID = VendID,
-                    //        // balSum = 0M,//because is not paid completely
-                    //        isPaid = false,
-                    //        isCleared = false,
-                    //        isVoided = false,
-                    //        isDeposited = false,
-                    //        voucherNo = voucherNo,
-                    //        dtTx = DateTime.Now,
-                    //        dtDue = DateTime.Now,
-                    //        glComments = "FromUploadTool",
-                    //        paidSum = 0
-                    //    };
+                        if (!isProductVendorExist)
+                        {
+                            var vendorProduct = new VendorProduct
+                            {
+                                comID = (int)product.comID,
+                                prodID = product.prodID,
+                                comVendID = (int)product.vendID,
+                                preference = newPreference,
+                                sharePercentage = product.sharePercentage
+                            };
 
-                    //    GL glItem = new GL();
-
-                    //    glItem.COAID = 98;
-                    //    glItem.relCOAID = 83;
-                    //    glItem.txTypeID = 1;
-                    //    glItem.depositID = fiscalYear;
-                    //    glItem.locID = 1;
-                    //    glItem.vendID = VendID;
-                    //    glItem.prodID = product.prodID;
-                    //    glItem.qty = product.qty;
-                    //    glItem.qtyBal = glItem.qty;
-                    //    glItem.unitPrice = product.purchRate;
-                    //    glItem.acctBal = (glItem.qty * product.purchRate) / glItem.qty;
-                    //    glItem.debitSum = product.purchRate * (glItem.qty);
-                    //    glItem.dtTx = DateTime.Now + DateTime.Now.TimeOfDay;
-                    //    glItem.isVoided = glItem.isDeposited = glItem.isCleared = glItem.isPaid = false;
-                    //    glItem.checkName = product.prodCode;
-                    //    glItem.voucherNo = voucherNo;
-                    //    glItem.crtDate = glItem.modDate =  DateTime.Now + DateTime.Now.TimeOfDay;
-
-                    //    totalQty += glItem.qty;
-                    //    totalAmount += glItem.debitSum;
-
-                    //    purchaceInvoiceList.Add(glItem);
-                    //    #endregion
-
-                    //    #region CashLedgerEntry
-
-                    //    GL glPayment = new GL();
-
-                    //    glPayment.COAID = 83;
-                    //    glPayment.relCOAID = 98;
-                    //    glPayment.txTypeID = 1;
-                    //    glPayment.depositID = fiscalYear;
-                    //    glPayment.locID = 1;
-                    //    glPayment.vendID = VendID;
-                    //    glPayment.balSum = glPayment.creditSum = totalAmount;
-                    //    glPayment.dtTx = glPayment.dtDue = DateTime.Now + DateTime.Now.TimeOfDay;
-                    //    glPayment.voucherNo = voucherNo;
-                    //    glPayment.crtDate = glPayment.modDate = DateTime.Now + DateTime.Now.TimeOfDay;
-                    //    glPayment.isVoided = glPayment.isCleared = glPayment.isDeposited = glPayment.isPaid = false;
-
-                    //    purchaceInvoiceList.Add(glPayment);
-
-                    //    #endregion
-
-
-                    //    msterEntry.balSum = msterEntry.debitSum = totalAmount;
-
-                    //    purchaceInvoiceList.Insert(0, msterEntry);
-
-                    //    var gl1 = 0;
-                    //    foreach (var item in purchaceInvoiceList)
-                    //    {
-                    //        if (gl1 != 0)
-                    //        {
-                    //            item.txID = gl1;
-                    //        }
-                    //        await _AMDbContext.gl.AddAsync(item);
-                    //        await _AMDbContext.SaveChangesAsync();
-                    //        if (gl1 == 0)
-                    //        {
-                    //            gl1 = item.GLID;
-                    //        }
-                    //    }
-
-                    //}
+                            await _glService.InsertVendorProductAsync(vendorProduct);
+                        }
+                    }
 
                     _notificationInterceptor.SaveNotification("ProductsCreate", product.comID, "");
                 }
@@ -359,6 +308,7 @@ namespace eMaestroD.Api.Controllers
             var list = _AMDbContext.Products.Where(a => a.prodID == prodID).ToList();
             _AMDbContext.RemoveRange(_AMDbContext.Products.Where(a => a.prodID == prodID));
             _AMDbContext.RemoveRange(_AMDbContext.ProductBarCodes.Where(a => a.prodID == prodID));
+            _AMDbContext.RemoveRange(_AMDbContext.VendorProducts.Where(a => a.prodID == prodID));
             await _AMDbContext.SaveChangesAsync();
             _notificationInterceptor.SaveNotification("ProductsDelete", list[0].comID, "");
 

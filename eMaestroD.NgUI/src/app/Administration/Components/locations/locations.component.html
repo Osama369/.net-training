@@ -43,15 +43,20 @@
 
         <ng-template pTemplate="header">
           <tr>
-            <th class="col-12" translate>Location Name</th>
+            <th class="col-6" translate>Location Name</th>
+            <th class="col-6" translate>Level</th>
           </tr>
         </ng-template>
 
         <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-          <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode">
-            <td class="col-11">
+          <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode"  >
+
+            <td class="col-6">
               <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
               {{ rowData.name | translate }}
+            </td>
+            <td class="col-6">
+                {{rowData.level | translate}}
             </td>
           </tr>
         </ng-template>

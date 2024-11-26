@@ -77,6 +77,7 @@ export interface Products {
     depName?:any;
     prodManuName?:any;
     categoryName?:any;
+    sharePercentage?:any;
 }
 
 

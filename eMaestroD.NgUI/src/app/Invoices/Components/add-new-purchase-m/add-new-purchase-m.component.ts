@@ -69,6 +69,7 @@ export class AddNewPurchaseMComponent implements OnInit{
   SelectedType : type[] = [];
   filterType :any[] = [];
   products: ProductViewModel[] = [];
+  productsDuplicate: ProductViewModel[] = [];
   customers: Vendor[] = [];
   customerList: Vendor[] = [];
 
@@ -134,7 +135,7 @@ export class AddNewPurchaseMComponent implements OnInit{
   GRNInvoiceList : Invoice[] = [];
 
   selectedVoucherNo : any;
-
+  showVendorProductsOnly: boolean = false;
   showReportDialog() {
     if(this.reportSettingItemList.find(x=>x.key == "A4" && x.value == true) != undefined){
       this.printtype = "A4"
@@ -169,6 +170,7 @@ export class AddNewPurchaseMComponent implements OnInit{
 
     this.sharedDataService.getProducts$().subscribe(products => {
       this.products = (products as { [key: string]: any })["enttityDataSource"];
+      this.productsDuplicate = this.products;
       this.Filterproductlist = this.products;
     });
 
@@ -205,6 +207,7 @@ export class AddNewPurchaseMComponent implements OnInit{
     this.sharedDataService.getConfigSettings$().subscribe({
       next : (result:ConfigSetting[])=>{
         this.isShowSideBar = result.find(x=>x.key === "Show Side bar on Purchase").value;
+        this.showVendorProductsOnly = result.find(x=>x.key === "Show Vendor Products Only").value
         console.log(result);
 
       }
@@ -366,9 +369,9 @@ export class AddNewPurchaseMComponent implements OnInit{
       if(newObj != undefined && newObj != '' && typeof(newObj) != 'string')
       {
         this.rowNmb = i;
-        this.selectedProductList = this.products.filter(f => f.prodBCID == newObj.prodBCID);
+        this.selectedProductList = this.productsDuplicate.filter(f => f.prodBCID == newObj.prodBCID);
         this.filteredProduct = this.productlist.filter(f => f.prodBCID == newObj.prodBCID);
-        if(this.filteredProduct.length > 1)
+        if(this.filteredProduct.length > 0)
         {
           this.productlist[i].prodName = "";
           let index = this.productlist.findIndex(f => f.prodBCID == newObj.prodBCID);
@@ -876,7 +879,7 @@ export class AddNewPurchaseMComponent implements OnInit{
 
   filterProduct(event: any) {
     const query = event.query.toLowerCase().trim();
-    this.Filterproductlist = this.products
+    this.Filterproductlist = this.productsDuplicate
         .filter(product => product.prodName.toLowerCase().includes(query))
         .slice(0, 20);
   }
@@ -940,7 +943,7 @@ export class AddNewPurchaseMComponent implements OnInit{
     if(newObj != '' && newObj != undefined)
     {
       this.rowNmb = i;
-      this.selectedProductList = this.products.filter(f => f.barCode == newObj);
+      this.selectedProductList = this.productsDuplicate.filter(f => f.barCode == newObj);
       this.filteredProduct = this.productlist.filter(f => f.barCode == newObj);
       if(this.filteredProduct.length > 1)
       {
@@ -1035,6 +1038,7 @@ export class AddNewPurchaseMComponent implements OnInit{
 
   VendorOnChange()
   {
+    this.showOnlyVendorProduct();
     if(this.selectedCustomerName == undefined){
       this.toastr.error("Please select supplier!");
       this.onEnterComplex(0);
@@ -1055,6 +1059,7 @@ export class AddNewPurchaseMComponent implements OnInit{
         }
       })
     }
+
   }
 
   async InvoiceOnChange()
@@ -1154,6 +1159,17 @@ export class AddNewPurchaseMComponent implements OnInit{
   }
   sumField(field: string): number {
     return parseFloat(this.productlist.reduce((acc, curr) => acc + (Number(curr[field]) || 0), 0).toFixed(2));
+  }
+
+  showOnlyVendorProduct(){
+    if(this.showVendorProductsOnly){
+      this.productlist = [{}];
+      this.productsDuplicate = this.products.filter(x=>x.vendID == this.selectedCustomerName.vendID);
+      this.Filterproductlist = this.productsDuplicate ;
+    }else{
+      this.productsDuplicate = this.products;
+      this.Filterproductlist = this.productsDuplicate ;
+    }
   }
 
 }

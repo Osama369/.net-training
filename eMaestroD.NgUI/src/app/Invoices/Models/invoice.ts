@@ -2,6 +2,8 @@ export interface Invoice {
   invoiceID?: number;
   invoiceDetailID? :number;
   invoiceDate?: Date;
+  bookerID?:number;
+  salesmanID?:number;
   invoiceVoucherNo?:any;
   invoiceType?:any;
   txtypeID?:number;

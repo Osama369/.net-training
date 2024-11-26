@@ -7,6 +7,7 @@ import { VendorService } from 'src/app/Manage/Services/vendor.service';
 import { Customer } from 'src/app/Manage/Models/customer';
 import { Vendor } from 'src/app/Manage/Models/vendor';
 import { VendorsComponent } from '../vendors.component';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 
 @Component({
@@ -25,6 +26,14 @@ export class AddNewVendorComponent {
   @Input() title : any;
   isEdit: boolean = false;
 
+  allLocation:any;
+  regionList : any;
+  cityList : any;
+  areaList : any;
+  selectedRegion:any;
+  selectedCity:any;
+  selectedArea:any;
+
   isCstSupp : boolean = false;
   sendDataToParent() {
     this.dataEvent.emit({type:'',value:false});
@@ -36,10 +45,15 @@ export class AddNewVendorComponent {
     this.vendorService.GetVndCode().subscribe(nmb=>{
       this.vendorList[0].vendCode = nmb;
     });
+
+    this.sharedDataService.getLocations$().subscribe(loc=>{
+      this.allLocation = loc;
+      this.regionList = loc.filter(x=>x.LocTypeId == 3);
+    });
   }
   constructor(
     private router: Router,
-    private citiesService:CitiesService,
+    private sharedDataService:SharedDataService,
     private vendorService:VendorService,
     private customersService:CustomersService,
     private toastr: ToastrService,
@@ -52,6 +66,7 @@ export class AddNewVendorComponent {
     {
       // this.isEdit = true;
       this.vendorList[0] = this.vndData;
+      console.log(this.vendorList[0]);
     }
     else
     {
@@ -61,9 +76,23 @@ export class AddNewVendorComponent {
     // You can also use categoryId.previousValue and
     // categoryId.firstChange for comparing old and new values
 
-}
+  }
+
+
+  ChangeRegion(){
+    this.cityList = this.allLocation.filter(x=>x.LocTypeId == 4 && x.ParentLocationId == this.selectedRegion);
+  }
+
+  ChangeCity(){
+  this.areaList = this.allLocation.filter(x=>x.LocTypeId == 5 && x.ParentLocationId == this.selectedCity);
+  }
+
   clear()
   {
+    this.selectedRegion = null;
+    this.selectedCity = null;
+    this.selectedArea = null;
+
     this.vendorList = [this.createNewVendor()];
     this.customerList = [this.createNewCustomer()];
     this.vendorService.GetVndCode().subscribe(nmb=>{
@@ -87,7 +116,14 @@ export class AddNewVendorComponent {
       this.toastr.error("Please write supplier name");
       this.onEnterTableInputCst(0);
     }
+    else if(this.selectedArea == undefined){
+      this.toastr.error("Please select area");
+      this.onEnterTableInputCst(0);
+    }
     else{
+      this.vendorList[0].cityID = this.selectedArea.LocationId;
+      this.vendorList[0].city = this.selectedArea.LocationName;
+
       if(!this.isCstSupp)
       {
         this.vendorList[0].comID = localStorage.getItem('comID');

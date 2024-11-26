@@ -14,6 +14,7 @@ import { ProdManufacture } from 'src/app/Manage/Models/prod-manufacture';
 import { Category } from 'src/app/Manage/Models/category';
 import { GenericService } from 'src/app/Shared/Services/generic.service';
 import { TreeNode } from 'primeng/api';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 @Component({
   selector: 'app-add-new-product',
@@ -55,6 +56,8 @@ export class AddNewProductComponent {
   ];
   EditProdID:any;
 
+  isPos : boolean = localStorage.getItem("isPos") === 'true';
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -62,7 +65,7 @@ export class AddNewProductComponent {
     private toastr: ToastrService,
     private el: ElementRef,
     private cdr: ChangeDetectorRef,
-    private productCategoryService: ProductCategoryService,
+    private sharedDataService: SharedDataService,
     private genericService : GenericService,
     private AuthService : AuthService,
     private zone: NgZone
@@ -86,6 +89,8 @@ export class AddNewProductComponent {
     this.route.params.subscribe(params1 => {
       this.EditProdID = params1['id'];
    });
+
+
    console.log(this.EditProdID);
 
     this.selectedType = this.type[0];
@@ -103,6 +108,7 @@ export class AddNewProductComponent {
   {
     const data = await lastValueFrom(this.productService.GetOneProductDetail(this.EditProdID));
       this.productlist[0] = data;
+      console.log(this.productlist[0]);
       this.onDepartmentChange(data.depID, data.categoryID);
   }
 
@@ -113,6 +119,10 @@ export class AddNewProductComponent {
       this.departmentList = data.Department;
       this.prodManufactureList = data.ProdManufacture;
       this.categoryList = data.Category;
+
+      this.sharedDataService.getVendors$().subscribe(vnd => {
+        this.Supplierlist = (vnd as { [key: string]: any })["enttityDataSource"];
+    });
 
     } catch (error) {
       console.error('Error fetching dropdown data', error);
@@ -168,6 +178,7 @@ export class AddNewProductComponent {
     if(this.prodData != undefined && this.prodData.length != 0)
     {
       this.productlist[0] = this.prodData;
+      console.log(this.productlist[0]);
       this.selectedType = this.prodData.descr;
       this.hideFields();
       this.SelectedproductGrouplist = {prodGrpID:this.productlist[0].prodGrpID,prodGrpName:this.productGrouplist.find(x=>x.prodGrpID==this.productlist[0].prodGrpID)?.prodGrpName};
@@ -272,7 +283,7 @@ onRowEditCancel(product:any, editing:any) {
         unitPrice:undefined,
         vendID:undefined,
         ProductBarCodes: [
-          {BarCode: '', Unit: 'pcs', Qty: 1, Active: true}
+          // {BarCode: '', Unit: 'pcs', Qty: 1, Active: true}
         ]
       },
     ];
@@ -280,6 +291,13 @@ onRowEditCancel(product:any, editing:any) {
 
   saveProduct()
   {
+
+    if(!this.isPos && this.productlist[0].vendID == undefined)
+    {
+      this.toastr.error("Please write Select Supplier.");
+      this.onEnterTableInput(1);
+      return;
+    }
 
     if(this.SelectedCategory != null)
     {
@@ -324,7 +342,7 @@ onRowEditCancel(product:any, editing:any) {
       console.log(this.productlist[0])
       this.productService.saveProduct(this.productlist[0]).subscribe({
         next: (prd:any) => {
-          if(this.EditProdID != undefined)
+          if(this.EditProdID == undefined)
           {
             this.toastr.success("Product has been successfully added!");
             this.router.navigateByUrl('/Manage/Products')
@@ -456,5 +474,12 @@ onRowEditCancel(product:any, editing:any) {
     });
 
     return tree;
+  }
+
+  showSharePercentage()
+  {
+    console.log(this.Supplierlist)
+    this.productlist[0].sharePercentage = this.Supplierlist.find(x=>x.vendID == this.productlist[0].vendID).sharePercentage || 0;
+    console.log(this.productlist[0].sharePercentage)
   }
 }

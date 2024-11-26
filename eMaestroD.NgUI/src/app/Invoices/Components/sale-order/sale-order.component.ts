@@ -1,0 +1,238 @@
+import { Component, OnInit } from '@angular/core';
+import { Table } from 'primeng/table';
+import { ActivatedRoute, Router } from '@angular/router';
+import * as FileSaver from 'file-saver';
+import { getCurrencySymbol } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
+import { ReportSettingService } from 'src/app/Reports/Services/report-setting.service';
+import { AuthService } from 'src/app/Shared/Services/auth.service';
+import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
+import { GenericService } from 'src/app/Shared/Services/generic.service';
+import { InvoicesService } from '../../Services/invoices.service';
+import { InvoiceView } from '../../Models/invoice-view';
+import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
+import { lastValueFrom } from 'rxjs';
+import { Invoice } from '../../Models/invoice';
+import { ConfirmationService } from 'primeng/api';
+
+@Component({
+  selector: 'app-sale-order',
+  templateUrl: './sale-order.component.html',
+  styleUrls: ['./sale-order.component.scss']
+})
+
+export class SaleOrderComponent implements OnInit {
+
+    invoices: Invoice[] = [];
+    invoiceNo: any;
+    loading: boolean = true;
+    PrintringVisible: boolean = false;
+    InvoiceDetailvisible: boolean = false;
+    Reportvisible: boolean = false;
+    printtype:any = "A4";
+    columns : any[] = [];
+    exportColumns : any[] =[];
+    CurrencyCode : any;
+    reportSettingVisiblity : boolean = false;
+    isProductCode : boolean = false;
+    isArabic: boolean = false;
+    reportSettingItemList : any[]=[];
+    bookmark : boolean = false;
+
+    constructor(private invoiceService: InvoicesService,
+      private genericService: GenericService,
+      private router: Router,
+      private toasterService: ToastrService,
+      private authService : AuthService,
+      private reportSettingService : ReportSettingService,
+      public bookmarkService: BookmarkService,
+      public route : ActivatedRoute,
+      public confirmationService : ConfirmationService
+      ) { }
+
+    async ngOnInit() {
+
+      this.reportSettingService.GetInvoiceReportSettings().subscribe(rpt=>{
+        this.reportSettingItemList = rpt.filter(x=>x.screenName.toLowerCase() == "purchase");
+      })
+
+
+      try{
+        var result = await lastValueFrom(this.invoiceService.GetInvoices(GLTxTypes.Quotation,0));
+        this.invoices = result;
+        console.log(this.invoices);
+        this.loading = false;
+      }
+      catch(error){
+        this.toasterService.error(error);
+      }
+
+        this.authService.GetBookmarkScreen(this.route.snapshot?.data['requiredPermission']).subscribe(x=>{
+          this.bookmark = x;
+      });
+
+    }
+
+    UpdateBookmark(value:any){
+      this.bookmarkService.Updatebookmark(this.route.snapshot.data['requiredPermission'],value).subscribe({
+        next: (result: any) => {
+          this.bookmark = value;
+        },
+      });;
+    }
+
+
+    clear(table: Table) {
+        table.clear();
+    }
+
+    printView(invoiceNo:any)
+    {
+        this.invoiceNo = invoiceNo;
+        if(this.reportSettingItemList.find(x=>x.key == "A4" && x.value == true) != undefined){
+          this.printtype = "A4"
+        }
+        else{
+          this.printtype = "Thermal"
+        }
+        this.isProductCode = this.reportSettingItemList.find(x=>x.key=="Add Product Code").value.toLocaleString();
+        if(this.reportSettingItemList.find(x=>x.key == "English Only" && x.value == true) != undefined){
+          this.isArabic = true;
+        }
+        else{
+          this.isArabic = false;
+        }
+        this.Reportvisible = true;
+        //this.PrintringVisible = true;
+    }
+
+    editView(invoiceNo:any)
+    {
+        this.router.navigateByUrl('/Invoices/AddNewQuotation/'+invoiceNo);
+    }
+
+    deleteView(invoiceNo:any)
+    {
+      this.authService.checkPermission('QuotationsDelete').subscribe((x:any)=>{
+        if(x)
+        {
+        if (confirm("Are you sure you want to delete this invoice?") == true) {
+            this.loading = true;
+            this.invoiceService.DeleteInvoice(invoiceNo).subscribe(asd => {
+              this.toasterService.success("Sale Order has been successfully deleted!");
+                this.invoices = this.invoices.filter(x=>x.invoiceVoucherNo != invoiceNo);
+                this.loading = false;
+              },
+              responce =>{
+                this.toasterService.error(responce.error);
+                this.loading = false;
+              }
+            );
+      }
+      }
+      else{
+        this.toasterService.error("Unauthorized Access! You don't have permission to access.");
+      }
+      });
+    }
+
+    onChangePrint(e:any) {
+        this.printtype= e.target.value;
+     }
+
+     onPrinterClick()
+     {
+       this.PrintringVisible = false;
+       this.Reportvisible = true;
+     }
+     viewInvoiceDetail(invoiceNo:any)
+     {
+      this.router.navigateByUrl('/Invoices/Detail/'+invoiceNo);
+     }
+
+     exportExcel() {
+        var date = new Date();
+        var dateFormate = `${date.getMonth()}-${date.getDate()}-${date.getFullYear()}`;
+        let filtercols = this.columns.filter((f) => {
+          return f.isHidden == true;
+        });
+        let filterList = this.invoices;
+        filterList.filter((f: { [x: string]: any; }) => {
+          filtercols.map((m) => {
+            delete f[m.field];
+          });
+        });
+        import('xlsx').then((xlsx) => {
+          const worksheet = xlsx.utils.json_to_sheet(filterList);
+          const workbook = { Sheets: { data: worksheet }, SheetNames: ['data'] };
+          const excelBuffer: any = xlsx.write(workbook, {
+            bookType: 'xlsx',
+            type: 'array',
+          });
+          this.saveAsExcelFile(excelBuffer, "Sale Order");
+        });
+      }
+
+      saveAsExcelFile(buffer: any, fileName: string): void {
+        let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        let EXCEL_EXTENSION = '.xlsx';
+        const data: Blob = new Blob([buffer], {
+            type: EXCEL_TYPE
+        });
+        FileSaver.saveAs(data, fileName + EXCEL_EXTENSION);
+      }
+
+      exportPdf() {
+        var date = new Date();
+        import('jspdf').then((jsPDF) => {
+          import('jspdf-autotable').then((x) => {
+            const doc = new jsPDF.default('p', 'px', 'a4');
+            (doc as any).autoTable(this.exportColumns, this.invoices);
+
+            doc.save('SaleOrder.pdf');
+
+          });
+        });
+      }
+
+      handleChildData(data: any) {
+
+        this.reportSettingVisiblity = false;
+        if(typeof(data) != 'boolean')
+        {
+          this.reportSettingItemList = data;
+        }
+
+      }
+
+      ConvertToSale(invoiceNo:any)
+      {
+        this.router.navigateByUrl('/Invoices/AddNewSale/'+invoiceNo);
+      }
+
+      confirmApproval(invoice:any) {
+          this.confirmationService.confirm({
+            header: 'Confirm Approval',
+            message: 'Are you sure you want to approve this GRN? This action can\'t be undone.',
+            accept: async () => {
+             try{
+               await lastValueFrom(this.invoiceService.ApproveInvoice(invoice.invoiceVoucherNo));
+               invoice.transactionStatus = "Approved";
+               invoice.isApproved = true;
+               invoice.isApproved1 = true;
+
+              }
+              catch{
+                this.toasterService.error("Something went wrong.");
+                invoice.isApproved = false;
+                invoice.isApproved1 = false;
+              }
+
+            },
+            reject:()=>{
+              invoice.isApproved = false;
+              invoice.isApproved1 = false;
+            }
+          });
+      }
+}
