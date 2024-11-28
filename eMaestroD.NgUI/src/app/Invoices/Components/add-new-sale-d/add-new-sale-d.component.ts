@@ -122,7 +122,7 @@ export class AddNewSaleDComponent implements OnInit{
 
   isProductCode: boolean = false;
   isArabic: boolean = false;
-  txTypeID : any = GLTxTypes.Quotation;
+  txTypeID : any = GLTxTypes.SaleInvoice;
 
   vatInclude : boolean = true;
   showPleaseWait: boolean = false;
@@ -140,6 +140,9 @@ export class AddNewSaleDComponent implements OnInit{
   selectedSalesman :any;
 
   selectedVoucherNo : any;
+
+  isConverted : boolean = false;
+  isDisabled : boolean = true;
 
   showReportDialog() {
     if(this.reportSettingItemList.find(x=>x.key == "A4" && x.value == true) != undefined){
@@ -194,7 +197,6 @@ export class AddNewSaleDComponent implements OnInit{
         this.userList = result;
         this.bookerList = this.userList.filter(x=>x.RoleName == 'Booker');
         this.salesManList = this.userList.filter(x=>x.RoleName == 'Salesman');
-        console.log(result);
       }
     })
 
@@ -237,6 +239,7 @@ export class AddNewSaleDComponent implements OnInit{
       if(this.EditVoucherNo.split("-")[0] == "QOV")
       {
         this.selectedVoucherNo = this.EditVoucherNo;
+        this.isConverted = true;
         this.InvoiceOnChange();
       }else{
         this.RenderEditItem();
@@ -269,6 +272,11 @@ export class AddNewSaleDComponent implements OnInit{
   increaseFocusIndexForProducts()
   {
     this.count++;
+  }
+
+  async GetProductBatchByProdBCID(prodBCID:number, locID:number){
+    const result = await lastValueFrom(this.invoicesService.GetProductBatchByProdBCID(prodBCID, locID));
+    console.log(result);
   }
 
   enterKeyPressCount = 0;
@@ -679,8 +687,8 @@ export class AddNewSaleDComponent implements OnInit{
           console.log(this.invoice);
           const result = await lastValueFrom(this.invoicesService.SaveInvoice(this.invoice));
           console.log(result);
-          this.toastr.success("Sale Order has been successfully Created!");
-          this.router.navigateByUrl(APP_ROUTES.invoices.quotations);
+          this.toastr.success("Sale Invoice has been successfully Created!");
+          this.router.navigateByUrl(APP_ROUTES.invoices.saleInvoices);
         } catch (result) {
           this.toastr.error(result.error);
         }
@@ -986,13 +994,16 @@ export class AddNewSaleDComponent implements OnInit{
     if(newObj != '' && newObj != undefined)
     {
       this.rowNmb = i;
-      this.selectedProductList = this.products.filter(f => f.barCode == newObj);
-      this.filteredProduct = this.productlist.filter(f => f.barCode == newObj);
+      console.log(newObj);
+      this.selectedProductList = this.products.filter(f => f.barCode == newObj.barCode);
+      console.log(this.selectedLocation);
+      //this.GetProductBatchByProdBCID(this.selectedProductList[0].prodBCID, this.selectedLocation.LocationId);
+      this.filteredProduct = this.productlist.filter(f => f.barCode == newObj.barCode && f.batchNo == newObj.batchNo);
       if(this.filteredProduct.length > 1)
       {
         this.productlist[i].prodName = "";
         this.productlist[i].barCode = "";
-        let index = this.productlist.findIndex(f => f.barCode == newObj);
+        let index = this.productlist.findIndex(f => f.barCode == newObj.barCode && f.batchNo == newObj.batchNo);
         this.productlist[index].qty = this.productlist[index].qty+1;
         this.productlist[index].qtyBal = this.productlist[index].qtyBal+1;
         this.Itemcalculation(index);
@@ -1020,7 +1031,7 @@ export class AddNewSaleDComponent implements OnInit{
           this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
           this.productlist[i].discount = this.selectedProductList[0].sharePercentage;
           this.productlist[i].isTaxable = this.selectedProductList[0].isTaxable;
-            console.log(this.productlist[i].isTaxable);
+          console.log(this.productlist[i].isTaxable);
           this.Itemcalculation(i);
           let el: HTMLElement = this.newRowButton.nativeElement;
           el.click();
@@ -1070,7 +1081,10 @@ export class AddNewSaleDComponent implements OnInit{
 
  updateQtyBal(data:Products,index:any)
  {
-  data.qtyBal = data.qty;
+  if(data.qty > data.qtyBal){
+    this.toastr.error("Available Quantity is less than input quantity.")
+    data.qty = data.qtyBal;
+  }
   this.Itemcalculation(index);
  }
 
@@ -1089,7 +1103,7 @@ async InvoiceOnChange()
     return;
   }
   try {
-    const invoiceData = await lastValueFrom(this.invoicesService.GetInvoice(this.selectedVoucherNo));
+    const invoiceData = await lastValueFrom(this.invoicesService.GetSaleInvoice(this.selectedVoucherNo));
 
     this.productlist = invoiceData.Products;
     this.selectedCustomerName = {cstID:invoiceData.CustomerOrVendorID,cstName:invoiceData.customerOrVendorName};
@@ -1104,25 +1118,30 @@ async InvoiceOnChange()
     this.totalAdvanceExtraTax = invoiceData.totalAdvanceExtraTax;
     this.totalExtraDiscount = invoiceData.totalExtraDiscount;
     this.totalNetPayable = invoiceData.netTotal;
+    console.log(invoiceData.Products);
     for (let i = 0; i < this.productlist.length; i++) {
       this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
-
       this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
       this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
       this.productlist[i].barCode = this.selectedProductList[0].barCode;
       this.productlist[i].isTaxable = this.selectedProductList[0].isTaxable;
-
+      this.productlist[i].qtyBal = invoiceData.Products[i].unitQty;
+      this.productlist[i].purchRate = invoiceData.Products[i].purchRate;
+      if(invoiceData.Products[i].expiry)
+      {
+        this.productlist[i].expiryDate = new Date(invoiceData.Products[i].expiry);
+      }
       this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
       this.productlist[i].depName =this.selectedProductList[0].depName;
       this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
       this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
 
-      this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0,
-      this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0,
-      this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0,
-      this.productlist[i].advanceTaxAmount= invoiceData.Products[i].ProductTaxes[1].taxAmount || 0,
-      this.productlist[i].extraAdvanceTaxPercent= invoiceData.Products[i].ProductTaxes[2].taxPercent || 0,
-      this.productlist[i].extraAdvanceTaxAmount= invoiceData.Products[i].ProductTaxes[2].taxAmount || 0
+      // this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0,
+      // this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0,
+      // this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0,
+      // this.productlist[i].advanceTaxAmount= invoiceData.Products[i].ProductTaxes[1].taxAmount || 0,
+      // this.productlist[i].extraAdvanceTaxPercent= invoiceData.Products[i].ProductTaxes[2].taxPercent || 0,
+      // this.productlist[i].extraAdvanceTaxAmount= invoiceData.Products[i].ProductTaxes[2].taxAmount || 0
       this.productlist[i].prodInvoiceID=  0;
       this.Itemcalculation(i)
     }

@@ -13,6 +13,7 @@ namespace eMaestroD.DataAccess.IRepositories
         Task<string> GenerateGLVoucherNoAsync(int txTypeID, int? comID);
         Task<string> GenerateTempGLVoucherNoAsync(int txTypeID, int? comID);
         Task<List<GL>> GetGLEntriesByVoucherNoAsync(string voucherNo);
+        Task<List<TempGL>> GetSaleGLEntriesByVoucherNoAsync(string voucherNo);
         Task<List<TempGL>> GetTempGLEntriesByVoucherNoAsync(string voucherNo);
         Task<bool> UpdateGLIsConvertedAsync(string voucherNo, string convertedVoucherNo, bool isDeleted);
         Task InsertEntriesAsync<T>(List<T> items) where T : class;
@@ -24,6 +25,7 @@ namespace eMaestroD.DataAccess.IRepositories
         Task PostTempGLEntriesAsync(string voucherNo); 
          Task<List<Invoice>> GetInvoicesAsync(int txTypeID, int customerOrVendorID, int comID);
         Task<List<InvoiceProduct>> GetItemsBySupplierAndDate(int supplierId, DateTime datefrom, DateTime dateTo);
+        Task<List<InvoiceProduct>> GetProductBatchByProdBCID(int prodBCID, int locID, int comID);
         Task<List<VendorProduct>> GetVendorProductListAsync(int comID);
         Task InsertVendorProductAsync(VendorProduct vendorProduct);
 

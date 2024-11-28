@@ -49,8 +49,6 @@ export class SharedDataService {
   }
 
   loadAllData(): Observable<any> {
-    console.log("in");
-
      const currentComID = localStorage.getItem('comID');
      const currentTenantID = localStorage.getItem('tenantID');
   if (this.isLoaded && this.storedComID === currentComID && this.storedTenantID === currentTenantID) {
@@ -122,4 +120,111 @@ export class SharedDataService {
     lastValueFrom(this._appConfigService.SaveConfigSetting(data));
     this.configSettingSubject.next(data);
   }
+
+
+  updateUsers$(): void {
+    this._userService.getAllUsers().pipe(
+      defaultIfEmpty([]),
+      tap(users => {
+        this.usersSubject.next(users || []);
+      })
+    ).subscribe();
+  }
+
+
+  updateTaxes$(data:Taxes) {
+    const currentData = this.taxesSubject.value || [];
+    const updatedData = [...currentData];
+
+    const index = updatedData.findIndex(p => p.TaxID === data.TaxID);
+    if (index >= 0) {
+      updatedData[index] = data;
+    } else {
+      updatedData.push(data);
+    }
+
+    this.taxesSubject.next(updatedData);
+  }
+
+  updateReportSettings$(data:InvoiceReportSettings[]) {
+    const currentData = this.reportSettingItemSubject.value || [];
+    const updatedData = [...currentData];
+
+    data.forEach(newItem => {
+      const index = updatedData.findIndex(p => p.invoiceReportSettingID === newItem.invoiceReportSettingID);
+      if (index >= 0) {
+        updatedData[index] = newItem;
+      } else {
+        updatedData.push(newItem);
+      }
+    });
+
+    this.reportSettingItemSubject.next(updatedData);
+  }
+
+  updateCustomers$(data:Customer) {
+    const currentData = (this.customerSubject.value as { [key: string]: any })["enttityDataSource"] || [];
+    const updatedData = [...currentData];
+    console.log(data);
+    const index = updatedData.findIndex(p => p.cstID === data.cstID);
+    if (index >= 0) {
+      updatedData[index] = data;
+    } else {
+      updatedData.push(data);
+    }
+
+   (this.customerSubject.value as { [key: string]: any })["enttityDataSource"] = updatedData;
+    this.customerSubject.next(this.customerSubject.value);
+   }
+
+  updateVendors$(data:Vendor) {
+    const currentData = (this.vendorSubject.value as { [key: string]: any })["enttityDataSource"] || [];
+    const updatedData = [...currentData];
+
+    const index = updatedData.findIndex(p => p.vendID === data.vendID);
+    if (index >= 0) {
+      updatedData[index] = data;
+    } else {
+      updatedData.push(data);
+    }
+
+   (this.vendorSubject.value as { [key: string]: any })["enttityDataSource"] = updatedData;
+    this.vendorSubject.next(this.vendorSubject.value);
+  }
+
+  updateLocations$(data:Location) {
+    console.log(data);
+    const currentData = this.locationSubject.value || [];
+    const updatedData = [...currentData];
+
+    const index = updatedData.findIndex(p => p.LocationId === data.LocationId);
+    if (index >= 0) {
+      updatedData[index] = data;
+    } else {
+      updatedData.push(data);
+    }
+
+    this.locationSubject.next(updatedData);
+  }
+
+
+  updateProducts$(data: ProductViewModel[]) {
+    const currentData = (this.productsSubject.value as { [key: string]: any })["enttityDataSource"] || [];
+    const updatedData = [...currentData];
+
+    data.forEach(newItem => {
+      const index = updatedData.findIndex(p => p.prodBCID === newItem.prodBCID);
+      if (index >= 0) {
+        updatedData[index] = newItem;
+      } else {
+        updatedData.push(newItem);
+      }
+    });
+
+   (this.productsSubject.value as { [key: string]: any })["enttityDataSource"] = updatedData;
+
+    this.productsSubject.next(this.productsSubject.value);
+
+  }
+
 }

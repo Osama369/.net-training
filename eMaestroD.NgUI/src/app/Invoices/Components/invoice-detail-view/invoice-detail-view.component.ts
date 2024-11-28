@@ -74,15 +74,17 @@ export class InvoiceDetailViewComponent {
        this.date = invoice.invoiceDate;
        this.type = invoice.invoiceType;
        this.Name = invoice.customerOrVendorName;
-       const seenProdBCIDs = new Set<number>();
+       const seenProdBatchKeys = new Set<string>();
 
        this.productlist = invoice.Products.filter(product => {
-           if (!seenProdBCIDs.has(product.prodBCID)) {
-               seenProdBCIDs.add(product.prodBCID);
+        const uniqueKey = `${product.prodBCID}-${product.batchNo || 'null'}`;
+           if (!seenProdBatchKeys.has(uniqueKey)) {
+               seenProdBatchKeys.add(uniqueKey);
                return true;
            }
            return false;
        });
+
         this.SubTotal = invoice.grossTotal
         this.TotalTax = invoice.totalTax
         this.TotalDiscount = invoice.totalDiscount;

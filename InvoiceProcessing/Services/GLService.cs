@@ -274,6 +274,111 @@ namespace eMaestroD.InvoiceProcessing.Services
             throw new InvalidOperationException("No Invoice found for provided voucherNo.");
         }
 
+        public async Task<Invoice> ConvertGLToSaleInvoice(string voucherNo)
+        {
+            var tempGlEntries = await _glRepository.GetSaleGLEntriesByVoucherNoAsync(voucherNo);
+
+            if (tempGlEntries != null && tempGlEntries.Any())
+            {
+                var masterEntry = tempGlEntries.FirstOrDefault(ge => IsMasterTempEntry(ge));
+                if (masterEntry == null)
+                {
+                    throw new InvalidOperationException("Master Entry not found.");
+                }
+
+                var detailEntries = tempGlEntries.Where(ge => !IsMasterTempEntry(ge) && ge.prodBCID > 0).ToList();
+
+                var entry = tempGlEntries.FirstOrDefault(ge => !IsMasterTempEntry(ge) && ge.prodBCID == 0);
+                int invoiceDetailID = entry != null ? entry.TempGLID : 0;
+
+                string customerOrVendorName = string.Empty;
+                if (masterEntry.cstID != 0)
+                {
+                    var customer = await _customerRepository.GetCustomerByIdAsync(masterEntry.cstID);
+                    customerOrVendorName = customer?.cstName ?? "";
+                }
+                else if (masterEntry.vendID != 0)
+                {
+                    var vendor = await _vendorRepository.GetVendorByIdAsync(masterEntry.vendID);
+                    customerOrVendorName = vendor?.vendName ?? "";
+                }
+
+
+                var invoice = new Invoice
+                {
+                    invoiceID = masterEntry.TempGLID,
+                    invoiceDetailID = invoiceDetailID,
+                    txTypeID = masterEntry.txTypeID,
+                    CustomerOrVendorID = masterEntry.cstID != 0 ? masterEntry.cstID : masterEntry.vendID,
+                    customerOrVendorName = customerOrVendorName,
+                    fiscalYear = masterEntry.depositID,
+                    invoiceVoucherNo = masterEntry.voucherNo,
+                    invoiceDate = masterEntry.dtTx,
+                    locID = masterEntry.locID,
+                    comID = masterEntry.comID,
+                    grossTotal = masterEntry.creditSum + masterEntry.discountSum + masterEntry.extraDiscountSum - masterEntry.taxSum + masterEntry.rebateSum,
+                    netTotal = masterEntry.creditSum,
+                    totalExtraTax = decimal.Zero,
+                    totalAdvanceExtraTax = decimal.Zero,
+                    totalDiscount = masterEntry.discountSum,
+                    totalExtraDiscount = masterEntry.extraDiscountSum,
+                    totalTax = masterEntry.taxSum,
+                    totalRebate = masterEntry.rebateSum,
+                    convertedInvoiceNo = masterEntry.checkName,
+                    invoiceType = masterEntry.balSum > 0 ? "Credit" : "Cash",
+                    isPaymented = masterEntry.isPaid,
+                    totalRemainingPayment = entry.balSum,
+                    isApproved = masterEntry.ApprovedDate != null ? true : false,
+                    bookerID = masterEntry.bookerID,
+                    salesmanID = masterEntry.salesManID,
+                    Products = new List<InvoiceProduct>()
+                };
+
+                foreach (var detail in detailEntries)
+                {
+                    var productDetail = await _productRepository.GetProducts((int)masterEntry.comID, detail.prodBCID);
+                    var product = new InvoiceProduct
+                    {
+                        prodInvoiceID = detail.TempGLID,
+                        prodID = detail.prodID,
+                        prodBCID = detail.prodBCID,
+                        prodCode = productDetail.FirstOrDefault().barCode,
+                        prodName = productDetail.FirstOrDefault().prodName,
+                        qty = detail.qty,
+                        unitQty = detail.qtyBal,
+                        bounsQty = detail.bonusQty,
+                        purchRate = detail.lastCost,
+                        sellRate = detail.unitPrice,
+                        netAmount = detail.debitSum > 0 ? detail.debitSum : detail.creditSum,
+                        discountPercent = (detail.checkAdd != null && decimal.TryParse(detail.checkAdd.ToString(), out var parsedValue)) ? parsedValue : 0,
+                        discountAmount = detail.discountSum,
+                        extraDiscountAmount = detail.extraDiscountSum,
+                        rebateAmount = detail.rebateSum,
+                        batchNo = detail.batchNo,
+                        expiry = detail.expiry,
+                        notes = detail.glComments,
+                        mrp = detail.mrp,
+                        sellingPrice = detail.sellPrice,
+                        lastCost = detail.lastCost,
+                        ProductTaxes = detail.tempGLDetails.Select(detail => new InvoiceProductTax
+                        {
+                            taxDetailID = detail.TempGLDetailID,
+                            taxAcctNo = detail.acctNo,
+                            taxAmount = detail.GLAmount,
+                            taxPercent = detail.rate
+                        }).ToList()
+                    };
+
+                    invoice.Products.Add(product);
+                }
+
+                return invoice;
+            }
+
+            throw new InvalidOperationException("No Invoice found for provided voucherNo.");
+        }
+
+        
         private bool IsMasterEntry(GL glEntry)
         {
             return string.IsNullOrEmpty(glEntry.acctNo) && string.IsNullOrEmpty(glEntry.relAcctNo);
@@ -373,7 +478,15 @@ namespace eMaestroD.InvoiceProcessing.Services
             var data = await _glRepository.GetItemsBySupplierAndDate(supplierId, datefrom, dateTo);
             return data;
         }
-        
+
+        public async Task<List<InvoiceProduct>> GetProductBatchByProdBCID(int prodBCID, int locID, int comID)
+        {
+            var data = await _glRepository.GetProductBatchByProdBCID(prodBCID, locID, comID);
+            return data;
+        }
+
+
+
         //Remove this after all invoices changes
         public async Task InsertGLEntriesAsync<T>(IEnumerable<T> items, DateTime now, string username) where T : GL
         {

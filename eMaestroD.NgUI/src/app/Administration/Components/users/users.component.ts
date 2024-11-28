@@ -8,6 +8,7 @@ import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { UserService } from '../../Services/user.service';
 import { Users } from '../../Models/users';
 import { APP_ROUTES } from 'src/app/app-routes';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 @Component({
   selector: 'app-users',
@@ -33,7 +34,8 @@ export class UsersComponent implements OnInit {
       private toastr: ToastrService, private router: Router,
       private authService:AuthService,
       public bookmarkService: BookmarkService,
-      public route : ActivatedRoute
+      public route : ActivatedRoute,
+      private sharedDataService : SharedDataService
       ) { }
 
     ngOnInit() {
@@ -143,6 +145,7 @@ export class UsersComponent implements OnInit {
               next : (lst) => {
                 this.toastr.success("User has been successfully deleted!");
                 this.User = this.User.filter(item => item.UserID !== ID);
+                this.sharedDataService.updateUsers$();
               },
               error: (err)=> {
                 this.toastr.error(err.error);

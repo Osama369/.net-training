@@ -15,8 +15,8 @@ export class ProductsService {
 
   constructor(private http: HttpClient) { }
 
-  saveProduct(productlist: Products): Observable<Products[]> {
-    return this.http.post<Products[]>(this.baseApiUrl, productlist);
+  saveProduct(productlist: Products): Observable<ProductViewModel[]> {
+    return this.http.post<ProductViewModel[]>(this.baseApiUrl, productlist);
   }
 
   deleteProduct(prodID: any) {

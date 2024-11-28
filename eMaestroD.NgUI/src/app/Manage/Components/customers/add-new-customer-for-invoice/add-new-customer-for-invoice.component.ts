@@ -207,7 +207,7 @@ CheckCustomerExistByVAT()
       this.customerList[0].comment = this.isRegular;
       this.customersService.saveCustomer(this.customerList[0]).subscribe({
         next: (cst:any) => {
-
+          this.sharedDataService.updateCustomers$(cst);
           this.clear();
           if(this.title == "Customer Registration")
           {

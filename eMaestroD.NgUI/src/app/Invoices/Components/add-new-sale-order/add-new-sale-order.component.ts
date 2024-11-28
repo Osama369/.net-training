@@ -192,7 +192,8 @@ export class AddNewSaleOrderComponent implements OnInit{
         this.userList = result;
         this.bookerList = this.userList.filter(x=>x.RoleName == 'Booker');
         this.salesManList = this.userList.filter(x=>x.RoleName == 'Salesman');
-        console.log(result);
+        console.log(this.bookerList);
+        console.log(this.salesManList);
       }
     })
 
@@ -389,13 +390,12 @@ export class AddNewSaleOrderComponent implements OnInit{
           let index = this.productlist.findIndex(f => f.prodBCID == newObj.prodBCID);
           this.productlist[index].qty = this.productlist[index].qty+1;
           this.Itemcalculation(index);
-          this.onEnterComplexInternal(this.inputFields.length-5);
+          this.onEnterComplexInternal(this.inputFields.length-3);
         }
         else
         {
             if(this.selectedProductList.length >0)
             {
-              console.log(this.selectedProductList);
             this.productlist[i].prodID = this.selectedProductList[0].prodID;
             this.productlist[i].prodBCID = this.selectedProductList[0].prodBCID;
             this.productlist[i].barCode = this.selectedProductList[0].barCode;
@@ -414,6 +414,8 @@ export class AddNewSaleOrderComponent implements OnInit{
             this.productlist[i].taxPercent = this.taxesList[0].taxValue;
             this.productlist[i].discount = this.selectedProductList[0].sharePercentage;
             this.productlist[i].isTaxable = this.selectedProductList[0].isTaxable;
+            this.productlist[i].batchNo = " ";
+            this.productlist[i].expiryDate = new Date();
 
             this.Itemcalculation(i);
             // let el: HTMLElement = this.newRowButton.nativeElement;
@@ -421,21 +423,11 @@ export class AddNewSaleOrderComponent implements OnInit{
             // this.cdr.detectChanges();
             // this.onEnterComplexInternal(this.inputFields.length-3);
           }
-            else
-            {
-              this.productlist[i].unitQty = 0;
-              this.productlist[i].qty = 0;
-              this.productlist[i].qtyBal = 0;
-              this.productlist[i].sellRate = 0;
-              this.productlist[i].purchRate = 0;
-              this.productlist[i].discount = 0;
-            }
+
 
         }
       }
-      else{
-        console.log(newObj);
-      }
+
     }
   };
 
@@ -1010,12 +1002,14 @@ export class AddNewSaleOrderComponent implements OnInit{
           this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
           this.productlist[i].discount = this.selectedProductList[0].sharePercentage;
           this.productlist[i].isTaxable = this.selectedProductList[0].isTaxable;
-            console.log(this.productlist[i].isTaxable);
+          this.productlist[i].batchNo = " ";
+          this.productlist[i].expiryDate = new Date();
+
           this.Itemcalculation(i);
-          let el: HTMLElement = this.newRowButton.nativeElement;
-          el.click();
-          this.cdr.detectChanges();
-          this.onEnterComplexInternal(this.inputFields.length-3);
+          // let el: HTMLElement = this.newRowButton.nativeElement;
+          // el.click();
+          // this.cdr.detectChanges();
+          this.onEnterComplexInternal(this.inputFields.length-2);
           }
           else
           {

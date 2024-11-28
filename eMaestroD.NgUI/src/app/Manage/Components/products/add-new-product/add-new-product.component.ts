@@ -69,7 +69,6 @@ export class AddNewProductComponent {
     private genericService : GenericService,
     private AuthService : AuthService,
     private zone: NgZone
-
   ) {}
 
 
@@ -342,6 +341,7 @@ onRowEditCancel(product:any, editing:any) {
       console.log(this.productlist[0])
       this.productService.saveProduct(this.productlist[0]).subscribe({
         next: (prd:any) => {
+          this.sharedDataService.updateProducts$(prd);
           if(this.EditProdID == undefined)
           {
             this.toastr.success("Product has been successfully added!");

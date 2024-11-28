@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Location } from '../..//Models/location';
 import { LocationService } from '../../Services/location.service';
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 @Component({
   selector: 'app-add-location',
@@ -40,6 +41,7 @@ export class AddLocationComponent {
     private toastr: ToastrService,
     private el: ElementRef,
     private locaitonService : LocationService,
+    private sharedDataService : SharedDataService,
     ) {}
 
   ngOnChanges(changes: SimpleChanges) {
@@ -88,6 +90,7 @@ export class AddLocationComponent {
       this.locationList[0].active = true;
       this.locaitonService.saveLoc(this.locationList[0]).subscribe({
         next: (loc) => {
+          this.sharedDataService.updateLocations$(loc);
           if(this.title == "Location Registration")
           {
             this.toastr.success("Location has been successfully added");
