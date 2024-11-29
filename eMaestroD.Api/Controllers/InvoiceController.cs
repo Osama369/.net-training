@@ -83,6 +83,27 @@ namespace eMaestroD.Api.Controllers
         }
 
         [HttpGet]
+        [Route("{voucherNo}")]
+        public async Task<IActionResult> GetSaleInvoice(string voucherNo)
+        {
+            try
+            {
+                var invoice = await _glService.ConvertGLToSaleInvoice(voucherNo);
+
+                if (invoice == null)
+                {
+                    return NotFound("Invoice not found.");
+                }
+
+                return Ok(invoice);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
         [Route("{txtypeID}/{customerOrVendorID}/{comID}")]
         public async Task<IActionResult> GetInvoices(int txtypeID, int customerOrVendorID, int comID)
         {
@@ -148,6 +169,23 @@ namespace eMaestroD.Api.Controllers
 
             return Ok(invoices); 
         }
+
+        [HttpGet]
+        [Route("{prodBCID}/{locID}/{comID}")]
+        public async Task<IActionResult> GetProductBatchByProdBCID(int prodBCID, int locID, int comID)
+        {
+
+            var invoices = await _glService.GetProductBatchByProdBCID(prodBCID, locID,comID);
+
+            if (invoices == null)
+            {
+                return NotFound("Invoices not found.");
+            }
+
+            return Ok(invoices);
+        }
+
+        
 
         [HttpPost]
         public async Task<IActionResult> PostInvoices(List<Invoice> invoices)

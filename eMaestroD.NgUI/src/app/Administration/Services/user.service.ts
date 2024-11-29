@@ -12,8 +12,8 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  saveUser(list: Users[]): Observable<Users[]> {
-    return this.http.post<Users[]>(this.baseApiUrl+'saveUser', list);
+  saveUser(list: Users[]): Observable<Users> {
+    return this.http.post<Users>(this.baseApiUrl+'saveUser', list);
   }
 
   saveUserInMaster(list: Users): Observable<Users[]> {

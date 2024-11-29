@@ -239,6 +239,9 @@ namespace eMaestroD.Api.Controllers
 
                 _notificationInterceptor.SaveNotification("UsersEdit", user[0].ComID, "");
             }
+           
+            var loc = await _AMDbContext.Locations.FirstOrDefaultAsync(x => x.LocationId == user[0].locID);
+            user[0].locations = loc.LocationName;
             return Ok(user[0]);
 
         }

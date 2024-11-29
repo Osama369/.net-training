@@ -133,7 +133,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
   invoiceID : number = 0;
   invoiceDetailID : number = 0;
   fiscalYear : number = 0;
-
+  isPos : boolean = localStorage.getItem("isPos") === 'true';
   displayDialog: boolean = false;
   fromDate: Date;
   toDate: Date;
@@ -398,21 +398,11 @@ export class AddNewPurchaseOrderComponent implements OnInit{
             // this.cdr.detectChanges();
             // this.onEnterComplexInternal(this.inputFields.length-3);
           }
-            else
-            {
-              this.productlist[i].unitQty = 0;
-              this.productlist[i].qty = 0;
-              this.productlist[i].qtyBal = 0;
-              this.productlist[i].sellRate = 0;
-              this.productlist[i].purchRate = 0;
-              this.productlist[i].discount = 0;
-            }
+
 
         }
       }
-      else{
-        console.log(newObj);
-      }
+
     }
   };
 
@@ -585,26 +575,41 @@ export class AddNewPurchaseOrderComponent implements OnInit{
   }
 
 
-  validateFields()
-  {
-    if(this.selectedDate == undefined) {
-      this.toastr.error("Please select date!");
+  validateFields() {
+    if (this.selectedDate === undefined) {
+      this.toastr.error("Please select a date!");
     }
-    else if(!this.SelectedType[0].name) {
-      this.toastr.error("Please select type!");
+    else if (!this.SelectedType[0].name) {
+      this.toastr.error("Please select a type!");
     }
-    else if(this.selectedCustomerName == undefined) {
-      this.toastr.error("Please select supplier!");
+    else if (this.selectedCustomerName === undefined) {
+      this.toastr.error("Please select a supplier!");
     }
-    else if(this.selectedCustomerName.vendID == undefined) {
-      this.toastr.error("Please select supplier!");
+    else if (this.selectedCustomerName.vendID === undefined) {
+      this.toastr.error("Supplier information is incomplete. Please select a valid supplier!");
     }
-    else if(this.selectedLocation.LocationId == undefined) {
-      this.toastr.error("Please select location!");
-    }else if(this.productlist.filter(p => p.prodID > 0).length == 0)
-    {
-      this.toastr.error("please add alteast one item!");
-    }else{
+    else if (this.selectedLocation.LocationId === undefined) {
+      this.toastr.error("Please select a location!");
+    }
+    else if (this.productlist.filter(p => p.prodID > 0).length === 0) {
+      this.toastr.error("Please add at least one item!");
+    }
+    else if (this.productlist.filter(p => p.prodID > 0 && (p.qty === 0 || p.qty == undefined)).length > 0) {
+      this.toastr.error("Please specify a quantity for all items!");
+    }
+    else if (this.productlist.filter(p => p.prodID > 0 && (p.purchRate === 0 || p.purchRate == undefined)).length > 0) {
+      this.toastr.error("Please specify the purchase rate for all items!");
+    }
+    else if (this.productlist.filter(p => p.prodID > 0 && (p.sellingPrice === 0 || p.sellingPrice == undefined)).length > 0) {
+      this.toastr.error("Please specify the Selling price for all items!");
+    }
+    else if (!this.isPos && this.productlist.filter(p => p.prodID > 0 && (p.batchNo === "" || p.batchNo === undefined)).length > 0) {
+      this.toastr.error("Please provide the batch number for all items!");
+    }
+    else if (!this.isPos && this.productlist.filter(p => p.prodID > 0 && (p.expiryDate === undefined)).length > 0) {
+      this.toastr.error("Please select an expiry date for all items!");
+    }
+    else {
       return true;
     }
     return false;
@@ -966,10 +971,10 @@ export class AddNewPurchaseOrderComponent implements OnInit{
           this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
 
           this.Itemcalculation(i);
-          let el: HTMLElement = this.newRowButton.nativeElement;
-          el.click();
-          this.cdr.detectChanges();
-          this.onEnterComplexInternal(this.inputFields.length-3);
+          // let el: HTMLElement = this.newRowButton.nativeElement;
+          // el.click();
+          // this.cdr.detectChanges();
+          this.onEnterComplexInternal(this.inputFields.length-2);
           }
           else
           {

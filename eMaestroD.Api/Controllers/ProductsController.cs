@@ -292,7 +292,12 @@ namespace eMaestroD.Api.Controllers
                 }
             }
 
-            return Ok(product);
+            var products = await _AMDbContext.Set<ProductViewModel>()
+                .FromSqlRaw("EXEC GetProducts @comID = {0}, @prodBCID = {1}", product.comID, product.ProductBarCodes[0].prodBCID)
+                .ToListAsync();
+
+            return Ok(products);
+
         }
 
         [HttpDelete]

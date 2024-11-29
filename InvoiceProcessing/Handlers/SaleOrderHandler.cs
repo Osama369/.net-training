@@ -144,8 +144,8 @@ namespace eMaestroD.InvoiceProcessing.Handlers
             {
                 TempGLID = (int)invoice.invoiceDetailID,
                 txTypeID = (int)invoice.txTypeID,
-                cstID = 0,
-                vendID = (int)invoice.CustomerOrVendorID,
+                cstID = (int)invoice.CustomerOrVendorID,
+                vendID = 0,
                 depositID = (int)invoice.fiscalYear,
                 salesManID = (int)invoice.salesmanID,
                 bookerID = (int)invoice.bookerID,

@@ -40,7 +40,8 @@ namespace eMaestroD.Models.Models
         public bool? AllowExport { get; set; }
         public bool? IsMultiLogin { get; set; }
 
-
+        [NotMapped]
+        public string? locations { get; set; }
         [NotMapped]
         public string? userName { get { return FirstName + " " + LastName; } }
     }

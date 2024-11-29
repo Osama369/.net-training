@@ -64,13 +64,18 @@
                 <input pInputText id="shortName" #inputFieldTableCst (keyup.enter)="onEnterTableInput(2)"
                     maxlength="95" class="col-form-label col-12" name="shortName" [(ngModel)]="productlist[0].shortName">
             </div>
+            <div class="col-3">
 
+            </div>
             <div class="col-3">
               <label class="col-form-label date-label required" translate>Supplier Name&nbsp;</label>
               <p-dropdown #inputField (keyup.enter)="onEnterTableInput(3)"  styleClass="myclass col-11" [style]="{'border-radius':'6px 0px 0px 6px'}" [(ngModel)]="productlist[0].vendID"
                   placeholder="Select a Supplier" [options]="Supplierlist"
                   optionLabel="vendName" optionValue="vendID" [filter]="true" [filterBy]="'vendName'" (onChange)="showSharePercentage()"
                   [showClear]="true">
+                  <ng-template let-vendor pTemplate="item">
+                    <div>{{vendor.vendCode}} - {{vendor.vendName}}</div>
+                  </ng-template>
                 </p-dropdown>
                 <!-- <p-button  icon="pi pi-plus" title="Add New Supplier"
                   styleClass="p-button col-1" (onClick)="openAddSupplier()">

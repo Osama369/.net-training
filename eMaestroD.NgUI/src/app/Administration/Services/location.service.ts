@@ -12,8 +12,8 @@ export class LocationService {
   baseApiUrl: string = environment.BaseApiUrl+'/Location/';
   constructor(private http: HttpClient) { }
 
-  saveLoc(list:Location): Observable<Location[]> {
-    return this.http.post<Location[]>(this.baseApiUrl,list);
+  saveLoc(list:Location): Observable<Location> {
+    return this.http.post<Location>(this.baseApiUrl,list);
   }
 
   getAllLoc(): Observable<Location[]> {

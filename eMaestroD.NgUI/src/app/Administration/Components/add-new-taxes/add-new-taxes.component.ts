@@ -1,3 +1,4 @@
+import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 import { Component, ElementRef, EventEmitter, Input, Output, QueryList, SimpleChanges, ViewChild, ViewChildren } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -14,6 +15,7 @@ export class AddNewTaxesComponent {
     private router: Router,
     private taxesService:TaxesService,
     private toastr: ToastrService,
+    private sharedDataService : SharedDataService
   ) {}
 
   @Input() taxVisible : boolean;
@@ -73,6 +75,7 @@ export class AddNewTaxesComponent {
     else{
         this.taxesService.saveTaxes(this.taxList[0]).subscribe({
           next: (data: any) => {
+            this.sharedDataService.updateTaxes$(data);
             if(this.title == "Add New Tax")
             {
               this.toastr.success("Tax has been successfully added!");

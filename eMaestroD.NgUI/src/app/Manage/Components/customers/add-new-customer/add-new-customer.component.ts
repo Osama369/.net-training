@@ -219,6 +219,7 @@ export class AddNewCustomerComponent {
         this.customerList[0].comment = "true";
         this.customersService.saveCustomer(this.customerList[0]).subscribe({
           next: (cst:any) => {
+            this.sharedDataService.updateCustomers$(cst);
             if(this.title == "Customer Registration")
             {
               this.toastr.success("Customer has been successfully added!");
@@ -255,9 +256,11 @@ export class AddNewCustomerComponent {
         this.vendorList[0].active = true;
         this.vendorService.saveVendor(this.vendorList[0]).subscribe({
           next: (vnd:any) => {
+            this.sharedDataService.updateVendors$(vnd);
             this.customerList[0].empID = vnd.vendID;
             this.customersService.saveCustomer(this.customerList[0]).subscribe({
               next: (cst:any) => {
+                this.sharedDataService.updateCustomers$(cst);
                 if(this.title == "Customer Registration")
                 {
                   this.toastr.success("Customer and Supplier has been successfully added!");

@@ -54,6 +54,16 @@ namespace eMaestroD.DataAccess.Repositories
                 .ToListAsync();
         }
 
+        public async Task<List<TempGL>> GetSaleGLEntriesByVoucherNoAsync(string voucherNo)
+        {
+            var query = "EXEC GetSaleGLEntriesByVoucherNo @VoucherNo = {0}";
+
+            return await _dbContext.TempGL
+                .FromSqlRaw(query, voucherNo)
+                .ToListAsync();
+        }
+
+
         public async Task<List<TempGL>> GetTempGLEntriesByVoucherNoAsync(string voucherNo)
         {
             return await _dbContext.TempGL
@@ -474,6 +484,21 @@ namespace eMaestroD.DataAccess.Repositories
             return SDL;
         }
 
+        public async Task<List<InvoiceProduct>> GetProductBatchByProdBCID(int prodBCID, int locID, int comID)
+        {
+            string sql = "EXEC GetProductBatchByProdBCID @SupplierID, @DateFrom, @DateTo";
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                new SqlParameter { ParameterName = "@prodBCID", Value = prodBCID },
+                new SqlParameter { ParameterName = "@locID", Value = locID },
+                new SqlParameter { ParameterName = "@comID", Value = comID }
+            };
+
+            var SDL = await _dbContext.InvoiceProducts.FromSqlRaw(sql, parms.ToArray()).ToListAsync();
+            return SDL;
+        }
+
+       
         //will do this after tempGL
         public async Task<List<GLTxLinks>> GenerateGLTxLinks(string invoiceNo, int? GLID)
         {

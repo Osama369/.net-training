@@ -189,8 +189,9 @@ export class AddNewUserComponent {
                     }
                     this.UserList.push({comID:undefined});
                   });
-                this.UserList.splice(this.UserList.length-1,1);
-                this.userService.saveUser(this.UserList).subscribe(us=>{
+                  this.UserList.splice(this.UserList.length-1,1);
+                  this.userService.saveUser(this.UserList).subscribe(us=>{
+                        this.sharedDataService.updateUsers$();
                         if(this.title == "User Registration")
                         {
                           this.toastr.success("User has been successfully added!");

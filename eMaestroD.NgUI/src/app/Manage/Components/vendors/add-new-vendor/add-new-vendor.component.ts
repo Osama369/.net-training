@@ -133,6 +133,7 @@ export class AddNewVendorComponent {
 
         this.vendorService.saveVendor(this.vendorList[0]).subscribe({
           next: (vnd:any) => {
+            this.sharedDataService.updateVendors$(vnd);
             if(this.title == "Supplier Registration")
             {
               this.toastr.success("Supplier has been successfully added!");
@@ -171,9 +172,11 @@ export class AddNewVendorComponent {
 
         this.vendorService.saveVendor(this.vendorList[0]).subscribe({
           next: (vnd:any) => {
+            this.sharedDataService.updateVendors$(vnd);
             this.customerList[0].empID = vnd.vendID;
             this.customersService.saveCustomer(this.customerList[0]).subscribe({
               next: (cst:any) => {
+                this.sharedDataService.updateCustomers$(cst);
                 if(this.title == "Supplier Registration")
                 {
                   this.toastr.success("Supplier and Customer has been successfully added!");

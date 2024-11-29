@@ -72,6 +72,8 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                 crtDate = DateTime.Now,
                 modDate = DateTime.Now,
                 isConverted = false,
+                salesManID = (int)(invoice.salesmanID ?? 0),
+                bookerID = (int)(invoice.bookerID ?? 0),
                 balSum = invoice.invoiceType.ToLower() == "credit" ? (decimal)invoice.netTotal : 0
 
             };
@@ -120,6 +122,8 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                     isDeposited = false,
                     isCleared = false,
                     isConverted = false,
+                    salesManID = (int)(invoice.salesmanID ?? 0),
+                    bookerID = (int)(invoice.bookerID ?? 0),
                     gLDetails = product.ProductTaxes.Select(tax => new GLDetail
                     {
                         GLDetailID = tax.taxDetailID,
@@ -171,7 +175,9 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                     isDeposited = false,
                     isCleared = false,
                     isConverted = false,
-                    gLDetails = null
+                    gLDetails = null,
+                    salesManID = (int)(invoice.salesmanID ?? 0),
+                    bookerID = (int)(invoice.bookerID ?? 0),
                 };
 
                 glEntries.Add(glEntry2);
@@ -216,7 +222,9 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                     isDeposited = false,
                     isCleared = false,
                     isConverted = false,
-                    gLDetails = null
+                    gLDetails = null,
+                    salesManID = (int)(invoice.salesmanID ?? 0),
+                    bookerID = (int)(invoice.bookerID ?? 0),
                 };
 
                 glEntries.Add(glEntry3);
@@ -231,8 +239,8 @@ namespace eMaestroD.InvoiceProcessing.Handlers
             {
                 GLID = (int)invoice.invoiceDetailID,
                 txTypeID = (int)invoice.txTypeID,
-                cstID = 0,
-                vendID = (int)invoice.CustomerOrVendorID,
+                vendID = 0,
+                cstID = (int)invoice.CustomerOrVendorID,
                 depositID = (int)invoice.fiscalYear,
                 isDeposited = false,
                 isVoided = false,
@@ -247,6 +255,8 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                 taxSum = 0,
                 rebateSum = 0,
                 paidSum = 0,
+                salesManID = (int)(invoice.salesmanID ?? 0),
+                bookerID = (int)(invoice.bookerID ?? 0),
                 dtTx = invoice.invoiceDate,
                 locID = (int)invoice.locID,
                 comID = invoice.comID,
