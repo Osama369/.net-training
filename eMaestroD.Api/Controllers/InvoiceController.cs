@@ -174,15 +174,22 @@ namespace eMaestroD.Api.Controllers
         [Route("{prodBCID}/{locID}/{comID}")]
         public async Task<IActionResult> GetProductBatchByProdBCID(int prodBCID, int locID, int comID)
         {
-
-            var invoices = await _glService.GetProductBatchByProdBCID(prodBCID, locID,comID);
-
-            if (invoices == null)
+            try
             {
-                return NotFound("Invoices not found.");
-            }
 
-            return Ok(invoices);
+                var invoices = await _glService.GetProductBatchByProdBCID(prodBCID, locID,comID);
+
+                if (invoices == null)
+                {
+                    return NotFound("Invoices not found.");
+                }
+
+                return Ok(invoices);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         

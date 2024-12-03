@@ -486,7 +486,7 @@ namespace eMaestroD.DataAccess.Repositories
 
         public async Task<List<InvoiceProduct>> GetProductBatchByProdBCID(int prodBCID, int locID, int comID)
         {
-            string sql = "EXEC GetProductBatchByProdBCID @SupplierID, @DateFrom, @DateTo";
+            string sql = "EXEC GetProductBatchByProdBCID @prodBCID, @locID, @comID";
             List<SqlParameter> parms = new List<SqlParameter>
             {
                 new SqlParameter { ParameterName = "@prodBCID", Value = prodBCID },

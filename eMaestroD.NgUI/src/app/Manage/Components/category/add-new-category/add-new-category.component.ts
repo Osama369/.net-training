@@ -12,7 +12,7 @@ import { DepartmentService } from 'src/app/Manage/Services/department.service';
 export class AddNewCategoryComponent {
   itemList: Category[];
   departments: any[] = []; // For storing department options
-  categories: any[] = []; // For storing parent category options
+  categories: Category[] = []; // For storing parent category options
 
   @Output() dataEvent = new EventEmitter<any>();
   @Input() Data: any;
@@ -91,6 +91,13 @@ export class AddNewCategoryComponent {
     if (this.itemList[0].categoryName && this.itemList[0].depID) {
       this.categoryService.UpsertCategory(this.itemList[0]).subscribe({
         next: (prd) => {
+          if(this.itemList[0].parentCategoryID != undefined){
+            prd.parentCategoryName = this.categories.find(x=>x.categoryID == this.itemList[0].parentCategoryID).categoryName;
+          }
+          prd.depName = this.departments.find(x=>x.depID == this.itemList[0].depID).depName;
+
+          console.log(prd);
+
           if (this.title == "Category Registration") {
             this.toastr.success("Category has been successfully added!");
             this.dataEvent.emit({ type: 'added', value: prd });
