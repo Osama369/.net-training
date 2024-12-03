@@ -11,4 +11,5 @@ export interface Category {
   modby?: string;
   modDate?: Date;
   comID?: any;
+  depName?:any;
 }
