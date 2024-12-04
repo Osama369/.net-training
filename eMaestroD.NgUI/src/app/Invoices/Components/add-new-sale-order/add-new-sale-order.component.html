@@ -37,12 +37,12 @@
               </div>
 
               <div class="col-2">
-                <p-autoComplete #inputField  [(ngModel)]="selectedLocation" [suggestions]="LocationList"  (completeMethod)="filterLocation($event)" (keyup.enter)="onEnterComplex(3)"
+                <p-autoComplete #inputField  [(ngModel)]="selectedLocation" [suggestions]="LocationList"  (completeMethod)="filterLocation($event)" (keyup.enter)="onEnterComplex(2)"
                 field="LocationName" value="LocationId" [minLength]="1" [dropdown]="true"  (onSelect)="locatonChange()"></p-autoComplete>
               </div>
 
               <div class="col-2">
-                <p-autoComplete #inputField [(ngModel)]="selectedCustomerName" [suggestions]="customerList" (keydown)="customerVisible($event)"  (completeMethod)="filterCustomer($event)" (keyup.enter)="onEnterComplex(2)"
+                <p-autoComplete #inputField [(ngModel)]="selectedCustomerName" [suggestions]="customerList" (keydown)="customerVisible($event)"  (completeMethod)="filterCustomer($event)" (keyup.enter)="onEnterComplex(3)"
                 field="cstName" value="cstID" [minLength]="1" [dropdown]="true" [disabled]="selectedLocation && disable" >
                 <ng-template let-customer pTemplate="item">
                   <div>{{customer.cstCode}} - {{customer.cstName}}</div>
@@ -54,13 +54,13 @@
             </div>
 
             <div class="col-2">
-              <p-autoComplete #inputField  [(ngModel)]="selectedBooker" [suggestions]="bookerList"  (completeMethod)="filterLocation($event)" (keyup.enter)="onEnterComplex(3)"
-              field="UserName" value="UserID" [minLength]="1" [readonly]="true" [dropdown]="true"></p-autoComplete>
+              <p-autoComplete   [(ngModel)]="selectedBooker" [suggestions]="bookerList"   (keyup.enter)="onEnterComplex(4)"
+              field="UserName" [disabled]="true" value="UserID" [minLength]="1" [readonly]="true" [dropdown]="true" ></p-autoComplete>
             </div>
 
             <div class="col-2">
-              <p-autoComplete #inputField  [(ngModel)]="selectedSalesman" [suggestions]="salesManList"  (completeMethod)="filterLocation($event)" (keyup.enter)="onEnterComplex(3)"
-              field="UserName" value="UserID"  [minLength]="1" [readonly]="true" [dropdown]="true"></p-autoComplete>
+              <p-autoComplete   [(ngModel)]="selectedSalesman" [suggestions]="salesManList"   (keyup.enter)="onEnterComplex(5)"
+              field="UserName" value="UserID"  [disabled]="true" [minLength]="1" [readonly]="true" [dropdown]="true"></p-autoComplete>
             </div>
 
           </div>

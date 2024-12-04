@@ -16,6 +16,7 @@ export class AddNewCategoryComponent {
 
   @Output() dataEvent = new EventEmitter<any>();
   @Input() Data: any;
+  @Input() DepartmentList: any;
   @Input() title: any;
 
   @ViewChildren('inputFieldTableCst') inputFieldsTableCst: QueryList<any>;
@@ -38,7 +39,9 @@ export class AddNewCategoryComponent {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.loadDepartments();
     this.loadCategories();
+
     if (this.Data != undefined && this.Data.length != 0) {
       this.itemList[0] = this.Data;
     } else {
@@ -96,8 +99,7 @@ export class AddNewCategoryComponent {
           }
           prd.depName = this.departments.find(x=>x.depID == this.itemList[0].depID).depName;
 
-          console.log(prd);
-
+          this.loadCategories();
           if (this.title == "Category Registration") {
             this.toastr.success("Category has been successfully added!");
             this.dataEvent.emit({ type: 'added', value: prd });
