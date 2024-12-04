@@ -799,7 +799,7 @@ export class AddNewSaleMComponent implements OnInit{
       this.selectedDate = today;
       this.rowNmb = 0;
       this.invoicelist = [this.createNewGLList()];
-      this.productlist = [];
+      this.productlist = [{}];
       this.Filterproductlist = this.products;
       // this.calculateTotalAmount();
       this.onEnterComplex(0);

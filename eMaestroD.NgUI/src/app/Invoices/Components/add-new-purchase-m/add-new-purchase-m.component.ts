@@ -261,17 +261,8 @@ export class AddNewPurchaseMComponent implements OnInit{
       this.enterKeyPressCount++;
 
         if (this.enterKeyPressCount === 2) {
-          if(this.selectedCustomerId != undefined)
-          {
-            inputField.focus();
-            this.enterKeyPressCount = 0;
-          }
-          else{
-            this.toastr.error("Please Select Customer Name");
-            this.enterKeyPressCount = 1;
-            let drop =inputFieldARRAY[index-1].el.nativeElement.querySelector('input');
-            drop.focus();
-          }
+          inputField.focus();
+          this.enterKeyPressCount = 0;
         }
     }
     else
@@ -555,7 +546,7 @@ export class AddNewPurchaseMComponent implements OnInit{
       let today = new Date();
       this.selectedDate = today;
       this.rowNmb = 0;
-      this.productlist = [];
+      this.productlist = [{}];
       this.Filterproductlist = this.products;
       this.calculateTotalAmount();
       this.onEnterComplex(0);
@@ -926,7 +917,7 @@ export class AddNewPurchaseMComponent implements OnInit{
     if(!this.VendorVisible)
     {
       if (!this.selectedCustomerName.cstID) {
-        this.toastr.error("Please Select Customer.");
+        this.toastr.error("Please Select Supplier.");
         this.onEnterComplex(1);
       }
     }
@@ -1068,9 +1059,7 @@ export class AddNewPurchaseMComponent implements OnInit{
   async InvoiceOnChange()
   {
     if(this.selectedVoucherNo == undefined || this.selectedVoucherNo == "Select Invoice No") {
-      this.toastr.error("Please select Invoice!");
-      this.onEnterComplex(2);
-      this.productlist = [];
+      this.productlist = [{}];
       return;
     }
 

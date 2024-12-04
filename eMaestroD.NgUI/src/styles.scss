@@ -336,7 +336,7 @@ ol, ul{
 
 
 .select-tree-custom-style > .p-treeselect {
-  width: 66.666% !important;
+  width: 58.33333% !important;
 }
 
 .select-tree-custom-style1 > .p-treeselect {
@@ -348,4 +348,9 @@ ol, ul{
 .green-chip {
   background-color: rgb(20, 209, 20);
   color: white; /* Adjust text color for better contrast if needed */
+}
+
+
+.p-disabled{
+  color:black !important;
 }

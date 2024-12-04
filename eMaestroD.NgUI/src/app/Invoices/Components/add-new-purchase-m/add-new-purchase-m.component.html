@@ -56,7 +56,7 @@
               <label class="col-form-label Vendor-label col-3 required" translate></label>
 
               <div class="col-3">
-                <p-autoComplete #inputField  [(ngModel)]="selectedLocation" [suggestions]="LocationList"  (completeMethod)="filterLocation($event)" (keyup.enter)="onEnterComplex(3)"
+                <p-autoComplete #inputField  [(ngModel)]="selectedLocation" [suggestions]="LocationList"  (completeMethod)="filterLocation($event)" (keyup.enter)="onEnterComplex(4)"
                 field="LocationName" value="LocationId" [minLength]="1" [dropdown]="true" ></p-autoComplete>
               </div>
           </div>

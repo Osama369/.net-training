@@ -21,6 +21,7 @@ import { AddRowDirective } from './Directive/add-row.directive';
 import { DateFilterPipe } from './Pipes/date-filter-pipe.pipe';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { SharedDataService } from './Services/shared-data.service';
+import { FocusNextDirective } from './Directive/focus-next.directive';
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);
@@ -38,7 +39,8 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     InvoicesComponent,
     TimezoneDatePipe,
     DateFilterPipe,
-    AddRowDirective
+    AddRowDirective,
+    FocusNextDirective
   ],
   imports: [
     CommonModule,
@@ -63,7 +65,8 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     TimezoneDatePipe,
     AddRowDirective,
     PleaseWaitComponent,
-    DateFilterPipe
+    DateFilterPipe,
+    FocusNextDirective
   ],
   providers: [
     DatePipe,

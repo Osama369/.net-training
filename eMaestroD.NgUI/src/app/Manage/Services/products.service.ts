@@ -43,6 +43,10 @@ export class ProductsService {
     return this.http.get<Products>(this.baseApiUrl+'GetOneProductDetail/'+comID+'/'+prodID);
   }
 
+  IsBarcodeExist(barcode:any,barcodeID:any) : Observable<boolean> {
+    let comID = localStorage.getItem('comID');
+    return this.http.get<boolean>(this.baseApiUrl+'IsBarcodeExist/'+barcode+'/'+barcodeID+'/'+comID);
+  }
 
 
   uploadProducts(formData:any){

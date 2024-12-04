@@ -824,5 +824,42 @@ namespace eMaestroD.Api.Controllers
 
         }
 
+        [HttpGet]
+        [Route("IsBarcodeExist/{barcode}/{barcodeID}/{comID}")]
+        public async Task<IActionResult> IsBarcodeExist(string barcode, int barcodeID, int comID)
+        {
+            var query = _AMDbContext.ProductBarCodes.AsQueryable();
+
+            if (barcodeID == 0)
+            {
+                var barcodeExists = await query
+                    .Where(x => x.BarCode == barcode)
+                    .AnyAsync();
+
+                if (barcodeExists)
+                {
+                    return Ok(true);
+                }
+                else
+                {
+                    return Ok(false);
+                }
+            }
+            else
+            {
+                var barcodeExists = await query
+                    .Where(x => x.BarCode == barcode && x.prodBCID != barcodeID)
+                    .AnyAsync();
+
+                if (barcodeExists)
+                {
+                    return Ok(true);
+                }
+                else
+                {
+                    return Ok(false);
+                }
+            }
+        }
     }
 }

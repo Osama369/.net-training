@@ -418,7 +418,7 @@ export class AddNewBulkStockUpdateComponent implements OnInit{
       this.selectedDate = today;
       this.rowNmb = 0;
       this.invoicelist = [this.createNewGLList()];
-      this.productlist = [];
+      this.productlist = [{}];
       this.calculateTotalAmount();
       this.onEnterComplex(0);
       this.savebtnDisable = false;

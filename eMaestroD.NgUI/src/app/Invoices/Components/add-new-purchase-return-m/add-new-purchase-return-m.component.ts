@@ -565,7 +565,7 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
       let today = new Date();
       this.selectedDate = today;
       this.rowNmb = 0;
-      this.productlist = [];
+      this.productlist = [{}];
       this.Filterproductlist = this.products;
       this.calculateTotalAmount();
       this.onEnterComplex(0);

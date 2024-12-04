@@ -328,7 +328,7 @@ export class AddNewSaleDComponent implements OnInit{
         el.focus();
       }
 
-      index = index + (rownumber*14);
+      index = index + (rownumber*15);
       if (index < this.inputFieldsTable.length-1) {
         this.focusOnTableInput(index + 1);
       }
@@ -766,7 +766,7 @@ export class AddNewSaleDComponent implements OnInit{
 
   close()
   {
-    this.router.navigateByUrl(APP_ROUTES.invoices.quotations);
+    this.router.navigateByUrl(APP_ROUTES.invoices.saleInvoices);
   }
   focusing(){
     this.cdr.detectChanges();
@@ -1165,12 +1165,15 @@ async InvoiceOnChange()
   if(this.selectedVoucherNo == undefined || this.selectedVoucherNo == "Select Invoice No") {
     this.toastr.error("Please select Invoice!");
     this.onEnterComplex(2);
-    this.productlist = [];
+    this.productlist = [{}];
     return;
   }
   try {
     const invoiceData = await lastValueFrom(this.invoicesService.GetSaleInvoice(this.selectedVoucherNo));
-
+    if(invoiceData.Products.length == 0){
+      this.toastr.error("No Stock available for this sale order");
+      this.router.navigateByUrl(APP_ROUTES.invoices.quotations);
+    }
     this.productlist = invoiceData.Products;
     this.selectedCustomerName = {cstID:invoiceData.CustomerOrVendorID,cstName:invoiceData.customerOrVendorName};
     this.selectedLocation = this.locations.find(x=>x.LocationId == invoiceData.locID);

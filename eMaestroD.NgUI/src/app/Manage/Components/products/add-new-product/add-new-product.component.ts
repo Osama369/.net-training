@@ -31,7 +31,6 @@ export class AddNewProductComponent {
   categoryList: Category[] = [];
   categoryListByDepartment: TreeNode[] = [];
 
-
   productlist: Products[];
   FilterProductGrouplist: prodGroups[];
   SelectedproductGrouplist: any;
@@ -44,6 +43,11 @@ export class AddNewProductComponent {
   @Input() prodGroupData : any;
   @Input() showGroupBtn : boolean = false;
   SupplierVisible : boolean = false;
+  departmentVisible : boolean = false;
+  categoryVisible : boolean = false;
+  manufactureVisible : boolean = false;
+  brandVisible : boolean = false;
+
   selectedType : any;
   filterType : any;
   hiddenField : boolean = true;
@@ -83,7 +87,7 @@ export class AddNewProductComponent {
   @ViewChildren('inputFieldTableCst') inputFieldsTableCst: QueryList<any>;
   @ViewChild('savebtn') savebtn: ElementRef<HTMLElement>;
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
 
     this.route.params.subscribe(params1 => {
       this.EditProdID = params1['id'];
@@ -95,7 +99,7 @@ export class AddNewProductComponent {
     this.selectedType = this.type[0];
 
     this.filterType = this.type;
-    this.fetchAllDropdownData();
+    await this.fetchAllDropdownData();
     if(this.EditProdID)
     {
       this.getEditProductDetail();
@@ -196,7 +200,7 @@ addNewRow() {
   if(this.productlist[0].ProductBarCodes?.find(x=>x.BarCode == empty.toString() && x.Qty == 0 )){
     this.toastr.info("Please Fill Empty row first to add new row!");
   }else{
-    this.productlist[0].ProductBarCodes?.push({ prodID: this.productlist[0].prodID, BarCode: '', Unit: '', Qty: 0, Active: true})
+    this.productlist[0].ProductBarCodes?.push({ prodBCID : 0, prodID: this.productlist[0].prodID, BarCode: '', Unit: '', Qty: 0, Active: true})
     // this.productlist.push({ prodID: this.productlist.length + 1, barcode: '', prodUnit: '', baseQty: 0 });
   }
 }
@@ -294,7 +298,7 @@ onRowEditCancel(product:any, editing:any) {
     if(!this.isPos && this.productlist[0].vendID == undefined)
     {
       this.toastr.error("Please write Select Supplier.");
-      this.onEnterTableInput(1);
+      this.onEnterTableInput(2);
       return;
     }
 
@@ -309,13 +313,13 @@ onRowEditCancel(product:any, editing:any) {
     {
       this.toastr.error("Please write product code.");
       this.count++;
-      this.onEnterTableInput(0);
+      this.onEnterTableInput(-1);
     }
     else if(this.productlist[0].prodName == "" || this.productlist[0].prodName == undefined)
     {
       this.toastr.error("Please write product name.");
       this.count++;
-      this.onEnterTableInput(1);
+      this.onEnterTableInput(0);
     }
     else
     {
@@ -423,27 +427,109 @@ onRowEditCancel(product:any, editing:any) {
     // this.quotationCom.ProductsVisible = false;
   }
 
-  openAddSupplier()
-  {
-    this.AuthService.checkPermission('SuppliersCreate').subscribe(x=>{
-      if(x)
-      {
-       this.SupplierVisible  = true;
-      }
-      else{
-        this.toastr.error("Unauthorized Access! You don't have permission to access.");
-      }
-    });
+  dailogType : string = "";
+  openDialog(event: MouseEvent | KeyboardEvent, isKey: boolean, dialogType: string): void {
+    if (isKey && !(event as KeyboardEvent).altKey) {
+      return; // Exit if it's a key event but Alt is not pressed
+    }
+
+    this.dailogType = dialogType;
+    const permissionKey = this.getPermissionKey(dialogType);
+    const visibilityKey = this.getVisibilityKey(dialogType);
+
+    if (permissionKey && visibilityKey) {
+      this.AuthService.checkPermission(permissionKey).subscribe((hasPermission) => {
+        if (hasPermission) {
+          this[visibilityKey] = true;
+        } else {
+          this.toastr.error("Unauthorized Access! You don't have permission to access.");
+        }
+      });
+    }
   }
 
-  handleChildData(data:any)
-  {
-    if(data.type == 'added')
-      {
-          this.Supplierlist.push(data.value);
-          this.SelectedSupplier = data.value;
-        }
+  private getPermissionKey(dialogType: string): string | null {
+    const permissions: { [key: string]: string } = {
+      supplier: 'SuppliersCreate',
+      department: 'DepartmentCreate',
+      category: 'CategoryCreate',
+      manufacturer: 'ManufactureCreate',
+      brand: 'ProductCategoryCreate',
+    };
+    return permissions[dialogType.toLowerCase()] || null;
+  }
+
+  private getVisibilityKey(dialogType: string): string | null {
+    const visibilityKeys: { [key: string]: string } = {
+      supplier: 'SupplierVisible',
+      department: 'departmentVisible',
+      category: 'categoryVisible',
+      manufacturer: 'manufactureVisible',
+      brand: 'brandVisible',
+    };
+    return visibilityKeys[dialogType.toLowerCase()] || null;
+  }
+
+  handleChildData(newItem: any): void {
+    if (!newItem || !newItem.value) {
+      this.closeDialog();
+      return;
+    }
+
+    switch (this.dailogType) {
+      case 'supplier':
+        this.productlist[0].vendID = newItem.value.vendID;
+        this.closeDialog();
+        break;
+      case 'department':
+        this.departmentList.push(newItem.value);
+        this.departmentList = [...this.departmentList];
+        this.productlist[0].depID = newItem.value.depID;
+        this.closeDialog();
+        break;
+      case 'category':
+        this.categoryList.push(newItem.value);
+        this.SelectedCategory = newItem.value.categoryID;
+        this.onDepartmentChange(this.productlist[0].depID,this.SelectedCategory);
+        this.closeDialog();
+        break;
+      case 'manufacturer':
+        this.prodManufactureList.push(newItem.value);
+        this.productlist[0].prodManuID = newItem.value.prodManuID;
+        this.closeDialog();
+        break;
+      case 'brand':
+        this.productGrouplist.push(newItem.data);
+        this.productlist[0].prodGrpID = newItem.value.prodGrpID;
+        this.closeDialog();
+        break;
+      default:
+        console.warn('Unknown item :', newItem);
+        break;
+    }
+  }
+
+  closeDialog(): void {
+    switch (this.dailogType) {
+      case 'supplier':
         this.SupplierVisible = false;
+        break;
+      case 'department':
+        this.departmentVisible = false;
+        break;
+      case 'category':
+        this.categoryVisible = false;
+        break;
+      case 'manufacturer':
+        this.manufactureVisible = false;
+        break;
+      case 'brand':
+        this.brandVisible = false;
+        break;
+      default:
+        console.warn('Unknown dialog type:', this.dailogType);
+        break;
+    }
   }
 
   buildCategoryTree(categories: any[]): TreeNode[] {
@@ -478,8 +564,26 @@ onRowEditCancel(product:any, editing:any) {
 
   showSharePercentage()
   {
-    console.log(this.Supplierlist)
     this.productlist[0].sharePercentage = this.Supplierlist.find(x=>x.vendID == this.productlist[0].vendID).sharePercentage || 0;
-    console.log(this.productlist[0].sharePercentage)
+  }
+
+  async checkExistence(field: string, fieldID: any, index: number = 0, isCode:boolean) {
+    if (field != "") {
+      try {
+        const result = await lastValueFrom(this.productService.IsBarcodeExist(field, fieldID));
+        if (result) {
+          this.toastr.error("This barcode already exists.");
+          if (isCode) {
+            this.productlist[0].prodCode = "";
+            this.focusOnTableInput(0);
+          } else {
+            this.productlist[0].ProductBarCodes[index].BarCode = "";
+          }
+        }
+      } catch {
+        this.toastr.error("An error occurred while checking the code/barcode.");
+        this.productlist[0].prodCode = "";
+      }
+    }
   }
 }

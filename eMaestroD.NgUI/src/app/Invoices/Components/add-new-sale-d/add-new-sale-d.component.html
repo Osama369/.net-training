@@ -37,12 +37,12 @@
               </div>
 
               <div class="col-2">
-                <p-autoComplete #inputField  [(ngModel)]="selectedLocation" [suggestions]="LocationList"  (completeMethod)="filterLocation($event)" (keyup.enter)="onEnterComplex(3)"
+                <p-autoComplete #inputField  [(ngModel)]="selectedLocation" [suggestions]="LocationList"  (completeMethod)="filterLocation($event)" (keyup.enter)="onEnterComplex(2)"
                 field="LocationName" value="LocationId" [minLength]="1" [dropdown]="true"  (onSelect)="locatonChange()"></p-autoComplete>
               </div>
 
               <div class="col-2">
-                <p-autoComplete #inputField [(ngModel)]="selectedCustomerName" [suggestions]="customerList" (keydown)="customerVisible($event)"  (completeMethod)="filterCustomer($event)" (keyup.enter)="onEnterComplex(2)"
+                <p-autoComplete #inputField [(ngModel)]="selectedCustomerName" [suggestions]="customerList" (keydown)="customerVisible($event)"  (completeMethod)="filterCustomer($event)" (keyup.enter)="onEnterComplex(3)"
                 field="cstName" value="cstID" [minLength]="1" [dropdown]="true" [disabled]="selectedLocation && disable" >
                 <ng-template let-customer pTemplate="item">
                   <div>{{customer.cstCode}} - {{customer.cstName}}</div>
@@ -54,13 +54,13 @@
             </div>
 
             <div class="col-2">
-              <p-autoComplete #inputField  [(ngModel)]="selectedBooker" [suggestions]="bookerList"  (completeMethod)="filterLocation($event)" (keyup.enter)="onEnterComplex(3)"
-              field="UserName" value="UserID" [minLength]="1" [readonly]="true" [dropdown]="true"></p-autoComplete>
+              <p-autoComplete   [(ngModel)]="selectedBooker" [suggestions]="bookerList"  (keyup.enter)="onEnterComplex(3)"
+              field="UserName" value="UserID" [minLength]="1" [disabled]="true" [dropdown]="true"></p-autoComplete>
             </div>
 
             <div class="col-2">
-              <p-autoComplete #inputField  [(ngModel)]="selectedSalesman" [suggestions]="salesManList"  (completeMethod)="filterLocation($event)" (keyup.enter)="onEnterComplex(3)"
-              field="UserName" value="UserID"  [minLength]="1" [readonly]="true" [dropdown]="true"></p-autoComplete>
+              <p-autoComplete   [(ngModel)]="selectedSalesman" [suggestions]="salesManList"  (keyup.enter)="onEnterComplex(3)"
+              field="UserName" value="UserID"  [minLength]="1" [disabled]="true" [dropdown]="true"></p-autoComplete>
             </div>
 
           </div>
@@ -153,7 +153,7 @@
                         <input #inputFieldTable [style]="{'width':'42px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName)" (keyup.enter)="onEnterTableInput(7, ri)" type="text" [(ngModel)]="rowData.discount" name="discount"  (ngModelChange)="Itemcalculation(ri)" class="girdRow">
                     </td>
                     <td>
-                        <input #inputFieldTable [style]="{'width':'70px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName)" type="text" (keyup.enter)="onEnterTableInput(9, ri)" [(ngModel)]="rowData.discountAmount" name="discountAmount" (ngModelChange)="Itemcalculation(ri)" class="girdRow">
+                        <input #inputFieldTable [style]="{'width':'70px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName)" type="text" (keyup.enter)="rowData.isTaxable ? onEnterTableInput(9, ri) : onEnterTableInput(14, ri)" [(ngModel)]="rowData.discountAmount" name="discountAmount" (ngModelChange)="Itemcalculation(ri)" class="girdRow">
                     </td>
                     <td>
                         <input #inputFieldTable [style]="{'width':'75px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName) || isConverted || isDisabled" type="text" (keyup.enter)="onEnterTableInput(6, ri)" [(ngModel)]="rowData.discountedGross" readonly class="girdRow">

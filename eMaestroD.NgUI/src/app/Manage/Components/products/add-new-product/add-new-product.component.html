@@ -49,7 +49,7 @@
 
               <div class="col-3">
                   <label class="col-form-label date-label required" translate>Product Code&nbsp;</label>
-                  <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInput(0)" maxlength="25"
+                  <input pInputText #inputFieldTableCst (blur)="checkExistence(productlist[0].prodCode, 0,0, true)" (keyup.enter)="onEnterTableInput(0)" maxlength="25"
                       id="code" class="col-form-label col-12" name="code" [(ngModel)]="productlist[0].prodCode" autofocus />
               </div>
 
@@ -69,7 +69,7 @@
             </div>
             <div class="col-3">
               <label class="col-form-label date-label required" translate>Supplier Name&nbsp;</label>
-              <p-dropdown #inputField (keyup.enter)="onEnterTableInput(3)"  styleClass="myclass col-11" [style]="{'border-radius':'6px 0px 0px 6px'}" [(ngModel)]="productlist[0].vendID"
+              <p-dropdown #inputField (keyup.enter)="onEnterTableInput(3)" (keydown)="openDialog($event, true, 'supplier')"  styleClass="myclass col-11" [style]="{'border-radius':'6px 0px 0px 6px'}" [(ngModel)]="productlist[0].vendID"
                   placeholder="Select a Supplier" [options]="Supplierlist"
                   optionLabel="vendName" optionValue="vendID" [filter]="true" [filterBy]="'vendName'" (onChange)="showSharePercentage()"
                   [showClear]="true">
@@ -77,14 +77,18 @@
                     <div>{{vendor.vendCode}} - {{vendor.vendName}}</div>
                   </ng-template>
                 </p-dropdown>
-                <!-- <p-button  icon="pi pi-plus" title="Add New Supplier"
-                  styleClass="p-button col-1" (onClick)="openAddSupplier()">
-                </p-button> -->
-            </div>
+                <p-button
+                  icon="pi pi-plus"
+                  title="Add New Supplier"
+                  styleClass="p-button col-1"
+                  (onClick)="openDialog($event, false, 'supplier')"
+                  [style]="{'height': '42.5px'}">
+                </p-button>
+                            </div>
 
             <div class="col-3" *ngIf="!isPos">
               <label class="col-form-label date-label required" translate>Share Percentage&nbsp;</label>
-              <input pInputText id="shortName" #inputFieldTableCst (keyup.enter)="onEnterTableInput(4)"
+              <input pInputText id="shortName" #inputFieldTableCst (keyup.enter)="onEnterTableInput(3)"
                   maxlength="95" class="col-form-label col-12" name="shortName" [(ngModel)]="productlist[0].sharePercentage">
             </div>
 
@@ -99,9 +103,16 @@
                   <div class="col-4">
                     <div class="col-12">
                       <label class="col-4 col-form-label date-label required" translate>Department&nbsp;</label>
-                      <p-dropdown [options]="departmentList" styleClass="col-8" [(ngModel)]="productlist[0].depID"
+                      <p-dropdown [options]="departmentList" styleClass="col-7" [(ngModel)]="productlist[0].depID"
                         optionLabel="depName" optionValue="depID" placeholder="Select a Department" class="col-form-label col-12" [filter]="true" [filterBy]="'depName'"
-                        [showClear]="true" (onChange)="onDepartmentChange($event.value, 0)"></p-dropdown>
+                        [showClear]="true" (onChange)="onDepartmentChange($event.value, 0)" (keydown)="openDialog($event, true, 'department')"></p-dropdown>
+                        <p-button
+                          icon="pi pi-plus"
+                          title="Add New Supplier"
+                          styleClass="p-button col-1"
+                          (onClick)="openDialog($event, false, 'department')"
+                          [style]="{'height': '42.5px'}">
+                        </p-button>
                     </div>
 
                     <div class="col-12 mt-2">
@@ -110,25 +121,50 @@
                         class="select-tree-custom-style"
                         [options]="categoryListByDepartment"
                         [(ngModel)]="SelectedCategory"
-                        placeholder="Select a Category"
-                        [filter]="true"
+                        [placeholder]="!productlist[0].depID
+                        ? 'Select Dept First'
+                        : (categoryListByDepartment && categoryListByDepartment.length > 0
+                           ? 'Select a Category'
+                           : 'No Category Found')"[filter]="true"
+                        (keydown)="openDialog($event, true, 'category')"
                         >
                       </p-treeSelect>
+                      <p-button
+                        icon="pi pi-plus"
+                        title="Add New Supplier"
+                        styleClass="p-button col-1"
+                        (onClick)="openDialog($event, false, 'category')"
+                        [style]="{'height': '42.5px'}">
+                      </p-button>
 
                     </div>
 
                     <div class="col-12 mt-2" *ngIf="isPos">
                       <label class="col-4 col-form-label date-label required" translate>Brand&nbsp;</label>
-                      <p-dropdown [options]="productGrouplist" styleClass="col-8"  [(ngModel)]="productlist[0].prodGrpID"
+                      <p-dropdown [options]="productGrouplist" styleClass="col-7"  [(ngModel)]="productlist[0].prodGrpID"
                         optionLabel="prodGrpName" optionValue="prodGrpID" placeholder="Select a Brand" class="col-form-label col-12" [filter]="true" [filterBy]="'prodGrpName'"
-                        [showClear]="true"></p-dropdown>
+                        [showClear]="true" (keydown)="openDialog($event, true, 'brand')"></p-dropdown>
+                        <p-button
+                          icon="pi pi-plus"
+                          title="Add New Brand"
+                          styleClass="p-button col-1"
+                          (onClick)="openDialog($event, false, 'brand')"
+                          [style]="{'height': '42.5px'}">
+                        </p-button>
                     </div>
 
                     <div class="col-12 mt-2" *ngIf="isPos">
                       <label class="col-4 col-form-label date-label required" translate>Manufacturer&nbsp;</label>
-                      <p-dropdown [options]="prodManufactureList"  styleClass="col-8"   [(ngModel)]="productlist[0].prodManuID"
+                      <p-dropdown [options]="prodManufactureList"  styleClass="col-7"   [(ngModel)]="productlist[0].prodManuID"
                         optionLabel="prodManuName" optionValue="prodManuID" placeholder="Select a Manufacturer" class="col-form-label col-12" [filter]="true" [filterBy]="'prodManuName'"
-                        [showClear]="true"></p-dropdown>
+                        [showClear]="true" (keydown)="openDialog($event, true, 'manufacturer')"></p-dropdown>
+                        <p-button
+                          icon="pi pi-plus"
+                          title="Add New Manufacturer"
+                          styleClass="p-button col-1"
+                          (onClick)="openDialog($event, false, 'manufacturer')"
+                          [style]="{'height': '42.5px'}">
+                        </p-button>
                     </div>
                 </div>
 
@@ -163,14 +199,14 @@
                       <div class="col-6">
                           <label class="col-form-label date-label required" translate>Min Qty&nbsp;</label>
                           <input pInputText id="minqty" (keypress)="($event.charCode >= 48 && $event.charCode < 58)"
-                              #inputFieldTableCst (keyup.enter)="onEnterTableInput(6)" class="col-form-label col-12"
+                              #inputFieldTableCst (keyup.enter)="onEnterTableInput(4)" class="col-form-label col-12"
                               name="minQty" [(ngModel)]="productlist[0].minQty" />
                       </div>
 
                       <div class="col-6">
                           <label class="col-form-label date-label required" translate>Max Qty&nbsp;</label>
                           <input pInputText id="maxqty" (keypress)="($event.charCode >= 48 && $event.charCode < 58)"
-                              #inputFieldTableCst (keyup.enter)="onEnterTableInput(7)" class="col-form-label col-12"
+                              #inputFieldTableCst (keyup.enter)="onEnterTableInput(5)" class="col-form-label col-12"
                               name="maxQty" [(ngModel)]="productlist[0].maxQty" />
                       </div>
                   </div>
@@ -226,10 +262,10 @@
                           <th>Active</th>
                         </tr>
                       </ng-template>
-                      <ng-template pTemplate="body" let-product let-editing="editing">
+                      <ng-template pTemplate="body" let-product let-i="index" let-editing="editing">
                         <tr [pEditableRow]="product">
                           <td>
-                            <input  [style]="{'width':'100% !important','min-width':'100%'}" pInputText [(ngModel)]="product.BarCode">
+                            <input  [style]="{'width':'100% !important','min-width':'100%'}" pInputText  (blur)="checkExistence(product.BarCode, product.prodBCID, i, false)"  [(ngModel)]="product.BarCode">
                           </td>
                           <td>
                             <p-dropdown  [appendTo]="'body'"  [style]="{'width':'50px !important','min-width':'100%'}" [(ngModel)]="product.Unit" [options]="unitOptions"></p-dropdown>
@@ -282,6 +318,27 @@
 </div>
 
 
-<p-dialog #cstDailog [(visible)]="SupplierVisible" [style]="{width: '40vw'}">
+<p-dialog #cstDailog [(visible)]="SupplierVisible" [contentStyle]="{ 'overflow': 'hidden' }"  [style]="{width: '60vw'}">
   <app-add-new-vendor [title]="'Supplier Registration'" (dataEvent)="handleChildData($event)"></app-add-new-vendor>
 </p-dialog>
+
+
+<p-dialog #cstDailog [(visible)]="departmentVisible" [contentStyle]="{ 'overflow': 'hidden' }"  [style]="{width: '40vw'}">
+  <app-add-new-department [title]="'Department Registration'" (dataEvent)="handleChildData($event)"></app-add-new-department>
+</p-dialog>
+
+
+<p-dialog #cstDailog [(visible)]="categoryVisible" [contentStyle]="{ 'overflow': 'hidden' }"  [style]="{width: '40vw'}">
+  <app-add-new-category [title]="'Category Registration'" [DepartmentList]="departmentList" (dataEvent)="handleChildData($event)"></app-add-new-category>
+</p-dialog>
+
+
+<p-dialog #cstDailog [(visible)]="manufactureVisible" [contentStyle]="{ 'overflow': 'hidden' }"  [style]="{width: '40vw'}">
+  <app-add-new-prod-manufacture [title]="'Manufacture Registration'" (dataEvent)="handleChildData($event)"></app-add-new-prod-manufacture>
+</p-dialog>
+
+
+<p-dialog #cstDailog [(visible)]="brandVisible" [contentStyle]="{ 'overflow': 'hidden' }"  [style]="{width: '40vw'}">
+  <app-add-new-prod-group [title]="'Brand Registration'" (dataEvent)="handleChildData($event)"></app-add-new-prod-group>
+</p-dialog>
+

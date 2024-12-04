@@ -3,10 +3,10 @@
   <div style="border-top: 3px solid #eee;" class="row">
     <div class="col-12">
       <label class="col-form-label date-label col-12 required" translate>Department Name</label>
-      <p-dropdown [options]="departments" optionLabel="depName" optionValue="depID" [(ngModel)]="itemList[0].depID" placeholder="Select Department"></p-dropdown>
+      <p-dropdown [options]="departments" optionLabel="depName" optionValue="depID" [(ngModel)]="itemList[0].depID" styleClass="col-12" placeholder="Select Department"></p-dropdown>
 
       <label class="col-form-label date-label col-12 required" translate>Parent Category</label>
-      <p-dropdown [options]="categories" optionLabel="categoryName" optionValue="categoryID" [(ngModel)]="itemList[0].parentCategoryID" class="col-12" placeholder="Select Parent Category"></p-dropdown>
+      <p-dropdown [options]="categories" optionLabel="categoryName" optionValue="categoryID" [(ngModel)]="itemList[0].parentCategoryID" styleClass="col-12" placeholder="Select Parent Category"></p-dropdown>
 
       <label class="col-form-label date-label col-12 required" translate>Category Name</label>
       <input pInputText #inputFieldTableCst autofocus (keyup.enter)="onEnterTableInput(0)" id="categoryName" class="col-form-label col-12" name="categoryName" [(ngModel)]="itemList[0].categoryName"/>
