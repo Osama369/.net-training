@@ -39,7 +39,7 @@ export interface ProductViewModel {
   costPrice?: number | null;
   salePrice?: number | null;
   tradePrice?: number | null;
-  unit?: string | null;
+  unit?: any | null;
   fobPrice?: number | null;
 
   prodManuName?: string | null;
@@ -87,4 +87,7 @@ export interface ProductViewModel {
   diff?:number | 0;
   vendID?:number | 0;
   sharePercentage?:number | 0;
+
+  baseQty?: number | 0;
+  units?: { unitType: string; unitValue: number; unitId: number; unitCode : string }[];
 }

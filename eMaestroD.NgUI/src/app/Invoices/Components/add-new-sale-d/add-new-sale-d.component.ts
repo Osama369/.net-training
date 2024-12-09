@@ -222,7 +222,7 @@ export class AddNewSaleDComponent implements OnInit{
 
     this.sharedDataService.getConfigSettings$().subscribe({
       next : (result:ConfigSetting[])=>{
-        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on GRN").value;
+        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on Sale")?.value ?? false;
         console.log(result);
       }
     })

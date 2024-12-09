@@ -15,17 +15,23 @@ namespace Models.VMModels
         public string? barCode { get; set; }
         [DisplayName(Name = "Product Name")]
         public string prodName { get; set; }
+        [DisplayName(Name = "Unit")]
+        public string? unit { get; set; }
         [DisplayName(Name = "Manufacture")]
+        [HiddenOnRender]
         public string? prodManuName { get; set; }
         [DisplayName(Name = "Department")]
         public string? depName { get; set; }
         [DisplayName(Name = "Category")]
         public string? categoryName { get; set; }
         [DisplayName(Name = "Brand")]
+        [HiddenOnRender]
         public string? prodGrpName { get; set; }
         [DisplayName(Name = "Purchase Rate")]
+        [HiddenOnRender]
         public decimal? purchRate { get; set; }
         [DisplayName(Name = "Sell Rate")]
+        [HiddenOnRender]
         public decimal? sellPrice { get; set; }
         [DisplayName(Name = "Current Stock")]
         public decimal? currentStock { get; set; }
@@ -37,7 +43,9 @@ namespace Models.VMModels
         public string? prodSize { get; set; }
         [DisplayName(Name = "Color")]
         public string? prodColor { get; set; }
+        [DisplayName(Name = "Is Taxable")]
         public bool? isTaxable { get; set; }
+        [HiddenOnRender]
         public bool? isImported { get; set; }
 
         [HiddenOnRender]
@@ -105,8 +113,6 @@ namespace Models.VMModels
         [HiddenOnRender]
         public decimal? tradePrice { get; set; }
         [HiddenOnRender]
-        public string? unit { get; set; }
-        [HiddenOnRender]
         public decimal? fobPrice { get; set; }
         [HiddenOnRender]
         public decimal? lastCost { get; set; }
@@ -118,5 +124,9 @@ namespace Models.VMModels
         public int? preference { get; set; }
         [HiddenOnRender]
         public decimal? sharePercentage { get; set; }
+        [HiddenOnRender]
+        public decimal? baseQty { get; set; }
+
+        
     }
 }

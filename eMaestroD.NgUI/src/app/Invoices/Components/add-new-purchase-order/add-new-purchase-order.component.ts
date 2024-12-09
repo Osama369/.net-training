@@ -206,8 +206,8 @@ export class AddNewPurchaseOrderComponent implements OnInit{
 
     this.sharedDataService.getConfigSettings$().subscribe({
       next : (result:ConfigSetting[])=>{
-        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on PO").value;
-        this.showVendorProductsOnly = result.find(x=>x.key === "Show Vendor Products Only").value
+        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on PO")?.value ?? false;
+        this.showVendorProductsOnly = result.find(x=>x.key === "Show Vendor Products Only")?.value ?? false;
         console.log(result);
       }
     })
@@ -360,7 +360,9 @@ export class AddNewPurchaseOrderComponent implements OnInit{
       {
         this.rowNmb = i;
         this.selectedProductList = this.productsDuplicate.filter(f => f.prodBCID == newObj.prodBCID);
-        this.filteredProduct = this.productlist.filter(f => f.prodBCID == newObj.prodBCID);
+         this.filteredProduct = this.productlist.filter((f, index) => {
+          return f.prodBCID === newObj.prodBCID && index !== i;
+        });
         if(this.filteredProduct.length > 0)
         {
           this.productlist[i].prodName = "";

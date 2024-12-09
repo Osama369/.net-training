@@ -206,8 +206,8 @@ export class AddNewPurchaseMComponent implements OnInit{
 
     this.sharedDataService.getConfigSettings$().subscribe({
       next : (result:ConfigSetting[])=>{
-        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on Purchase").value;
-        this.showVendorProductsOnly = result.find(x=>x.key === "Show Vendor Products Only").value
+        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on Purchase")?.value ?? false;
+        this.showVendorProductsOnly = result.find(x=>x.key === "Show Vendor Products Only")?.value ?? false;
         console.log(result);
 
       }
@@ -361,7 +361,9 @@ export class AddNewPurchaseMComponent implements OnInit{
       {
         this.rowNmb = i;
         this.selectedProductList = this.productsDuplicate.filter(f => f.prodBCID == newObj.prodBCID);
-        this.filteredProduct = this.productlist.filter(f => f.prodBCID == newObj.prodBCID);
+         this.filteredProduct = this.productlist.filter((f, index) => {
+          return f.prodBCID === newObj.prodBCID && index !== i;
+        });
         if(this.filteredProduct.length > 0)
         {
           this.productlist[i].prodName = "";
@@ -393,7 +395,7 @@ export class AddNewPurchaseMComponent implements OnInit{
             this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
             this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
             this.productlist[i].taxPercent =this.taxesList[0].taxValue;
-
+            this.productlist[i].unit =this.selectedProductList[0].unit;
             this.Itemcalculation(i);
             // let el: HTMLElement = this.newRowButton.nativeElement;
             // el.click();
@@ -970,6 +972,7 @@ export class AddNewPurchaseMComponent implements OnInit{
           this.productlist[i].depName =this.selectedProductList[0].depName;
           this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
           this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
+          this.productlist[i].unit =this.selectedProductList[0].unit;
 
           this.Itemcalculation(i);
           // let el: HTMLElement = this.newRowButton.nativeElement;

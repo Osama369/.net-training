@@ -23,5 +23,6 @@ namespace eMaestroD.Models.VMModels
         public string? CompaniesID { get; set; }
         public int? locID { get; set; }
         public string? locations { get; set; }
+        public bool? isAllowLogin { get; set; }
     }
 }

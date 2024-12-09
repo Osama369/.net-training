@@ -527,7 +527,9 @@ export class AddNewSaleMComponent implements OnInit{
       {
         this.rowNmb = i;
         this.selectedProductList = this.products.filter(f => f.prodBCID == newObj.prodBCID);
-        this.filteredProduct = this.productlist.filter(f => f.prodBCID == newObj.prodBCID);
+         this.filteredProduct = this.productlist.filter((f, index) => {
+          return f.prodBCID === newObj.prodBCID && index !== i;
+        });
         if(this.filteredProduct.length > 1)
         {
           this.productlist[i].prodName = "";

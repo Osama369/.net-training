@@ -1,6 +1,5 @@
-import { ConfigSetting } from './../../../Shared/Models/config-setting';
 import { SharedDataService } from './../../../Shared/Services/shared-data.service';
-import { ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, AfterViewInit, NgModule } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, Input, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmationService,MessageService } from 'primeng/api';
 import { ToastrService } from 'ngx-toastr';
@@ -17,19 +16,21 @@ import { InvoicesService } from '../../Services/invoices.service';
 import { InvoiceView } from '../../Models/invoice-view';
 import { Vendor } from 'src/app/Manage/Models/vendor';
 import { Invoice, InvoiceProduct, InvoiceProductTax } from '../../Models/invoice';
+import { lastValueFrom } from 'rxjs';
 import { ProductViewModel } from 'src/app/Manage/Models/product-view-model';
 import { Taxes } from 'src/app/Administration/Models/taxes';
 import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
-import { APP_ROUTES } from 'src/app/app-routes';
-import { lastValueFrom } from 'rxjs';
+import { ConfigSetting } from 'src/app/Shared/Models/config-setting';
 
 @Component({
-  selector: 'app-add-new-grn',
-  templateUrl: './add-new-grn.component.html',
-  styleUrls: ['./add-new-grn.component.scss'],
+  selector: 'app-add-new-purchase-d',
+  templateUrl: './add-new-purchase-d.component.html',
+  styleUrls: ['./add-new-purchase-d.component.scss'],
   providers:[ConfirmationService,MessageService]
 })
-export class AddNewGrnComponent implements OnInit{
+
+export class AddNewPurchaseDComponent implements OnInit{
+  filteredGRNInvoiceList: Invoice[];
   constructor(
     private router: Router,
     private vendorService:VendorService,
@@ -122,7 +123,7 @@ export class AddNewGrnComponent implements OnInit{
 
   isProductCode: boolean = false;
   isArabic: boolean = false;
-  txTypeID : any = GLTxTypes.GoodsReceivedNote;
+  txTypeID : any = GLTxTypes.PurchaseInvoice;
 
   vatInclude : boolean = true;
   showPleaseWait: boolean = false;
@@ -132,10 +133,10 @@ export class AddNewGrnComponent implements OnInit{
   invoiceDetailID : number = 0;
   fiscalYear : number = 0;
 
-  showVendorProductsOnly: boolean = false;
-
+  GRNInvoiceList : Invoice[] = [];
   isPos : boolean = localStorage.getItem("isPos") === 'true';
-
+  selectedVoucherNo : any;
+  showVendorProductsOnly: boolean = false;
   showReportDialog() {
     if(this.reportSettingItemList.find(x=>x.key == "A4" && x.value == true) != undefined){
       this.printtype = "A4"
@@ -166,10 +167,42 @@ export class AddNewGrnComponent implements OnInit{
     const today = new Date();
     this.selectedDate = today;
 
+
+
     this.sharedDataService.getProducts$().subscribe(products => {
       this.products = (products as { [key: string]: any })["enttityDataSource"];
-      this.productsDuplicate = this.products;
+      // this.productsDuplicate = this.products;
+
+      this.products = this.products.reduce((acc: ProductViewModel[], product: ProductViewModel) => {
+        let existingProduct = acc.find(p => p.barCode === product.barCode);
+
+        if (existingProduct) {
+
+          existingProduct.units.push({
+            unitType: product.unit,
+            unitValue: product.baseQty,
+            unitId : product.prodBCID,
+            unitCode : product.barCode
+          });
+        } else {
+
+          acc.push({
+            ...product,
+            units: [
+              {
+                unitType: product.unit,
+                unitValue: product.baseQty,
+                unitId : product.prodBCID,
+                unitCode : product.barCode
+              },
+            ],
+          });
+        }
+        return acc;
+      }, []);
       this.Filterproductlist = this.products;
+      this.productsDuplicate = this.products;
+      console.log(this.productsDuplicate);
     });
 
 
@@ -204,11 +237,14 @@ export class AddNewGrnComponent implements OnInit{
 
     this.sharedDataService.getConfigSettings$().subscribe({
       next : (result:ConfigSetting[])=>{
-        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on GRN")?.value ?? false;
+        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on Purchase")?.value ?? false;
         this.showVendorProductsOnly = result.find(x=>x.key === "Show Vendor Products Only")?.value ?? false;
         console.log(result);
+
       }
     })
+
+
 
     this.SelectedType[0] = { name: this.type[0].name };
     this.filterType = this.type;
@@ -217,9 +253,18 @@ export class AddNewGrnComponent implements OnInit{
       this.EditVoucherNo = params1['id'];
       if(this.EditVoucherNo != undefined)
       {
-        this.RenderEditItem();
+        console.log(this.EditVoucherNo.split("-")[0]);
+        if(this.EditVoucherNo.split("-")[0] == "GRN")
+        {
+          this.selectedVoucherNo = this.EditVoucherNo;
+          this.GRNInvoiceList.unshift({ invoiceVoucherNo : this.selectedVoucherNo});
+          this.InvoiceOnChange();
+        }else{
+          this.RenderEditItem();
+        }
       }
    });
+
 
   }
 
@@ -247,18 +292,8 @@ export class AddNewGrnComponent implements OnInit{
       this.enterKeyPressCount++;
 
         if (this.enterKeyPressCount === 2) {
-          if(this.selectedCustomerId != undefined)
-          {
-            inputField.focus();
-            this.enterKeyPressCount = 0;
-          }
-          else{
-            this.toastr.error("Please Select Customer Name");
-            this.enterKeyPressCount = 1;
-            let drop =inputFieldARRAY[index-1].el.nativeElement.querySelector('input');
-            drop.focus();
-            //drop.close();
-          }
+          inputField.focus();
+          this.enterKeyPressCount = 0;
         }
     }
     else
@@ -279,8 +314,7 @@ export class AddNewGrnComponent implements OnInit{
   }
   count = 0;
   onEnterTableInput(index: number, rownumber:number) {
-
-    if(this.productlist[rownumber].prodName == undefined)
+      if(this.productlist[rownumber].prodName == undefined)
       {
         let el: HTMLElement = this.savebtn.nativeElement;
         el.focus();
@@ -358,10 +392,9 @@ export class AddNewGrnComponent implements OnInit{
       {
         this.rowNmb = i;
         this.selectedProductList = this.productsDuplicate.filter(f => f.prodBCID == newObj.prodBCID);
-         this.filteredProduct = this.productlist.filter((f, index) => {
+        this.filteredProduct = this.productlist.filter((f, index) => {
           return f.prodBCID === newObj.prodBCID && index !== i;
         });
-        console.log(this.filteredProduct);
         if(this.filteredProduct.length > 0)
         {
           this.productlist[i].prodName = "";
@@ -378,7 +411,6 @@ export class AddNewGrnComponent implements OnInit{
               console.log(this.selectedProductList);
             this.productlist[i].prodID = this.selectedProductList[0].prodID;
             this.productlist[i].prodBCID = this.selectedProductList[0].prodBCID;
-            this.productlist[i].barCode = this.selectedProductList[0].barCode;
             this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
             this.productlist[i].barCode = this.selectedProductList[0].barCode;
             this.productlist[i].unitQty = this.selectedProductList[0].unitQty;
@@ -386,20 +418,23 @@ export class AddNewGrnComponent implements OnInit{
             this.productlist[i].qtyBal = 1;
             this.productlist[i].purchRate = this.selectedProductList[0].costPrice;
             this.productlist[i].discount = 0;
+
+            this.productlist[i].lastCost =this.selectedProductList[0].lastCost;
             this.productlist[i].currentStock = this.selectedProductList[0].currentStock;
             this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
             this.productlist[i].depName =this.selectedProductList[0].depName;
             this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
             this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
-            this.productlist[i].lastCost =this.selectedProductList[0].lastCost;
             this.productlist[i].taxPercent =this.taxesList[0].taxValue;
-
+            this.productlist[i].units =this.selectedProductList[0].units;
+            this.productlist[i].unit =this.selectedProductList[0].units[0];
             this.Itemcalculation(i);
             // let el: HTMLElement = this.newRowButton.nativeElement;
             // el.click();
             // this.cdr.detectChanges();
             // this.onEnterComplexInternal(this.inputFields.length-3);
           }
+
         }
       }
 
@@ -492,7 +527,7 @@ export class AddNewGrnComponent implements OnInit{
     let totalQty = rowData.qty;
     rowData.netRate = totalQty ? parseFloat((rowData.netAmount / totalQty).toFixed(2)) : 0;
 
-    rowData.diff = parseFloat((rowData.lastCost - rowData.netRate).toFixed(2)) || 0;
+    rowData.diff = rowData.lastCost == 0 ? 0 :  parseFloat((rowData.lastCost - rowData.netRate).toFixed(2)) || 0;
 
     this.productlist[rowIndex] = rowData;
     this.calculateTotalSummary();
@@ -536,10 +571,11 @@ export class AddNewGrnComponent implements OnInit{
   {
     if(this.EditVoucherNo != undefined)
     {
-      this.router.navigateByUrl(APP_ROUTES.invoices.grn);
+      this.router.navigateByUrl('/Invoices/Purchase')
     }
     else
     {
+      // this.selectedCustomerName = undefined;
       this.TotalDiscount = 0;
       let today = new Date();
       this.selectedDate = today;
@@ -550,6 +586,7 @@ export class AddNewGrnComponent implements OnInit{
       this.onEnterComplex(0);
       this.savebtnDisable = false;
     }
+
   }
 
 
@@ -612,9 +649,9 @@ export class AddNewGrnComponent implements OnInit{
     }
     return false;
   }
-
   async saveInvoice()
   {
+    console.log(this.productlist);
     if(this.validateFields())
     {
       try {
@@ -637,13 +674,13 @@ export class AddNewGrnComponent implements OnInit{
             this.totalExtraDiscount,
             this.totalNetPayable,
             this.taxesList,
-            null
+            this.selectedVoucherNo
           );
           console.log(this.invoice);
           const result = await lastValueFrom(this.invoicesService.SaveInvoice(this.invoice));
           console.log(result);
-          this.toastr.success("GRN has been successfully Created!");
-          this.router.navigateByUrl(APP_ROUTES.invoices.grn);
+          this.toastr.success("Purchase has been successfully Created!");
+          this.router.navigateByUrl('/Invoices/Purchase')
         } catch (result) {
           this.toastr.error(result.error);
       }
@@ -720,7 +757,7 @@ export class AddNewGrnComponent implements OnInit{
 
   close()
   {
-    this.router.navigateByUrl(APP_ROUTES.invoices.grn);
+    this.router.navigateByUrl('/Invoices/Purchase');
   }
   focusing(){
     this.cdr.detectChanges();
@@ -914,7 +951,7 @@ export class AddNewGrnComponent implements OnInit{
     if(!this.VendorVisible)
     {
       if (!this.selectedCustomerName.cstID) {
-        this.toastr.error("Please Select Customer.");
+        this.toastr.error("Please Select Supplier.");
         this.onEnterComplex(1);
       }
     }
@@ -944,7 +981,7 @@ export class AddNewGrnComponent implements OnInit{
         this.productlist[index].qty = this.productlist[index].qty+1;
         this.productlist[index].qtyBal = this.productlist[index].qtyBal+1;
         this.Itemcalculation(index);
-        this.onEnterComplexInternal(this.inputFields.length-3);
+        this.onEnterComplexInternal(this.inputFields.length-4);
       }
       else
       {
@@ -967,12 +1004,14 @@ export class AddNewGrnComponent implements OnInit{
           this.productlist[i].depName =this.selectedProductList[0].depName;
           this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
           this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
+          this.productlist[i].units =this.selectedProductList[0].units;
+          this.productlist[i].unit =this.selectedProductList[0].units[0];
 
-          // this.Itemcalculation(i);
+          this.Itemcalculation(i);
           // let el: HTMLElement = this.newRowButton.nativeElement;
           // el.click();
           // this.cdr.detectChanges();
-          this.onEnterComplexInternal(this.inputFields.length-2);
+          this.onEnterComplexInternal(this.inputFields.length-3);
           }
           else
           {
@@ -1004,13 +1043,21 @@ export class AddNewGrnComponent implements OnInit{
         // this.productlist[i].amount = "";
         this.Itemcalculation(i);
         if (event.key === "Enter" || event.key === "Tab") {
-          this.onEnterComplexInternal(this.inputFields.length-2);
+          this.onEnterComplexInternal(this.inputFields.length-3);
         }
       }
 
     }
 
 
+
+  filterInvoices(event: any) {
+    const query = event.query.toLowerCase();
+    this.filteredGRNInvoiceList = this.GRNInvoiceList.filter(invoice =>
+      invoice.invoiceVoucherNo.toLowerCase().includes(query)
+    );
+  }
+  
   onChangePrint(e:any) {
     this.printtype= e.target.value;
  }
@@ -1025,6 +1072,80 @@ export class AddNewGrnComponent implements OnInit{
   this.ProductsVisible = false;
   this.VendorVisible = false;
 }
+
+
+  VendorOnChange()
+  {
+    this.showOnlyVendorProduct();
+    if(this.selectedCustomerName == undefined){
+      this.toastr.error("Please select supplier!");
+      this.onEnterComplex(0);
+    }
+    else{
+      // this.invoicesService.GetInvoices(GLTxTypes.GoodsReceivedNote,this.selectedCustomerName.vendID).subscribe({
+      //   next:(result)=>{
+      //     console.log(result);
+      //     this.GRNInvoiceList = result.filter(x=>x.convertedInvoiceNo == null || x.convertedInvoiceNo == "");
+      //     this.selectedVoucherNo = "";
+      //     if(this.GRNInvoiceList.length > 0){
+      //       // this.GRNInvoiceList.unshift({ invoiceVoucherNo : "Select Invoice No"});
+      //     }else{
+      //       // this.GRNInvoiceList.unshift({ invoiceVoucherNo : "No GRN Available"});
+      //     }
+      //   },
+      //   error:(responce)=>{
+      //     this.GRNInvoiceList = [];
+      //   }
+      // })
+    }
+
+  }
+
+  async InvoiceOnChange()
+  {
+    if(this.selectedVoucherNo == undefined || this.selectedVoucherNo == "Select Invoice No") {
+      this.productlist = [{}];
+      return;
+    }
+
+    try {
+      const invoiceData = await lastValueFrom(this.invoicesService.GetInvoice(this.selectedVoucherNo));
+
+      this.productlist = invoiceData.Products;
+      this.selectedCustomerName = {vendID:invoiceData.CustomerOrVendorID,vendName:invoiceData.customerOrVendorName};
+      this.totalGross = invoiceData.grossTotal;
+      this.totalDiscount = invoiceData.totalDiscount;
+      this.totalTax = invoiceData.totalTax;
+      this.totalRebate = invoiceData.totalRebate;
+      this.totalExtraTax = invoiceData.totalExtraTax;
+      this.totalAdvanceExtraTax = invoiceData.totalAdvanceExtraTax;
+      this.totalExtraDiscount = invoiceData.totalExtraDiscount;
+      this.totalNetPayable = invoiceData.netTotal;
+      for (let i = 0; i < this.productlist.length; i++) {
+        this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
+
+        this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
+        this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
+        this.productlist[i].barCode = this.selectedProductList[0].barCode;
+
+        this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
+        this.productlist[i].depName =this.selectedProductList[0].depName;
+        this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
+        this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
+
+        this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0,
+        this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0,
+        this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0,
+        this.productlist[i].advanceTaxAmount= invoiceData.Products[i].ProductTaxes[1].taxAmount || 0,
+        this.productlist[i].extraAdvanceTaxPercent= invoiceData.Products[i].ProductTaxes[2].taxPercent || 0,
+        this.productlist[i].extraAdvanceTaxAmount= invoiceData.Products[i].ProductTaxes[2].taxAmount || 0
+        this.productlist[i].prodInvoiceID=  0;
+        this.Itemcalculation(i)
+      }
+    } catch (result) {
+      this.toastr.error(result.error);
+    }
+  }
 
   async RenderEditItem()
   {
@@ -1044,6 +1165,7 @@ export class AddNewGrnComponent implements OnInit{
     this.totalAdvanceExtraTax = invoiceData.totalAdvanceExtraTax;
     this.totalExtraDiscount = invoiceData.totalExtraDiscount;
     this.totalNetPayable = invoiceData.netTotal;
+
     for (let i = 0; i < this.productlist.length; i++) {
       this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
 
@@ -1060,21 +1182,21 @@ export class AddNewGrnComponent implements OnInit{
       {
         this.productlist[i].expiryDate = new Date(invoiceData.Products[i].expiry);
       }
-      this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0;
-      this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0;
-      this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0;
-      this.productlist[i].advanceTaxAmount= invoiceData.Products[i].ProductTaxes[1].taxAmount || 0;
-      this.productlist[i].extraAdvanceTaxPercent= invoiceData.Products[i].ProductTaxes[2].taxPercent || 0;
-      this.productlist[i].extraAdvanceTaxAmount= invoiceData.Products[i].ProductTaxes[2].taxAmount || 0;
-      this.productlist[i].prodInvoiceID= invoiceData.Products[i].prodInvoiceID || 0;
-      this.Itemcalculation(i)
+      this.productlist[i].taxID= invoiceData.Products[i].ProductTaxes[0].taxDetailID || 0,
+      this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0,
+      this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0,
+      this.productlist[i].advanceTaxID= invoiceData.Products[i].ProductTaxes[1].taxDetailID || 0,
+      this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0,
+      this.productlist[i].advanceTaxAmount= invoiceData.Products[i].ProductTaxes[1].taxAmount || 0,
+      this.productlist[i].extraAdvanceTaxID= invoiceData.Products[i].ProductTaxes[2].taxDetailID || 0,
+      this.productlist[i].extraAdvanceTaxPercent= invoiceData.Products[i].ProductTaxes[2].taxPercent || 0,
+      this.productlist[i].extraAdvanceTaxAmount= invoiceData.Products[i].ProductTaxes[2].taxAmount || 0
+       this.Itemcalculation(i)
     }
   }
-
   sumField(field: string): number {
     return parseFloat(this.productlist.reduce((acc, curr) => acc + (Number(curr[field]) || 0), 0).toFixed(2));
   }
-
 
   showOnlyVendorProduct(){
     if(this.showVendorProductsOnly){
@@ -1086,5 +1208,19 @@ export class AddNewGrnComponent implements OnInit{
       this.Filterproductlist = this.productsDuplicate ;
     }
   }
+
+
+  filterUnitSuggestions(rowData: any) {
+    rowData.units = rowData?.units || []; // Populate units for the selected product
+    console.log(rowData.units);
+    rowData.unit = rowData.units[0]?.unitType || ''; // Auto-select the first unit
+  }
+
+  onUnitSelect(event: any, rowData: any, rowIndex: number) {
+    console.log('Selected Unit:', event);
+    rowData.selectedUnit = event.unitType; // Update the selected unit
+  }
+
+
 }
 

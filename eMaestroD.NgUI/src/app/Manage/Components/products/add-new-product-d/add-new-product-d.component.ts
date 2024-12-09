@@ -17,11 +17,11 @@ import { TreeNode } from 'primeng/api';
 import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 
 @Component({
-  selector: 'app-add-new-product',
-  templateUrl: './add-new-product.component.html',
-  styleUrls: ['./add-new-product.component.css']
+  selector: 'app-add-new-product-d',
+  templateUrl: './add-new-product-d.component.html',
+  styleUrls: ['./add-new-product-d.component.scss']
 })
-export class AddNewProductComponent {
+export class AddNewProductDComponent {
 
 
   productGrouplist: prodGroups[];
@@ -77,7 +77,8 @@ export class AddNewProductComponent {
 
 
   sendDataToParent() {
-    this.router.navigateByUrl('/Manage/Products');
+    this.router.navigateByUrl('/Manage/Products')
+    // this.dataEvent.emit({type:'',value:false});
   }
 
   OpenAddGroupByParent(type:any,value:any) {
@@ -122,12 +123,15 @@ export class AddNewProductComponent {
       this.departmentList = data.Department;
       this.prodManufactureList = data.ProdManufacture;
       this.categoryList = data.Category;
+      this.categoryListByDepartment = this.buildCategoryTree(this.categoryList);
 
       this.productlist[0].ProductBarCodes?.push({ prodBCID : 0, prodID: this.productlist[0].prodID, BarCode: this.productlist[0].prodCode, Unit: 'Unit', Qty: 1, Active: true})
 
+
       this.sharedDataService.getVendors$().subscribe(vnd => {
         this.Supplierlist = (vnd as { [key: string]: any })["enttityDataSource"];
-    });
+      });
+
 
     } catch (error) {
       console.error('Error fetching dropdown data', error);
@@ -198,12 +202,10 @@ export class AddNewProductComponent {
 selectedProducts: any;
 
 addNewRow() {
-  console.log(this.productlist[0].ProductBarCodes);
   if(this.productlist[0].ProductBarCodes?.find(x=>x.BarCode == empty.toString() && x.Qty == 0 )){
     this.toastr.info("Please Fill Empty row first to add new row!");
   }else{
-    this.productlist[0].ProductBarCodes?.push({ prodBCID : 0, prodID: this.productlist[0].prodID, BarCode: '', Unit: '', Qty: 0, Active: true})
-    // this.productlist.push({ prodID: this.productlist.length + 1, barcode: '', prodUnit: '', baseQty: 0 });
+    this.productlist[0].ProductBarCodes?.push({ prodBCID : 0, prodID: this.productlist[0].prodID, BarCode: this.productlist[0].prodCode, Unit: '', Qty: 0, Active: true})
   }
 }
 
@@ -344,10 +346,12 @@ onRowEditCancel(product:any, editing:any) {
       }
       this.productlist[0].qty = parseFloat(this.productlist[0].qty);
 
+
       this.productlist[0].ProductBarCodes = this.productlist[0].ProductBarCodes.filter(element => {
         return !(element.Qty == 0 || element.Unit == "");
       });
       console.log(this.productlist[0])
+
       this.productService.saveProduct(this.productlist[0]).subscribe({
         next: (prd:any) => {
           this.sharedDataService.updateProducts$(prd);
@@ -435,7 +439,7 @@ onRowEditCancel(product:any, editing:any) {
   dailogType : string = "";
   openDialog(event: MouseEvent | KeyboardEvent, isKey: boolean, dialogType: string): void {
     if (isKey && !(event as KeyboardEvent).altKey) {
-      return; // Exit if it's a key event but Alt is not pressed
+      return;
     }
 
     this.dailogType = dialogType;
@@ -573,19 +577,24 @@ onRowEditCancel(product:any, editing:any) {
   }
 
   async checkExistence(field: string, fieldID: any, index: number = 0, isCode:boolean) {
-    if (field != "") {
+    if (field != undefined && field != "") {
       try {
-        const result = await lastValueFrom(this.productService.IsBarcodeExist(field, fieldID));
+        const result = await lastValueFrom(this.productService.IsBarcodeExist(field, this.productlist[0].prodID ?? 0));
         if (result) {
           this.toastr.error("This barcode already exists.");
           if (isCode) {
             this.productlist[0].prodCode = "";
+            this.productlist[0].ProductBarCodes.forEach(element => {
+              element.BarCode = this.productlist[0].prodCode;
+            });
             this.focusOnTableInput(0);
           } else {
             this.productlist[0].ProductBarCodes[index].BarCode = "";
           }
         }else{
-          this.productlist[0].ProductBarCodes[0].BarCode = this.productlist[0].prodCode;
+          this.productlist[0].ProductBarCodes.forEach(element => {
+            element.BarCode = this.productlist[0].prodCode;
+          });
         }
       } catch {
         this.toastr.error("An error occurred while checking the code/barcode.");

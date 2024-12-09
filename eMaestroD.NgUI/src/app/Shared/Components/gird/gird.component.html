@@ -9,6 +9,7 @@
     [rowsPerPageOptions]="[100,500,1000]"  [paginator]="true" [filterDelay]="0"
     [tableStyle]="{'min-width':'75rem'}" scrollHeight="355px" [showCurrentPageReport]="true"
     styleClass="p-datatable-striped mt-3"
+    [currentPageReportTemplate]="'Showing {first} to {last} of {totalRecords} records'"
     [scrollable]="true"
     >
           <ng-template *ngIf="allowGlobalFilter" pTemplate="caption">

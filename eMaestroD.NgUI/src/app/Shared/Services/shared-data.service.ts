@@ -68,7 +68,8 @@ export class SharedDataService {
     users : this._userService.getAllUsers().pipe(defaultIfEmpty([]))
   }).pipe(
     tap(result => {
-      this.productsSubject.next(result.products || []);
+      // this.productsSubject.next(result.products || []);
+      this.setProducts(result.products || []);
       this.locationSubject.next(result.locations || []);
       this.customerSubject.next(result.customers || []);
       this.vendorSubject.next(result.vendors || []);
@@ -82,11 +83,51 @@ export class SharedDataService {
       this.storedTenantID = localStorage.getItem('tenantID');
       })
     );
+
+  }
+
+  setProducts(rawProducts: any[]) {
+    this.productsSubject.next(rawProducts);
+    const currentData = (this.productsSubject.value as { [key: string]: any })["enttityDataSource"] || [];
+    const updatedData = [...currentData];
+    const transformedProducts = updatedData.reduce((acc: ProductViewModel[], product: any) => {
+      const existingProduct = acc.find(p => p.barCode === product.barCode);
+
+      if (existingProduct) {
+        existingProduct.units.push({
+          unitType: product.unit,
+          unitValue: product.baseQty,
+          unitId: product.prodBCID,
+          unitCode: product.barCode,
+        });
+        existingProduct.unit = existingProduct.units
+        .map(unit => `${unit.unitType}(${unit.unitValue})`) 
+        .join(', ');
+      } else {
+        acc.push({
+          ...product,
+          units: [
+            {
+              unitType: product.unit,
+              unitValue: product.baseQty,
+              unitId: product.prodBCID,
+              unitCode: product.barCode,
+            },
+          ],
+        });
+      }
+
+      return acc;
+    }, []);
+
+    (this.productsSubject.value as { [key: string]: any })["enttityDataSource"] = transformedProducts;
+    this.productsSubject.next(this.productsSubject.value);
   }
 
    getProducts$(): Observable<ProductViewModel[]> {
     return this.productsSubject.asObservable();
   }
+
 
   getLocations$(): Observable<Location[]> {
     return this.locationSubject.asObservable();
@@ -211,20 +252,38 @@ export class SharedDataService {
   updateProducts$(data: ProductViewModel[]) {
     const currentData = (this.productsSubject.value as { [key: string]: any })["enttityDataSource"] || [];
     const updatedData = [...currentData];
-
-    data.forEach(newItem => {
-      const index = updatedData.findIndex(p => p.prodBCID === newItem.prodBCID);
-      if (index >= 0) {
-        updatedData[index] = newItem;
+  
+    data.forEach(product => {
+      const existingProduct = updatedData.find(p => p.barCode === product.barCode);
+  
+      const newUnit = {
+        unitType: product.unit,
+        unitValue: product.baseQty,
+        unitId: product.prodBCID,
+        unitCode: product.barCode,
+      };
+  
+      if (existingProduct) {
+        // Merge new unit into the existing product
+        if (!existingProduct.units.some(unit => unit.unitId === newUnit.unitId)) {
+          existingProduct.units.push(newUnit);
+          existingProduct.unit = existingProduct.units
+            .map(unit => `${unit.unitType}(${unit.unitValue})`)
+            .join(', ');
+        }
       } else {
-        updatedData.push(newItem);
+        // Add a new product entry
+        updatedData.unshift({
+          ...product,
+          units: [newUnit],
+          unit: `${newUnit.unitType}(${newUnit.unitValue})`, // Initialize unit string
+        });
       }
     });
-
-   (this.productsSubject.value as { [key: string]: any })["enttityDataSource"] = updatedData;
-
+  
+    // Update the enttityDataSource and notify observers
+    (this.productsSubject.value as { [key: string]: any })["enttityDataSource"] = updatedData;
     this.productsSubject.next(this.productsSubject.value);
-
   }
 
 }

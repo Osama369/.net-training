@@ -53,10 +53,13 @@ export class ProductsComponent implements OnInit {
               this.products = [];
             }
             this.cols = (prd as { [key: string]: any })["entityModel"];
+
+          
             this.loading = false;
         });
     }
 
+   
     handleChildData(data: any) {
       console.log(data)
         if(data.type == 'add')

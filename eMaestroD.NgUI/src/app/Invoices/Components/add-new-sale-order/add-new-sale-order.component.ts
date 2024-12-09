@@ -219,7 +219,7 @@ export class AddNewSaleOrderComponent implements OnInit{
 
     this.sharedDataService.getConfigSettings$().subscribe({
       next : (result:ConfigSetting[])=>{
-        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on GRN").value;
+        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on SO")?.value ?? false;
         console.log(result);
       }
     })
@@ -383,7 +383,9 @@ export class AddNewSaleOrderComponent implements OnInit{
       {
         this.rowNmb = i;
         this.selectedProductList = this.products.filter(f => f.prodBCID == newObj.prodBCID);
-        this.filteredProduct = this.productlist.filter(f => f.prodBCID == newObj.prodBCID);
+         this.filteredProduct = this.productlist.filter((f, index) => {
+          return f.prodBCID === newObj.prodBCID && index !== i;
+        });
         if(this.filteredProduct.length > 0)
         {
           this.productlist[i].prodName = "";

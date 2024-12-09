@@ -95,7 +95,7 @@ namespace eMaestroD.Api.Controllers
         public async Task<IActionResult> GetProducts(int comID, int prodBCID = 0)
         {
             var products = await _AMDbContext.Set<ProductViewModel>()
-                .FromSqlRaw("EXEC GetProducts @comID = {0}, @prodBCID = {1}", comID, prodBCID)
+                .FromSqlRaw("EXEC GetProducts @comID = {0}, @prodBCID = {1}, @prodID={2}", comID, prodBCID, 0)
                 .ToListAsync();
 
             ResponsedGroupListVM vM = new ResponsedGroupListVM();
@@ -233,18 +233,18 @@ namespace eMaestroD.Api.Controllers
                     await _AMDbContext.Products.AddAsync(product);
                     await _AMDbContext.SaveChangesAsync();
                     
-                    product.ProductBarCodes.Add(new ProductBarCodes
-                    {
-                        Active = true,
-                        BarCode = product.prodCode,
-                        CostPrice = product.purchRate,
-                        SalePrice = product.sellRate,
-                        FOBPrice = product.tP,
-                        TradePrice = product.retailprice,
-                        prodID = product.prodID,
-                        Qty = 1,
-                        Unit = product.prodUnit
-                    });
+                    //product.ProductBarCodes.Add(new ProductBarCodes
+                    //{
+                    //    Active = true,
+                    //    BarCode = product.prodCode,
+                    //    CostPrice = product.purchRate,
+                    //    SalePrice = product.sellRate,
+                    //    FOBPrice = product.tP,
+                    //    TradePrice = product.retailprice,
+                    //    prodID = product.prodID,
+                    //    Qty = 1,
+                    //    Unit = product.prodUnit
+                    //});
 
                     foreach (var item in product.ProductBarCodes)
                     {
@@ -293,7 +293,7 @@ namespace eMaestroD.Api.Controllers
             }
 
             var products = await _AMDbContext.Set<ProductViewModel>()
-                .FromSqlRaw("EXEC GetProducts @comID = {0}, @prodBCID = {1}", product.comID, product.ProductBarCodes[0].prodBCID)
+                .FromSqlRaw("EXEC GetProducts @comID = {0}, @prodBCID = {1}, @prodID ={2}", product.comID, 0,product.prodID)
                 .ToListAsync();
 
             return Ok(products);
@@ -848,7 +848,7 @@ namespace eMaestroD.Api.Controllers
             else
             {
                 var barcodeExists = await query
-                    .Where(x => x.BarCode == barcode && x.prodBCID != barcodeID)
+                    .Where(x => x.BarCode == barcode && (x.prodBCID != barcodeID && x.prodID != barcodeID))
                     .AnyAsync();
 
                 if (barcodeExists)

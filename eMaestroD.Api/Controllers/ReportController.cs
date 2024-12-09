@@ -877,8 +877,6 @@ namespace eMaestroD.Api.Controllers
         [NonAction]
         public async Task<List<StockStatusCumulativeValuation>> StockStatusCumulativeValuation(DateTime dtTo, int locID, int comID, int catID)
         {
-
-
             List<StockStatusCumulativeValuation> SDL;
             string sql = "EXEC Report_StockStatusCumulativeValuation @asOfDate,@locID,@comID,@catID";
             List<SqlParameter> parms = new List<SqlParameter>
@@ -891,15 +889,12 @@ namespace eMaestroD.Api.Controllers
 
             SDL = _AMDbContext.StockStatusCumulativeValuation.FromSqlRaw(sql, parms.ToArray()).ToList();
 
-
             if (SDL.Count > 0)
             {
                 return SDL;
             }
             return null;
         }
-
-
 
         [NonAction]
         public async Task<List<CashBook>> CashBook(DateTime dtfrom, DateTime dtTo, int locID, int comID)
