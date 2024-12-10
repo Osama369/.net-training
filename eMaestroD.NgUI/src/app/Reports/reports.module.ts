@@ -33,6 +33,7 @@ import { TrialBalanceComponent } from './Components/trial-balance/trial-balance.
 import { VendorledgerComponent } from './Components/vendorledger/vendorledger.component';
 import { SharedModule } from '../Shared/shared.module';
 import { ReportsRoutingModule } from './reports-routing.module';
+import { BonusClaimsComponent } from './Components/bonus-claims/bonus-claims.component';
 
 
 
@@ -68,7 +69,8 @@ import { ReportsRoutingModule } from './reports-routing.module';
     TaxReportBySupplierComponent,
     TaxReportComponent,
     TrialBalanceComponent,
-    VendorledgerComponent
+    VendorledgerComponent,
+    BonusClaimsComponent
 
   ],
   imports: [

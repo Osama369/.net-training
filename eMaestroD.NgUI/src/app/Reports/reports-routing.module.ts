@@ -32,6 +32,7 @@ import { TaxSummaryComponent } from './Components/tax-summary/tax-summary.compon
 import { TrialBalanceComponent } from './Components/trial-balance/trial-balance.component';
 import { VendorledgerComponent } from './Components/vendorledger/vendorledger.component';
 import { CreditCardReportComponent } from './Components/credit-card-report/credit-card-report.component';
+import { BonusClaimsComponent } from './Components/bonus-claims/bonus-claims.component';
 
 const routes: Routes = [
   { path: 'DailySaleReport', component: DailyinvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DailySale' }  },
@@ -66,6 +67,7 @@ const routes: Routes = [
       { path: 'BankSummary', component: BankSummaryComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'BankSummary' }  },
       { path: 'InvoiceWiseProfit', component: InvoiceWiseProfitComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'InvoiceWiseProfit' }  },
       { path: 'CreditCardReport', component: CreditCardReportComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CreditCardReport' }  },
+      { path: 'BonusClaimReport', component: BonusClaimsComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'BonusClaim' }  },
 
     ];
 

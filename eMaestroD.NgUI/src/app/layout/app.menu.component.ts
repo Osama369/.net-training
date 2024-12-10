@@ -167,6 +167,7 @@ export class AppMenuComponent implements OnInit {
                         { label: 'Profit And Loss', routerLink: [APP_ROUTES.reports.accountReports.profitReports.profitAndLoss] },
                       ],
                     },
+                    { label: 'Bonus Claim', routerLink: [APP_ROUTES.reports.accountReports.BonusClaim] },
                   ],
                 },
               ],
