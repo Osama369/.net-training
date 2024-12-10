@@ -34,6 +34,7 @@ import { VendorledgerComponent } from './Components/vendorledger/vendorledger.co
 import { SharedModule } from '../Shared/shared.module';
 import { ReportsRoutingModule } from './reports-routing.module';
 import { BonusClaimsComponent } from './Components/bonus-claims/bonus-claims.component';
+import { DiscountClaimComponent } from './Components/discount-claim/discount-claim.component';
 
 
 
@@ -70,7 +71,8 @@ import { BonusClaimsComponent } from './Components/bonus-claims/bonus-claims.com
     TaxReportComponent,
     TrialBalanceComponent,
     VendorledgerComponent,
-    BonusClaimsComponent
+    BonusClaimsComponent,
+    DiscountClaimComponent
 
   ],
   imports: [
