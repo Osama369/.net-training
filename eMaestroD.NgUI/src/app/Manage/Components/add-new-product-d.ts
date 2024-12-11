@@ -1,0 +1,2 @@
+xport interface AddNewProductD {
+}

@@ -171,13 +171,13 @@ namespace eMaestroD.Api.Controllers
         }
 
         [HttpGet]
-        [Route("{prodBCID}/{locID}/{comID}")]
-        public async Task<IActionResult> GetProductBatchByProdBCID(int prodBCID, int locID, int comID)
+        [Route("{prodID}/{prodBCID}/{locID}/{comID}")]
+        public async Task<IActionResult> GetProductBatchByProdBCID(int prodID, int prodBCID, int locID, int comID)
         {
             try
             {
 
-                var invoices = await _glService.GetProductBatchByProdBCID(prodBCID, locID,comID);
+                var invoices = await _glService.GetProductBatchByProdBCID(prodID, prodBCID, locID,comID);
 
                 if (invoices == null)
                 {

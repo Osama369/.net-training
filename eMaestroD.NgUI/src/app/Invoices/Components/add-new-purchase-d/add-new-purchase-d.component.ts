@@ -137,6 +137,30 @@ export class AddNewPurchaseDComponent implements OnInit{
   isPos : boolean = localStorage.getItem("isPos") === 'true';
   selectedVoucherNo : any;
   showVendorProductsOnly: boolean = false;
+
+
+  validateDate(dateInput:any,i:any) {
+    // Use the directive's validation logic
+    const dateRegex = /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$/;
+
+    if (!dateRegex.test(dateInput)) {
+      this.toastr.error("Please write correct date");
+      this.onEnterTableInput(4, i);
+      return;
+    }
+
+    const [day, month, year] = dateInput.split('-').map((v) => parseInt(v, 10));
+    const inputDate = new Date(year, month - 1, day);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let isInvalid = inputDate <= today || isNaN(inputDate.getTime());
+    if(isInvalid){
+      this.toastr.error("Date must be greater than today date.");
+      this.onEnterTableInput(4, i);
+    }
+  }
+
   showReportDialog() {
     if(this.reportSettingItemList.find(x=>x.key == "A4" && x.value == true) != undefined){
       this.printtype = "A4"
@@ -173,33 +197,6 @@ export class AddNewPurchaseDComponent implements OnInit{
       this.products = (products as { [key: string]: any })["enttityDataSource"];
       // this.productsDuplicate = this.products;
 
-      this.products = this.products.reduce((acc: ProductViewModel[], product: ProductViewModel) => {
-        let existingProduct = acc.find(p => p.barCode === product.barCode);
-
-        if (existingProduct) {
-
-          existingProduct.units.push({
-            unitType: product.unit,
-            unitValue: product.baseQty,
-            unitId : product.prodBCID,
-            unitCode : product.barCode
-          });
-        } else {
-
-          acc.push({
-            ...product,
-            units: [
-              {
-                unitType: product.unit,
-                unitValue: product.baseQty,
-                unitId : product.prodBCID,
-                unitCode : product.barCode
-              },
-            ],
-          });
-        }
-        return acc;
-      }, []);
       this.Filterproductlist = this.products;
       this.productsDuplicate = this.products;
       console.log(this.productsDuplicate);
@@ -1057,7 +1054,7 @@ export class AddNewPurchaseDComponent implements OnInit{
       invoice.invoiceVoucherNo.toLowerCase().includes(query)
     );
   }
-  
+
   onChangePrint(e:any) {
     this.printtype= e.target.value;
  }
@@ -1167,7 +1164,7 @@ export class AddNewPurchaseDComponent implements OnInit{
     this.totalNetPayable = invoiceData.netTotal;
 
     for (let i = 0; i < this.productlist.length; i++) {
-      this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
+      this.selectedProductList = this.products.filter(f => f.prodID == this.productlist[i].prodID);
 
       this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
       this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
@@ -1177,10 +1174,13 @@ export class AddNewPurchaseDComponent implements OnInit{
       this.productlist[i].depName =this.selectedProductList[0].depName;
       this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
       this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
+      this.productlist[i].units =this.selectedProductList[0].units;
+      let unit = this.selectedProductList[0].units.find(x=>x.unitType  == this.productlist[i].unit);
+      this.productlist[i].unit = unit;
 
       if(invoiceData.Products[i].expiry)
       {
-        this.productlist[i].expiryDate = new Date(invoiceData.Products[i].expiry);
+        this.productlist[i].expiryDate = this.formatDate(new Date(invoiceData.Products[i].expiry));
       }
       this.productlist[i].taxID= invoiceData.Products[i].ProductTaxes[0].taxDetailID || 0,
       this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0,
@@ -1221,6 +1221,12 @@ export class AddNewPurchaseDComponent implements OnInit{
     rowData.selectedUnit = event.unitType; // Update the selected unit
   }
 
+  formatDate(date: Date): string {
+    const day = String(date.getDate()).padStart(2, '0'); // Ensure 2-digit day
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure 2-digit month
+    const year = date.getFullYear();
 
+    return `${day}-${month}-${year}`;
+  }
 }
 

@@ -264,13 +264,15 @@ export class SharedDataService {
       };
   
       if (existingProduct) {
-        // Merge new unit into the existing product
-        if (!existingProduct.units.some(unit => unit.unitId === newUnit.unitId)) {
+        const index = existingProduct.units.findIndex(unit => unit.unitId === newUnit.unitId);
+        if (index === -1) {
           existingProduct.units.push(newUnit);
-          existingProduct.unit = existingProduct.units
-            .map(unit => `${unit.unitType}(${unit.unitValue})`)
-            .join(', ');
+        } else {
+          existingProduct.units[index] = newUnit;
         }
+        existingProduct.unit = existingProduct.units
+        .map(unit => `${unit.unitType}(${unit.unitValue})`)
+        .join(', ');
       } else {
         // Add a new product entry
         updatedData.unshift({

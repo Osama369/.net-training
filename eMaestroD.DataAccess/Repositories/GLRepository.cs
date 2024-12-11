@@ -484,11 +484,12 @@ namespace eMaestroD.DataAccess.Repositories
             return SDL;
         }
 
-        public async Task<List<InvoiceProduct>> GetProductBatchByProdBCID(int prodBCID, int locID, int comID)
+        public async Task<List<InvoiceProduct>> GetProductBatchByProdBCID(int prodID, int prodBCID, int locID, int comID)
         {
-            string sql = "EXEC GetProductBatchByProdBCID @prodBCID, @locID, @comID";
+            string sql = "EXEC GetProductBatchByProdBCID @prodID, @prodBCID, @locID, @comID";
             List<SqlParameter> parms = new List<SqlParameter>
             {
+                new SqlParameter { ParameterName = "@prodID", Value = prodID },
                 new SqlParameter { ParameterName = "@prodBCID", Value = prodBCID },
                 new SqlParameter { ParameterName = "@locID", Value = locID },
                 new SqlParameter { ParameterName = "@comID", Value = comID }

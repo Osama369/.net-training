@@ -34,7 +34,6 @@ import { AddNewSchemesComponent } from './Components/schemes/add-new-schemes/add
 import { AddNewProductDComponent } from './Components/products/add-new-product-d/add-new-product-d.component';
 
 
-
 @NgModule({
   declarations: [
     AddNewBulkStockUpdateComponent,
