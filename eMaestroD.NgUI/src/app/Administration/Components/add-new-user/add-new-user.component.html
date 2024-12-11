@@ -20,15 +20,19 @@
             </div>
 
           <div class="col-12">
-              <label class="col-form-label date-label col-12 required" translate>Mobile</label>
-              <input pInputText id="phone" #inputFieldTable (keyup.enter)="onEnterTableInputCst(4)" class="col-form-label col-12" name="phone"  [(ngModel)]="UserList[0].Mobile"/>
-          </div>
+
+              <label class="col-form-label date-label col-7 required" translate>Mobile</label>
+              <label class="col-form-label date-label col-5 required" translate>Is Allow login</label>
+              <input pInputText id="phone" #inputFieldTable (keyup.enter)="onEnterTableInputCst(4)" class="col-form-label col-6" name="phone"  [(ngModel)]="UserList[0].Mobile"/>
+              <p-inputSwitch [(ngModel)]="UserList[0].isAllowLogin" styleClass="offset-1"></p-inputSwitch>
+
+            </div>
 
           <div class="col-12">
             <label class="col-form-label date-label col-6 required" translate>Roles</label>
             <label class="col-form-label Vendor-label col-6 required" translate>Location<span>:</span>&nbsp;</label>
             <p-autoComplete #inputField pAutoFocus [autofocus]="true" [(ngModel)]="SelectedRole" [suggestions]="filterRole"  (completeMethod)="filtersRole($event)" (keyup.enter)="onEnterTableInputCst(5)"
-            field="RoleName" value="RoleID" styleClass="col-5" [minLength]="1" [dropdown]="true" #autoComplete (onFocus)="autoComplete.show()"></p-autoComplete>
+            field="RoleName" value="RoleID" styleClass="col-5" [minLength]="1" [dropdown]="true" #autoComplete (onFocus)="autoComplete.show()" appendTo="body"></p-autoComplete>
             <p-dropdown
             #inputField
             styleClass="offset-1 col-6"
@@ -40,6 +44,7 @@
             appendTo="body"
             [showClear]="true"
             placeholder="Select a Location"
+
             >
             </p-dropdown>
           </div>

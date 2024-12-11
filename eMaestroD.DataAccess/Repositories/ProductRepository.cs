@@ -17,10 +17,10 @@ namespace eMaestroD.DataAccess.Repositories
         {
             _dbContext = dbContext;
         }
-        public async Task<List<ProductViewModel>> GetProducts(int comID, int prodBCID = 0)
+        public async Task<List<ProductViewModel>> GetProducts(int comID, int prodBCID = 0, int prodID = 0)
         {
             return await _dbContext.Set<ProductViewModel>()
-                .FromSqlRaw("EXEC GetProducts @comID = {0}, @prodBCID = {1}", comID, prodBCID)
+                .FromSqlRaw("EXEC GetProducts @comID = {0}, @prodBCID = {1},@prodID={2}", comID, prodBCID, prodID)
                 .ToListAsync();
         }
     }

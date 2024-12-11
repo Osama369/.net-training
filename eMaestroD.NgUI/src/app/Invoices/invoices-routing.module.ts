@@ -38,6 +38,9 @@ import { PurchaseReturnMComponent } from './Components/purchase-return-m/purchas
 import { AddNewSaleOrderComponent } from './Components/add-new-sale-order/add-new-sale-order.component';
 import { SaleOrderComponent } from './Components/sale-order/sale-order.component';
 import { AddNewSaleDComponent } from './Components/add-new-sale-d/add-new-sale-d.component';
+import { AddNewPurchaseDComponent } from './Components/add-new-purchase-d/add-new-purchase-d.component';
+import { AddNewGrnDComponent } from './Components/add-new-grn-d/add-new-grn-d.component';
+import { AddNewPurchaseOrderDComponent } from './Components/add-new-purchase-order-d/add-new-purchase-order-d.component';
 
 function getDynamicComponent(componentForPos: any, componentForDistribution: any): any {
   const isPos = localStorage.getItem('isPos') === 'true';
@@ -62,11 +65,11 @@ const routes: Routes = [
   // { path: 'Purchase', component: PurchaseComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Purchase' }  },
   // { path: 'AddNewPurchase', component: AddPurchaseComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseCreate' }  },
   { path: 'Purchase', component: PurchaseMComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Purchase' }  },
-  { path: 'AddNewPurchase', component: AddNewPurchaseMComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseCreate' }  },
-  { path: 'AddNewPurchase/:id', component: AddNewPurchaseMComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseEdit' }  },
+  { path: 'AddNewPurchase', component: getDynamicComponent(AddNewPurchaseMComponent, AddNewPurchaseDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseCreate' }  },
+  { path: 'AddNewPurchase/:id', component: getDynamicComponent(AddNewPurchaseMComponent, AddNewPurchaseDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseEdit' }  },
   { path: 'AddNewPurchases/:id', component: AddOrderToPurchaseComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseCreate' }  },
-  { path: 'AddNewPurchaseOrder', component: AddNewPurchaseOrderComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseOrderCreate' }  },
-  { path: 'AddNewPurchaseOrder/:id', component: AddNewPurchaseOrderComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseOrderEdit' }  },
+  { path: 'AddNewPurchaseOrder', component: getDynamicComponent(AddNewPurchaseOrderComponent, AddNewPurchaseOrderDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseOrderCreate' }  },
+  { path: 'AddNewPurchaseOrder/:id', component: getDynamicComponent(AddNewPurchaseOrderComponent, AddNewPurchaseOrderDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseOrderEdit' }  },
   { path: 'PurchaseOrder', component: PurchaseOrderComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseOrder' }  },
   { path: 'Detail/:id', component: InvoiceDetailViewComponent, canActivate:[AuthGuard], data: { requiredPermission: 'InvoiceDetailView' }  },
   { path: 'VoucherDetail/:id', component: VoucherDetailViewComponent, canActivate:[AuthGuard], data: { requiredPermission: 'VoucherDetail' }  },
@@ -91,8 +94,8 @@ const routes: Routes = [
   { path: 'AddNewStockShortage', component: AddNewStockShortageComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'StockShortageCreate' }  },
   { path: 'AddNewStockShortage/:id', component: AddNewStockShortageComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'StockShortageEdit' }  },
   { path: 'GRN', component: GRNComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'GRN' }  },
-  { path: 'AddNewGRN', component: AddNewGrnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'GRNCreate' }  },
-  { path: 'AddNewGRN/:id', component: AddNewGrnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'GRNEdit' }  },
+  { path: 'AddNewGRN', component: getDynamicComponent(AddNewGrnComponent, AddNewGrnDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'GRNCreate' }  },
+  { path: 'AddNewGRN/:id', component: getDynamicComponent(AddNewGrnComponent, AddNewGrnDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'GRNEdit' }  },
   { path: 'invoicePosting', component: InvoicePostingComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'InvoicePosting' }  },
 
 ];

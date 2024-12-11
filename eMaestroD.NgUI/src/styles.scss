@@ -354,3 +354,16 @@ ol, ul{
 .p-disabled{
   color:black !important;
 }
+
+
+.fixed-table-height{
+  height:200px;
+}
+
+.fixed-table-height .p-datatable-wrapper {
+  min-height: calc(100vh - 450px);
+}
+
+.fixed-table-height th, .fixed-table-height td,.fixed-table-height td input {
+  padding: 0 !important;
+}

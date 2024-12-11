@@ -204,8 +204,8 @@ export class AddNewGrnComponent implements OnInit{
 
     this.sharedDataService.getConfigSettings$().subscribe({
       next : (result:ConfigSetting[])=>{
-        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on GRN").value;
-        this.showVendorProductsOnly = result.find(x=>x.key === "Show Vendor Products Only").value
+        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on GRN")?.value ?? false;
+        this.showVendorProductsOnly = result.find(x=>x.key === "Show Vendor Products Only")?.value ?? false;
         console.log(result);
       }
     })
@@ -358,7 +358,9 @@ export class AddNewGrnComponent implements OnInit{
       {
         this.rowNmb = i;
         this.selectedProductList = this.productsDuplicate.filter(f => f.prodBCID == newObj.prodBCID);
-        this.filteredProduct = this.productlist.filter(f => f.prodBCID == newObj.prodBCID);
+         this.filteredProduct = this.productlist.filter((f, index) => {
+          return f.prodBCID === newObj.prodBCID && index !== i;
+        });
         console.log(this.filteredProduct);
         if(this.filteredProduct.length > 0)
         {
@@ -1056,7 +1058,7 @@ export class AddNewGrnComponent implements OnInit{
 
       if(invoiceData.Products[i].expiry)
       {
-        this.productlist[i].expiryDate = new Date(invoiceData.Products[i].expiry);
+          this.productlist[i].expiryDate = this.formatDate(new Date(invoiceData.Products[i].expiry));
       }
       this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0;
       this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0;
@@ -1083,6 +1085,14 @@ export class AddNewGrnComponent implements OnInit{
       this.productsDuplicate = this.products;
       this.Filterproductlist = this.productsDuplicate ;
     }
+  }
+
+  formatDate(date: Date): string {
+    const day = String(date.getDate()).padStart(2, '0'); // Ensure 2-digit day
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure 2-digit month
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
   }
 }
 

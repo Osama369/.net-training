@@ -9,6 +9,6 @@ namespace eMaestroD.DataAccess.IRepositories
 {
     public interface IProductRepository
     {
-        Task<List<ProductViewModel>> GetProducts(int comID, int prodBCID = 0);
+        Task<List<ProductViewModel>> GetProducts(int comID, int prodBCID = 0, int prodID = 0);
     }
 }

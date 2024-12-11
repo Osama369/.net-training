@@ -2,7 +2,7 @@
 <div class="card">
   <div class="row">
     <div class="col-12">
-      <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Purchase Return
+      <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Purchase Invoice
         <i class="pi pi-times-circle" (click)="confirmDailog('close')" style="font-size: 1.5rem; float:right"></i>
         <a (click)="ChangeIsShowDetail()" *ngIf="isShowSideBar" style="float:right; margin-right: 8px;">{{isShowDetails? 'Show Details':'Hide Details'}}</a>
       </h4>
@@ -12,7 +12,7 @@
               <!-- <label class="col-form-label date-label col-4 required">Invoice No</label>  -->
 
               <label class="col-form-label date-label col-3 required" translate>Date</label>
-              <!-- <label class="col-form-label Type-label col-3 required" translate>Type</label> -->
+              <label class="col-form-label Type-label col-3 required" translate>Type</label>
               <label class="col-form-label customer-label col-3 required" translate>Supplier Name
                 <div class="custom-tooltip">
                   <i class="fa fa-info-circle"></i>
@@ -21,8 +21,7 @@
                   </div>
                 </div>
               </label>
-               <label class="col-form-label Vendor-label col-3 required" translate>Return Invoice No</label>
-               <label class="col-form-label Vendor-label col-3 required" translate>Location</label>
+              <label class="col-form-label Vendor-label col-3 required" translate>Location</label>
 
           </div>
           <div class="row">
@@ -34,10 +33,10 @@
                   <p-calendar #calender #inputField (keyup.enter)="onEnterComplex(0)" [(ngModel)]="selectedDate" [minDate]="maxDate" [maxDate]="maxDate"   [showIcon]="true" dateFormat="dd/mm/yy"></p-calendar>
               </div>
 
-              <!-- <div class="col-3">
+              <div class="col-3">
                 <p-autoComplete #inputField pAutoFocus [autofocus]="true" [(ngModel)]="SelectedType[0]" [suggestions]="filterType"  (completeMethod)="filtersType($event)" (keyup.enter)="onEnterComplex(1)"
                 field="name" [minLength]="1" [dropdown]="true" ></p-autoComplete>
-              </div> -->
+              </div>
 
               <div class="col-3">
                   <p-autoComplete #inputField  [(ngModel)]="selectedCustomerName" [suggestions]="customerList" (keydown)="VendorsVisible($event)"  (completeMethod)="filterCustomer($event)" (keyup.enter)="onEnterComplex(2)"
@@ -49,14 +48,21 @@
               </div>
 
               <div class="col-3">
-                <p-dropdown #inputField [options]="GRNInvoiceList"  [(ngModel)]="selectedVoucherNo"  styleClass="col-12" optionLabel="invoiceVoucherNo" optionValue="invoiceVoucherNo" (onChange)="InvoiceOnChange()" (keyup.enter)="onEnterComplex(3)"></p-dropdown>
-              </div>
-
-
-              <div class="col-3">
                 <p-autoComplete #inputField  [(ngModel)]="selectedLocation" [suggestions]="LocationList"  (completeMethod)="filterLocation($event)" (keyup.enter)="onEnterComplex(3)"
                 field="LocationName" value="LocationId" [minLength]="1" [dropdown]="true" ></p-autoComplete>
               </div>
+
+              <!-- <div class="col-3">
+                <p-dropdown #inputField [options]="GRNInvoiceList"  [(ngModel)]="selectedVoucherNo"  styleClass="col-12" optionLabel="invoiceVoucherNo" optionValue="invoiceVoucherNo" (onChange)="InvoiceOnChange()" (keyup.enter)="onEnterComplex(3)"></p-dropdown>
+              </div>
+
+              <label class="col-form-label Vendor-label col-3 required" translate>GRN</label>
+
+              <label class="col-form-label Vendor-label col-3 required" translate></label>
+              <label class="col-form-label Vendor-label col-3 required" translate></label>
+              <label class="col-form-label Vendor-label col-3 required" translate></label> -->
+
+
           </div>
           <br>
           <p-table #dt [value]="productlist" dataKey="prodID" editMode="row" styleClass="p-datatable-sm" [scrollable]="true" class="AddTable" scrollHeight="300px" scrollDirection="vertical">
@@ -71,7 +77,7 @@
                       </div>
                     </div>
                   </th>
-                  <th rowspan="2" style="text-align: center;"  translate>Unit</th>
+                  <th rowspan="2" style="text-align: center;" pFrozenColumn style="min-width: 80px !important;"  translate>Unit</th>
                   <th rowspan="2" style="text-align: center;"  translate>Qty</th>
                   <th rowspan="2" style="text-align: center;"  translate>Price</th>
                   <th rowspan="2" style="text-align: center;"  translate >Gross Value</th>
@@ -90,8 +96,8 @@
                   <th colspan="2" style="text-align: center;     border-bottom: 1px solid;" translate>Rebate</th>
                   <th rowspan="2" style="text-align: center;"  translate>Net Amount</th>
                   <th rowspan="2" style="text-align: center;"  translate>Net Rate</th>
-                  <th rowspan="2" style="text-align: center;"  translate>M.R.P</th>
-                  <th rowspan="2" style="text-align: center;"  translate>Selling Price</th>
+                  <th rowspan="2" style="text-align: center;"  translate>M.R.P (Per Unit)</th>
+                  <th rowspan="2" style="text-align: center;"  translate>Sell Rate (Per Unit)</th>
                   <th rowspan="2" style="text-align: center;"  translate>Last Cost</th>
                   <th rowspan="2" style="text-align: center;"  translate>Diff</th>
                   <th rowspan="2" style="text-align: center;"  translate>Notes</th>
@@ -115,14 +121,30 @@
               <ng-template pTemplate="body" let-rowData let-editing="editing" let-ri="rowIndex">
                 <tr (click)="activeAllModule(ri)" [style.background-color]="ri == rowNmb ? 'gray' : ''">
                     <td pFrozenColumn style="z-index: 1;">
-                        <p-autoComplete  #inputField [(ngModel)]="rowData.barCode" [minLength]="1" [disabled]="returnTotalAmount == 0" (keyup.enter)="onCodeChange(rowData.barCode, ri, $event)" (onBlur)="onCodeChange(rowData.barCode, ri, $event)" class="girdRow girdRowCode codeInput" [style]="{ 'width':'100%'}"></p-autoComplete>
+                        <p-autoComplete  #inputField [(ngModel)]="rowData.barCode" [minLength]="1" [disabled]="!selectedCustomerName"  (keyup.enter)="onCodeChange(rowData.barCode, ri, $event)" (onBlur)="onCodeChange(rowData.barCode, ri, $event)" class="girdRow girdRowCode codeInput" [style]="{ 'width':'100%'}"></p-autoComplete>
                     </td>
                     <td pFrozenColumn style="z-index: 1;">
-                      <p-autoComplete #inputField styleClass="myclass"  appendTo="body" [(ngModel)]="rowData.prodName" [suggestions]="Filterproductlist" (completeMethod)="filterProduct($event)"
-                      field="prodName" value="prodBCID" [minLength]="1" (keydown)="productVisible($event)" [disabled]="returnTotalAmount == 0" (keyup.enter)="onEnterTableInput(-1,ri)" (onBlur)="onChange(rowData.prodName,ri, autoComplete3)" class="myClass girdRow" [style]="{ 'width':'100% !important','min-width':'100%'}" #autoComplete3 (onFocus)="autoComplete3.show()"></p-autoComplete>
+                      <p-autoComplete #inputField styleClass="myclass"  appendTo="body" [disabled]="!selectedCustomerName" [(ngModel)]="rowData.prodName" [suggestions]="Filterproductlist" (completeMethod)="filterProduct($event)"
+                      field="prodName" value="prodBCID" [minLength]="1" (keydown)="productVisible($event)" (keyup.enter)="onEnterComplex(inputFields.length-2)" (onBlur)="onChange(rowData.prodName,ri, autoComplete3)" class="myClass girdRow" [style]="{ 'width':'100% !important','min-width':'100%'}" #autoComplete3 (onFocus)="autoComplete3.show()"></p-autoComplete>
                     </td>
-                    <td>
-                      <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(0, ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.unit" class="girdRow">
+                    <td pFrozenColumn style="z-index: 1;">
+                      <p-autoComplete
+                      #inputField
+                      [(ngModel)]="rowData.unit"
+                      [suggestions]="rowData.units"
+                      [field]="'unitType'"
+                      [disabled]="!rowData.prodName"
+                      [minLength]="1"
+                      appendTo="body"
+                      class="girdRow girdRowCode"
+                      [style]="{ 'width': '100%' }"
+                      #autoComplete4
+                      (onFocus)="autoComplete4.show()"
+                      (onBlur)="autoComplete4.hide()"
+                      (completeMethod)="filterUnitSuggestions(rowData)"
+                      (keyup.enter)="onEnterTableInput(-1,ri)"
+                      >
+                    </p-autoComplete>
                     </td>
                     <td>
                         <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(0, ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.qty" (ngModelChange)="updateQtyBal(rowData, ri)" class="girdRow">
@@ -137,10 +159,20 @@
                       <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(3, ri)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.bonusQty" (ngModelChange)="updateQtyBal(rowData, ri)" class="girdRow">
                     </td>
                     <td>
-                        <input #inputFieldTable [style]="{'width':'80px'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(5, ri)" type="text" [(ngModel)]="rowData.batchNo" class="girdRow">
+                        <input #inputFieldTable [style]="{'width':'80px'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(4, ri)" type="text" [(ngModel)]="rowData.batchNo" class="girdRow">
                     </td>
                     <td>
-                        <p-calendar [(ngModel)]="rowData.expiryDate" appendTo="body" styleClass="girdRow" #inputFieldTable [disabled]="!rowData.barCode && !rowData.prodName" [style]="{'width':'92px', 'z-index':'0'}" (keyup.enter)="onEnterTableInput(5, ri)" ></p-calendar>
+                      <input
+                      type="text"
+                      [disabled]="!rowData.barCode && !rowData.prodName"
+                      #inputFieldTable
+                      appDateMask
+                      [(ngModel)]="rowData.expiryDate"
+                      class="date-input"
+                      placeholder="dd-MM-yyyy"
+                      (keyup.enter)="onEnterTableInput(5, ri)"
+                      (blur)="validateDate(rowData.expiryDate, ri)"
+                    />
                     </td>
                     <td>
                         <input #inputFieldTable [style]="{'width':'42px', 'text-align':'right'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(6, ri)" type="text" [(ngModel)]="rowData.discount" name="discount" (ngModelChange)="Itemcalculation(ri)" class="girdRow">
@@ -219,6 +251,7 @@
                   </td>
 
                       <td pFrozenColumn>Total:</td>
+                      <td></td>
                       <td style="text-align: right;">{{ sumField('qty') }}</td>
                       <td style="text-align: right;">{{ sumField('purchRate') }}</td>
                       <td style="text-align: right;">{{ sumField('grossValue') }}</td>
@@ -250,12 +283,7 @@
                     </tr>
             </ng-template>
           </p-table>
-          <div class="col-12">
-            <label class="col-form-label date-label col-2 required" translate>Total Amount</label>
-            <input #inputFieldTable [style]="{'width':'70px', 'text-align':'right', 'color':'black','font-weight':'bold'}" pInputText type="text" [(ngModel)]="totalNetPayable" [disabled]="true" class="girdRow">
-            <label class="col-form-label date-label col-2 required" translate>Total Return Amount</label>
-            <input #inputFieldTable [style]="{'width':'70px', 'text-align':'right', 'color':'black','font-weight':'bold'}" pInputText type="text" [(ngModel)]="returnTotalAmount" [disabled]="true" class="girdRow">
-          </div>
+
 
 
           <br/>
@@ -363,18 +391,6 @@
     </div>
   </p-dialog>
 
-
-  <p-dialog [(visible)]="PrintringVisible" [style]="{width: '20vw'}" (onHide)="closePrintingOption()">
-      <div class="container"  *ngIf="PrintringVisible">
-            <input type="radio" id="html" name="fav_language" (change)="onChangePrint($event)" value="thermal" checked>
-            <label for="html" translate>Thermal View</label><br>
-            <input type="radio" id="css" name="fav_language" (change)="onChangePrint($event)" value="A4">
-            <label for="css" translate>A4 View</label><br>
-          <br>
-          <button (click)="onPrinterClick()" translate autofocus class="btn btn-outline-primary">Submit</button>
-          &nbsp;<button (click)="PrintringVisible=false" translate class="btn btn-outline-danger">Close</button>
-      </div>
-  </p-dialog>
 
 
 <p-confirmDialog [style]="{width: '50vw'}"></p-confirmDialog>

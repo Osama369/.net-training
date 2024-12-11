@@ -33,6 +33,7 @@ namespace eMaestroD.Models.VMModels
         public decimal? mrp { get; set; }
         public decimal? sellingPrice { get; set; }
         public decimal? lastCost { get; set; }
+        public string? unit { get; set; }
         public List<InvoiceProductTax> ProductTaxes { get; set; }
     }
 }

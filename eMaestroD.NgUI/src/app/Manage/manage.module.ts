@@ -31,7 +31,7 @@ import { OfferComponent } from './Components/offer/offer.component';
 import { AddNewOfferComponent } from './Components/offer/add-new-offer/add-new-offer.component';
 import { SchemesComponent } from './Components/schemes/schemes.component';
 import { AddNewSchemesComponent } from './Components/schemes/add-new-schemes/add-new-schemes.component';
-
+import { AddNewProductDComponent } from './Components/products/add-new-product-d/add-new-product-d.component';
 
 
 @NgModule({
@@ -64,7 +64,8 @@ import { AddNewSchemesComponent } from './Components/schemes/add-new-schemes/add
     OfferComponent,
     AddNewOfferComponent,
     SchemesComponent,
-    AddNewSchemesComponent
+    AddNewSchemesComponent,
+    AddNewProductDComponent
   ],
   imports: [
     CommonModule,

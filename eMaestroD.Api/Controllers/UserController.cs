@@ -76,15 +76,14 @@ namespace eMaestroD.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> saveUserInMaster([FromBody] Users user)
         {
-            if (user.UserID == null)
+            var existEmail = await _userManager.FindByEmailAsync(user.Email);
+            if ((user.UserID == null || existEmail == null) && user.isAllowLogin == true)
             {
-
-                var existEmail = await _userManager.FindByEmailAsync(user.Email);
                 var tenantID = Decrypt(HttpContext.User.FindFirst(ClaimTypes.Upn).Value);
                 if (existEmail == null)
                 {
                     var tenlist = _Context.Tenants.Where(x => x.tenantID == int.Parse(tenantID)).ToList();
-                    var userlist = _AMDbContext.Users.ToList();
+                    var userlist = _AMDbContext.Users.Where(x=>x.isAllowLogin == true).ToList();
                     if (tenlist[0].maxUserCount > userlist.Count())
                     {
 

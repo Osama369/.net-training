@@ -39,7 +39,7 @@ namespace eMaestroD.Models.Models
         public string? modBy { get; set; }
         public bool? AllowExport { get; set; }
         public bool? IsMultiLogin { get; set; }
-
+        public bool? isAllowLogin { get; set; }
         [NotMapped]
         public string? locations { get; set; }
         [NotMapped]

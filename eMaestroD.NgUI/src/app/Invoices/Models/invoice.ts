@@ -56,6 +56,7 @@ export interface InvoiceProduct {
   mrp?:number;
   sellingPrice?:number;
   lastCost?:number;
+  unit?:string;
   ProductTaxes? : InvoiceProductTax[];
 }
 

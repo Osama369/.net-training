@@ -19,13 +19,18 @@ import { AddNewProductComponent } from './Components/products/add-new-product/ad
 import { OfferComponent } from './Components/offer/offer.component';
 import { SchemesComponent } from './Components/schemes/schemes.component';
 import { AddNewSchemesComponent } from './Components/schemes/add-new-schemes/add-new-schemes.component';
+import { AddNewProductDComponent } from './Components/products/add-new-product-d/add-new-product-d.component';
 
+function getDynamicComponent(componentForPos: any, componentForDistribution: any): any {
+  const isPos = localStorage.getItem('isPos') === 'true';
+  return isPos ? componentForPos : componentForDistribution;
+}
 
 const routes: Routes = [
   { path: 'Customers', component: CustomersComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Customers' }  },
   { path: 'Products', component: ProductsComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Products' }  },
-  { path: 'AddProduct', component: AddNewProductComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ProductsCreate' }  },
-  { path: 'AddProduct/:id', component: AddNewProductComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ProductsEdit' }  },
+  { path: 'AddProduct', component: getDynamicComponent(AddNewProductComponent, AddNewProductDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ProductsCreate' }  },
+  { path: 'AddProduct/:id', component: getDynamicComponent(AddNewProductComponent, AddNewProductDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ProductsEdit' }  },
   { path: 'ProductBarcode', component: ProductBarcodeComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ProductBarcode' }  },
   { path: 'Department', component: DepartmentComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Department' }  },
   { path: 'Manufacture', component: ProdManufactureComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Manufacture' }  },

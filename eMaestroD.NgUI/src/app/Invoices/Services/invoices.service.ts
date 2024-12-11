@@ -41,9 +41,9 @@ export class InvoicesService {
     return this.http.get<Invoice>(this.ApiUrl + '/GetInvoice/'+voucherNo);
   }
 
-  GetProductBatchByProdBCID(prodBCID:number,locID:number): Observable<InvoiceProduct[]>{
+  GetProductBatchByProdBCID(prodID:number, prodBCID:number,locID:number): Observable<InvoiceProduct[]>{
     let comID = localStorage.getItem('comID');
-    return this.http.get<InvoiceProduct[]>(this.ApiUrl + '/GetProductBatchByProdBCID/'+prodBCID+'/'+locID+'/'+comID);
+    return this.http.get<InvoiceProduct[]>(this.ApiUrl + '/GetProductBatchByProdBCID/'+prodID+'/'+prodBCID+'/'+locID+'/'+comID);
   }
 
   GetItemsBySupplierAndDate(supplierId: string, fromDate: any, ToDate: any): Observable<InvoiceProduct[]> {
@@ -242,21 +242,25 @@ export class InvoicesService {
   }
 
   createInvoiceProduct(product: ProductViewModel, taxesList: any[]): InvoiceProduct {
+    const expiryDateString = product.expiryDate;
+    const [day, month, year] = expiryDateString.split('-').map(Number);
+    const expiryDate = new Date(year, month - 1, day);
+
     return {
       prodInvoiceID : product.prodInvoiceID,
       prodID: product.prodID,
-      prodBCID: product.prodBCID,
+      prodBCID: product.unit.unitId,
       prodCode: product.prodCode,
       prodName: product.prodName.prodName,
       descr: product.descr,
       unitQty: product.unitQty,
-      qty: product.qty,
+      qty: product.qty * product.unit?.unitValue,
       bounsQty: product.bonusQty,
       notes: product.notes,
       batchNo: product.batchNo,
-      expiry: product.expiryDate,
-      purchRate: product.purchRate,
-      sellRate: product.sellRate,
+      expiry: expiryDate,
+      purchRate: product.purchRate / product.unit?.unitValue,
+      sellRate: product.sellRate / product.unit?.unitValue,
       discountPercent: product.discount,
       discountAmount: product.discountAmount,
       extraDiscountPercent: product.extraDiscountPercent,

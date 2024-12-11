@@ -222,8 +222,7 @@ export class AddNewSaleDComponent implements OnInit{
 
     this.sharedDataService.getConfigSettings$().subscribe({
       next : (result:ConfigSetting[])=>{
-        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on GRN").value;
-        console.log(result);
+        this.isShowSideBar = result.find(x=>x.key === "Show Side bar on Sale")?.value ?? false;
       }
     })
 
@@ -274,9 +273,8 @@ export class AddNewSaleDComponent implements OnInit{
     this.count++;
   }
 
-  async GetProductBatchByProdBCID(prodBCID:number, locID:number){
-    const result = await lastValueFrom(this.invoicesService.GetProductBatchByProdBCID(prodBCID, locID));
-    console.log(result);
+  async GetProductBatchByProdBCID(prodID:number,prodBCID:number, locID:number){
+    const result = await lastValueFrom(this.invoicesService.GetProductBatchByProdBCID(prodID, prodBCID, locID));
   }
 
   enterKeyPressCount = 0;
@@ -328,7 +326,7 @@ export class AddNewSaleDComponent implements OnInit{
         el.focus();
       }
 
-      index = index + (rownumber*15);
+      index = index + (rownumber*19);
       if (index < this.inputFieldsTable.length-1) {
         this.focusOnTableInput(index + 1);
       }
@@ -345,7 +343,7 @@ export class AddNewSaleDComponent implements OnInit{
               let el: HTMLElement = this.newRowButton.nativeElement;
               el.click();
               this.cdr.detectChanges();
-              this.onEnterComplexInternal(this.inputFields.length-3);
+              this.onEnterComplexInternal(this.inputFields.length-4);
             } else {
               let el: HTMLElement = this.savebtn.nativeElement;
               el.focus();
@@ -353,7 +351,7 @@ export class AddNewSaleDComponent implements OnInit{
         }
         else
         {
-          this.onEnterComplexInternal(this.inputFields.length-3);
+          this.onEnterComplexInternal(this.inputFields.length-4);
 
         }
   }
@@ -418,13 +416,16 @@ export class AddNewSaleDComponent implements OnInit{
       const selectedProduct = this.selectedProductList[0];
 
       const result = await lastValueFrom(
-        this.invoicesService.GetProductBatchByProdBCID(selectedProduct.prodBCID, this.selectedLocation.LocationId)
+        this.invoicesService.GetProductBatchByProdBCID(selectedProduct.prodID, 0, this.selectedLocation.LocationId)
       );
 
       if (result.length === 0) {
         this.toastr.error("No stock available for the selected product");
-        this.productlist[i].prodName = "";
-        this.onEnterComplexInternal(this.inputFields.length - 2);
+        Object.keys(this.productlist[i]).forEach(key => {
+          this.productlist[i][key] = null;
+        });
+
+        this.onEnterComplexInternal(this.inputFields.length - 3);
         return;
       }
 
@@ -434,11 +435,13 @@ export class AddNewSaleDComponent implements OnInit{
         );
 
         if (existingIndex >= 0) {
-          if (this.productlist[existingIndex].qty < batch.unitQty) {
+          if (this.productlist[existingIndex].qty < (batch.unitQty/this.productlist[existingIndex].unit.unitValue)) {
             this.productlist[existingIndex].qty = parseInt(this.productlist[existingIndex].qty.toString(), 10) + 1;
             if(existingIndex != i)
             {
-              this.productlist[i].prodName = "";
+              Object.keys(this.productlist[i]).forEach(key => {
+                this.productlist[i][key] = null;
+              });
             }
             this.Itemcalculation(existingIndex);
             return; // Exit the loop once the quantity is updated
@@ -447,7 +450,7 @@ export class AddNewSaleDComponent implements OnInit{
           }
         } else {
           this.addNewEntry(i, selectedProduct, batch);
-          this.onEnterTableInput(0,i);
+          this.onEnterComplexInternal(this.inputFields.length - 2);
           return;
         }
       }
@@ -770,7 +773,7 @@ export class AddNewSaleDComponent implements OnInit{
   }
   focusing(){
     this.cdr.detectChanges();
-    this.onEnterComplexInternal(this.inputFields.length-3);
+    this.onEnterComplexInternal(this.inputFields.length-4);
   }
 
   newRow() {
@@ -996,7 +999,7 @@ export class AddNewSaleDComponent implements OnInit{
       this.Itemcalculation(i);
 
       if (event.key === "Enter" || event.key === "Tab") {
-        this.onEnterComplexInternal(this.inputFields.length - 2);
+        this.onEnterComplexInternal(this.inputFields.length - 3);
       }
       return;
     }
@@ -1012,7 +1015,8 @@ export class AddNewSaleDComponent implements OnInit{
       // Fetch stock information for the selected product using API
       const result = await lastValueFrom(
         this.invoicesService.GetProductBatchByProdBCID(
-          this.selectedProductList[0].prodBCID,
+          this.selectedProductList[0].prodID,
+          0,
           this.selectedLocation.LocationId
         )
       );
@@ -1031,9 +1035,15 @@ export class AddNewSaleDComponent implements OnInit{
 
         if (existingIndex >= 0) {
           // If batch exists, update the quantity if within stock limits
-          if (this.productlist[existingIndex].qty < batch.unitQty) {
+          if (this.productlist[existingIndex].qty < (batch.unitQty/this.productlist[existingIndex].unit.unitValue) ) {
             this.productlist[existingIndex].qty = parseInt(this.productlist[existingIndex].qty.toString(), 10) + 1;
-            this.productlist[i].barCode = ""; // Clear barcode for new input
+            if(existingIndex != i)
+            {
+              Object.keys(this.productlist[i]).forEach(key => {
+                this.productlist[i][key] = null;
+              });
+            }
+            this.addNewRow();
             this.Itemcalculation(existingIndex);
             return; // Exit as the update is complete
           } else {
@@ -1066,9 +1076,8 @@ export class AddNewSaleDComponent implements OnInit{
     this.productlist[i].prodBCID = product.prodBCID;
     this.productlist[i].prodName = { prodName: product.prodName };
     this.productlist[i].prodCode = product.prodCode;
-    this.productlist[i].unitQty = product.unitQty;
+    this.productlist[i].unitQty = batch.unitQty;
     this.productlist[i].qty = 1;
-    this.productlist[i].sellRate = batch.sellRate;
     this.productlist[i].taxPercent = this.taxesList[0].taxValue;
     this.productlist[i].lastCost = product.lastCost;
     this.productlist[i].currentStock = product.currentStock;
@@ -1078,24 +1087,33 @@ export class AddNewSaleDComponent implements OnInit{
     this.productlist[i].prodGrpName = product.prodGrpName;
     this.productlist[i].discount = product.sharePercentage;
     this.productlist[i].isTaxable = product.isTaxable;
+    this.productlist[i].units =product.units;
+    this.productlist[i].unit =product.units.find(x=>x.unitType  == batch.unit);
     this.productlist[i].batchNo = batch.batchNo;
-    this.productlist[i].qtyBal = batch.unitQty;
-    this.productlist[i].purchRate = batch.purchRate,
-    this.productlist[i].expiryDate = batch.expiry ? new Date(batch.expiry) : null;
-
+    this.productlist[i].purchPrice = batch.purchRate;
+    this.productlist[i].sellPrice = batch.sellRate;
+    this.productlist[i].sellRate = (batch.sellRate*this.productlist[i].unit.unitValue);
+    this.productlist[i].qtyBal = (batch.unitQty/this.productlist[i].unit.unitValue);
+    this.productlist[i].purchRate = (batch.purchRate*this.productlist[i].unit.unitValuey),
+    this.productlist[i].expiryDate = batch.expiry ? this.formatDate(new Date(batch.expiry)) : null;
     this.Itemcalculation(i);
   }
 
   addNewProductEntry(i: number, product: any, batch: any) {
+    let TempUnit = product.units.find(x=>x.unitType  == batch.unit);
     this.productlist[i] = {
       barCode: product.barCode,
       prodID: product.prodID,
       prodBCID: product.prodBCID,
       prodName: {prodName:product.prodName},
       prodCode: product.prodCode,
-      unitQty: product.unitQty,
+      unitQty: batch.unitQty,
       qty: 1,
-      sellRate: batch.sellRate,
+      units : product.units,
+      unit : TempUnit,
+      purchPrice : batch.purchRate,
+      sellPrice : batch.sellRate,
+      sellRate: (batch.sellRate*TempUnit.unitValue),
       taxPercent: this.taxesList[0].taxValue,
       lastCost: product.lastCost,
       currentStock: product.currentStock,
@@ -1106,9 +1124,9 @@ export class AddNewSaleDComponent implements OnInit{
       discount: product.sharePercentage,
       isTaxable: product.isTaxable,
       batchNo: batch.batchNo,
-      qtyBal: batch.unitQty,
-      purchRate : batch.purchRate,
-      expiryDate: new Date(batch.expiry) || null,
+      qtyBal: (batch.unitQty/TempUnit.unitValue),
+      purchRate : (batch.purchRate*TempUnit.unitValue),
+      expiryDate: this.formatDate(new Date(batch.expiry)) || null,
     };
 
     this.Itemcalculation(i);
@@ -1119,11 +1137,15 @@ export class AddNewSaleDComponent implements OnInit{
     this.productlist.push({
       ...product,
       prodName: {prodName:product.prodName},
+      unitQty: batch.unitQty,
       qty: 1,
-      sellRate: batch.sellRate,
+      purchPrice : batch.purchRate,
+      sellPrice : batch.sellRate,
+      sellRate: (batch.sellRate*product.baseQty),
       batchNo: batch.batchNo,
-      qtyBal: batch.unitQty,
-      purchRate : batch.purchRate,
+      qtyBal: (batch.unitQty/product.baseQty),
+
+      purchRate : (batch.purchRate*product.baseQty),
       expiryDate: new Date(batch.expiry) || null,
     });
     this.Itemcalculation(this.productlist.length - 1);
@@ -1134,21 +1156,22 @@ export class AddNewSaleDComponent implements OnInit{
     let el: HTMLElement = this.newRowButton.nativeElement;
     el.click();
     this.cdr.detectChanges();
-    this.onEnterComplexInternal(this.inputFields.length - 3);
+    this.onEnterComplexInternal(this.inputFields.length - 4);
   }
 
   onChangePrint(e:any) {
     this.printtype= e.target.value;
  }
 
- updateQtyBal(data: Products, index: any) {
+ updateQtyBal(data: any, index: any) {
   data.qty = Number(data.qty);
 
   if (data.qty > data.qtyBal) {
-    this.productlist[index].qty = 0;
-    this.toastr.error("Available Quantity is less than input quantity.");
-    this.productlist[index].qty = data.qtyBal;
 
+    this.toastr.error("Available Quantity is less than input quantity.");
+    Object.assign(this.productlist[index], {
+      qty: data.qtyBal,
+    });
   }
 
   this.Itemcalculation(index);
@@ -1198,7 +1221,7 @@ async InvoiceOnChange()
       this.productlist[i].purchRate = invoiceData.Products[i].purchRate;
       if(invoiceData.Products[i].expiry)
       {
-        this.productlist[i].expiryDate = new Date(invoiceData.Products[i].expiry);
+        this.productlist[i].expiryDate = this.formatDate(new Date(invoiceData.Products[i].expiry));
       }
       this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
       this.productlist[i].depName =this.selectedProductList[0].depName;
@@ -1251,10 +1274,13 @@ async InvoiceOnChange()
       this.productlist[i].depName =this.selectedProductList[0].depName;
       this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
       this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
+      this.productlist[i].units =this.selectedProductList[0].units;
+      let unit = this.selectedProductList[0].units.find(x=>x.unitType  == this.productlist[i].unit);
+      this.productlist[i].unit = unit;
 
       if(invoiceData.Products[i].expiry)
       {
-        this.productlist[i].expiryDate = new Date(invoiceData.Products[i].expiry);
+        this.productlist[i].expiryDate = this.formatDate(new Date(invoiceData.Products[i].expiry));
       }
       this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0;
       this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0;
@@ -1271,6 +1297,49 @@ async InvoiceOnChange()
     return parseFloat(this.productlist.reduce((acc, curr) => acc + (Number(curr[field]) || 0), 0).toFixed(2));
   }
 
+  filterUnitSuggestions(rowData: any) {
+    rowData.units = rowData?.units || []; // Populate units for the selected product
+    console.log(rowData.units);
+    rowData.unit = rowData.units[0]?.unitType || ''; // Auto-select the first unit
+  }
+
+  onUnitSelect(event: any, rowData: any, rowIndex: number) {
+    if (rowData.qtyBal < event.unitValue) {
+      this.toastr.error(
+        "Cannot select this unit because the available quantity is less than the base quantity of this unit."
+      );
+
+      rowData.unit = { ...rowData.units[0] };
+      rowData.qtyBal = rowData.unitQty / rowData.unit.unitValue;
+      rowData.purchRate = rowData.purchPrice * rowData.unit.unitValue;
+      rowData.sellRate = rowData.sellPrice*rowData.unit.unitValue;
+
+      if(rowData.qty > rowData.qtyBal){
+        rowData.qty = rowData.qtyBal;
+      }
+
+      this.Itemcalculation(rowIndex);
+
+      return;
+    }
+
+    rowData.qtyBal = rowData.unitQty / event.unitValue;
+    rowData.purchRate = rowData.purchPrice * event.unitValue;
+    rowData.sellRate = rowData.sellPrice * event.unitValue;
+    if(rowData.qty > rowData.qtyBal){
+      rowData.qty = rowData.qtyBal;
+    }
+    this.Itemcalculation(rowIndex);
+  }
+
+
+  formatDate(date: Date): string {
+    const day = String(date.getDate()).padStart(2, '0'); // Ensure 2-digit day
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure 2-digit month
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  }
 
 }
 

@@ -54,7 +54,7 @@ export class AppMenuComponent implements OnInit {
     ngOnInit() {
       this.sharedDataService.getConfigSettings$().subscribe({
         next : (result:any[])=>{
-          this.isShowPurchase = result.find(x=>x.key === "Purchase Through GRN").value;
+          this.isShowPurchase = result?.find(x=>x.key === "Purchase Through GRN")?.value ?? false;
         }
       })
 

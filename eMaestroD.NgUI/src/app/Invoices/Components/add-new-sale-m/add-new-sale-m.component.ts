@@ -527,7 +527,9 @@ export class AddNewSaleMComponent implements OnInit{
       {
         this.rowNmb = i;
         this.selectedProductList = this.products.filter(f => f.prodBCID == newObj.prodBCID);
-        this.filteredProduct = this.productlist.filter(f => f.prodBCID == newObj.prodBCID);
+         this.filteredProduct = this.productlist.filter((f, index) => {
+          return f.prodBCID === newObj.prodBCID && index !== i;
+        });
         if(this.filteredProduct.length > 1)
         {
           this.productlist[i].prodName = "";
@@ -1588,7 +1590,9 @@ export class AddNewSaleMComponent implements OnInit{
 
       if(invoiceData.Products[i].expiry)
       {
-        this.productlist[i].expiryDate = new Date(invoiceData.Products[i].expiry);
+
+        this.productlist[i].expiryDate = this.formatDate(new Date(invoiceData.Products[i].expiry));
+
       }
       if(invoiceData.Products[i].ProductTaxes.length > 0){
         this.productlist[i].taxID= invoiceData.Products[i].ProductTaxes[0].taxDetailID || 0,
@@ -1603,6 +1607,14 @@ export class AddNewSaleMComponent implements OnInit{
       }
       this.Itemcalculation(i)
     }
+  }
+
+  formatDate(date: Date): string {
+    const day = String(date.getDate()).padStart(2, '0'); // Ensure 2-digit day
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure 2-digit month
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
   }
 }
 

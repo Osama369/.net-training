@@ -23,13 +23,14 @@ import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
 import { ConfigSetting } from 'src/app/Shared/Models/config-setting';
 
 @Component({
-  selector: 'app-add-new-purchase-m',
-  templateUrl: './add-new-purchase-m.component.html',
-  styleUrls: ['./add-new-purchase-m.component.scss'],
+  selector: 'app-add-new-purchase-d',
+  templateUrl: './add-new-purchase-d.component.html',
+  styleUrls: ['./add-new-purchase-d.component.scss'],
   providers:[ConfirmationService,MessageService]
 })
 
-export class AddNewPurchaseMComponent implements OnInit{
+export class AddNewPurchaseDComponent implements OnInit{
+  filteredGRNInvoiceList: Invoice[];
   constructor(
     private router: Router,
     private vendorService:VendorService,
@@ -136,6 +137,30 @@ export class AddNewPurchaseMComponent implements OnInit{
   isPos : boolean = localStorage.getItem("isPos") === 'true';
   selectedVoucherNo : any;
   showVendorProductsOnly: boolean = false;
+
+
+  validateDate(dateInput:any,i:any) {
+    // Use the directive's validation logic
+    const dateRegex = /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$/;
+
+    if (!dateRegex.test(dateInput)) {
+      this.toastr.error("Please write correct date");
+      this.onEnterTableInput(4, i);
+      return;
+    }
+
+    const [day, month, year] = dateInput.split('-').map((v) => parseInt(v, 10));
+    const inputDate = new Date(year, month - 1, day);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let isInvalid = inputDate <= today || isNaN(inputDate.getTime());
+    if(isInvalid){
+      this.toastr.error("Date must be greater than today date.");
+      this.onEnterTableInput(4, i);
+    }
+  }
+
   showReportDialog() {
     if(this.reportSettingItemList.find(x=>x.key == "A4" && x.value == true) != undefined){
       this.printtype = "A4"
@@ -170,8 +195,11 @@ export class AddNewPurchaseMComponent implements OnInit{
 
     this.sharedDataService.getProducts$().subscribe(products => {
       this.products = (products as { [key: string]: any })["enttityDataSource"];
-      this.productsDuplicate = this.products;
+      // this.productsDuplicate = this.products;
+
       this.Filterproductlist = this.products;
+      this.productsDuplicate = this.products;
+      console.log(this.productsDuplicate);
     });
 
 
@@ -361,7 +389,7 @@ export class AddNewPurchaseMComponent implements OnInit{
       {
         this.rowNmb = i;
         this.selectedProductList = this.productsDuplicate.filter(f => f.prodBCID == newObj.prodBCID);
-         this.filteredProduct = this.productlist.filter((f, index) => {
+        this.filteredProduct = this.productlist.filter((f, index) => {
           return f.prodBCID === newObj.prodBCID && index !== i;
         });
         if(this.filteredProduct.length > 0)
@@ -395,7 +423,8 @@ export class AddNewPurchaseMComponent implements OnInit{
             this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
             this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
             this.productlist[i].taxPercent =this.taxesList[0].taxValue;
-            this.productlist[i].unit =this.selectedProductList[0].unit;
+            this.productlist[i].units =this.selectedProductList[0].units;
+            this.productlist[i].unit =this.selectedProductList[0].units[0];
             this.Itemcalculation(i);
             // let el: HTMLElement = this.newRowButton.nativeElement;
             // el.click();
@@ -495,7 +524,7 @@ export class AddNewPurchaseMComponent implements OnInit{
     let totalQty = rowData.qty;
     rowData.netRate = totalQty ? parseFloat((rowData.netAmount / totalQty).toFixed(2)) : 0;
 
-    rowData.diff = parseFloat((rowData.lastCost - rowData.netRate).toFixed(2)) || 0;
+    rowData.diff = rowData.lastCost == 0 ? 0 :  parseFloat((rowData.lastCost - rowData.netRate).toFixed(2)) || 0;
 
     this.productlist[rowIndex] = rowData;
     this.calculateTotalSummary();
@@ -949,7 +978,7 @@ export class AddNewPurchaseMComponent implements OnInit{
         this.productlist[index].qty = this.productlist[index].qty+1;
         this.productlist[index].qtyBal = this.productlist[index].qtyBal+1;
         this.Itemcalculation(index);
-        this.onEnterComplexInternal(this.inputFields.length-3);
+        this.onEnterComplexInternal(this.inputFields.length-4);
       }
       else
       {
@@ -972,13 +1001,14 @@ export class AddNewPurchaseMComponent implements OnInit{
           this.productlist[i].depName =this.selectedProductList[0].depName;
           this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
           this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
-          this.productlist[i].unit =this.selectedProductList[0].unit;
+          this.productlist[i].units =this.selectedProductList[0].units;
+          this.productlist[i].unit =this.selectedProductList[0].units[0];
 
           this.Itemcalculation(i);
           // let el: HTMLElement = this.newRowButton.nativeElement;
           // el.click();
           // this.cdr.detectChanges();
-          this.onEnterComplexInternal(this.inputFields.length-2);
+          this.onEnterComplexInternal(this.inputFields.length-3);
           }
           else
           {
@@ -1010,12 +1040,20 @@ export class AddNewPurchaseMComponent implements OnInit{
         // this.productlist[i].amount = "";
         this.Itemcalculation(i);
         if (event.key === "Enter" || event.key === "Tab") {
-          this.onEnterComplexInternal(this.inputFields.length-2);
+          this.onEnterComplexInternal(this.inputFields.length-3);
         }
       }
 
     }
 
+
+
+  filterInvoices(event: any) {
+    const query = event.query.toLowerCase();
+    this.filteredGRNInvoiceList = this.GRNInvoiceList.filter(invoice =>
+      invoice.invoiceVoucherNo.toLowerCase().includes(query)
+    );
+  }
 
   onChangePrint(e:any) {
     this.printtype= e.target.value;
@@ -1041,20 +1079,21 @@ export class AddNewPurchaseMComponent implements OnInit{
       this.onEnterComplex(0);
     }
     else{
-      this.invoicesService.GetInvoices(GLTxTypes.GoodsReceivedNote,this.selectedCustomerName.vendID).subscribe({
-        next:(result)=>{
-          console.log(result);
-          this.GRNInvoiceList = result.filter(x=>x.convertedInvoiceNo == null || x.convertedInvoiceNo == "");
-          if(this.GRNInvoiceList.length > 0){
-            this.GRNInvoiceList.unshift({ invoiceVoucherNo : "Select Invoice No"});
-          }else{
-            this.GRNInvoiceList.unshift({ invoiceVoucherNo : "No GRN Available"});
-          }
-        },
-        error:(responce)=>{
-          this.GRNInvoiceList = [];
-        }
-      })
+      // this.invoicesService.GetInvoices(GLTxTypes.GoodsReceivedNote,this.selectedCustomerName.vendID).subscribe({
+      //   next:(result)=>{
+      //     console.log(result);
+      //     this.GRNInvoiceList = result.filter(x=>x.convertedInvoiceNo == null || x.convertedInvoiceNo == "");
+      //     this.selectedVoucherNo = "";
+      //     if(this.GRNInvoiceList.length > 0){
+      //       // this.GRNInvoiceList.unshift({ invoiceVoucherNo : "Select Invoice No"});
+      //     }else{
+      //       // this.GRNInvoiceList.unshift({ invoiceVoucherNo : "No GRN Available"});
+      //     }
+      //   },
+      //   error:(responce)=>{
+      //     this.GRNInvoiceList = [];
+      //   }
+      // })
     }
 
   }
@@ -1125,7 +1164,7 @@ export class AddNewPurchaseMComponent implements OnInit{
     this.totalNetPayable = invoiceData.netTotal;
 
     for (let i = 0; i < this.productlist.length; i++) {
-      this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
+      this.selectedProductList = this.products.filter(f => f.prodID == this.productlist[i].prodID);
 
       this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
       this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
@@ -1135,6 +1174,9 @@ export class AddNewPurchaseMComponent implements OnInit{
       this.productlist[i].depName =this.selectedProductList[0].depName;
       this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
       this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
+      this.productlist[i].units =this.selectedProductList[0].units;
+      let unit = this.selectedProductList[0].units.find(x=>x.unitType  == this.productlist[i].unit);
+      this.productlist[i].unit = unit;
 
       if(invoiceData.Products[i].expiry)
       {
@@ -1165,6 +1207,18 @@ export class AddNewPurchaseMComponent implements OnInit{
       this.productsDuplicate = this.products;
       this.Filterproductlist = this.productsDuplicate ;
     }
+  }
+
+
+  filterUnitSuggestions(rowData: any) {
+    rowData.units = rowData?.units || []; // Populate units for the selected product
+    console.log(rowData.units);
+    rowData.unit = rowData.units[0]?.unitType || ''; // Auto-select the first unit
+  }
+
+  onUnitSelect(event: any, rowData: any, rowIndex: number) {
+    console.log('Selected Unit:', event);
+    rowData.selectedUnit = event.unitType; // Update the selected unit
   }
 
   formatDate(date: Date): string {
