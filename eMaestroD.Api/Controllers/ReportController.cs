@@ -251,6 +251,7 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
+            
             return Ok(vM);
 
         }
@@ -292,6 +293,13 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
+            else if (ReportName == "SSRWithAvailability")
+            {
+                var res = await SSRWithAvailability(Parameter1, Parameter2, comID, int.Parse(Parameter3), int.Parse(Parameter3));
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
+
             return Ok(vM);
         }
 
@@ -951,6 +959,37 @@ namespace eMaestroD.Api.Controllers
             return null;
         }
 
+        [NonAction]
+        public async Task<List<SSRWithAvailabilityReport>>SSRWithAvailability (DateTime dtfrom, DateTime dtTo, int comID,int groupID, int vendID)
+        {
+            List<SSRWithAvailabilityReport> SDL;
+            string sql = "[dbo].[Report_SSRWithAvailability] @dtStart, @dtEnd, @comID, @groupID, @vendID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+                    new SqlParameter { ParameterName = "@groupID", Value = groupID },
+                    new SqlParameter { ParameterName = "@vendID", Value = vendID },
+            };
+            SDL = _AMDbContext.SSRWithAvailabilityReport.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                // return SDL.OrderBy(x => x.expiryDate).ToList();
+                return SDL;
+            }
+            return null;
+        }
         [NonAction]
         public async Task<List<ItemExpiryListReport>> ItemExpiryListReport(DateTime dtfrom, DateTime dtTo, int comID, int vendID)
         {

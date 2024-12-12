@@ -36,6 +36,7 @@ import { ReportsRoutingModule } from './reports-routing.module';
 import { BonusClaimsComponent } from './Components/bonus-claims/bonus-claims.component';
 import { DiscountClaimComponent } from './Components/discount-claim/discount-claim.component';
 import { ItemExpiryListComponent } from './Components/item-expiry-list/item-expiry-list.component';
+import { SSRWithAvailabilityComponent } from './Components/ssrwith-availability/ssrwith-availability.component';
 
 
 
@@ -74,7 +75,8 @@ import { ItemExpiryListComponent } from './Components/item-expiry-list/item-expi
     VendorledgerComponent,
     BonusClaimsComponent,
     DiscountClaimComponent,
-    ItemExpiryListComponent
+    ItemExpiryListComponent,
+    SSRWithAvailabilityComponent
 
   ],
   imports: [

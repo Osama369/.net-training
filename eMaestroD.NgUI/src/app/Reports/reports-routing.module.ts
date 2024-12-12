@@ -35,6 +35,7 @@ import { CreditCardReportComponent } from './Components/credit-card-report/credi
 import { BonusClaimsComponent } from './Components/bonus-claims/bonus-claims.component';
 import { DiscountClaimComponent } from './Components/discount-claim/discount-claim.component';
 import { ItemExpiryListComponent } from './Components/item-expiry-list/item-expiry-list.component';
+import { SSRWithAvailabilityComponent } from './Components/ssrwith-availability/ssrwith-availability.component';
 
 const routes: Routes = [
   { path: 'DailySaleReport', component: DailyinvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DailySale' }  },
@@ -72,6 +73,7 @@ const routes: Routes = [
       { path: 'BonusClaimReport', component: BonusClaimsComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'BonusClaim' }  },
       { path: 'DiscountClaimReport', component: DiscountClaimComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DiscountClaim' }  },
       { path: 'ItemExpiryListReport', component: ItemExpiryListComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ItemExpiryListReport' }  },
+      { path: 'SSRWithAvailability', component: SSRWithAvailabilityComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SSRWithAvailability' }  },
 
     ];
 
