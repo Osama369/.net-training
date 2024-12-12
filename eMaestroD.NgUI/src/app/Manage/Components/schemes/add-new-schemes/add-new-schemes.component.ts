@@ -41,7 +41,7 @@ export class AddNewSchemesComponent {
   SelectedManufacture : any = null;
 
   title : any = "Add Schemes & Promotion";
-
+  isSaveDisable : boolean = false;
   hiddenField : boolean = true;
   autoComplete: any;
   EditProdDiscID:any;
@@ -211,6 +211,7 @@ export class AddNewSchemesComponent {
       }
 
     this.prepareSchemesList();
+    this.isSaveDisable = true;
     this.schemesService.saveSchemes(this.schemesList).subscribe({
       next: (prd:any) => {
         if(this.EditProdDiscID == undefined)
@@ -227,6 +228,7 @@ export class AddNewSchemesComponent {
         console.log(response);
         this.toastr.error(response.error);
         this.onEnterTableInput(0);
+        this.isSaveDisable = false;
       },
     });
   }

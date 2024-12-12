@@ -33,7 +33,7 @@ export class AddNewVendorComponent {
   selectedRegion:any;
   selectedCity:any;
   selectedArea:any;
-
+  isSaveDisable : boolean = false;
   isCstSupp : boolean = false;
   sendDataToParent() {
     this.dataEvent.emit({type:'',value:false});
@@ -130,7 +130,7 @@ export class AddNewVendorComponent {
         this.vendorList[0].vendTypeID = 1;
         this.vendorList[0].active = true;
         this.vendorList[0].isEmail = true;
-
+        this.isSaveDisable = true;
         this.vendorService.saveVendor(this.vendorList[0]).subscribe({
           next: (vnd:any) => {
             this.sharedDataService.updateVendors$(vnd);
@@ -138,17 +138,20 @@ export class AddNewVendorComponent {
             {
               this.toastr.success("Supplier has been successfully added!");
               this.dataEvent.emit({type:'added',value:vnd});
+              this.isSaveDisable = false;
             }
             else
             {
               this.toastr.success("Supplier has been successfully updated! "+vnd.message);
               this.dataEvent.emit({type:'',value:vnd});
+              this.isSaveDisable = false;
             }
 
           },
           error: (response) => {
             this.toastr.error(response.error);
             this.onEnterTableInputCst(-1);
+            this.isSaveDisable = false;
           },
         });
       }
@@ -169,7 +172,7 @@ export class AddNewVendorComponent {
         this.customerList[0].taxValue = this.vendorList[0].taxValue;
         this.customerList[0].active = true;
         this.customerList[0].comment = "true";
-
+        this.isSaveDisable = true;
         this.vendorService.saveVendor(this.vendorList[0]).subscribe({
           next: (vnd:any) => {
             this.sharedDataService.updateVendors$(vnd);
@@ -181,16 +184,19 @@ export class AddNewVendorComponent {
                 {
                   this.toastr.success("Supplier and Customer has been successfully added!");
                   this.dataEvent.emit({type:'added',value:vnd});
+                  this.isSaveDisable = false;
                 }
                 else
                 {
                   this.toastr.success("Supplier and Customer has been successfully updated! "+vnd.message);
                   this.dataEvent.emit({type:'',value:vnd});
+                  this.isSaveDisable = false;
                 }
               },
               error: (response) => {
                 this.toastr.error(response.error);
                 this.onEnterTableInputCst(-1);
+                this.isSaveDisable = false;
               },
             });
           }

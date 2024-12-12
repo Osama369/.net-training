@@ -59,7 +59,7 @@ export class AddNewProductComponent {
     { label: 'Carton', value: 'Carton' }
   ];
   EditProdID:any;
-
+  isSaveDisable : boolean = false;
   isPos : boolean = localStorage.getItem("isPos") === 'true';
 
   constructor(
@@ -325,6 +325,7 @@ onRowEditCancel(product:any, editing:any) {
     }
     else
     {
+      this.isSaveDisable = true;
       if(this.productlist[0].purchRate == null) {this.productlist[0].purchRate = 0}
       if(this.productlist[0].sellRate == null) {this.productlist[0].sellRate = 0}
       if(this.productlist[0].minQty == null) {this.productlist[0].minQty = 0}
@@ -367,6 +368,7 @@ onRowEditCancel(product:any, editing:any) {
           console.log(response);
           this.toastr.error(response.error);
           this.onEnterTableInput(0);
+          this.isSaveDisable = false;
         },
       });
     }

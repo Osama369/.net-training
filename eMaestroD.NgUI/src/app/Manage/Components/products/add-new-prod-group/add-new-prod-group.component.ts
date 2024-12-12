@@ -23,6 +23,7 @@ export class AddNewProdGroupComponent {
   @Output() dataEvent = new EventEmitter<any>();
   @Input() prodData : any;
   @Input() title : any;
+  isSaveDisable : boolean = false;
   sendDataToParent() {
     this.dataEvent.emit({type:'closeGroup',value:false});
   }
@@ -85,7 +86,7 @@ export class AddNewProdGroupComponent {
   {
      if(this.productGrouplist[0].prodGrpName != "" && this.productGrouplist[0].prodGrpName != undefined)
      {
-
+      this.isSaveDisable = true;
       this.productGroupService.saveProductGroup(this.productGrouplist[0]).subscribe({
         next: (prd) => {
           if(this.title == "Brand Registration")
@@ -98,10 +99,12 @@ export class AddNewProdGroupComponent {
             this.toastr.success("Brand has been successfully updated!");
             this.dataEvent.emit({type:'',value:prd});
           }
+          this.isSaveDisable = false;
         },
         error: (response) => {
             this.toastr.error(response.error);
             this.onEnterTableInput(-1);
+            this.isSaveDisable = false;
         },
       });
     }

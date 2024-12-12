@@ -35,6 +35,7 @@ export class AddNewProductDComponent {
   FilterProductGrouplist: prodGroups[];
   SelectedproductGrouplist: any;
   SelectedSupplier: any = null;
+  filteredSuppliers: any[] = []; // Stores filtered results
   SelectedCategory : any = null;
   comName: any;
   @Output() dataEvent = new EventEmitter<any>();
@@ -47,6 +48,7 @@ export class AddNewProductDComponent {
   categoryVisible : boolean = false;
   manufactureVisible : boolean = false;
   brandVisible : boolean = false;
+  savebtnDisable : boolean = false;
 
   selectedType : any;
   filterType : any;
@@ -113,6 +115,7 @@ export class AddNewProductDComponent {
     const data = await lastValueFrom(this.productService.GetOneProductDetail(this.EditProdID));
       this.productlist[0] = data;
       console.log(this.productlist[0]);
+      this.SelectedSupplier = this.Supplierlist.find(x=>x.vendID == this.productlist[0].vendID);
       this.onDepartmentChange(data.depID, data.categoryID);
   }
 
@@ -302,7 +305,7 @@ onRowEditCancel(product:any, editing:any) {
     if(!this.isPos && this.productlist[0].vendID == undefined)
     {
       this.toastr.error("Please write Select Supplier.");
-      this.onEnterTableInput(2);
+      this.onEnterTableInput(-1);
       return;
     }
 
@@ -317,13 +320,13 @@ onRowEditCancel(product:any, editing:any) {
     {
       this.toastr.error("Please write product code.");
       this.count++;
-      this.onEnterTableInput(-1);
+      this.onEnterTableInput(0);
     }
     else if(this.productlist[0].prodName == "" || this.productlist[0].prodName == undefined)
     {
       this.toastr.error("Please write product name.");
       this.count++;
-      this.onEnterTableInput(0);
+      this.onEnterTableInput(1);
     }
     else
     {
@@ -351,7 +354,7 @@ onRowEditCancel(product:any, editing:any) {
         return !(element.Qty == 0 || element.Unit == "");
       });
       console.log(this.productlist[0])
-
+      this.savebtnDisable = true;
       this.productService.saveProduct(this.productlist[0]).subscribe({
         next: (prd:any) => {
           this.sharedDataService.updateProducts$(prd);
@@ -366,11 +369,13 @@ onRowEditCancel(product:any, editing:any) {
             this.toastr.success("Product has been successfully updated!");
             this.router.navigateByUrl('/Manage/Products')
           }
+
         },
         error: (response) => {
           console.log(response);
           this.toastr.error(response.error);
           this.onEnterTableInput(0);
+          this.savebtnDisable = false;
         },
       });
     }
@@ -385,15 +390,7 @@ onRowEditCancel(product:any, editing:any) {
 
 
   onEnterTableInput(index: number) {
-      if(index == -1 && this.count==0)
-      {
-        this.count++;
-        return;
-      }
-      else
-      {
-        this.count = 0;
-      }
+
     if (index < this.inputFieldsTableCst.length-1) {
       this.focusOnTableInput(index + 1);
     }
@@ -487,6 +484,7 @@ onRowEditCancel(product:any, editing:any) {
 
     switch (this.dailogType) {
       case 'supplier':
+        this.SelectedSupplier = newItem.value;
         this.productlist[0].vendID = newItem.value.vendID;
         this.closeDialog();
         break;
@@ -571,8 +569,10 @@ onRowEditCancel(product:any, editing:any) {
     return tree;
   }
 
-  showSharePercentage()
-  {
+
+  onSupplierSelect(event: any) {
+    this.productlist[0].vendID = event.vendID; // Assign only vendID to the target field
+    console.log('Updated vendID:', this.productlist[0].vendID); // Log the assigned vendID
     this.productlist[0].sharePercentage = this.Supplierlist.find(x=>x.vendID == this.productlist[0].vendID).sharePercentage || 0;
   }
 
@@ -587,7 +587,7 @@ onRowEditCancel(product:any, editing:any) {
             this.productlist[0].ProductBarCodes.forEach(element => {
               element.BarCode = this.productlist[0].prodCode;
             });
-            this.focusOnTableInput(0);
+            this.focusOnTableInput(1);
           } else {
             this.productlist[0].ProductBarCodes[index].BarCode = "";
           }
@@ -601,5 +601,14 @@ onRowEditCancel(product:any, editing:any) {
         this.productlist[0].prodCode = "";
       }
     }
+  }
+
+  filterSuppliers(event: any) {
+    const query = event.query.toLowerCase();
+    this.filteredSuppliers = this.Supplierlist.filter(
+      (supplier) =>
+        supplier.vendName.toLowerCase().includes(query) ||
+        supplier.vendCode.toLowerCase().includes(query)
+    );
   }
 }

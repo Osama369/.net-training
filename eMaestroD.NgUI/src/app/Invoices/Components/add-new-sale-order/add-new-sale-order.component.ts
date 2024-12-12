@@ -636,6 +636,7 @@ export class AddNewSaleOrderComponent implements OnInit{
   {
     if(this.validateFields())
     {
+      this.savebtnDisable = true;
       try {
           this.invoice = this.invoicesService.createInvoice(
             this.invoiceID,
@@ -667,6 +668,8 @@ export class AddNewSaleOrderComponent implements OnInit{
           this.router.navigateByUrl(APP_ROUTES.invoices.quotations);
         } catch (result) {
           this.toastr.error(result.error);
+          this.savebtnDisable = false;
+
         }
     }
   }

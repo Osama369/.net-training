@@ -651,6 +651,7 @@ export class AddNewPurchaseDComponent implements OnInit{
     console.log(this.productlist);
     if(this.validateFields())
     {
+      this.savebtnDisable = true;
       try {
           this.invoice = this.invoicesService.createInvoice(
             this.invoiceID,
@@ -680,6 +681,8 @@ export class AddNewPurchaseDComponent implements OnInit{
           this.router.navigateByUrl('/Invoices/Purchase')
         } catch (result) {
           this.toastr.error(result.error);
+          this.savebtnDisable = false;
+
       }
     }
   }

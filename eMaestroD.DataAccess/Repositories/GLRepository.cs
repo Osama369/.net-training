@@ -452,13 +452,30 @@ namespace eMaestroD.DataAccess.Repositories
             return await _dbContext.VendorProducts.Where(x => x.comID == comID).ToListAsync();
         }
 
-        public async Task InsertVendorProductAsync(VendorProduct vendorProduct)
+        public async Task UpsertVendorProductAsync(VendorProduct vendorProduct)
         {
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    _dbContext.Set<VendorProduct>().AddAsync(vendorProduct);
+                    var existingProduct = await _dbContext.Set<VendorProduct>()
+                        .FirstOrDefaultAsync(vp => vp.vendProdID == vendorProduct.vendProdID);
+
+                    if (existingProduct != null)
+                    {
+                        existingProduct.comID = vendorProduct.comID;
+                        existingProduct.prodID = vendorProduct.prodID;
+                        existingProduct.comVendID = vendorProduct.comVendID;
+                        existingProduct.preference = vendorProduct.preference;
+                        existingProduct.sharePercentage = vendorProduct.sharePercentage;
+
+                        _dbContext.Set<VendorProduct>().Update(existingProduct);
+                    }
+                    else
+                    {
+                        await _dbContext.Set<VendorProduct>().AddAsync(vendorProduct);
+                    }
+
                     await _dbContext.SaveChangesAsync();
                     await transaction.CommitAsync();
                 }

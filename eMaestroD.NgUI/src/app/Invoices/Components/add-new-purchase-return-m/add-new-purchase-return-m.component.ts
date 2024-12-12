@@ -507,7 +507,7 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
     let totalQty = rowData.qty;
     rowData.netRate = totalQty ? parseFloat((rowData.netAmount / totalQty).toFixed(2)) : 0;
 
-    rowData.diff = parseFloat((rowData.lastCost - rowData.netRate).toFixed(2)) || 0;
+    rowData.diff = rowData.lastCost == 0 ? 0 :  parseFloat((rowData.lastCost - rowData.netRate).toFixed(2)) || 0;
 
     this.productlist[rowIndex] = rowData;
     this.calculateTotalSummary();
@@ -624,9 +624,9 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
 
   async saveInvoice()
   {
-    console.log(this.productlist);
     if(this.validateFields())
     {
+      this.savebtnDisable = true;
       try {
           this.invoice = this.invoicesService.createInvoice(
             this.invoiceID,
@@ -656,6 +656,8 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
           this.router.navigateByUrl('/Invoices/Purchase')
         } catch (result) {
           this.toastr.error(result.error);
+          this.savebtnDisable = false;
+
       }
     }
   }

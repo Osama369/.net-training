@@ -42,7 +42,7 @@ export class AddNewCustomerForInvoiceComponent {
   selectedRegion:any;
   selectedCity:any;
   selectedArea:any;
-
+  isSaveDisable : boolean = false;
   sendDataToParent() {
     this.clear();
     this.dataEvent.emit({type:'',value:false});
@@ -205,6 +205,7 @@ CheckCustomerExistByVAT()
       this.customerList[0].active = true;
       this.customerList[0].comID = localStorage.getItem("comID");
       this.customerList[0].comment = this.isRegular;
+      this.isSaveDisable = true;
       this.customersService.saveCustomer(this.customerList[0]).subscribe({
         next: (cst:any) => {
           this.sharedDataService.updateCustomers$(cst);
@@ -219,10 +220,12 @@ CheckCustomerExistByVAT()
             this.toastr.success("Customer has been successfully updated! "+cst.message);
             this.dataEvent.emit({type:'',value:cst});
           }
+          this.isSaveDisable = false;
         },
         error: (response) => {
           this.toastr.error(response.error);
           this.onEnterTableInputCst(-1);
+          this.isSaveDisable = false;
         },
       });
     }
@@ -230,6 +233,7 @@ CheckCustomerExistByVAT()
       this.customerList[0].active = true;
       this.customerList[0].comID = localStorage.getItem("comID");
       this.customerList[0].comment = this.isRegular;
+      this.isSaveDisable = true;
       this.customersService.saveCustomer(this.customerList[0]).subscribe({
         next: (cst:any) => {
           this.clear();
@@ -237,11 +241,13 @@ CheckCustomerExistByVAT()
           {
             this.toastr.success("Customer has been succesfully added!");
             this.dataEvent.emit({type:'addedWalkin',value:cst});
+            this.isSaveDisable = false;
           }
         },
         error: (response) => {
           this.toastr.error(response.error);
           this.onEnterTableInputCst(-1);
+          this.isSaveDisable = false;
         },
       });
     }

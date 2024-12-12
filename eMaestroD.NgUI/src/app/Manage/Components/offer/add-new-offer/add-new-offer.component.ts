@@ -17,6 +17,7 @@ export class AddNewOfferComponent {
   @Output() dataEvent = new EventEmitter<any>();
   @Input() Data : any;
   @Input() title : any;
+  isSaveDisable : boolean = false;
   sendDataToParent() {
     this.dataEvent.emit({type:'closeGroup',value:false});
   }
@@ -74,7 +75,7 @@ export class AddNewOfferComponent {
   {
      if(this.itemList[0].offerName != "" && this.itemList[0].offerName != undefined)
      {
-
+      this.isSaveDisable = true;
       this.offerService.upsertOffer(this.itemList[0]).subscribe({
         next: (prd) => {
           if(this.title == "Offer Registration")
@@ -87,10 +88,12 @@ export class AddNewOfferComponent {
             this.toastr.success("Offer has been successfully updated!");
             this.dataEvent.emit({type:'',value:prd});
           }
+          this.isSaveDisable = false;
         },
         error: (response) => {
             this.toastr.error(response.error);
             this.onEnterTableInput(-1);
+            this.isSaveDisable = false;
         },
       });
     }
