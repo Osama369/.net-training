@@ -45,10 +45,10 @@ namespace eMaestroD.Models.ReportModels
         public string? prodCode { get; set; }
 
         [DisplayName(Name = "Expiry Date")]
-        public DateTime? expiryDate { get; set; }
+        public DateTime expiryDate { get; set; }
 
         [DisplayName(Name = "Prod Unit")]
-        public decimal prodUnit { get; set; }
+        public string prodUnit { get; set; }
 
         [DisplayName(Name = "Purchase Price")]
         public decimal DP { get; set; }
