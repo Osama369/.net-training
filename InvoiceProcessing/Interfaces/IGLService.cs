@@ -19,7 +19,7 @@ namespace eMaestroD.InvoiceProcessing.Interfaces
          Task<decimal> GetInvoiceRemainingAmount(string voucherNo);
         Task<List<Invoice>> GetInvoicesAsync(int txTypeID, int customerOrVendorID, int comID);
         Task<List<VendorProduct>> GetVendorProductListAsync(int comID);
-        Task InsertVendorProductAsync(VendorProduct vendorProduct);
+        Task UpsertVendorProductAsync(VendorProduct vendorProduct);
         Task InsertInvoice(List<GL> items);
         Task UpdateInvoice(List<GL> items);
         Task InsertOrUpdateInvoice<T>(List<T> items) where T : class;

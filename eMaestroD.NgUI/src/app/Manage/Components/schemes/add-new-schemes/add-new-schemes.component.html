@@ -116,7 +116,7 @@
 
           <!-- Save and Cancel Buttons -->
           <div class="col-12" style="text-align: right;">
-              <button #savebtn (click)="saveSchemes()" translate class="btn btn-primary col-2">
+              <button #savebtn [disabled]="isSaveDisable" (click)="saveSchemes()" translate class="btn btn-primary col-2">
                   <i class="fa fa-save"></i> Save
               </button>&nbsp;
               <button #cancelbtn (click)="sendDataToParent()" translate class="btn btn-danger col-2">

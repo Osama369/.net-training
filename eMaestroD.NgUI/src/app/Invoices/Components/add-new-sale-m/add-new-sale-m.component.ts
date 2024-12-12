@@ -966,7 +966,8 @@ export class AddNewSaleMComponent implements OnInit{
 
   async SaveData(url :any){
     try {
-      console.log(this.productlist);
+
+      this.savebtnDisable = true;
       this.invoice = this.invoicesService.createInvoice(
         this.invoiceID,
         this.invoiceDetailID,
@@ -995,6 +996,8 @@ export class AddNewSaleMComponent implements OnInit{
       this.router.navigateByUrl(url);
     } catch (result) {
       this.toastr.error(result.error);
+      this.savebtnDisable = false;
+
     }
   }
 

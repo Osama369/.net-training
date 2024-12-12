@@ -42,7 +42,7 @@ export class AddNewCustomerComponent {
   selectedRegion:any;
   selectedCity:any;
   selectedArea:any;
-
+  isSaveDisable : boolean = false;
   sendDataToParent() {
     this.dataEvent.emit({type:'',value:false});
   }
@@ -217,6 +217,7 @@ export class AddNewCustomerComponent {
         this.customerList[0].active = true;
         this.customerList[0].comID = localStorage.getItem("comID");
         this.customerList[0].comment = "true";
+        this.isSaveDisable = true;
         this.customersService.saveCustomer(this.customerList[0]).subscribe({
           next: (cst:any) => {
             this.sharedDataService.updateCustomers$(cst);
@@ -230,10 +231,12 @@ export class AddNewCustomerComponent {
               this.toastr.success("Customer has been successfully updated! "+cst.message);
               this.dataEvent.emit({type:'',value:cst});
             }
+            this.isSaveDisable = false;
           },
           error: (response) => {
             this.toastr.error(response.error);
             this.onEnterTableInputCst(-1);
+            this.isSaveDisable = false;
           },
         });
       }
@@ -254,6 +257,7 @@ export class AddNewCustomerComponent {
         this.vendorList[0].taxValue = this.customerList[0].taxValue;
         this.vendorList[0].vendTypeID = 1;
         this.vendorList[0].active = true;
+        this.isSaveDisable = true;
         this.vendorService.saveVendor(this.vendorList[0]).subscribe({
           next: (vnd:any) => {
             this.sharedDataService.updateVendors$(vnd);
@@ -265,16 +269,19 @@ export class AddNewCustomerComponent {
                 {
                   this.toastr.success("Customer and Supplier has been successfully added!");
                   this.dataEvent.emit({type:'added',value:cst});
+                  this.isSaveDisable = false;
                 }
                 else
                 {
                   this.toastr.success("Customer and Supplier has been successfully updated! "+cst.message);
                   this.dataEvent.emit({type:'',value:cst});
+                  this.isSaveDisable = false;
                 }
               },
               error: (response) => {
                 this.toastr.error(response.error);
                 this.onEnterTableInputCst(-1);
+                this.isSaveDisable = false;
               },
             });
 

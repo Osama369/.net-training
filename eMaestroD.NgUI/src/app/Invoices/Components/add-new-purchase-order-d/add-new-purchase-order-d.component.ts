@@ -496,7 +496,7 @@ export class AddNewPurchaseOrderDComponent implements OnInit{
     let totalQty = rowData.qty;
     rowData.netRate = totalQty ? parseFloat((rowData.netAmount / totalQty).toFixed(2)) : 0;
 
-    rowData.diff = parseFloat((rowData.lastCost - rowData.netRate).toFixed(2)) || 0;
+    rowData.diff = rowData.lastCost == 0 ? 0 :  parseFloat((rowData.lastCost - rowData.netRate).toFixed(2)) || 0;
 
     this.productlist[rowIndex] = rowData;
     this.calculateTotalSummary();
@@ -623,6 +623,7 @@ export class AddNewPurchaseOrderDComponent implements OnInit{
   {
     if(this.validateFields())
     {
+      this.savebtnDisable = true;
       try {
           this.invoice = this.invoicesService.createInvoice(
             this.invoiceID,
@@ -652,6 +653,8 @@ export class AddNewPurchaseOrderDComponent implements OnInit{
           this.router.navigateByUrl(APP_ROUTES.invoices.purchaseOrder);
         } catch (result) {
           this.toastr.error(result.error);
+          this.savebtnDisable = false;
+
       }
     }
   }

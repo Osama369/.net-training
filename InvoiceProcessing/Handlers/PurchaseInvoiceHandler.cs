@@ -100,7 +100,7 @@ namespace eMaestroD.InvoiceProcessing.Handlers
                         sharePercentage = 0
                     };
 
-                    await _gLService.InsertVendorProductAsync(vendorProduct);
+                    await _gLService.UpsertVendorProductAsync(vendorProduct);
                 }
 
                 GL glEntry1 = new GL

@@ -471,9 +471,9 @@ namespace eMaestroD.InvoiceProcessing.Services
             return data;
         }
 
-        public async Task InsertVendorProductAsync(VendorProduct vendorProduct)
+        public async Task UpsertVendorProductAsync(VendorProduct vendorProduct)
         {
-            await _glRepository.InsertVendorProductAsync(vendorProduct);
+            await _glRepository.UpsertVendorProductAsync(vendorProduct);
         }
 
         public async Task<List<InvoiceProduct>> GetItemsBySupplierAndDate(int supplierId, DateTime datefrom, DateTime dateTo)
