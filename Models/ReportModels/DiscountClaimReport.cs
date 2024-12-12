@@ -36,8 +36,6 @@ namespace eMaestroD.Models.ReportModels
         [DisplayName(Name = "Amount")]
         public decimal Amount { get; set; } 
 
-
-
         
     }
 }

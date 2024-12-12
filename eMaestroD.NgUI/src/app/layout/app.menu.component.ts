@@ -169,6 +169,7 @@ export class AppMenuComponent implements OnInit {
                     },
                     { label: 'Bonus Claim', routerLink: [APP_ROUTES.reports.accountReports.BonusClaim] },
                     { label: 'Discount Claim', routerLink: [APP_ROUTES.reports.accountReports.DiscountClaim] },
+                    { label: 'Item Expiry List Report', routerLink: [APP_ROUTES.reports.accountReports.ItemExpiryList] },
                   ],
                 },
               ],

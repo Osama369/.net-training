@@ -35,6 +35,7 @@ import { SharedModule } from '../Shared/shared.module';
 import { ReportsRoutingModule } from './reports-routing.module';
 import { BonusClaimsComponent } from './Components/bonus-claims/bonus-claims.component';
 import { DiscountClaimComponent } from './Components/discount-claim/discount-claim.component';
+import { ItemExpiryListComponent } from './Components/item-expiry-list/item-expiry-list.component';
 
 
 
@@ -72,7 +73,8 @@ import { DiscountClaimComponent } from './Components/discount-claim/discount-cla
     TrialBalanceComponent,
     VendorledgerComponent,
     BonusClaimsComponent,
-    DiscountClaimComponent
+    DiscountClaimComponent,
+    ItemExpiryListComponent
 
   ],
   imports: [

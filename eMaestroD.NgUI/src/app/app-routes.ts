@@ -91,6 +91,7 @@ export const APP_ROUTES = {
       balanceSheet: 'Reports/BalanceSheetReport',
       BonusClaim: 'Reports/BonusClaimReport',
       DiscountClaim: 'Reports/DiscountClaimReport',
+      ItemExpiryList: 'Reports/ItemExpiryListReport',
       profitReports: {
         itemWiseProfit: 'Reports/ItemWiseProfitReport',
         invoiceWiseProfit: 'Reports/InvoiceWiseProfit',
