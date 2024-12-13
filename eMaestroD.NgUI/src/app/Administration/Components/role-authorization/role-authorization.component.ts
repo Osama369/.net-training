@@ -71,7 +71,7 @@ export class RoleAuthorizationComponent implements OnInit {
       this.userList = this.userList.filter(x=>x.RoleID == roleID);
       if(this.userData != undefined)
       {
-        this.SelectedUser = {UserID : this.userData.split(',')[1], userName : this.userList.find(x=>x.UserID == this.userData.split(',')[1])?.userName};
+        this.SelectedUser = {UserID : this.userData.split(',')[1], userName : this.userList.find(x=>x.UserID == this.userData.split(',')[1])?.UserName};
       }
     })
   }
@@ -92,7 +92,7 @@ export class RoleAuthorizationComponent implements OnInit {
     let query = event.query;
     for (let i = 0; i < this.userList.length; i++) {
       let p = this.userList[i];
-      if (p.userName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
+      if (p.UserName.toLowerCase().indexOf(query.toLowerCase()) == 0) {
         filtered.push(p);
       }
     }

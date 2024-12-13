@@ -167,8 +167,10 @@ export class TaxReportBySupplierComponent {
     let d2 =  this.datePipe.transform(this.DateTo, "yyyy-MM-dd");
 
     this.reportService.runReportWith4Para("TaxReportBySupplier",d1,d2,0,this.SelectedVendor.vendID,this.selectedLocation.LocationId).subscribe(data => {
+      
       this.data = (data as { [key: string]: any })["enttityDataSource"];
       this.cols = (data as { [key: string]: any })["entityModel"];
+      console.log(this.data);
       this.allowBtn = true;
     });
   }

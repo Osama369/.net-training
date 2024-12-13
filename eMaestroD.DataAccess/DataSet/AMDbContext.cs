@@ -107,6 +107,7 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<UserLocation> UserLocations { get; set; }
         public DbSet<UserDetailsViewModel> UserDetailsViewModel { get; set; }
         public DbSet<ItemExpiryListReport> ItemExpiryListReport { get; set; }
+        public DbSet<SaleManeLedgerReport> SaleManLedgerReport { get; set; }
         public DbSet<SSRWithAvailabilityReport> SSRWithAvailabilityReport { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -147,6 +148,7 @@ namespace eMaestroD.DataAccess.DataSet
             modelBuilder.Entity<DiscountClaimReport>().HasNoKey();
             modelBuilder.Entity<ItemExpiryListReport>().HasNoKey();
             modelBuilder.Entity<SSRWithAvailabilityReport>().HasNoKey();
+            modelBuilder.Entity<SaleManeLedgerReport>().HasNoKey();
         }
 
     }

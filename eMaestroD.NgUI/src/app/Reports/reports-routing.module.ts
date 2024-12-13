@@ -36,6 +36,7 @@ import { BonusClaimsComponent } from './Components/bonus-claims/bonus-claims.com
 import { DiscountClaimComponent } from './Components/discount-claim/discount-claim.component';
 import { ItemExpiryListComponent } from './Components/item-expiry-list/item-expiry-list.component';
 import { SSRWithAvailabilityComponent } from './Components/ssrwith-availability/ssrwith-availability.component';
+import { SaleManLedgerReportComponent } from './Components/sale-man-ledger-report/sale-man-ledger-report.component';
 
 const routes: Routes = [
   { path: 'DailySaleReport', component: DailyinvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DailySale' }  },
@@ -74,6 +75,7 @@ const routes: Routes = [
       { path: 'DiscountClaimReport', component: DiscountClaimComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DiscountClaim' }  },
       { path: 'ItemExpiryListReport', component: ItemExpiryListComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ItemExpiryListReport' }  },
       { path: 'SSRWithAvailability', component: SSRWithAvailabilityComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SSRWithAvailability' }  },
+      { path: 'SalesManLedgerReport', component: SaleManLedgerReportComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SalesManLedgerReport' }  },
 
     ];
 

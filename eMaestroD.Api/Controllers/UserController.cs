@@ -124,7 +124,7 @@ namespace eMaestroD.Api.Controllers
                     }
                     return NotFound("User limit reached. No new users can be added.");
                 }
-                else if(existEmail.Email == user.Email)
+                else if(existEmail.Email.ToLower() == user.Email.ToLower())
                 {
                     var tenantUser = new TenantUser
                     {

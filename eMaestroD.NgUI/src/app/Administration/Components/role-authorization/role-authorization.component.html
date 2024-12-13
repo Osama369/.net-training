@@ -12,7 +12,7 @@
         field="RoleName" value="RoleID" [minLength]="1" (ngModelChange)="roleOnChange(SelectedRoles.RoleID)" [dropdown]="true" class="col-form-label col-3" styleClass="col-3"></p-autoComplete>
         <label class="col-form-label date-label col-2 required" style="text-align: right;" translate>User Name <span>:</span> &nbsp;</label>
         <p-autoComplete styleClass="myclass" translate [(ngModel)]="SelectedUser" [suggestions]="FilteredUserList" (completeMethod)="filterUserlist($event)"
-        field="userName" value="UserID" [minLength]="1" [dropdown]="true" class="col-form-label col-2" styleClass="col-3"></p-autoComplete>
+        field="UserName" value="UserID" [minLength]="1" [dropdown]="true" class="col-form-label col-2" styleClass="col-3"></p-autoComplete>
         &nbsp;
         <button #savebtn (click)="submit()" class="btn btn-primary btnSetting" translate><i class="far fa-paper-plane"></i> Submit</button>&nbsp;
         </div>

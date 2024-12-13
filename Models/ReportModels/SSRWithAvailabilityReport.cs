@@ -13,15 +13,15 @@ namespace eMaestroD.Models.ReportModels
     {
 
         [DisplayName(Name = "Product Group Name")]
-        public string prodGrpName { get; set; }
+        public string? prodGrpName { get; set; }
 
 
         [DisplayName(Name = "Company Name")]
-        public string comName { get; set; }
+        public string? comName { get; set; }
 
 
         [DisplayName(Name = "Product Name")]
-        public string prodName { get; set; }
+        public string? prodName { get; set; }
 
 
         [DisplayName(Name = "Product Price")]

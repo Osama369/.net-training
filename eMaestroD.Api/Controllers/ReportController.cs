@@ -251,7 +251,12 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
-            
+            else if (ReportName == "SalesManLedgerReport")
+            {
+                var res = await SaleManLedgerReport(Parameter1, Parameter2, comID, int.Parse(Parameter3));
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
             return Ok(vM);
 
         }
@@ -1016,6 +1021,36 @@ namespace eMaestroD.Api.Controllers
                 //}
                 //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
                 return SDL.OrderBy(x => x.expiryDate).ToList();
+            }
+            return null;
+        }
+        [NonAction]
+        public async Task<List<SaleManeLedgerReport>> SaleManLedgerReport(DateTime dtfrom, DateTime dtTo, int comID, int UserID)
+        {
+            List<SaleManeLedgerReport> SDL;
+            string sql = "exec [dbo].[Report_SalesManLedger] @dtStart, @dtEnd,@comID ,@saleManID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+                    new SqlParameter { ParameterName = "@saleManID", Value = UserID },
+            };
+            SDL = _AMDbContext.SaleManLedgerReport.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+              //  return SDL.OrderBy(x => x.expiryDate).ToList();
+                return SDL.ToList();
             }
             return null;
         }
