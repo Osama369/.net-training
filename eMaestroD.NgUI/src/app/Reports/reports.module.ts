@@ -38,6 +38,7 @@ import { DiscountClaimComponent } from './Components/discount-claim/discount-cla
 import { ItemExpiryListComponent } from './Components/item-expiry-list/item-expiry-list.component';
 import { SSRWithAvailabilityComponent } from './Components/ssrwith-availability/ssrwith-availability.component';
 import { SaleManLedgerReportComponent } from './Components/sale-man-ledger-report/sale-man-ledger-report.component';
+import { SalemanItemWiseSaleReportComponent } from './Components/saleman-item-wise-sale-report/saleman-item-wise-sale-report.component';
 
 
 
@@ -78,7 +79,8 @@ import { SaleManLedgerReportComponent } from './Components/sale-man-ledger-repor
     DiscountClaimComponent,
     ItemExpiryListComponent,
     SSRWithAvailabilityComponent,
-    SaleManLedgerReportComponent
+    SaleManLedgerReportComponent,
+    SalemanItemWiseSaleReportComponent
 
   ],
   imports: [
