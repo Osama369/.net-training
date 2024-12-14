@@ -684,14 +684,14 @@ export class AddNewGrnComponent implements OnInit{
             }
               this.RemoveItemGLID1 = [
                 {voucherNo:this.productlist[index].prodCode,
-                dtTx:undefined,
-                cstName:undefined,
-                amount:undefined,
-                prodID: this.productlist[index].prodID,
-                enterAmount : undefined,
-                cstID: undefined,
-                COAID : undefined,
-              glComments : undefined
+                  dtTx:undefined,
+                  cstName:undefined,
+                  amount:undefined,
+                  prodID: this.productlist[index].prodID,
+                  enterAmount : undefined,
+                  cstID: undefined,
+                  COAID : undefined,
+                  glComments : undefined
                 }
               ]
               this.RemoveItemGLID2.push(this.RemoveItemGLID1[0]);

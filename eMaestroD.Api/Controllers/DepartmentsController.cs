@@ -51,15 +51,21 @@ namespace eMaestroD.Api.Controllers
         {
             var existingDepartment = await _AMDbContext.Departments.FindAsync(model.depID);
 
+            bool nameExists = await _AMDbContext.Departments
+                .AnyAsync(d => d.depName == model.depName && d.depID != model.depID && d.comID == model.comID);
+
+            if (nameExists)
+            {
+                return BadRequest($"A department with the name '{model.depName}' already exists.");
+            }
+
             if (existingDepartment == null)
             {
-                // If department doesn't exist, add it
                 model.crtDate = DateTime.Now;
                 _AMDbContext.Departments.Add(model);
             }
             else
             {
-                // If department exists, update it
                 existingDepartment.depName = model.depName;
                 existingDepartment.descr = model.descr;
                 existingDepartment.active = model.active;
@@ -82,7 +88,7 @@ namespace eMaestroD.Api.Controllers
             return CreatedAtAction(nameof(GetDepartment), new { id = model.depID }, model);
         }
 
-      
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDepartment(int id)
         {

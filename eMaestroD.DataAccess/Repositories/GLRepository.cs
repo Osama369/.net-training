@@ -77,7 +77,7 @@ namespace eMaestroD.DataAccess.Repositories
         {
             try
             {
-                var entries = await _dbContext.gl.Where(g => g.voucherNo == voucherNo).ToListAsync();
+                var entries = await _dbContext.TempGL.Where(g => g.voucherNo == voucherNo).ToListAsync();
 
                 if (!entries.Any())
                 {
@@ -90,11 +90,13 @@ namespace eMaestroD.DataAccess.Repositories
                     {
                         entry.isConverted = true;
                         entry.checkName = convertedVoucherNo;
+                        entry.TransactionStatus = "Posted";
                     }
                     else
                     {
                         entry.isConverted = false;
                         entry.checkName = "";
+                        entry.TransactionStatus = "Pending";
                     }
 
                     _dbContext.Entry(entry).State = EntityState.Modified;
@@ -135,6 +137,17 @@ namespace eMaestroD.DataAccess.Repositories
 
                     await dbSet.AddRangeAsync(items.Skip(1));
                     await _dbContext.SaveChangesAsync();
+
+                    
+                    var checkNameProperty = typeof(T).GetProperty("checkName");
+                    var voucherNoProperty = typeof(T).GetProperty("voucherNo");
+                    var checkName = checkNameProperty?.GetValue(firstItem)?.ToString();
+                    var voucherNo = voucherNoProperty?.GetValue(firstItem)?.ToString();
+                    if (!string.IsNullOrEmpty(checkName))
+                    {
+                        await UpdateGLIsConvertedAsync(checkName, voucherNo, false);
+                    }
+                    
                     await transaction.CommitAsync();
                 }
                 catch (Exception)
@@ -153,12 +166,10 @@ namespace eMaestroD.DataAccess.Repositories
             {
                 try
                 {
-                    // Update the first item
                     var firstItem = items.First();
                     _dbContext.Set<T>().Update(firstItem);
                     await _dbContext.SaveChangesAsync();
 
-                    // Set `txID` for the remaining items if applicable
                     var idProperty = firstItem.GetType().GetProperty("GLID") ?? firstItem.GetType().GetProperty("TempGLID");
                     var firstItemId = idProperty?.GetValue(firstItem);
 

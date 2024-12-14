@@ -89,5 +89,5 @@ export interface ProductViewModel {
   sharePercentage?:number | 0;
 
   baseQty?: number | 0;
-  units?: { unitType: string; unitValue: number; unitId: number; unitCode : string }[];
+  units?: { unitType: string; unitValue: number; unitId: number; unitCode : string; }[];
 }

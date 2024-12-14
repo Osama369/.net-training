@@ -101,11 +101,23 @@ export class SharedDataService {
           unitCode: product.barCode,
         });
         existingProduct.unit = existingProduct.units
-        .map(unit => `${unit.unitType}(${unit.unitValue})`) 
+        .map(unit => `${unit.unitType}(${unit.unitValue})`)
         .join(', ');
+
+        if (existingProduct.sellPrice === 0) {
+          const nonZeroSellPrice = updatedData
+            .filter(p => p.barCode === product.barCode && p.sellPrice !== 0)
+            .map(p => p.sellPrice)[0];
+          if (nonZeroSellPrice) {
+            existingProduct.sellPrice = nonZeroSellPrice;
+          }
+        }
       } else {
         acc.push({
           ...product,
+          sellPrice: product.sellPrice === 0
+          ? updatedData.find(p => p.barCode === product.barCode && p.sellPrice !== 0)?.sellPrice || 0
+          : product.sellPrice,
           units: [
             {
               unitType: product.unit,
@@ -252,17 +264,17 @@ export class SharedDataService {
   updateProducts$(data: ProductViewModel[]) {
     const currentData = (this.productsSubject.value as { [key: string]: any })["enttityDataSource"] || [];
     const updatedData = [...currentData];
-  
+
     data.forEach(product => {
       const existingProduct = updatedData.find(p => p.barCode === product.barCode);
-  
+
       const newUnit = {
         unitType: product.unit,
         unitValue: product.baseQty,
         unitId: product.prodBCID,
         unitCode: product.barCode,
       };
-  
+
       if (existingProduct) {
         const index = existingProduct.units.findIndex(unit => unit.unitId === newUnit.unitId);
         if (index === -1) {
@@ -282,7 +294,7 @@ export class SharedDataService {
         });
       }
     });
-  
+
     // Update the enttityDataSource and notify observers
     (this.productsSubject.value as { [key: string]: any })["enttityDataSource"] = updatedData;
     this.productsSubject.next(this.productsSubject.value);

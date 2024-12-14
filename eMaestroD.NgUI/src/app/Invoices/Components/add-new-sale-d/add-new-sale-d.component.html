@@ -196,16 +196,16 @@
                         <input #inputFieldTable [style]="{'width':'70px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName) || !rowData.isTaxable" [readonly]="!rowData.isTaxable" type="text" (keyup.enter)="onEnterTableInput(11, ri)" [(ngModel)]="rowData.taxAmount" name="taxAmount" (ngModelChange)="Itemcalculation(ri)" class="girdRow">
                     </td>
                    <td>
-                      <input #inputFieldTable [style]="{'width':'42px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName) || isConverted || !rowData.isTaxable" type="text" (keyup.enter)="onEnterTableInput(12, ri)" [(ngModel)]="rowData.extraAdvanceTaxPercent" name="extraTax" (ngModelChange)="Itemcalculation(ri)" class="girdRow">
+                      <input #inputFieldTable [style]="{'width':'42px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName) || !rowData.isTaxable" type="text" (keyup.enter)="onEnterTableInput(12, ri)" [(ngModel)]="rowData.extraAdvanceTaxPercent" name="extraTax" (ngModelChange)="Itemcalculation(ri)" class="girdRow">
                     </td>
                     <td>
-                        <input #inputFieldTable [style]="{'width':'70px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName) || isConverted || !rowData.isTaxable" type="text" (keyup.enter)="onEnterTableInput(13, ri)" [(ngModel)]="rowData.extraAdvanceTaxAmount" name="extraTaxAmount" (ngModelChange)="Itemcalculation(ri)" class="girdRow">
+                        <input #inputFieldTable [style]="{'width':'70px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName)  || !rowData.isTaxable" type="text" (keyup.enter)="onEnterTableInput(13, ri)" [(ngModel)]="rowData.extraAdvanceTaxAmount" name="extraTaxAmount" (ngModelChange)="Itemcalculation(ri)" class="girdRow">
                     </td>
                     <td>
-                        <input #inputFieldTable [style]="{'width':'42px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName) || isConverted" type="text" (keyup.enter)="onEnterTableInput(14, ri)" [(ngModel)]="rowData.extraDiscountPercent" name="extraDiscount" (ngModelChange)="Itemcalculation(ri)" class="girdRow">
+                        <input #inputFieldTable [style]="{'width':'42px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName)" type="text" (keyup.enter)="onEnterTableInput(14, ri)" [(ngModel)]="rowData.extraDiscountPercent" name="extraDiscount" (ngModelChange)="Itemcalculation(ri)" class="girdRow">
                     </td>
                     <td>
-                        <input #inputFieldTable [style]="{'width':'70px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName) || isConverted" type="text" (keyup.enter)="onEnterTableInput(19, ri)" [(ngModel)]="rowData.extraDiscountAmount" name="extraDiscountAmount" (ngModelChange)="Itemcalculation(ri)" class="girdRow">
+                        <input #inputFieldTable [style]="{'width':'70px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName)" type="text" (keyup.enter)="onEnterTableInput(19, ri)" [(ngModel)]="rowData.extraDiscountAmount" name="extraDiscountAmount" (ngModelChange)="Itemcalculation(ri)" class="girdRow">
                     </td>
                <!-- <td>
                         <input #inputFieldTable [style]="{'width':'42px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName) || isConverted || isDisabled" type="text" (keyup.enter)="onEnterTableInput(15, ri)" [(ngModel)]="rowData.advanceTaxPercent" name="advanceTax" (ngModelChange)="Itemcalculation(ri)" class="girdRow">
