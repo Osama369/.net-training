@@ -39,6 +39,7 @@ import { ItemExpiryListComponent } from './Components/item-expiry-list/item-expi
 import { SSRWithAvailabilityComponent } from './Components/ssrwith-availability/ssrwith-availability.component';
 import { SaleManLedgerReportComponent } from './Components/sale-man-ledger-report/sale-man-ledger-report.component';
 import { SalemanItemWiseSaleReportComponent } from './Components/saleman-item-wise-sale-report/saleman-item-wise-sale-report.component';
+import { SaleManWiseSaleReportComponent } from './Components/sale-man-wise-sale-report/sale-man-wise-sale-report.component';
 
 
 
@@ -80,7 +81,8 @@ import { SalemanItemWiseSaleReportComponent } from './Components/saleman-item-wi
     ItemExpiryListComponent,
     SSRWithAvailabilityComponent,
     SaleManLedgerReportComponent,
-    SalemanItemWiseSaleReportComponent
+    SalemanItemWiseSaleReportComponent,
+    SaleManWiseSaleReportComponent
 
   ],
   imports: [

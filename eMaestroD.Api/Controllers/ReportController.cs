@@ -257,6 +257,13 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
+
+            else if (ReportName == "SaleManWiseSale")
+            {
+                var res = await SaleManWiseSale(Parameter1, Parameter2, comID, int.Parse(Parameter3));
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
             return Ok(vM);
 
         }
@@ -1098,6 +1105,37 @@ namespace eMaestroD.Api.Controllers
             }
             return null;
         }
+        [NonAction]
+        public async Task<List<SaleManWiseSaleReport>> SaleManWiseSale(DateTime dtfrom, DateTime dtTo, int comID, int UserID)
+        {
+            List<SaleManWiseSaleReport> SDL;
+            string sql = "exec [dbo].[Report_SalePersonWiseSale] @dtStart, @dtEnd, @comID ,@userID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+                    new SqlParameter { ParameterName = "@userID", Value = UserID },
+            };
+            SDL = _AMDbContext.SaleManWiseSaleReport.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                //  return SDL.OrderBy(x => x.expiryDate).ToList();
+                return SDL.ToList();
+            }
+            return null;
+        }
+
         [NonAction]
         public async Task<List<StockStatusCumulativeValuation>> StockStatusCumulativeValuation(DateTime dtTo, int locID, int comID, int catID)
         {

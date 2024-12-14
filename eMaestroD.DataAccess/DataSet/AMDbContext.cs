@@ -108,6 +108,7 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<UserDetailsViewModel> UserDetailsViewModel { get; set; }
         public DbSet<ItemExpiryListReport> ItemExpiryListReport { get; set; }
         public DbSet<SaleManeLedgerReport> SaleManLedgerReport { get; set; }
+        public DbSet<SaleManWiseSaleReport> SaleManWiseSaleReport { get; set; }
         public DbSet<SSRWithAvailabilityReport> SSRWithAvailabilityReport { get; set; }
         public DbSet<SalemanItemWiseSaleReport> SalemanItemWiseSaleReport { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)

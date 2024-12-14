@@ -174,6 +174,7 @@ export class AppMenuComponent implements OnInit {
                     { label: 'SSR With Availability', routerLink: [APP_ROUTES.reports.accountReports.SSRWithAvailability] },
                    
                     { label: 'SalesMan Item Wise Sale', routerLink: [APP_ROUTES.reports.accountReports.SalemanItemWiseSaleReport] },
+                    { label: 'SalesMan Wise Sale', routerLink: [APP_ROUTES.reports.accountReports.SalemanWiseSaleReport] },
                   ],
                 },
               ],
