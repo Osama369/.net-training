@@ -33,6 +33,13 @@ import { TrialBalanceComponent } from './Components/trial-balance/trial-balance.
 import { VendorledgerComponent } from './Components/vendorledger/vendorledger.component';
 import { SharedModule } from '../Shared/shared.module';
 import { ReportsRoutingModule } from './reports-routing.module';
+import { BonusClaimsComponent } from './Components/bonus-claims/bonus-claims.component';
+import { DiscountClaimComponent } from './Components/discount-claim/discount-claim.component';
+import { ItemExpiryListComponent } from './Components/item-expiry-list/item-expiry-list.component';
+import { SSRWithAvailabilityComponent } from './Components/ssrwith-availability/ssrwith-availability.component';
+import { SaleManLedgerReportComponent } from './Components/sale-man-ledger-report/sale-man-ledger-report.component';
+import { SalemanItemWiseSaleReportComponent } from './Components/saleman-item-wise-sale-report/saleman-item-wise-sale-report.component';
+import { SaleManWiseSaleReportComponent } from './Components/sale-man-wise-sale-report/sale-man-wise-sale-report.component';
 
 
 
@@ -68,7 +75,14 @@ import { ReportsRoutingModule } from './reports-routing.module';
     TaxReportBySupplierComponent,
     TaxReportComponent,
     TrialBalanceComponent,
-    VendorledgerComponent
+    VendorledgerComponent,
+    BonusClaimsComponent,
+    DiscountClaimComponent,
+    ItemExpiryListComponent,
+    SSRWithAvailabilityComponent,
+    SaleManLedgerReportComponent,
+    SalemanItemWiseSaleReportComponent,
+    SaleManWiseSaleReportComponent
 
   ],
   imports: [

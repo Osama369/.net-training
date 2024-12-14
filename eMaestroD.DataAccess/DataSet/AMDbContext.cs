@@ -64,6 +64,8 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<ProfitAndLoss> ProfitAndLoss { get; set; }
         public DbSet<TrialBalance> TrialBalance { get; set; }
         public DbSet<BalanceSheet> BalanceSheet { get; set; }
+        public DbSet<BonusClaimReport> BonusClaim { get; set; }
+        public DbSet<DiscountClaimReport> DiscountClaimReport { get; set; }
         public DbSet<SaleHistory> SaleHistory { get; set; }
         public DbSet<voucherDetail> voucherDetail { get; set; }
         public DbSet<generalJournal> generalJournal { get; set; }
@@ -104,6 +106,11 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<TransactionLog> TransactionLogs { get; set; }
         public DbSet<UserLocation> UserLocations { get; set; }
         public DbSet<UserDetailsViewModel> UserDetailsViewModel { get; set; }
+        public DbSet<ItemExpiryListReport> ItemExpiryListReport { get; set; }
+        public DbSet<SaleManeLedgerReport> SaleManLedgerReport { get; set; }
+        public DbSet<SaleManWiseSaleReport> SaleManWiseSaleReport { get; set; }
+        public DbSet<SSRWithAvailabilityReport> SSRWithAvailabilityReport { get; set; }
+        public DbSet<SalemanItemWiseSaleReport> SalemanItemWiseSaleReport { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -139,6 +146,13 @@ namespace eMaestroD.DataAccess.DataSet
             modelBuilder.Entity<InvoiceView>().HasNoKey();
             modelBuilder.Entity<SalesSummary>().HasNoKey();
             modelBuilder.Entity<InvoiceProduct>().HasNoKey();
+            modelBuilder.Entity<BonusClaimReport>().HasNoKey();
+            modelBuilder.Entity<DiscountClaimReport>().HasNoKey();
+            modelBuilder.Entity<ItemExpiryListReport>().HasNoKey();
+            modelBuilder.Entity<SSRWithAvailabilityReport>().HasNoKey();
+            modelBuilder.Entity<SaleManeLedgerReport>().HasNoKey();
+            modelBuilder.Entity<SalemanItemWiseSaleReport>().HasNoKey();
+            modelBuilder.Entity<SaleManWiseSaleReport>().HasNoKey();
         }
 
     }

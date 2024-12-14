@@ -154,6 +154,7 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
+          
             return Ok(vM);
             //return File(result, "application/pdf");
         }
@@ -232,6 +233,37 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
+            else if (ReportName == "BonusClaim")
+            {
+                var res = await BonusClaim(Parameter1, Parameter2, comID, int.Parse(Parameter3));
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
+            else if (ReportName == "DiscountClaim")
+            {
+                var res = await DiscoutClaim(Parameter1, Parameter2, comID, int.Parse(Parameter3));
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
+            else if (ReportName == "ItemExpiryListReport")
+            {
+                var res = await ItemExpiryListReport(Parameter1, Parameter2, comID, int.Parse(Parameter3));
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
+            else if (ReportName == "SalesManLedgerReport")
+            {
+                var res = await SaleManLedgerReport(Parameter1, Parameter2, comID, int.Parse(Parameter3));
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
+
+            else if (ReportName == "SaleManWiseSale")
+            {
+                var res = await SaleManWiseSale(Parameter1, Parameter2, comID, int.Parse(Parameter3));
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
             return Ok(vM);
 
         }
@@ -273,6 +305,18 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
+            else if (ReportName == "SSRWithAvailability")
+            {
+                var res = await SSRWithAvailability(Parameter1, Parameter2, int.Parse(Parameter3), int.Parse(Parameter4),  locID, comID);
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
+            //else if (ReportName == "SalemanItemWiseSaleReport")
+            //{
+            //    var res = await SalemanItemWiseSalesReport(Parameter1, Parameter2, comID, int.Parse(Parameter3), int.Parse(Parameter4));
+            //    vM.enttityDataSource = res;
+            //    vM.entityModel = res?.GetEntity_MetaData();
+            //}
             return Ok(vM);
         }
 
@@ -289,6 +333,7 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
+           
             return Ok(vM);
         }
 
@@ -873,6 +918,225 @@ namespace eMaestroD.Api.Controllers
             return null;
         }
 
+        [NonAction]
+        public async Task<List<BonusClaimReport>> BonusClaim(DateTime dtfrom, DateTime dtTo, int comID,int vendID)
+        {
+            List<BonusClaimReport> SDL;
+            string sql = "exec [dbo].[Report_BonusClaim] @dtStart, @dtEnd ,@vendID,@comID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+                    new SqlParameter { ParameterName = "@vendID", Value = vendID },
+            };
+            SDL = _AMDbContext.BonusClaim.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                return SDL.OrderBy(x => x.dtTx).ToList();
+            }
+            return null;
+        }
+        [NonAction]
+        public async Task<List<DiscountClaimReport>> DiscoutClaim(DateTime dtfrom, DateTime dtTo, int comID, int vendID)
+        {
+            List<DiscountClaimReport> SDL;
+            string sql = "exec [dbo].[Report_DiscountClaim] @dtStart, @dtEnd ,@vendID,@comID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+                    new SqlParameter { ParameterName = "@vendID", Value = vendID },
+            };
+            SDL = _AMDbContext.DiscountClaimReport.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                return SDL.OrderBy(x => x.dtTx).ToList();
+            }
+            return null;
+        }
+
+        [NonAction]
+        public async Task<List<SSRWithAvailabilityReport>>SSRWithAvailability (DateTime dtfrom, DateTime dtTo, int vendID, int groupID, int locID, int comID)
+        {
+            List<SSRWithAvailabilityReport> SDL;
+            string sql = "[dbo].[Report_SSRWithAvailability] @dtStart, @dtEnd, @comID, @groupID, @locID, @vendorID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+                    new SqlParameter { ParameterName = "@groupID", Value = groupID },
+                    new SqlParameter { ParameterName = "@locID", Value = locID },
+                    new SqlParameter { ParameterName = "@vendorID", Value = vendID },
+            };
+            SDL = _AMDbContext.SSRWithAvailabilityReport.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                // return SDL.OrderBy(x => x.expiryDate).ToList();
+                return SDL;
+            }
+            return null;
+        }
+        
+
+
+        [NonAction]
+        public async Task<List<SalemanItemWiseSaleReport>> SalemanItemWiseSalesReport(DateTime dtfrom, DateTime dtTo, int comID, int userID, int ProdID)
+        {
+            
+                List<SalemanItemWiseSaleReport> SDL;
+                string sql = "[dbo].[Report_SalePersonProductWiseSale] @dtStart, @dtEnd, @comID, @userID, @prodID";
+
+                List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+                    new SqlParameter { ParameterName = "@userID", Value = userID },
+                    new SqlParameter { ParameterName = "@prodID", Value = ProdID },
+            };
+                SDL = _AMDbContext.SalemanItemWiseSaleReport.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+          
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                // return SDL.OrderBy(x => x.expiryDate).ToList();
+                return SDL;
+            }
+            return null;
+
+
+        }
+        [NonAction]
+        public async Task<List<ItemExpiryListReport>> ItemExpiryListReport(DateTime dtfrom, DateTime dtTo, int comID, int vendID)
+        {
+            List<ItemExpiryListReport> SDL;
+            string sql = "exec [dbo].[Report_ProductExpiryList] @dtStart, @dtEnd ,@vendID,@comID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+                    new SqlParameter { ParameterName = "@vendID", Value = vendID },
+            };
+            SDL = _AMDbContext.ItemExpiryListReport.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                return SDL.OrderBy(x => x.expiryDate).ToList();
+            }
+            return null;
+        }
+        [NonAction]
+        public async Task<List<SaleManeLedgerReport>> SaleManLedgerReport(DateTime dtfrom, DateTime dtTo, int comID, int UserID)
+        {
+            List<SaleManeLedgerReport> SDL;
+            string sql = "exec [dbo].[Report_SalesManLedger] @dtStart, @dtEnd,@comID ,@saleManID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+                    new SqlParameter { ParameterName = "@saleManID", Value = UserID },
+            };
+            SDL = _AMDbContext.SaleManLedgerReport.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+              //  return SDL.OrderBy(x => x.expiryDate).ToList();
+                return SDL.ToList();
+            }
+            return null;
+        }
+        [NonAction]
+        public async Task<List<SaleManWiseSaleReport>> SaleManWiseSale(DateTime dtfrom, DateTime dtTo, int comID, int UserID)
+        {
+            List<SaleManWiseSaleReport> SDL;
+            string sql = "exec [dbo].[Report_SalePersonWiseSale] @dtStart, @dtEnd, @comID ,@userID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+                    new SqlParameter { ParameterName = "@userID", Value = UserID },
+            };
+            SDL = _AMDbContext.SaleManWiseSaleReport.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                //  return SDL.OrderBy(x => x.expiryDate).ToList();
+                return SDL.ToList();
+            }
+            return null;
+        }
 
         [NonAction]
         public async Task<List<StockStatusCumulativeValuation>> StockStatusCumulativeValuation(DateTime dtTo, int locID, int comID, int catID)
