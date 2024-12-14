@@ -1,3 +1,4 @@
+
 import { HttpClient } from '@angular/common/http';
 import { Component, QueryList, ViewChildren } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -12,13 +13,16 @@ import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { ReportService } from '../../Services/report.service';
 import { Location } from './../../../Administration/Models/location';
 import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
+import { prodGroups } from 'src/app/Manage/Models/prodGroups';
+import { ProductCategoryService } from 'src/app/Manage/Services/product-category.service';
+import { Products } from 'src/app/Manage/Models/products';
 
 @Component({
-  selector: 'app-tax-report-by-supplier',
-  templateUrl: './tax-report-by-supplier.component.html',
-  styleUrls: ['./tax-report-by-supplier.component.css']
+  selector: 'app-ssrwith-availability',
+  templateUrl: './ssrwith-availability.component.html',
+  styleUrls: ['./ssrwith-availability.component.scss']
 })
-export class TaxReportBySupplierComponent {
+export class SSRWithAvailabilityComponent {
   constructor(
     private authService : AuthService,
     public bookmarkService: BookmarkService,
@@ -28,6 +32,7 @@ export class TaxReportBySupplierComponent {
     private sanitizer: DomSanitizer,
     private locationService:LocationService,
     private datePipe: DatePipe,
+    private productCategoryService : ProductCategoryService,
     private reportService: ReportService){}
 
   Vendor: Vendor[];
@@ -36,6 +41,19 @@ export class TaxReportBySupplierComponent {
   FilterVendorlist: Vendor[];
   SelectedType:any;
   FilterTypelist: any;
+  SelectedProduct:any;
+  productlist: Products[];
+  allProductlist: Products[];
+  Filterproductlist: Products[];
+  products: Products[] = [];
+  
+
+  selectedLocation:any;
+  locationlist: Location[];
+  allLocations: Location[];
+  FilterLocationslist: Location[];
+  Locations: Location[] = [];
+
   @ViewChildren('inputField') inputFields: QueryList<any>;
   DateFrom :any;
   DateTo :any;
@@ -45,9 +63,12 @@ export class TaxReportBySupplierComponent {
   cols:any []= [];
   data:any[];
   bookmark : boolean = false;
-  selectedLocation:any;
+  
   LocationList : Location[];
   locations : Location[];
+  productGrouplist: prodGroups[];
+  FilterProductGrouplist: prodGroups[];
+  SelectedproductGrouplist: any;
 
   type :any[] = [ {
     name:'All',
@@ -72,6 +93,20 @@ export class TaxReportBySupplierComponent {
     this.DateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
     this.DateTo = today;
     this.SelectedType = {name:this.type[0].name,value:this.type[0].value};
+
+    this.productCategoryService.getAllGroups().subscribe({
+      next: (comp) => {
+        this.productGrouplist =(comp as { [key: string]: any })["enttityDataSource"];;
+        this.productGrouplist.unshift({
+          prodGrpID:0,
+          prodGrpName:"---ALL---"
+        })
+        this.SelectedproductGrouplist = {prodGrpID:0,prodGrpName:"---ALL---"};
+      },
+      error: (response) => {
+        console.log(response);
+      },
+    });
 
 
     this.sharedDataService.getVendors$().subscribe({
@@ -107,8 +142,35 @@ export class TaxReportBySupplierComponent {
     this.authService.GetBookmarkScreen(this.route.snapshot?.data['requiredPermission']).subscribe(x=>{
       this.bookmark = x;
   });
-
+  this.LoadLocations()
 }
+
+LoadLocations()
+  {
+    this.locationlist = undefined;
+    this.selectedLocation = [];
+    this.sharedDataService.getLocations$().subscribe((us:any)=>{
+      this.locationlist = us;
+      this.locationlist= this.locationlist.filter(x=>x.LocTypeId==5);
+      this.locationlist.unshift({
+          
+          LocationId : 0,
+          LocationName : "---ALL---"});
+     })
+    
+  }
+
+  filterLocation(event: any) {
+    // In a real application, make a request to a remote URL with the query and return filtered results. For demo, we filter at the client-side.
+    const filtered: any[] = [];
+    const query = event.query.toLowerCase().trim();
+    for (const location of this.Locations) {
+      if (location.LocationName.toLowerCase().includes(query)) {
+        filtered.push(location);
+      }
+    }
+    this.FilterLocationslist = filtered;
+  }
         UpdateBookmark(value:any){
   this.bookmarkService.Updatebookmark(this.route.snapshot.data['requiredPermission'],value).subscribe({
     next: (result: any) => {
@@ -160,17 +222,93 @@ export class TaxReportBySupplierComponent {
       inputField.focus();
       inputField.select();
   }
+  filterProductCategory(event: any) {
+    // In a real application, make a request to a remote URL with the query and return filtered results. For demo, we filter at the client-side.
+    const filtered: any[] = [];
+    const query = event.query.toLowerCase().trim();
+    for (const product of this.productGrouplist) {
+      if (product.prodGrpName.toLowerCase().includes(query)) {
+        filtered.push(product);
+      }
+    }
+    this.FilterProductGrouplist = filtered;
+  }
+
+  changeProductDropdown()
+  {
+    if(this.SelectedproductGrouplist.prodGrpID != 0)
+    {
+      this.products = this.allProductlist.filter(x=>x.prodGrpID == this.SelectedproductGrouplist.prodGrpID);
+      this.products.unshift({
+        prodBCID : 0,
+        prodGrpID : undefined,
+        comID : undefined,
+        comName : undefined,
+        prodGrpName : undefined,
+        prodCode : undefined,
+        shortName : undefined,
+        prodName : "---ALL---",
+        descr : undefined,
+        prodUnit : undefined,
+        unitQty : undefined,
+        qty:undefined,
+        tax:undefined,
+        discount:undefined,
+        purchRate : undefined,
+        amount:undefined,
+        sellRate : undefined,
+        batch:undefined,
+        retailprice : undefined,
+        bonusQty:undefined,
+        tP : undefined,
+        isDiscount : false,
+        isTaxable : false,
+        isStore : false,
+        isRaw : false,
+        isBonus : false,
+        minQty : undefined,
+        maxQty : undefined,
+        mega : true,
+        active : true,
+        crtBy : undefined,
+        crtDate : undefined,
+        modby : undefined,
+        modDate : undefined,
+        expirydate : undefined,
+        qtyBal:undefined,
+        GLID:undefined,
+        TxID:undefined,
+        unitPrice:undefined
+      }
+    );
+
+    }else{
+      this.products = this.allProductlist;
+    }
+    this.SelectedProduct = {prodBCID:  0, prodName: '---ALL---'};
+
+  }
+
+  filterProduct(event: any) {
+    // In a real application, make a request to a remote URL with the query and return filtered results. For demo, we filter at the client-side.
+    const filtered: any[] = [];
+    const query = event.query.toLowerCase().trim();
+    for (const product of this.products) {
+      if (product.prodName.toLowerCase().includes(query)) {
+        filtered.push(product);
+      }
+    }
+    this.Filterproductlist = filtered;
+  }
 
   submit()
   {
     let d1 = this.datePipe.transform(this.DateFrom, "yyyy-MM-dd");
     let d2 =  this.datePipe.transform(this.DateTo, "yyyy-MM-dd");
-
-    this.reportService.runReportWith4Para("TaxReportBySupplier",d1,d2,0,this.SelectedVendor.vendID,this.selectedLocation.LocationId).subscribe(data => {
-      
+                                                              // para1:any, para2:any, para3:any, para4:any, para5:any,locID:any) 
+    this.reportService.runReportWith4Para("SSRWithAvailability",d1,d2,this.SelectedVendor.vendID, this.SelectedproductGrouplist.prodGrpID,this.selectedLocation.LocationId).subscribe(data => {
       this.data = (data as { [key: string]: any })["enttityDataSource"];
       this.cols = (data as { [key: string]: any })["entityModel"];
-      console.log(this.data);
       this.allowBtn = true;
     });
   }

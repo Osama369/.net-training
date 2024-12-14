@@ -89,6 +89,13 @@ export const APP_ROUTES = {
       },
       trialBalance: 'Reports/TrialBalanceReport',
       balanceSheet: 'Reports/BalanceSheetReport',
+      BonusClaim: 'Reports/BonusClaimReport',
+      DiscountClaim: 'Reports/DiscountClaimReport',
+      ItemExpiryList: 'Reports/ItemExpiryListReport',
+      SSRWithAvailability: 'Reports/SSRWithAvailability',
+      SalesManLedgerReport: 'Reports/SalesManLedgerReport',
+      SalemanItemWiseSaleReport: 'Reports/SalemanItemWiseSaleReport',
+      SalemanWiseSaleReport: 'Reports/SalemanWiseSaleReport',
       profitReports: {
         itemWiseProfit: 'Reports/ItemWiseProfitReport',
         invoiceWiseProfit: 'Reports/InvoiceWiseProfit',

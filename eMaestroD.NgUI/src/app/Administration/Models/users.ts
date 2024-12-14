@@ -27,6 +27,6 @@ export class Users {
    Companies?:any;
    locations?:any;
    locID?:any;
-   userName?:any;
+   UserName?:any;
    isAllowLogin?:any;
 }

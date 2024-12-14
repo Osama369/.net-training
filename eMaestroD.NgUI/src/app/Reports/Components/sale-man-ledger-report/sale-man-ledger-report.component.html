@@ -1,0 +1,44 @@
+<div class="container">
+    <div class="card">
+        <div class="col-12">
+            <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Sales Man Ledger Report
+              <a *ngIf="!bookmark"  (click)="UpdateBookmark(true)" title="Add Bookmark"><i class="pi pi-bookmark" style="font-size: 1.5rem;"></i></a>
+              <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark"><i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i></a>
+            </h4>
+                    <div class="row">
+  
+                      <div class="col-12">
+                        <label class="col-form-label date-label required" translate>Date From <span>:</span> &nbsp;</label>
+                        <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" [autofocus]="true" pAutoFocus class="ReportDropDown" [(ngModel)]="DateFrom" dateFormat="dd/mm/yy"></p-calendar>
+                        &nbsp;
+                        <label class="col-form-label date-label required" translate>Date To  <span>:</span> &nbsp;</label>
+                        <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" [(ngModel)]="DateTo" class="ReportDropDown" dateFormat="dd/mm/yy"></p-calendar>
+                        &nbsp;
+                        <label class="col-form-label lblUser date-label col-2 required" style="text-align: right;width: auto;" translate>User Name <span>:</span> &nbsp;</label>
+                        <p-autoComplete styleClass="myclass" translate [(ngModel)]="selectedUser" [suggestions]="FilteredUserList" (completeMethod)="filterUserlist($event)"
+                        field="UserName" value="UserID" [minLength]="1" [dropdown]="true" class="col-form-label col-2" styleClass="col-3"></p-autoComplete>
+                                          
+                         &nbsp;                  
+                        <button #savebtn (click)="submit()" translate class="btn btn-primary btnSetting"> <i class="far fa-paper-plane"></i> Submit</button>
+                     
+                      </div>
+  
+  
+                </div>
+            </div>
+        </div>
+  </div>
+  
+  
+  <app-report-gird
+  heading="Sale Man Ledger Report"
+  [dtFrom]="DateFrom"
+  [dtTo]="DateTo"
+  [columns]="cols"
+  [data]="data"
+  [AllowHeaderSetting]="allowBtn"
+  [AllowGlobalFilter]="allowBtn"
+  [AllowPrintButtons]="allowBtn"
+  >
+  </app-report-gird>
+  
