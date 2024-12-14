@@ -47,6 +47,13 @@ export class SSRWithAvailabilityComponent {
   Filterproductlist: Products[];
   products: Products[] = [];
   
+
+  selectedLocation:any;
+  locationlist: Location[];
+  allLocations: Location[];
+  FilterLocationslist: Location[];
+  Locations: Location[] = [];
+
   @ViewChildren('inputField') inputFields: QueryList<any>;
   DateFrom :any;
   DateTo :any;
@@ -56,13 +63,12 @@ export class SSRWithAvailabilityComponent {
   cols:any []= [];
   data:any[];
   bookmark : boolean = false;
-  selectedLocation:any;
+  
   LocationList : Location[];
   locations : Location[];
   productGrouplist: prodGroups[];
   FilterProductGrouplist: prodGroups[];
   SelectedproductGrouplist: any;
-
 
   type :any[] = [ {
     name:'All',
@@ -136,8 +142,35 @@ export class SSRWithAvailabilityComponent {
     this.authService.GetBookmarkScreen(this.route.snapshot?.data['requiredPermission']).subscribe(x=>{
       this.bookmark = x;
   });
-
+  this.LoadLocations()
 }
+
+LoadLocations()
+  {
+    this.locationlist = undefined;
+    this.selectedLocation = [];
+    this.sharedDataService.getLocations$().subscribe((us:any)=>{
+      this.locationlist = us;
+      this.locationlist= this.locationlist.filter(x=>x.LocTypeId==5);
+      this.locationlist.unshift({
+          
+          LocationId : 0,
+          LocationName : "---ALL---"});
+     })
+    
+  }
+
+  filterLocation(event: any) {
+    // In a real application, make a request to a remote URL with the query and return filtered results. For demo, we filter at the client-side.
+    const filtered: any[] = [];
+    const query = event.query.toLowerCase().trim();
+    for (const location of this.Locations) {
+      if (location.LocationName.toLowerCase().includes(query)) {
+        filtered.push(location);
+      }
+    }
+    this.FilterLocationslist = filtered;
+  }
         UpdateBookmark(value:any){
   this.bookmarkService.Updatebookmark(this.route.snapshot.data['requiredPermission'],value).subscribe({
     next: (result: any) => {
@@ -272,8 +305,8 @@ export class SSRWithAvailabilityComponent {
   {
     let d1 = this.datePipe.transform(this.DateFrom, "yyyy-MM-dd");
     let d2 =  this.datePipe.transform(this.DateTo, "yyyy-MM-dd");
-
-    this.reportService.runReportWith4Para("SSRWithAvailability",d1,d2,0,4,this.SelectedVendor.vendID).subscribe(data => {
+                                                              // para1:any, para2:any, para3:any, para4:any, para5:any,locID:any) 
+    this.reportService.runReportWith4Para("SSRWithAvailability",d1,d2,this.SelectedVendor.vendID, this.SelectedproductGrouplist.prodGrpID,this.selectedLocation.LocationId).subscribe(data => {
       this.data = (data as { [key: string]: any })["enttityDataSource"];
       this.cols = (data as { [key: string]: any })["entityModel"];
       this.allowBtn = true;

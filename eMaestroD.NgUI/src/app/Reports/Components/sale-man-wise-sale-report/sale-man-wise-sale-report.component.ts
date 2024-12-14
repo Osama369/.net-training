@@ -8,10 +8,12 @@ import { AuthService } from 'src/app/Shared/Services/auth.service';
 import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { ReportService } from '../../Services/report.service';
 import { Vendor } from 'src/app/Manage/Models/vendor';
+import { Products } from 'src/app/Manage/Models/products';
 
 import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 import { Users } from 'src/app/Administration/Models/users';
 import { UserService } from 'src/app/Administration/Services/user.service';
+import { Location } from 'src/app/Administration/Models/location';
 
 
 @Component({
@@ -49,6 +51,12 @@ export class SaleManWiseSaleReportComponent {
   datalist :any;
   userList : Users[];
 
+selectedLocation:any;
+  locationlist: Location[];
+  allLocations: Location[];
+  FilterLocationslist: Location[];
+  Locations: Location[] = [];
+
   bookmark: boolean = false;
 
   ngOnInit(): void {
@@ -75,7 +83,36 @@ export class SaleManWiseSaleReportComponent {
       },
     });
     this.roleOnChange(7);
+    this.LoadProducts();
+   
   }
+  LoadProducts()
+  {
+    this.locationlist = undefined;
+    this.selectedLocation = [];
+    this.sharedDataService.getLocations$().subscribe((us:any)=>{
+      this.locationlist = (us as { [key: string]: any })["enttityDataSource"];
+
+      this.locationlist.unshift({
+          
+          LocationId : 0,
+          LocationName : "---ALL---"});
+        })
+    
+  }
+
+  filterProduct(event: any) {
+    // In a real application, make a request to a remote URL with the query and return filtered results. For demo, we filter at the client-side.
+    const filtered: any[] = [];
+    const query = event.query.toLowerCase().trim();
+    for (const location of this.Locations) {
+      if (location.LocationName.toLowerCase().includes(query)) {
+        filtered.push(location);
+      }
+    }
+    this.FilterLocationslist = filtered;
+  }
+
   filterUserlist(event:any) {
     //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
     console.log(this.userList);

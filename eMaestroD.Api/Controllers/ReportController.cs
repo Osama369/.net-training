@@ -307,16 +307,16 @@ namespace eMaestroD.Api.Controllers
             }
             else if (ReportName == "SSRWithAvailability")
             {
-                var res = await SSRWithAvailability(Parameter1, Parameter2, comID, int.Parse(Parameter3), int.Parse(Parameter3));
+                var res = await SSRWithAvailability(Parameter1, Parameter2, int.Parse(Parameter3), int.Parse(Parameter4),  locID, comID);
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
-            else if (ReportName == "SalemanItemWiseSaleReport")
-            {
-                var res = await SalemanItemWiseSalesReport(Parameter1, Parameter2, comID, int.Parse(Parameter3), int.Parse(Parameter4));
-                vM.enttityDataSource = res;
-                vM.entityModel = res?.GetEntity_MetaData();
-            }
+            //else if (ReportName == "SalemanItemWiseSaleReport")
+            //{
+            //    var res = await SalemanItemWiseSalesReport(Parameter1, Parameter2, comID, int.Parse(Parameter3), int.Parse(Parameter4));
+            //    vM.enttityDataSource = res;
+            //    vM.entityModel = res?.GetEntity_MetaData();
+            //}
             return Ok(vM);
         }
 
@@ -333,6 +333,7 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
+           
             return Ok(vM);
         }
 
@@ -977,10 +978,10 @@ namespace eMaestroD.Api.Controllers
         }
 
         [NonAction]
-        public async Task<List<SSRWithAvailabilityReport>>SSRWithAvailability (DateTime dtfrom, DateTime dtTo, int comID,int groupID, int vendID)
+        public async Task<List<SSRWithAvailabilityReport>>SSRWithAvailability (DateTime dtfrom, DateTime dtTo, int vendID, int groupID, int locID, int comID)
         {
             List<SSRWithAvailabilityReport> SDL;
-            string sql = "[dbo].[Report_SSRWithAvailability] @dtStart, @dtEnd, @comID, @groupID, @vendID";
+            string sql = "[dbo].[Report_SSRWithAvailability] @dtStart, @dtEnd, @comID, @groupID, @locID, @vendorID";
 
             List<SqlParameter> parms = new List<SqlParameter>
             {
@@ -988,7 +989,8 @@ namespace eMaestroD.Api.Controllers
                     new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
                     new SqlParameter { ParameterName = "@comID", Value = comID },
                     new SqlParameter { ParameterName = "@groupID", Value = groupID },
-                    new SqlParameter { ParameterName = "@vendID", Value = vendID },
+                    new SqlParameter { ParameterName = "@locID", Value = locID },
+                    new SqlParameter { ParameterName = "@vendorID", Value = vendID },
             };
             SDL = _AMDbContext.SSRWithAvailabilityReport.FromSqlRaw(sql, parms.ToArray()).ToList();
 

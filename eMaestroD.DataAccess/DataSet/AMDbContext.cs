@@ -152,6 +152,7 @@ namespace eMaestroD.DataAccess.DataSet
             modelBuilder.Entity<SSRWithAvailabilityReport>().HasNoKey();
             modelBuilder.Entity<SaleManeLedgerReport>().HasNoKey();
             modelBuilder.Entity<SalemanItemWiseSaleReport>().HasNoKey();
+            modelBuilder.Entity<SaleManWiseSaleReport>().HasNoKey();
         }
 
     }

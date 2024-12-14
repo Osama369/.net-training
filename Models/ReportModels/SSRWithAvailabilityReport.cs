@@ -15,7 +15,7 @@ namespace eMaestroD.Models.ReportModels
         [DisplayName(Name = "Product Group Name")]
         public string? prodGrpName { get; set; }
 
-
+        [HiddenOnRender]
         [DisplayName(Name = "Company Name")]
         public string? comName { get; set; }
 
@@ -64,9 +64,11 @@ namespace eMaestroD.Models.ReportModels
         [DisplayName(Name = "Discount")]
         public decimal discount { get; set; }
 
+        [HiddenOnRender]
         [DisplayName(Name = "DT Start")]
         public DateTime dtStart { get; set; }
 
+        [HiddenOnRender]
         [DisplayName(Name = "DT End")]
         public DateTime dtEnd { get; set; }
 

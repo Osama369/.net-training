@@ -40,15 +40,32 @@
                         [options]="productGrouplist"
                         optionLabel="prodGrpName"
                         [filter]="true"
-                        [filterBy]="'prodGrpName'"
+                        [filterBy]="'prodGrpName'"               
                         [showClear]="true"
                         >
                         </p-dropdown>
-                         &nbsp;                  
-                        <button #savebtn (click)="submit()" translate class="btn btn-primary btnSetting"> <i class="far fa-paper-plane"></i> Submit</button>
-                     
+                         &nbsp;           
+                        
                       </div>
-  
+                        <div calss="col-12 mt-2" style="margin-top: 10px;">
+                          <label class="col-form-label date-label required" translate>Location<span>:</span>&nbsp;</label>
+                          <!-- <p-autoComplete #inputField [(ngModel)]="SelectedproductGrouplist" [suggestions]="FilterProductGrouplist" (ngModelChange)="changeProductDropdown()" (completeMethod)="filterProductCategory($event)"
+                          field="prodGrpName" value="prodGrpID" [minLength]="1" class="ReportDropDown" [dropdown]="true"></p-autoComplete> -->
+                          <p-dropdown
+                          #inputField
+                          styleClass="ReportDropDown"
+                          [(ngModel)]="selectedLocation"
+                          [options]="locationlist"
+                          optionLabel="LocationName"
+                          [filter]="true"
+                          [filterBy]="'LocationName'"
+                          [showClear]="true"
+                          >
+                          </p-dropdown>
+                           &nbsp;          
+                          <button #savebtn (click)="submit()" translate class="btn btn-primary btnSetting"> <i class="far fa-paper-plane"></i> Submit</button>
+                       
+                        </div>
   
                 </div>
             </div>
