@@ -129,7 +129,7 @@ export class AddNewProductDComponent {
       this.categoryListByDepartment = this.buildCategoryTree(this.categoryList);
 
       this.productlist[0].ProductBarCodes?.push({ prodBCID : 0, prodID: this.productlist[0].prodID, BarCode: this.productlist[0].prodCode, Unit: 'Unit', Qty: 1, Active: true})
-
+      this.productlist[0].isTaxable = true;
 
       this.sharedDataService.getVendors$().subscribe(vnd => {
         this.Supplierlist = (vnd as { [key: string]: any })["enttityDataSource"];
@@ -274,7 +274,7 @@ onRowEditCancel(product:any, editing:any) {
         bonusQty:undefined,
         tP : undefined,
         isDiscount : false,
-        isTaxable : false,
+        isTaxable : true,
         isStore : false,
         isRaw : false,
         isBonus : false,

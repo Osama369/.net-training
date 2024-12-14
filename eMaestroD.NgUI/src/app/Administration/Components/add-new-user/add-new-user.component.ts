@@ -158,7 +158,7 @@ export class AddNewUserComponent {
         this.toastr.error("Please select user location");
         this.onEnterTableInputCst(5);
       }
-      else if(this.UsersList.find(x=>x.locID == this.SelectedLocation.LocationId && x.RoleID == this.SelectedRole.RoleID)){
+      else if(this.UsersList.find(x=>x.locID == this.SelectedLocation.LocationId && x.RoleID == this.SelectedRole.RoleID && x.UserID != this.UserList[0].UserID)){
         this.toastr.error("This location already assign to some other users, Please select other location");
         this.onEnterTableInputCst(5);
       }

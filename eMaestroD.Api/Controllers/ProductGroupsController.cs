@@ -58,29 +58,30 @@ namespace eMaestroD.Api.Controllers
             var comID = int.Parse(Request.Headers["comID"].ToString());
 
             product.prodGrpName = product.prodGrpName.Trim();
+
+            bool nameExists = await _AMDbContext.ProdGroups
+                .AnyAsync(x => x.prodGrpID != product.prodGrpID
+                            && x.prodGrpName.ToLower() == product.prodGrpName.ToLower()
+                            && x.comID == comID);
+
+            if (nameExists)
+            {
+                return BadRequest($"A brand with the name '{product.prodGrpName}' already exists.");
+            }
+
             if (product.prodGrpID != 0)
             {
-                var existList = _AMDbContext.ProdGroups.Where(x => x.prodGrpID != product.prodGrpID && x.prodGrpName.ToLower() == product.prodGrpName.ToLower() && x.comID == comID).ToList();
-                if (existList.Count() == 0)
-                {
-                    product.comID = comID;
-                    product.modby = username;
-                    product.modDate = DateTime.Now;
+                product.comID = comID;
+                product.modby = username;
+                product.modDate = DateTime.Now;
 
-                    _AMDbContext.ProdGroups.Update(product);
-                    await _AMDbContext.SaveChangesAsync();
+                _AMDbContext.ProdGroups.Update(product);
+                await _AMDbContext.SaveChangesAsync();
 
-                    _notificationInterceptor.SaveNotification("ProductCategoryEdit", comID, "");
-                }
-                else
-                {
-                    return NotFound("Category Name Already Exists!");
-                }
-                return Ok(product);
+                _notificationInterceptor.SaveNotification("ProductCategoryEdit", comID, "");
             }
             else
             {
-
                 product.active = true;
                 product.parentProdGrpID = 0;
                 product.prodGrpTypeID = 1;
@@ -90,20 +91,13 @@ namespace eMaestroD.Api.Controllers
                 product.modby = username;
                 product.modDate = DateTime.Now;
 
-                var existList = _AMDbContext.ProdGroups.Where(x => x.prodGrpName.ToLower() == product.prodGrpName.ToLower() && x.comID == comID).ToList();
-                if (existList.Count() == 0)
-                {
-                    await _AMDbContext.ProdGroups.AddAsync(product);
-                    await _AMDbContext.SaveChangesAsync();
+                await _AMDbContext.ProdGroups.AddAsync(product);
+                await _AMDbContext.SaveChangesAsync();
 
-                    _notificationInterceptor.SaveNotification("ProductCategoryCreate", comID, "");
-                }
-                else
-                {
-                    return NotFound("Category Name Already Exists!");
-                }
-                return Ok(product);
+                _notificationInterceptor.SaveNotification("ProductCategoryCreate", comID, "");
             }
+
+            return Ok(product);
         }
 
         [HttpDelete]

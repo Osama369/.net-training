@@ -37,11 +37,18 @@ namespace eMaestroD.Api.Controllers
             return Ok(response);
         }
 
-        // POST: api/ProdManufactures
-        // This method handles both Insert and Update
         [HttpPost]
         public async Task<IActionResult> UpsertProdManufacture(ProdManufacture prodManufacture)
         {
+            // Check for duplicate name
+            bool nameExists = await _AMDbContext.ProdManufactures
+                .AnyAsync(pm => pm.prodManuName == prodManufacture.prodManuName && pm.prodManuID != prodManufacture.prodManuID && pm.comID == prodManufacture.comID);
+
+            if (nameExists)
+            {
+                return BadRequest($"A product manufacturer with the name '{prodManufacture.prodManuName}' already exists.");
+            }
+
             if (prodManufacture.prodManuID == 0)
             {
                 _AMDbContext.ProdManufactures.Add(prodManufacture);

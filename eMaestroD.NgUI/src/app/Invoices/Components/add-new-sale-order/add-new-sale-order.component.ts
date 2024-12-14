@@ -311,7 +311,7 @@ export class AddNewSaleOrderComponent implements OnInit{
         el.focus();
       }
 
-      index = index + (rownumber*12);
+      index = index + (rownumber*16);
       if (index < this.inputFieldsTable.length-1) {
         this.focusOnTableInput(index + 1);
       }
@@ -406,6 +406,7 @@ export class AddNewSaleOrderComponent implements OnInit{
             this.productlist[i].unitQty = this.selectedProductList[0].unitQty;
             this.productlist[i].qty = 1;
             this.productlist[i].qtyBal = 1;
+            this.productlist[i].sellPrice = this.selectedProductList[0].sellPrice;
             this.productlist[i].sellRate = this.selectedProductList[0].sellPrice;
             this.productlist[i].currentStock = this.selectedProductList[0].currentStock;
             this.productlist[i].categoryName = this.selectedProductList[0].categoryName;
@@ -418,6 +419,8 @@ export class AddNewSaleOrderComponent implements OnInit{
             this.productlist[i].isTaxable = this.selectedProductList[0].isTaxable;
             this.productlist[i].batchNo = " ";
             this.productlist[i].expiryDate = this.formatDate(new Date());
+            this.productlist[i].units =this.selectedProductList[0].units;
+            this.productlist[i].unit =this.selectedProductList[0].units[0];
 
             this.Itemcalculation(i);
             // let el: HTMLElement = this.newRowButton.nativeElement;
@@ -983,7 +986,7 @@ export class AddNewSaleOrderComponent implements OnInit{
         this.productlist[index].qty = this.productlist[index].qty+1;
         this.productlist[index].qtyBal = this.productlist[index].qtyBal+1;
         this.Itemcalculation(index);
-        this.onEnterComplexInternal(this.inputFields.length-3);
+        this.onEnterComplexInternal(this.inputFields.length-4);
       }
       else
       {
@@ -997,8 +1000,10 @@ export class AddNewSaleOrderComponent implements OnInit{
           this.productlist[i].unitQty = this.selectedProductList[0].unitQty;
           this.productlist[i].qty = 1;
           this.productlist[i].qtyBal = 1;
+          this.productlist[i].sellPrice = this.selectedProductList[0].sellPrice;
           this.productlist[i].sellRate = this.selectedProductList[0].sellPrice;
           this.productlist[i].taxPercent =this.taxesList[0].taxValue;
+          this.productlist[i].purchPrice =this.selectedProductList[0].lastCost;
           this.productlist[i].lastCost =this.selectedProductList[0].lastCost;
           this.productlist[i].currentStock = this.selectedProductList[0].currentStock;
           this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
@@ -1009,12 +1014,14 @@ export class AddNewSaleOrderComponent implements OnInit{
           this.productlist[i].isTaxable = this.selectedProductList[0].isTaxable;
           this.productlist[i].batchNo = " ";
           this.productlist[i].expiryDate = this.formatDate(new Date());
+          this.productlist[i].units =this.selectedProductList[0].units;
+          this.productlist[i].unit =this.selectedProductList[0].units[0];
 
           this.Itemcalculation(i);
           // let el: HTMLElement = this.newRowButton.nativeElement;
           // el.click();
           // this.cdr.detectChanges();
-          this.onEnterComplexInternal(this.inputFields.length-2);
+          this.onEnterComplexInternal(this.inputFields.length-3);
           }
           else
           {
@@ -1046,7 +1053,7 @@ export class AddNewSaleOrderComponent implements OnInit{
         // this.productlist[i].amount = "";
         this.Itemcalculation(i);
         if (event.key === "Enter" || event.key === "Tab") {
-          this.onEnterComplexInternal(this.inputFields.length-2);
+          this.onEnterComplexInternal(this.inputFields.length-3);
         }
       }
 
@@ -1090,7 +1097,7 @@ export class AddNewSaleOrderComponent implements OnInit{
     this.totalExtraDiscount = invoiceData.totalExtraDiscount;
     this.totalNetPayable = invoiceData.netTotal;
     for (let i = 0; i < this.productlist.length; i++) {
-      this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
+      this.selectedProductList = this.products.filter(f => f.prodID == this.productlist[i].prodID);
 
       this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
       this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
@@ -1101,6 +1108,9 @@ export class AddNewSaleOrderComponent implements OnInit{
       this.productlist[i].depName =this.selectedProductList[0].depName;
       this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
       this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
+      this.productlist[i].units =this.selectedProductList[0].units;
+      let unit = this.selectedProductList[0].units.find(x=>x.unitType  == this.productlist[i].unit);
+      this.productlist[i].unit = unit;
 
       if(invoiceData.Products[i].expiry)
       {
@@ -1120,6 +1130,20 @@ export class AddNewSaleOrderComponent implements OnInit{
   sumField(field: string): number {
     return parseFloat(this.productlist.reduce((acc, curr) => acc + (Number(curr[field]) || 0), 0).toFixed(2));
   }
+
+  filterUnitSuggestions(rowData: any) {
+    rowData.units = rowData?.units || []; // Populate units for the selected product
+    console.log(rowData.units);
+    rowData.unit = rowData.units[0]?.unitType || ''; // Auto-select the first unit
+  }
+
+  onUnitSelect(event: any, rowData: any, rowIndex: number) {
+    rowData.lastCost = rowData.purchPrice * event.unitValue;
+    rowData.sellRate = rowData.sellPrice * event.unitValue;
+
+    this.Itemcalculation(rowIndex);
+  }
+
 
   formatDate(date: Date): string {
     const day = String(date.getDate()).padStart(2, '0'); // Ensure 2-digit day

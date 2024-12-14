@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using eMaestroD.DataAccess.DataSet;
 using eMaestroD.Shared.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace eMaestroD.Api.Controllers
 {
@@ -32,10 +33,21 @@ namespace eMaestroD.Api.Controllers
             return Ok(response);
         }
 
-        // Add or Update (Upsert) an offer
         [HttpPost("upsert")]
         public async Task<IActionResult> UpsertOffer([FromBody] Offer offer)
         {
+            offer.offerName = offer.offerName.Trim();
+
+            bool nameExists = await _AMDbContext.Offers
+                .AnyAsync(o => o.offerID != offer.offerID
+                            && o.offerName.ToLower() == offer.offerName.ToLower()
+                            && o.comID == offer.comID);
+
+            if (nameExists)
+            {
+                return BadRequest($"An offer with the name '{offer.offerName}' already exists.");
+            }
+
             if (offer.offerID == 0)
             {
                 _AMDbContext.Offers.Add(offer);
@@ -49,9 +61,10 @@ namespace eMaestroD.Api.Controllers
                     existingOffer.offerType = offer.offerType;
                     existingOffer.offerDescr = offer.offerDescr;
                     existingOffer.modBy = offer.modBy;
-                    existingOffer.modDate = offer.modDate;
+                    existingOffer.modDate = DateTime.Now; 
                     existingOffer.active = offer.active;
                     existingOffer.comID = offer.comID;
+
                     _AMDbContext.Offers.Update(existingOffer);
                 }
                 else
@@ -63,8 +76,7 @@ namespace eMaestroD.Api.Controllers
             await _AMDbContext.SaveChangesAsync();
             return Ok(offer);
         }
-
-        // Delete an offer
+        
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOffer(int id)
         {

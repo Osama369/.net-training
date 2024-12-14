@@ -685,7 +685,7 @@ export class AddNewSaleDComponent implements OnInit{
             this.totalExtraDiscount,
             this.totalNetPayable,
             this.taxesList,
-            null,
+            this.EditVoucherNo ?? null,
             this.selectedBooker.UserID,
             this.selectedSalesman.UserID
           );
@@ -697,7 +697,6 @@ export class AddNewSaleDComponent implements OnInit{
         } catch (result) {
           this.toastr.error(result.error);
           this.savebtnDisable = false;
-
         }
     }
   }
@@ -1215,7 +1214,7 @@ async InvoiceOnChange()
     this.totalNetPayable = invoiceData.netTotal;
     console.log(invoiceData.Products);
     for (let i = 0; i < this.productlist.length; i++) {
-      this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
+      this.selectedProductList = this.products.filter(f => f.prodID == this.productlist[i].prodID);
       this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
       this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
       this.productlist[i].barCode = this.selectedProductList[0].barCode;
@@ -1230,7 +1229,9 @@ async InvoiceOnChange()
       this.productlist[i].depName =this.selectedProductList[0].depName;
       this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
       this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
-
+      this.productlist[i].units =this.selectedProductList[0].units;
+      let unit = this.selectedProductList[0].units.find(x=>x.unitType  == this.productlist[i].unit);
+      this.productlist[i].unit = unit;
       // this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0,
       // this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0,
       // this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0,
@@ -1241,7 +1242,7 @@ async InvoiceOnChange()
       this.Itemcalculation(i)
     }
   } catch (result) {
-    this.toastr.error(result);
+    this.toastr.error(result.error);
   }
 }
 
@@ -1267,7 +1268,7 @@ async InvoiceOnChange()
     this.totalExtraDiscount = invoiceData.totalExtraDiscount;
     this.totalNetPayable = invoiceData.netTotal;
     for (let i = 0; i < this.productlist.length; i++) {
-      this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
+      this.selectedProductList = this.products.filter(f => f.prodID == this.productlist[i].prodID);
 
       this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
       this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
@@ -1307,7 +1308,7 @@ async InvoiceOnChange()
   }
 
   onUnitSelect(event: any, rowData: any, rowIndex: number) {
-    if (rowData.qtyBal < event.unitValue) {
+    if (rowData.unitQty <= event.unitValue) {
       this.toastr.error(
         "Cannot select this unit because the available quantity is less than the base quantity of this unit."
       );
