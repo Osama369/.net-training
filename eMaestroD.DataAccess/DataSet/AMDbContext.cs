@@ -112,6 +112,7 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<SaleManWiseSaleReport> SaleManWiseSaleReport { get; set; }
         public DbSet<SSRWithAvailabilityReport> SSRWithAvailabilityReport { get; set; }
         public DbSet<SalemanItemWiseSaleReport> SalemanItemWiseSaleReport { get; set; }
+        public DbSet<ExpenseReport> ExpenseReport { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -155,6 +156,7 @@ namespace eMaestroD.DataAccess.DataSet
             modelBuilder.Entity<SalemanItemWiseSaleReport>().HasNoKey();
             modelBuilder.Entity<SaleManWiseSaleReport>().HasNoKey();
             modelBuilder.Entity<SaleClaimReport>().HasNoKey();
+            modelBuilder.Entity<ExpenseReport>().HasNoKey();
         }
 
     }
