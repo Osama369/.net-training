@@ -494,7 +494,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
     let totalQty = rowData.qty;
     rowData.netRate = totalQty ? parseFloat((rowData.netAmount / totalQty).toFixed(2)) : 0;
 
-    rowData.diff = parseFloat((rowData.lastCost - rowData.netRate).toFixed(2)) || 0;
+    rowData.diff = rowData.lastCost == 0 ? 0 :  parseFloat((rowData.lastCost - rowData.netRate).toFixed(2)) || 0;
 
     this.productlist[rowIndex] = rowData;
     this.calculateTotalSummary();
@@ -621,6 +621,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
   {
     if(this.validateFields())
     {
+      this.savebtnDisable = true;
       try {
           this.invoice = this.invoicesService.createInvoice(
             this.invoiceID,
@@ -650,6 +651,8 @@ export class AddNewPurchaseOrderComponent implements OnInit{
           this.router.navigateByUrl(APP_ROUTES.invoices.purchaseOrder);
         } catch (result) {
           this.toastr.error(result.error);
+          this.savebtnDisable = false;
+
       }
     }
   }
@@ -1043,7 +1046,7 @@ export class AddNewPurchaseOrderComponent implements OnInit{
 
       if(invoiceData.Products[i].expiry)
       {
-        this.productlist[i].expiryDate = new Date(invoiceData.Products[i].expiry);
+        this.productlist[i].expiryDate = this.formatDate(new Date(invoiceData.Products[i].expiry));
       }
       this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0;
       this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0;
@@ -1102,6 +1105,14 @@ export class AddNewPurchaseOrderComponent implements OnInit{
       this.productsDuplicate = this.products;
       this.Filterproductlist = this.productsDuplicate ;
     }
+  }
+
+  formatDate(date: Date): string {
+    const day = String(date.getDate()).padStart(2, '0'); // Ensure 2-digit day
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure 2-digit month
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
   }
 }
 

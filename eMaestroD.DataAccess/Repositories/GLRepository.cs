@@ -77,7 +77,7 @@ namespace eMaestroD.DataAccess.Repositories
         {
             try
             {
-                var entries = await _dbContext.gl.Where(g => g.voucherNo == voucherNo).ToListAsync();
+                var entries = await _dbContext.TempGL.Where(g => g.voucherNo == voucherNo).ToListAsync();
 
                 if (!entries.Any())
                 {
@@ -90,11 +90,13 @@ namespace eMaestroD.DataAccess.Repositories
                     {
                         entry.isConverted = true;
                         entry.checkName = convertedVoucherNo;
+                        entry.TransactionStatus = "Posted";
                     }
                     else
                     {
                         entry.isConverted = false;
                         entry.checkName = "";
+                        entry.TransactionStatus = "Pending";
                     }
 
                     _dbContext.Entry(entry).State = EntityState.Modified;
@@ -135,6 +137,17 @@ namespace eMaestroD.DataAccess.Repositories
 
                     await dbSet.AddRangeAsync(items.Skip(1));
                     await _dbContext.SaveChangesAsync();
+
+                    
+                    var checkNameProperty = typeof(T).GetProperty("checkName");
+                    var voucherNoProperty = typeof(T).GetProperty("voucherNo");
+                    var checkName = checkNameProperty?.GetValue(firstItem)?.ToString();
+                    var voucherNo = voucherNoProperty?.GetValue(firstItem)?.ToString();
+                    if (!string.IsNullOrEmpty(checkName))
+                    {
+                        await UpdateGLIsConvertedAsync(checkName, voucherNo, false);
+                    }
+                    
                     await transaction.CommitAsync();
                 }
                 catch (Exception)
@@ -153,12 +166,10 @@ namespace eMaestroD.DataAccess.Repositories
             {
                 try
                 {
-                    // Update the first item
                     var firstItem = items.First();
                     _dbContext.Set<T>().Update(firstItem);
                     await _dbContext.SaveChangesAsync();
 
-                    // Set `txID` for the remaining items if applicable
                     var idProperty = firstItem.GetType().GetProperty("GLID") ?? firstItem.GetType().GetProperty("TempGLID");
                     var firstItemId = idProperty?.GetValue(firstItem);
 
@@ -452,13 +463,30 @@ namespace eMaestroD.DataAccess.Repositories
             return await _dbContext.VendorProducts.Where(x => x.comID == comID).ToListAsync();
         }
 
-        public async Task InsertVendorProductAsync(VendorProduct vendorProduct)
+        public async Task UpsertVendorProductAsync(VendorProduct vendorProduct)
         {
             using (var transaction = await _dbContext.Database.BeginTransactionAsync())
             {
                 try
                 {
-                    _dbContext.Set<VendorProduct>().AddAsync(vendorProduct);
+                    var existingProduct = await _dbContext.Set<VendorProduct>()
+                        .FirstOrDefaultAsync(vp => vp.vendProdID == vendorProduct.vendProdID);
+
+                    if (existingProduct != null)
+                    {
+                        existingProduct.comID = vendorProduct.comID;
+                        existingProduct.prodID = vendorProduct.prodID;
+                        existingProduct.comVendID = vendorProduct.comVendID;
+                        existingProduct.preference = vendorProduct.preference;
+                        existingProduct.sharePercentage = vendorProduct.sharePercentage;
+
+                        _dbContext.Set<VendorProduct>().Update(existingProduct);
+                    }
+                    else
+                    {
+                        await _dbContext.Set<VendorProduct>().AddAsync(vendorProduct);
+                    }
+
                     await _dbContext.SaveChangesAsync();
                     await transaction.CommitAsync();
                 }
@@ -484,11 +512,12 @@ namespace eMaestroD.DataAccess.Repositories
             return SDL;
         }
 
-        public async Task<List<InvoiceProduct>> GetProductBatchByProdBCID(int prodBCID, int locID, int comID)
+        public async Task<List<InvoiceProduct>> GetProductBatchByProdBCID(int prodID, int prodBCID, int locID, int comID)
         {
-            string sql = "EXEC GetProductBatchByProdBCID @prodBCID, @locID, @comID";
+            string sql = "EXEC GetProductBatchByProdBCID @prodID, @prodBCID, @locID, @comID";
             List<SqlParameter> parms = new List<SqlParameter>
             {
+                new SqlParameter { ParameterName = "@prodID", Value = prodID },
                 new SqlParameter { ParameterName = "@prodBCID", Value = prodBCID },
                 new SqlParameter { ParameterName = "@locID", Value = locID },
                 new SqlParameter { ParameterName = "@comID", Value = comID }

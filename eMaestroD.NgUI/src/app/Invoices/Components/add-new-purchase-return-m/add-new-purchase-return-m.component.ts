@@ -507,7 +507,7 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
     let totalQty = rowData.qty;
     rowData.netRate = totalQty ? parseFloat((rowData.netAmount / totalQty).toFixed(2)) : 0;
 
-    rowData.diff = parseFloat((rowData.lastCost - rowData.netRate).toFixed(2)) || 0;
+    rowData.diff = rowData.lastCost == 0 ? 0 :  parseFloat((rowData.lastCost - rowData.netRate).toFixed(2)) || 0;
 
     this.productlist[rowIndex] = rowData;
     this.calculateTotalSummary();
@@ -624,9 +624,9 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
 
   async saveInvoice()
   {
-    console.log(this.productlist);
     if(this.validateFields())
     {
+      this.savebtnDisable = true;
       try {
           this.invoice = this.invoicesService.createInvoice(
             this.invoiceID,
@@ -656,6 +656,8 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
           this.router.navigateByUrl('/Invoices/Purchase')
         } catch (result) {
           this.toastr.error(result.error);
+          this.savebtnDisable = false;
+
       }
     }
   }
@@ -1117,7 +1119,7 @@ clear()
 
       if(invoiceData.Products[i].expiry)
       {
-        this.productlist[i].expiryDate = new Date(invoiceData.Products[i].expiry);
+        this.productlist[i].expiryDate = this.formatDate(new Date(invoiceData.Products[i].expiry));
       }
       this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0;
       this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0;
@@ -1134,5 +1136,12 @@ clear()
     return parseFloat(this.productlist.reduce((acc, curr) => acc + (Number(curr[field]) || 0), 0).toFixed(2));
   }
 
+  formatDate(date: Date): string {
+    const day = String(date.getDate()).padStart(2, '0'); // Ensure 2-digit day
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure 2-digit month
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  }
 }
 

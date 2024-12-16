@@ -21,6 +21,7 @@ export class AddNewDepartmentComponent {
   @Output() dataEvent = new EventEmitter<any>();
   @Input() Data : any;
   @Input() title : any;
+  isSaveDisable : boolean = false;
   sendDataToParent() {
     this.dataEvent.emit({type:'closeGroup',value:false});
   }
@@ -78,7 +79,7 @@ export class AddNewDepartmentComponent {
   {
      if(this.itemList[0].depName != "" && this.itemList[0].depName != undefined)
      {
-
+      this.isSaveDisable = true;
       this.departmentService.upsertDepartment(this.itemList[0]).subscribe({
         next: (prd) => {
           if(this.title == "Department Registration")
@@ -91,10 +92,12 @@ export class AddNewDepartmentComponent {
             this.toastr.success("Department has been successfully updated!");
             this.dataEvent.emit({type:'',value:prd});
           }
+          this.isSaveDisable = false;
         },
         error: (response) => {
             this.toastr.error(response.error);
             this.onEnterTableInput(-1);
+            this.isSaveDisable = false;
         },
       });
     }

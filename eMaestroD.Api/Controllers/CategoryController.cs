@@ -75,18 +75,27 @@ namespace eMaestroD.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Category>> UpsertCategory(Category model)
         {
-            // Check if category already exists
+            model.categoryName = model.categoryName.Trim();
+
+            bool nameExists = await _AMDbContext.Categories
+                .AnyAsync(c => c.categoryID != model.categoryID
+                            && c.categoryName.ToLower() == model.categoryName.ToLower()
+                            && c.comID == model.comID);
+
+            if (nameExists)
+            {
+                return BadRequest($"A category with the name '{model.categoryName}' already exists.");
+            }
+
             var existingCategory = await _AMDbContext.Categories.FindAsync(model.categoryID);
 
             if (existingCategory == null)
             {
-                // If category doesn't exist, add it
                 model.crtDate = DateTime.Now;
                 _AMDbContext.Categories.Add(model);
             }
             else
             {
-                // If category exists, update it
                 existingCategory.parentCategoryID = model.parentCategoryID;
                 existingCategory.parentCategoryName = model.parentCategoryName;
                 existingCategory.depID = model.depID;
@@ -98,7 +107,7 @@ namespace eMaestroD.Api.Controllers
                 existingCategory.modDate = DateTime.Now;
 
                 _AMDbContext.Entry(existingCategory).State = EntityState.Modified;
-                model = existingCategory; // Update the model to reflect changes
+                model = existingCategory;
             }
 
             try

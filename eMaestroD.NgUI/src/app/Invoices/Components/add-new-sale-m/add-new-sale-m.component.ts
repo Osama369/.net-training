@@ -966,7 +966,8 @@ export class AddNewSaleMComponent implements OnInit{
 
   async SaveData(url :any){
     try {
-      console.log(this.productlist);
+
+      this.savebtnDisable = true;
       this.invoice = this.invoicesService.createInvoice(
         this.invoiceID,
         this.invoiceDetailID,
@@ -995,6 +996,8 @@ export class AddNewSaleMComponent implements OnInit{
       this.router.navigateByUrl(url);
     } catch (result) {
       this.toastr.error(result.error);
+      this.savebtnDisable = false;
+
     }
   }
 
@@ -1590,7 +1593,9 @@ export class AddNewSaleMComponent implements OnInit{
 
       if(invoiceData.Products[i].expiry)
       {
-        this.productlist[i].expiryDate = new Date(invoiceData.Products[i].expiry);
+
+        this.productlist[i].expiryDate = this.formatDate(new Date(invoiceData.Products[i].expiry));
+
       }
       if(invoiceData.Products[i].ProductTaxes.length > 0){
         this.productlist[i].taxID= invoiceData.Products[i].ProductTaxes[0].taxDetailID || 0,
@@ -1605,6 +1610,14 @@ export class AddNewSaleMComponent implements OnInit{
       }
       this.Itemcalculation(i)
     }
+  }
+
+  formatDate(date: Date): string {
+    const day = String(date.getDate()).padStart(2, '0'); // Ensure 2-digit day
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure 2-digit month
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
   }
 }
 

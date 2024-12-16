@@ -45,52 +45,73 @@
                     </p-button>
               </div> -->
 
+              <div class="col-3">
+                <label class="col-form-label date-label required" translate>
+                  Supplier Name&nbsp;
+                </label>
+                  <!-- AutoComplete Component -->
+                  <p-autoComplete
+                    (keyup.enter)="onEnterTableInput(-1)"
+                    [(ngModel)]="SelectedSupplier"
+                    [suggestions]="filteredSuppliers"
+                    (completeMethod)="filterSuppliers($event)"
+                    field="vendName"
+                    [dropdown]="true"
+                    [forceSelection]="true"
+                    [showClear]="true"
+                    placeholder="Select a Supplier"
+                    styleClass="col-11"
+                     (onSelect)="onSupplierSelect($event)"
+                    [style]="{'border-radius':'6px 0px 0px 6px'}"
+                    pAutoFocus [autofocus]="true"
+                  >
+                    <!-- Custom Template for Dropdown Suggestions -->
+                    <ng-template let-supplier pTemplate="item">
+                      <div>{{ supplier.vendCode }} - {{ supplier.vendName }}</div>
+                    </ng-template>
+                  </p-autoComplete>
 
+                  <!-- Add New Supplier Button -->
+                  <p-button
+                    icon="pi pi-plus"
+                    title="Add New Supplier"
+                    styleClass="p-button col-1"
+                    (onClick)="openDialog($event, false, 'supplier')"
+                    [style]="{'height': '44px'}"
+                  >
+                  </p-button>
+                </div>
+
+
+              <div class="col-3" *ngIf="!isPos">
+                <label class="col-form-label date-label required" translate>Share Percentage&nbsp;</label>
+                <input pInputText id="shortName" #inputFieldTableCst (keyup.enter)="onEnterTableInput(0)"
+                    maxlength="95" class="col-form-label col-12" name="shortName" [(ngModel)]="productlist[0].sharePercentage">
+              </div>
+              <div class="col-3"></div>
+              <div class="col-3"></div>
 
               <div class="col-3">
                   <label class="col-form-label date-label required" translate>Product Code&nbsp;</label>
-                  <input pInputText #inputFieldTableCst (blur)="checkExistence(productlist[0].prodCode, 0,0, true)" (keyup.enter)="onEnterTableInput(0)" maxlength="25"
-                      id="code" class="col-form-label col-12" name="code" [(ngModel)]="productlist[0].prodCode" autofocus />
+                  <input pInputText #inputFieldTableCst (blur)="checkExistence(productlist[0].prodCode, 0,0, true)" (keyup.enter)="onEnterTableInput(1)" maxlength="25"
+                      id="code" class="col-form-label col-12" name="code" [(ngModel)]="productlist[0].prodCode" />
               </div>
 
               <div class="col-3">
                   <label class="col-form-label date-label required" translate>Name&nbsp;</label>
-                  <input pInputText id="name" #inputFieldTableCst (keyup.enter)="onEnterTableInput(1)"
+                  <input pInputText id="name" #inputFieldTableCst (keyup.enter)="onEnterTableInput(2)"
                       maxlength="95" class="col-form-label col-12" name="name" [(ngModel)]="productlist[0].prodName">
               </div>
 
               <div class="col-3">
                 <label class="col-form-label date-label required" translate>Short Name&nbsp;</label>
-                <input pInputText id="shortName" #inputFieldTableCst (keyup.enter)="onEnterTableInput(2)"
+                <input pInputText id="shortName" #inputFieldTableCst (keyup.enter)="onEnterTableInput(3)"
                     maxlength="95" class="col-form-label col-12" name="shortName" [(ngModel)]="productlist[0].shortName">
             </div>
             <div class="col-3">
 
             </div>
-            <div class="col-3">
-              <label class="col-form-label date-label required" translate>Supplier Name&nbsp;</label>
-              <p-dropdown #inputField (keyup.enter)="onEnterTableInput(3)" (keydown)="openDialog($event, true, 'supplier')"  styleClass="myclass col-11" [style]="{'border-radius':'6px 0px 0px 6px'}" [(ngModel)]="productlist[0].vendID"
-                  placeholder="Select a Supplier" [options]="Supplierlist"
-                  optionLabel="vendName" optionValue="vendID" [filter]="true" [filterBy]="'vendName'" (onChange)="showSharePercentage()"
-                  [showClear]="true">
-                  <ng-template let-vendor pTemplate="item">
-                    <div>{{vendor.vendCode}} - {{vendor.vendName}}</div>
-                  </ng-template>
-                </p-dropdown>
-                <p-button
-                  icon="pi pi-plus"
-                  title="Add New Supplier"
-                  styleClass="p-button col-1"
-                  (onClick)="openDialog($event, false, 'supplier')"
-                  [style]="{'height': '42.5px'}">
-                </p-button>
-                            </div>
 
-            <div class="col-3" *ngIf="!isPos">
-              <label class="col-form-label date-label required" translate>Share Percentage&nbsp;</label>
-              <input pInputText id="shortName" #inputFieldTableCst (keyup.enter)="onEnterTableInput(3)"
-                  maxlength="95" class="col-form-label col-12" name="shortName" [(ngModel)]="productlist[0].sharePercentage">
-            </div>
 
           </div>
 
@@ -304,7 +325,7 @@
 
           <!-- Save and Cancel Buttons -->
           <div class="col-12" style="text-align: right;">
-              <button #savebtn (click)="saveProduct()" translate class="btn btn-primary col-2">
+              <button #savebtn [disabled]="savebtnDisable" (click)="saveProduct()" translate class="btn btn-primary col-2">
                   <i class="fa fa-save"></i> Save
               </button>&nbsp;
               <button #cancelbtn (click)="sendDataToParent()" translate class="btn btn-danger col-2">

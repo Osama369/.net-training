@@ -14,12 +14,12 @@ namespace eMaestroD.InvoiceProcessing.Interfaces
         Task<string> GenerateTempGLVoucherNo(int txTypeID, int? comID);
         Task<List<GLTxLinks>> GenerateGLTxLinks(string invoiceNo, int? GLID);
         Task<List<object>> ConvertInvoiceToGL(Invoice invoice);
-        Task<Invoice> ConvertGLToInvoice(string voucherNo); 
+        Task<Invoice> ConvertGLToInvoice(string voucherNo, bool isConverted = false); 
         Task<Invoice> ConvertGLToSaleInvoice(string voucherNo); 
          Task<decimal> GetInvoiceRemainingAmount(string voucherNo);
         Task<List<Invoice>> GetInvoicesAsync(int txTypeID, int customerOrVendorID, int comID);
         Task<List<VendorProduct>> GetVendorProductListAsync(int comID);
-        Task InsertVendorProductAsync(VendorProduct vendorProduct);
+        Task UpsertVendorProductAsync(VendorProduct vendorProduct);
         Task InsertInvoice(List<GL> items);
         Task UpdateInvoice(List<GL> items);
         Task InsertOrUpdateInvoice<T>(List<T> items) where T : class;
@@ -28,7 +28,7 @@ namespace eMaestroD.InvoiceProcessing.Interfaces
         Task ApproveInvoice(string VoucherNo); 
         Task PostInvoices(List<Invoice> invoices); 
         Task<List<InvoiceProduct>> GetItemsBySupplierAndDate(int supplierId, DateTime datefrom, DateTime dateTo);
-        Task<List<InvoiceProduct>> GetProductBatchByProdBCID(int prodBCID, int locID, int comID);
+        Task<List<InvoiceProduct>> GetProductBatchByProdBCID(int prodID, int prodBCID, int locID, int comID);
         
     }
 }

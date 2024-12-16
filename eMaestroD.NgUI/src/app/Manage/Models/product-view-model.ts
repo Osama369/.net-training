@@ -50,7 +50,7 @@ export interface ProductViewModel {
   lastCost? : number | null;
   currentStock? : number | null;
   sellPrice? : number | null;
-
+  purchPrice?:number | null;
 
 
   qty?: number;
@@ -80,7 +80,7 @@ export interface ProductViewModel {
   amount?: string;
   batchNo?:string;
   notes?:string;
-  expiryDate?:Date;
+  expiryDate?:string;
   prodInvoiceID?:number | 0;
   sellingPrice?:number;
   mrp?:number;
@@ -89,5 +89,5 @@ export interface ProductViewModel {
   sharePercentage?:number | 0;
 
   baseQty?: number | 0;
-  units?: { unitType: string; unitValue: number; unitId: number; unitCode : string }[];
+  units?: { unitType: string; unitValue: number; unitId: number; unitCode : string; }[];
 }

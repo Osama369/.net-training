@@ -70,7 +70,7 @@ namespace eMaestroD.InvoiceProcessing.Services
 
             throw new InvalidOperationException("Entry not found.");
         }
-        public async Task<Invoice> ConvertGLToInvoice(string voucherNo)
+        public async Task<Invoice> ConvertGLToInvoice(string voucherNo, bool isConverted = false)
         {
             var glEntries = await _glRepository.GetGLEntriesByVoucherNoAsync(voucherNo);
 
@@ -132,7 +132,7 @@ namespace eMaestroD.InvoiceProcessing.Services
 
                 foreach (var detail in detailEntries)
                 {
-                    var productDetail = await _productRepository.GetProducts((int)masterEntry.comID, detail.prodBCID);
+                    var productDetail = await _productRepository.GetProducts((int)masterEntry.comID, detail.prodBCID,0);
                     var product = new InvoiceProduct
                     {
                         prodInvoiceID = detail.GLID,
@@ -140,10 +140,10 @@ namespace eMaestroD.InvoiceProcessing.Services
                         prodBCID = detail.prodBCID,
                         prodCode = productDetail.FirstOrDefault().barCode,
                         prodName = productDetail.FirstOrDefault().prodName,
-                        qty = detail.qty,
+                        qty = isConverted ? detail.qty : (detail.qty/ productDetail.FirstOrDefault().baseQty),
                         bounsQty = detail.bonusQty,
-                        purchRate = detail.unitPrice,
-                        sellRate = detail.unitPrice,
+                        purchRate = isConverted ? detail.unitPrice : (detail.unitPrice * productDetail.FirstOrDefault().baseQty),
+                        sellRate = isConverted ? detail.unitPrice : (detail.unitPrice * productDetail.FirstOrDefault().baseQty),
                         netAmount = detail.debitSum > 0 ? detail.debitSum : detail.creditSum,
                         discountPercent = (detail.checkAdd != null && decimal.TryParse(detail.checkAdd.ToString(), out var parsedValue)) ? parsedValue : 0,
                         discountAmount = detail.discountSum,
@@ -155,6 +155,7 @@ namespace eMaestroD.InvoiceProcessing.Services
                         mrp = detail.mrp,
                         sellingPrice = detail.sellPrice,
                         lastCost = detail.lastCost,
+                        unit = productDetail.FirstOrDefault().unit,
                         ProductTaxes = detail.gLDetails.Select(detail => new InvoiceProductTax
                         {
                             taxDetailID = detail.GLDetailID,
@@ -233,7 +234,7 @@ namespace eMaestroD.InvoiceProcessing.Services
 
                 foreach (var detail in detailEntries)
                 {
-                    var productDetail = await _productRepository.GetProducts((int)masterEntry.comID, detail.prodBCID);
+                    var productDetail = await _productRepository.GetProducts((int)masterEntry.comID, detail.prodBCID, 0);
                     var product = new InvoiceProduct
                     {
                         prodInvoiceID = detail.TempGLID,
@@ -241,10 +242,10 @@ namespace eMaestroD.InvoiceProcessing.Services
                         prodBCID = detail.prodBCID,
                         prodCode = productDetail.FirstOrDefault().barCode,
                         prodName = productDetail.FirstOrDefault().prodName,
-                        qty = detail.qty,
+                        qty = isConverted ? detail.qty : (detail.qty/ productDetail.FirstOrDefault().baseQty),
                         bounsQty = detail.bonusQty,
-                        purchRate = detail.unitPrice,
-                        sellRate = detail.unitPrice,
+                        purchRate = isConverted ? detail.unitPrice : (detail.unitPrice * productDetail.FirstOrDefault().baseQty),
+                        sellRate = isConverted ? detail.unitPrice :  (detail.unitPrice * productDetail.FirstOrDefault().baseQty),
                         netAmount = detail.debitSum > 0 ? detail.debitSum : detail.creditSum,
                         discountPercent = (detail.checkAdd != null && decimal.TryParse(detail.checkAdd.ToString(), out var parsedValue)) ? parsedValue : 0,
                         discountAmount = detail.discountSum,
@@ -256,6 +257,7 @@ namespace eMaestroD.InvoiceProcessing.Services
                         mrp = detail.mrp,
                         sellingPrice = detail.sellPrice,
                         lastCost = detail.lastCost,
+                        unit = productDetail.FirstOrDefault().unit,
                         ProductTaxes = detail.tempGLDetails.Select(detail => new InvoiceProductTax
                         {
                             taxDetailID = detail.TempGLDetailID,
@@ -336,7 +338,7 @@ namespace eMaestroD.InvoiceProcessing.Services
 
                 foreach (var detail in detailEntries)
                 {
-                    var productDetail = await _productRepository.GetProducts((int)masterEntry.comID, detail.prodBCID);
+                    var productDetail = await _productRepository.GetProducts((int)masterEntry.comID, detail.prodBCID, 0);
                     var product = new InvoiceProduct
                     {
                         prodInvoiceID = detail.TempGLID,
@@ -360,6 +362,7 @@ namespace eMaestroD.InvoiceProcessing.Services
                         mrp = detail.mrp,
                         sellingPrice = detail.sellPrice,
                         lastCost = detail.lastCost,
+                        unit = productDetail.FirstOrDefault().unit,
                         ProductTaxes = detail.tempGLDetails.Select(detail => new InvoiceProductTax
                         {
                             taxDetailID = detail.TempGLDetailID,
@@ -439,7 +442,7 @@ namespace eMaestroD.InvoiceProcessing.Services
         {
             foreach (var item in invoices)
             {
-                var TempGLToPurchase = await ConvertGLToInvoice(item.invoiceVoucherNo);
+                var TempGLToPurchase = await ConvertGLToInvoice(item.invoiceVoucherNo, true);
                 
                 TempGLToPurchase.txTypeID = 1;
                 TempGLToPurchase.invoiceID = 0;
@@ -468,9 +471,9 @@ namespace eMaestroD.InvoiceProcessing.Services
             return data;
         }
 
-        public async Task InsertVendorProductAsync(VendorProduct vendorProduct)
+        public async Task UpsertVendorProductAsync(VendorProduct vendorProduct)
         {
-            await _glRepository.InsertVendorProductAsync(vendorProduct);
+            await _glRepository.UpsertVendorProductAsync(vendorProduct);
         }
 
         public async Task<List<InvoiceProduct>> GetItemsBySupplierAndDate(int supplierId, DateTime datefrom, DateTime dateTo)
@@ -479,9 +482,9 @@ namespace eMaestroD.InvoiceProcessing.Services
             return data;
         }
 
-        public async Task<List<InvoiceProduct>> GetProductBatchByProdBCID(int prodBCID, int locID, int comID)
+        public async Task<List<InvoiceProduct>> GetProductBatchByProdBCID(int prodID, int prodBCID, int locID, int comID)
         {
-            var data = await _glRepository.GetProductBatchByProdBCID(prodBCID, locID, comID);
+            var data = await _glRepository.GetProductBatchByProdBCID(prodID, prodBCID, locID, comID);
             return data;
         }
 

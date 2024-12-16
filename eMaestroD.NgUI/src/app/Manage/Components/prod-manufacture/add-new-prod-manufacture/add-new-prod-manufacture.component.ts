@@ -16,6 +16,7 @@ export class AddNewProdManufactureComponent {
   @Output() dataEvent = new EventEmitter<any>();
   @Input() Data : any;
   @Input() title : any;
+  isSaveDisable : boolean = false;
   sendDataToParent() {
     this.dataEvent.emit({type:'closeGroup',value:false});
   }
@@ -68,7 +69,7 @@ export class AddNewProdManufactureComponent {
   {
      if(this.itemList[0].prodManuName != "" && this.itemList[0].prodManuName != undefined)
      {
-
+      this.isSaveDisable = true;
       this.prodManufactureService.upsertProdManufacture(this.itemList[0]).subscribe({
         next: (prd) => {
           if(this.title == "Manufacture Registration")
@@ -81,10 +82,12 @@ export class AddNewProdManufactureComponent {
             this.toastr.success("Manufacture has been successfully updated!");
             this.dataEvent.emit({type:'',value:prd});
           }
+          this.isSaveDisable = false;
         },
         error: (response) => {
             this.toastr.error(response.error);
             this.onEnterTableInput(-1);
+            this.isSaveDisable = false;
         },
       });
     }

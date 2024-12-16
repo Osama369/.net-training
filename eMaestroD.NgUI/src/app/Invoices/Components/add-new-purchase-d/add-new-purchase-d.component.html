@@ -55,14 +55,14 @@
               <!-- <div class="col-3">
                 <p-dropdown #inputField [options]="GRNInvoiceList"  [(ngModel)]="selectedVoucherNo"  styleClass="col-12" optionLabel="invoiceVoucherNo" optionValue="invoiceVoucherNo" (onChange)="InvoiceOnChange()" (keyup.enter)="onEnterComplex(3)"></p-dropdown>
               </div>
-              
+
               <label class="col-form-label Vendor-label col-3 required" translate>GRN</label>
 
               <label class="col-form-label Vendor-label col-3 required" translate></label>
               <label class="col-form-label Vendor-label col-3 required" translate></label>
               <label class="col-form-label Vendor-label col-3 required" translate></label> -->
 
-            
+
           </div>
           <br>
           <p-table #dt [value]="productlist" dataKey="prodID" editMode="row" styleClass="p-datatable-sm" [scrollable]="true" class="AddTable" scrollHeight="300px" scrollDirection="vertical">
@@ -96,8 +96,8 @@
                   <th colspan="2" style="text-align: center;     border-bottom: 1px solid;" translate>Rebate</th>
                   <th rowspan="2" style="text-align: center;"  translate>Net Amount</th>
                   <th rowspan="2" style="text-align: center;"  translate>Net Rate</th>
-                  <th rowspan="2" style="text-align: center;"  translate>M.R.P</th>
-                  <th rowspan="2" style="text-align: center;"  translate>Selling Price</th>
+                  <th rowspan="2" style="text-align: center;"  translate>M.R.P (Per Unit)</th>
+                  <th rowspan="2" style="text-align: center;"  translate>Sell Rate (Per Unit)</th>
                   <th rowspan="2" style="text-align: center;"  translate>Last Cost</th>
                   <th rowspan="2" style="text-align: center;"  translate>Diff</th>
                   <th rowspan="2" style="text-align: center;"  translate>Notes</th>
@@ -159,10 +159,20 @@
                       <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(3, ri)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.bonusQty" (ngModelChange)="updateQtyBal(rowData, ri)" class="girdRow">
                     </td>
                     <td>
-                        <input #inputFieldTable [style]="{'width':'80px'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(5, ri)" type="text" [(ngModel)]="rowData.batchNo" class="girdRow">
+                        <input #inputFieldTable [style]="{'width':'80px'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(4, ri)" type="text" [(ngModel)]="rowData.batchNo" class="girdRow">
                     </td>
                     <td>
-                        <p-calendar [(ngModel)]="rowData.expiryDate" appendTo="body" styleClass="girdRow" #inputFieldTable [disabled]="!rowData.barCode && !rowData.prodName" [style]="{'width':'92px', 'z-index':'0'}" (keyup.enter)="onEnterTableInput(5, ri)" dateFormat="dd/mm/yy" ></p-calendar>
+                      <input
+                      type="text"
+                      [disabled]="!rowData.barCode && !rowData.prodName"
+                      #inputFieldTable
+                      appDateMask
+                      [(ngModel)]="rowData.expiryDate"
+                      class="date-input"
+                      placeholder="dd-MM-yyyy"
+                      (keyup.enter)="onEnterTableInput(5, ri)"
+                      (blur)="validateDate(rowData.expiryDate, ri)"
+                    />
                     </td>
                     <td>
                         <input #inputFieldTable [style]="{'width':'42px', 'text-align':'right'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(6, ri)" type="text" [(ngModel)]="rowData.discount" name="discount" (ngModelChange)="Itemcalculation(ri)" class="girdRow">

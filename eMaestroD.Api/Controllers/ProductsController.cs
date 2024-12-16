@@ -201,10 +201,11 @@ namespace eMaestroD.Api.Controllers
                         bool isProductVendorExist = existingVendorProducts
                             .Any(x => x.comVendID == (int)product.vendID);
 
-                        if (!isProductVendorExist)
+                        if (!existingVendorProducts.Any())
                         {
                             var vendorProduct = new VendorProduct
                             {
+                                vendProdID = 0,
                                 comID = (int)product.comID,
                                 prodID = product.prodID,
                                 comVendID = (int)product.vendID,
@@ -212,7 +213,21 @@ namespace eMaestroD.Api.Controllers
                                 sharePercentage = product.sharePercentage
                             };
 
-                            await _glService.InsertVendorProductAsync(vendorProduct);
+                            await _glService.UpsertVendorProductAsync(vendorProduct);
+                        }
+                        else
+                        {
+                            var vendorProduct = new VendorProduct
+                            {
+                                vendProdID = existingVendorProducts.FirstOrDefault().vendProdID,
+                                comID = (int)product.comID,
+                                prodID = product.prodID,
+                                comVendID = (int)product.vendID,
+                                preference = existingVendorProducts.FirstOrDefault().preference,
+                                sharePercentage = product.sharePercentage
+                            };
+
+                            await _glService.UpsertVendorProductAsync(vendorProduct);
                         }
                     }
 
@@ -280,7 +295,7 @@ namespace eMaestroD.Api.Controllers
                                 sharePercentage = product.sharePercentage
                             };
 
-                            await _glService.InsertVendorProductAsync(vendorProduct);
+                            await _glService.UpsertVendorProductAsync(vendorProduct);
                         }
                     }
 

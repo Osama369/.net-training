@@ -7,7 +7,7 @@
           </div>
           <div class="col-12" style="text-align: right;">
           <br>
-          <button #savebtn (click)="saveProduct()" translate class="btn btn-primary col-3"><i class="fa fa-save"></i> Save</button>&nbsp;
+          <button #savebtn [disabled]="isSaveDisable" (click)="saveProduct()" translate class="btn btn-primary col-3"><i class="fa fa-save"></i> Save</button>&nbsp;
           <button #cancelbtn (click)="sendDataToParent()" translate class="btn btn-danger col-3"><i class="fa fa-undo"></i> Cancel</button>
         </div>
     </div>

@@ -25,9 +25,9 @@ namespace eMaestroD.DataAccess.IRepositories
         Task PostTempGLEntriesAsync(string voucherNo); 
          Task<List<Invoice>> GetInvoicesAsync(int txTypeID, int customerOrVendorID, int comID);
         Task<List<InvoiceProduct>> GetItemsBySupplierAndDate(int supplierId, DateTime datefrom, DateTime dateTo);
-        Task<List<InvoiceProduct>> GetProductBatchByProdBCID(int prodBCID, int locID, int comID);
+        Task<List<InvoiceProduct>> GetProductBatchByProdBCID(int prodID, int prodBCID, int locID, int comID);
         Task<List<VendorProduct>> GetVendorProductListAsync(int comID);
-        Task InsertVendorProductAsync(VendorProduct vendorProduct);
+        Task UpsertVendorProductAsync(VendorProduct vendorProduct);
 
         //Temp until all method change
         Task<List<GLTxLinks>> GenerateGLTxLinks(string invoiceNo, int? GLID);
