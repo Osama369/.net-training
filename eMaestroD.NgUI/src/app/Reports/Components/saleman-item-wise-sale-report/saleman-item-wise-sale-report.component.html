@@ -16,28 +16,29 @@
                         &nbsp;
                         <label class="col-form-label date-label  col-2 required" style="text-align: right;width:auto;" translate>User Name <span>:</span> &nbsp;</label>
                         <p-autoComplete styleClass="myclass" translate [(ngModel)]="selectedUser" [suggestions]="FilteredUserList" (completeMethod)="filterUserlist($event)"
-                        field="UserName" value="UserID" [minLength]="1" [dropdown]="true" class="col-form-label col-2" styleClass="col-3"></p-autoComplete>                 
-                         &nbsp; 
-                         <label class="col-form-label date-label required" translate>Product<span>:</span>&nbsp;</label>
-                    <!-- <p-autoComplete #inputField [(ngModel)]="SelectedProduct" [suggestions]="Filterproductlist" (completeMethod)="filterProduct($event)"
-                    field="prodName" value="prodID" [minLength]="1" [dropdown]="true" class="ReportDropDown"></p-autoComplete> -->
-                    <p-dropdown
-                        #inputField
-                        styleClass="ReportDropDown"
-                        [(ngModel)]="SelectedProduct"
-                        [options]="productlist"
-                        optionLabel="prodName"
-                        [filter]="true"
-                        [filterBy]="'prodName'"
-                        [showClear]="true"
-                        >
-                        </p-dropdown>   
-                        &nbsp;               
+                        field="UserName" value="UserID" [minLength]="1" [dropdown]="true" class="col-form-label col-3" styleClass="col-3"></p-autoComplete>                 
+                                        
+                        </div>
+  
+                      <div class="col-12 mt-3">
+                        <label class="col-form-label date-label required" translate>Product<span>:</span>&nbsp;</label>
+                        <!-- <p-autoComplete #inputField [(ngModel)]="SelectedProduct" [suggestions]="Filterproductlist" (completeMethod)="filterProduct($event)"
+                        field="prodName" value="prodID" [minLength]="1" [dropdown]="true" class="ReportDropDown"></p-autoComplete> -->
+                        <p-dropdown
+                            #inputField
+                            styleClass="ReportDropDown"
+                            [(ngModel)]="SelectedProduct"
+                            [options]="productlist"
+                            optionLabel="prodName"
+                            [filter]="true"
+                            [filterBy]="'prodName'"
+                            [showClear]="true"
+                            >
+                            </p-dropdown>   
+                            &nbsp;  
+
                         <button #savebtn (click)="submit()" translate class="btn btn-primary btnSetting"> <i class="far fa-paper-plane"></i> Submit</button>
-                     
-                      </div>
-  
-  
+                     </div>
                 </div>
             </div>
         </div>

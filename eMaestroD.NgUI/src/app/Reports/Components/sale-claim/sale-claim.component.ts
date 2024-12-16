@@ -9,6 +9,7 @@ import { BookmarkService } from 'src/app/Shared/Services/bookmark.service';
 import { ReportService } from '../../Services/report.service';
 import { Vendor } from 'src/app/Manage/Models/vendor';
 import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
+import { Products } from 'src/app/Manage/Models/products';
 
 
 @Component({
@@ -38,10 +39,9 @@ export class SaleClaimComponent {
   allowBtn: boolean = false;
   cols: any[] = [];
   data: any[];
-  Vendor: Vendor[];
-  SelectedVendor: any;
+ 
   bookmark: boolean = false;
-
+ 
   ngOnInit(): void {
     let today = new Date();
     this.DateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -52,19 +52,7 @@ export class SaleClaimComponent {
       this.bookmark = x;
     });
 
-    this.sharedDataService.getVendors$().subscribe({
-      next: (Vendor) => {
-        this.Vendor = [...(Vendor as { [key: string]: any })["enttityDataSource"]];
-        this.Vendor.unshift({
-          vendID: 0,
-          vendName: "---ALL---",
-        });
-        this.SelectedVendor = { vendID: 0, vendName: '---ALL---' };
-      },
-      error: (response) => {
-        console.log(response);
-      },
-    });
+   
   }
 
   UpdateBookmark(value: any) {
@@ -93,7 +81,7 @@ export class SaleClaimComponent {
     let d1 = this.datePipe.transform(this.DateFrom, "yyyy-MM-dd");
     let d2 = this.datePipe.transform(this.DateTo, "yyyy-MM-dd");
 
-    this.reportService.runReportWith3Para("SaleClaimReport", d1, d2, this.SelectedVendor.vendID, 0).subscribe(data => {
+    this.reportService.runReportWith2Para("SaleClaimReport", d1, d2, 0,0).subscribe(data => {
       this.data = (data as { [key: string]: any })["enttityDataSource"];
       this.cols = (data as { [key: string]: any })["entityModel"];
       this.allowBtn = true;
