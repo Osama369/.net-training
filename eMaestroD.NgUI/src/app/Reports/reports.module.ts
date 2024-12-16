@@ -40,6 +40,7 @@ import { SSRWithAvailabilityComponent } from './Components/ssrwith-availability/
 import { SaleManLedgerReportComponent } from './Components/sale-man-ledger-report/sale-man-ledger-report.component';
 import { SalemanItemWiseSaleReportComponent } from './Components/saleman-item-wise-sale-report/saleman-item-wise-sale-report.component';
 import { SaleManWiseSaleReportComponent } from './Components/sale-man-wise-sale-report/sale-man-wise-sale-report.component';
+import { SaleClaimComponent } from './Components/sale-claim/sale-claim.component';
 
 
 
@@ -82,7 +83,9 @@ import { SaleManWiseSaleReportComponent } from './Components/sale-man-wise-sale-
     SSRWithAvailabilityComponent,
     SaleManLedgerReportComponent,
     SalemanItemWiseSaleReportComponent,
-    SaleManWiseSaleReportComponent
+    SaleManWiseSaleReportComponent,
+    
+    SaleClaimComponent
 
   ],
   imports: [

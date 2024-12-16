@@ -96,6 +96,7 @@ export const APP_ROUTES = {
       SalesManLedgerReport: 'Reports/SalesManLedgerReport',
       SalemanItemWiseSaleReport: 'Reports/SalemanItemWiseSaleReport',
       SalemanWiseSaleReport: 'Reports/SalemanWiseSaleReport',
+      SaleClaimReport: 'Reports/SaleClaim',
       profitReports: {
         itemWiseProfit: 'Reports/ItemWiseProfitReport',
         invoiceWiseProfit: 'Reports/InvoiceWiseProfit',
