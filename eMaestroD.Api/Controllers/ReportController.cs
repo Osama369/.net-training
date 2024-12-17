@@ -162,6 +162,8 @@ namespace eMaestroD.Api.Controllers
                 vM.entityModel = res?.GetEntity_MetaData();
             }
 
+
+           
             return Ok(vM);
             //return File(result, "application/pdf");
         }
@@ -324,7 +326,14 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
-           
+            if (ReportName == "ChallanReport")
+            {
+                var res = await ChallanepRort(Parameter3, Parameter4, locID,comID);
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
+            return Ok(vM);
+
             return Ok(vM);
         }
 
@@ -955,7 +964,36 @@ namespace eMaestroD.Api.Controllers
             }
             return null;
         }
+      
+        [NonAction]
+        public async Task<List<ChallanReport>> ChallanepRort( string Vfrom, string VTo, int locID, int comID)
+        {
+            List<ChallanReport> SDL;
+            string sql = "[Report_InvoiceWiseSale] @VFrom,@VTo,@locID";
 
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@VFrom", Value = Vfrom },
+                    new SqlParameter { ParameterName = "@VTo", Value = VTo },
+                    new SqlParameter { ParameterName = "@locID", Value = locID },
+            };
+            SDL = _AMDbContext.ChallanReport.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                // return SDL.OrderBy(x => x.PrimitiveType).ToList();
+                return SDL;
+            }
+            return null;
+        }
 
         [NonAction]
         public async Task<List<BonusClaimReport>> BonusClaim(DateTime dtfrom, DateTime dtTo, int comID,int vendID)
@@ -2145,5 +2183,7 @@ namespace eMaestroD.Api.Controllers
 
             return regionInfo.CurrencySymbol;
         }
+
+       
     }
 }

@@ -42,6 +42,7 @@ import { SalemanItemWiseSaleReportComponent } from './Components/saleman-item-wi
 import { SaleManWiseSaleReportComponent } from './Components/sale-man-wise-sale-report/sale-man-wise-sale-report.component';
 import { SaleClaimComponent } from './Components/sale-claim/sale-claim.component';
 import { ExpenseReportComponent } from './Components/expense-report/expense-report.component';
+import { ChallanReportComponent } from './Components/challan-report/challan-report.component';
 
 
 
@@ -87,7 +88,8 @@ import { ExpenseReportComponent } from './Components/expense-report/expense-repo
     SaleManWiseSaleReportComponent,
     
     SaleClaimComponent,
-          ExpenseReportComponent
+          ExpenseReportComponent,
+          ChallanReportComponent
 
   ],
   imports: [

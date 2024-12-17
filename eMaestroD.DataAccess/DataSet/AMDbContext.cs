@@ -65,6 +65,7 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<TrialBalance> TrialBalance { get; set; }
         public DbSet<BalanceSheet> BalanceSheet { get; set; }
         public DbSet<SaleClaimReport> SaleClaimReport { get; set; }
+        public DbSet<ChallanReport> ChallanReport { get; set; }
         public DbSet<BonusClaimReport> BonusClaim { get; set; }
         public DbSet<DiscountClaimReport> DiscountClaimReport { get; set; }
         public DbSet<SaleHistory> SaleHistory { get; set; }
@@ -157,6 +158,7 @@ namespace eMaestroD.DataAccess.DataSet
             modelBuilder.Entity<SaleManWiseSaleReport>().HasNoKey();
             modelBuilder.Entity<SaleClaimReport>().HasNoKey();
             modelBuilder.Entity<ExpenseReport>().HasNoKey();
+            modelBuilder.Entity<ChallanReport>().HasNoKey();
         }
 
     }

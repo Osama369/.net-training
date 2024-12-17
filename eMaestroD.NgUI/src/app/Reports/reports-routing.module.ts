@@ -41,6 +41,7 @@ import { SalemanItemWiseSaleReportComponent } from './Components/saleman-item-wi
 import { SaleManWiseSaleReportComponent } from './Components/sale-man-wise-sale-report/sale-man-wise-sale-report.component';
 import { SaleClaimComponent } from './Components/sale-claim/sale-claim.component';
 import { ExpenseReportComponent } from './Components/expense-report/expense-report.component';
+import { ChallanReportComponent } from './Components/challan-report/challan-report.component';
 
 const routes: Routes = [
   { path: 'DailySaleReport', component: DailyinvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DailySale' }  },
@@ -84,6 +85,7 @@ const routes: Routes = [
       { path: 'SalemanWiseSaleReport', component: SaleManWiseSaleReportComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SalemanWiseSaleReport' }  },
       { path: 'SaleClaim', component: SaleClaimComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleClaim' }  },
       { path: 'ExpenseReport', component: ExpenseReportComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ExpenseReport' }  },
+      { path: 'ChallanReport', component: ChallanReportComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ChallanReport' }  },
 
     ];
 
