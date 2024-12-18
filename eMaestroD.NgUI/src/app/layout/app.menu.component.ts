@@ -181,6 +181,7 @@ export class AppMenuComponent implements OnInit {
                     { label: 'Purchase/Order/GRN Report', routerLink: [APP_ROUTES.reports.accountReports.PurchaseOrderGRNReport] },
                     { label: 'Payable Aging', routerLink: [APP_ROUTES.reports.accountReports.PayableAging] },
                     { label: 'Receivable Aging', routerLink: [APP_ROUTES.reports.accountReports.ReceivableAging] },
+                    { label: 'Receipt Journal', routerLink: [APP_ROUTES.reports.accountReports.ReceiptJournal] },
                   ],
                 },
               ],

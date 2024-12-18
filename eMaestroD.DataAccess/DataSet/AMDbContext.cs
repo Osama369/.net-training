@@ -117,6 +117,7 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<PurchaseOrderGrn> PurchaseOrderGrn { get; set; }
         public DbSet<PayableAging> PayableAging { get; set; }
         public DbSet<ReceivableAging> ReceivableAging { get; set; }
+        public DbSet<ReceiptJournal> ReceiptJournal { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -165,6 +166,7 @@ namespace eMaestroD.DataAccess.DataSet
             modelBuilder.Entity<PurchaseOrderGrn>().HasNoKey();
             modelBuilder.Entity<PayableAging>().HasNoKey();
             modelBuilder.Entity<ReceivableAging>().HasNoKey();
+            modelBuilder.Entity<ReceiptJournal>().HasNoKey();
         }
 
     }

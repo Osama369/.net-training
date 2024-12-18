@@ -279,6 +279,13 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
+
+            else if (ReportName == "ReceiptJournal")
+            {                                                                 // cstID
+                var res = await ReceiptJournal(Parameter1, Parameter2, int.Parse(Parameter3), locID, comID);
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
             return Ok(vM);
 
         }
@@ -1250,6 +1257,45 @@ namespace eMaestroD.Api.Controllers
 
 
         }
+
+
+        [NonAction]
+        public async Task<List<ReceiptJournal>> ReceiptJournal(DateTime dtfrom, DateTime dtTo, int cstID, int locID, int comID)
+        {
+
+            List<ReceiptJournal> SDL;
+            string sql = "[dbo].[Report_ReciptJournal] @dtStart, @dtEnd, @cstId,  @locID, @comID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@cstId", Value = cstID },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+                    new SqlParameter { ParameterName = "@locID", Value = locID },
+            };
+            SDL = _AMDbContext.ReceiptJournal.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                // return SDL.OrderBy(x => x.expiryDate).ToList();
+                return SDL;
+            }
+            return null;
+
+
+        }
+
 
         [NonAction]
         public async Task<List<SalemanItemWiseSaleReport>> SalemanItemWiseSalesReport(DateTime dtfrom, DateTime dtTo, int comID, int userID, int ProdID)

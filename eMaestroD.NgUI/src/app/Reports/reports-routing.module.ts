@@ -46,6 +46,7 @@ import { PurchaseGrnOrdeReportrComponent } from './Components/purchase-grn-orde-
 import { SaleClaimComponent } from './Components/sale-claim/sale-claim.component';
 import { PayableAgingComponent } from './Components/payable-aging/payable-aging.component';
 import { ReceivableAgingComponent } from './Components/receivable-aging/receivable-aging.component';
+import { ReceiptJournalComponent } from './Components/receipt-journal/receipt-journal.component';
 
 const routes: Routes = [
   { path: 'DailySaleReport', component: DailyinvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DailySale' }  },
@@ -93,6 +94,7 @@ const routes: Routes = [
       { path: 'PurchaseOrderGRNReport', component: PurchaseGrnOrdeReportrComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseOrderGRN' }  },
       { path: 'PayableAging', component: PayableAgingComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PayableAging' }  },
       { path: 'ReceivableAging', component:ReceivableAgingComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ReceivableAging' }  },
+      { path: 'ReceiptJournal', component:ReceiptJournalComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ReceiptJournal' }  },
 
     ];
 
