@@ -28,9 +28,28 @@ namespace eMaestroD.Models.ReportModels
 		public string? vendName { get; set; }
 
 		[DisplayName(Name = "Date Diff")]
-		public string? DateDiffx { get; set; }
-
-		[DisplayName(Name = "Credit Days")]
-		public DateTime creditDays { get; set; }
+		public int DateDiffx { get; set; }
+		
+		[DisplayName(Name = "Pay Off")]
+		
+		public decimal PayOff { get; set; }
+		
+		[DisplayName(Name = "Thirty Days")]
+		public decimal ThirtyDays { get; set; }
+		
+		[DisplayName(Name = "Sixty Days")]
+		public decimal SixtyDays { get; set; }
+		
+		[DisplayName(Name = "Ninety Days")]
+		public decimal NinetyDays { get; set; }
+		
+		[DisplayName(Name = "One Fifty Days")]		
+		public decimal OneFiftyDays { get; set; }
+		
+		[DisplayName(Name = "Three Sixty Days")]
+		public decimal ThreeSixtyDays { get; set; }
+		
+		//[DisplayName(Name = "Credit Days")]
+		//public DateTime creditDays { get; set; }
 	}
 }

@@ -161,12 +161,7 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
-            else if (ReportName == "PayableAging")
-            {
-                var res = await PayableAging(Parameter1, Parameter2, locID, comID);
-                vM.enttityDataSource = res;
-                vM.entityModel = res?.GetEntity_MetaData();
-            }
+           
 
 
             return Ok(vM);
@@ -348,12 +343,26 @@ namespace eMaestroD.Api.Controllers
 
             else if (ReportName == "ReceivableAging")
             {
-                //result = await CashBook(Parameter1, Parameter2);
-               // var res = await ReceivableAging(Parameter1, int.Parse(Parameter4),  locID, comID);
-               // vM.enttityDataSource = res;
-                //vM.entityModel = res?.GetEntity_MetaData();
-            }
+                try
+                {
+                    //result = await CashBook(Parameter1, Parameter2);
+                    var res = await ReceivableAging(Parameter1, int.Parse(Parameter3), locID, comID);
+                    vM.enttityDataSource = res;
+                    vM.entityModel = res?.GetEntity_MetaData();
+                }
+                catch (Exception ex)
+                {
 
+                    throw;
+                }
+              
+            }
+            else if (ReportName == "PayableAging")
+            {
+                var res = await PayableAging(Parameter1, int.Parse(Parameter3), locID, comID);
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
             return Ok(vM);
         }
 
@@ -989,15 +998,15 @@ namespace eMaestroD.Api.Controllers
 
 
         [NonAction]
-        public async Task<List<PayableAging>> PayableAging(DateTime dtfrom, DateTime dtTo, int locID , int comID)
+        public async Task<List<PayableAging>> PayableAging(DateTime dtfrom,int vendorID , int locID , int comID)
         {
             List<PayableAging> SDL;
-            string sql = "[Report_PayableAging] @dtStart,@dtEnd,@locID,@comID";
+            string sql = "[Report_PayableAging]  @vendID, @asOfDate, @locID, @comID";
 
             List<SqlParameter> parms = new List<SqlParameter>
             {
-                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
-                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@vendID", Value = vendorID },
+                    new SqlParameter { ParameterName = "@asOfDate", Value = dtfrom },
                     new SqlParameter { ParameterName = "@locID", Value = locID },
                     new SqlParameter { ParameterName = "@comID", Value = comID },
             };
@@ -1020,7 +1029,7 @@ namespace eMaestroD.Api.Controllers
         }
 
         [NonAction]
-        public async Task<List<ReceivableAging>> ReceivableAging(int cstID, DateTime dtTo, int locID, int comID)
+        public async Task<List<ReceivableAging>> ReceivableAging(DateTime dtTO, int cstID, int locID, int comID)
         {
             List<ReceivableAging> SDL;
             string sql = "[Report_ReceivableAging] @cstID ,@asOfDate ,@locID,@comID";
@@ -1028,7 +1037,7 @@ namespace eMaestroD.Api.Controllers
             List<SqlParameter> parms = new List<SqlParameter>
             {
                     new SqlParameter { ParameterName = "@cstID ", Value = cstID },
-                    new SqlParameter { ParameterName = "@asOfDate ", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@asOfDate ", Value = dtTO },
                     new SqlParameter { ParameterName = "@locID", Value = locID },
                     new SqlParameter { ParameterName = "@comID", Value = comID },
             };
