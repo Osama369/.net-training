@@ -99,6 +99,9 @@ export const APP_ROUTES = {
       SaleClaimReport: 'Reports/SaleClaim',
       ExpenseReport: 'Reports/ExpenseReport',
       ChallanReport: 'Reports/ChallanReport',
+      PurchaseOrderGRNReport: 'Reports/PurchaseOrderGRNReport',
+      PayableAging: 'Reports/PayableAging',
+      ReceivableAging: 'Reports/ReceivableAging',
       profitReports: {
         itemWiseProfit: 'Reports/ItemWiseProfitReport',
         invoiceWiseProfit: 'Reports/InvoiceWiseProfit',

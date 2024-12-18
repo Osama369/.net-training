@@ -161,9 +161,14 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
+            else if (ReportName == "PayableAging")
+            {
+                var res = await PayableAging(Parameter1, Parameter2, locID, comID);
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
 
 
-           
             return Ok(vM);
             //return File(result, "application/pdf");
         }
@@ -332,7 +337,22 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
-            return Ok(vM);
+
+            else if(ReportName == "PurchaseOrderGRN")
+            {
+                //result = await CashBook(Parameter1, Parameter2);
+                var res = await PurchaseOrderGRN(Parameter1, Parameter2, int.Parse(Parameter3), int.Parse(Parameter4),  locID, comID);
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
+
+            else if (ReportName == "ReceivableAging")
+            {
+                //result = await CashBook(Parameter1, Parameter2);
+               // var res = await ReceivableAging(Parameter1, int.Parse(Parameter4),  locID, comID);
+               // vM.enttityDataSource = res;
+                //vM.entityModel = res?.GetEntity_MetaData();
+            }
 
             return Ok(vM);
         }
@@ -350,7 +370,9 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
-           
+
+            
+
             return Ok(vM);
         }
 
@@ -964,7 +986,69 @@ namespace eMaestroD.Api.Controllers
             }
             return null;
         }
-      
+
+
+        [NonAction]
+        public async Task<List<PayableAging>> PayableAging(DateTime dtfrom, DateTime dtTo, int locID , int comID)
+        {
+            List<PayableAging> SDL;
+            string sql = "[Report_PayableAging] @dtStart,@dtEnd,@locID,@comID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@locID", Value = locID },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+            };
+            SDL = _AMDbContext.PayableAging.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                // return SDL.OrderBy(x => x.PrimitiveType).ToList();
+                return SDL;
+            }
+            return null;
+        }
+
+        [NonAction]
+        public async Task<List<ReceivableAging>> ReceivableAging(int cstID, DateTime dtTo, int locID, int comID)
+        {
+            List<ReceivableAging> SDL;
+            string sql = "[Report_ReceivableAging] @cstID ,@asOfDate ,@locID,@comID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@cstID ", Value = cstID },
+                    new SqlParameter { ParameterName = "@asOfDate ", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@locID", Value = locID },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+            };
+            SDL = _AMDbContext.ReceivableAging.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                // return SDL.OrderBy(x => x.PrimitiveType).ToList();
+                return SDL;
+            }
+            return null;
+        }
         [NonAction]
         public async Task<List<ChallanReport>> ChallanepRort( string Vfrom, string VTo, int locID, int comID)
         {
@@ -994,6 +1078,40 @@ namespace eMaestroD.Api.Controllers
             }
             return null;
         }
+
+        [NonAction]
+        public async Task<List<PurchaseOrderGrn>> PurchaseOrderGRN(DateTime dFrom, DateTime dTo,int txTypeID,int vendID, int locID, int comID)
+        {
+            List<PurchaseOrderGrn> SDL;
+            string sql = "[Report_PurchaseHistory] @dtStart,@dtEnd,@txTypId,@vendID,@locID,@comId";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart ", Value = dFrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@txTypId", Value = txTypeID },
+                    new SqlParameter { ParameterName = "@vendID", Value = vendID },
+                    new SqlParameter { ParameterName = "@locID", Value = locID },
+                    new SqlParameter { ParameterName = "@comId ", Value = comID },
+            };
+            SDL = _AMDbContext.PurchaseOrderGrn.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                // return SDL.OrderBy(x => x.PrimitiveType).ToList();
+                return SDL;
+            }
+            return null;
+        }
+
 
         [NonAction]
         public async Task<List<BonusClaimReport>> BonusClaim(DateTime dtfrom, DateTime dtTo, int comID,int vendID)
