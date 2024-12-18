@@ -1,23 +1,27 @@
 <div class="container">
-    <div class="card">
-        <div class="col-12">
-            <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;SSR Availability Report
-              <a *ngIf="!bookmark"  (click)="UpdateBookmark(true)" title="Add Bookmark"><i class="pi pi-bookmark" style="font-size: 1.5rem;"></i></a>
-              <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark"><i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i></a>
-            </h4>
-                    <div class="row">
-  
+  <div class="card">
+    <div class="col-12">
+      <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;SSR Availability Report
+        <a *ngIf="!bookmark"  (click)="UpdateBookmark(true)" title="Add Bookmark"><i class="pi pi-bookmark" style="font-size: 1.5rem;"></i></a>
+        <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark"><i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i></a>
+      </h4>
+      <div class="row">
+        
                       <div class="col-12">
-                        <label class="col-form-label date-label required" translate>Date From <span>:</span> &nbsp;</label>
-                        <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" [autofocus]="true" pAutoFocus class="ReportDropDown" [(ngModel)]="DateFrom" dateFormat="dd/mm/yy"></p-calendar>
+                        <label class="col-2 col-form-label date-label required" style="padding-left:4px" translate>Date From <span>:</span> &nbsp;</label>
+                        <label class="col-2 col-form-label date-label required" style="padding-left:16px" translate>Date To  <span>:</span> &nbsp;</label>
+                        <label class="col-2 col-form-label date-label required" style="padding-left:27px"  translate>Supplier<span>:</span>&nbsp;</label>
+                        <label class="col-2 col-form-label date-label required" style="padding-left:38px" translate>Category<span>:</span>&nbsp;</label>
+                        <label class="col-2 col-form-label date-label required" style="padding-left:49px" translate>Location<span>:</span>&nbsp;</label>
+                      </div>
+                      <div class="col-12">
+                        <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" [autofocus]="true" pAutoFocus class="ReportDropDown" styleClass="col-2" [(ngModel)]="DateFrom" dateFormat="dd/mm/yy"></p-calendar>
                         &nbsp;
-                        <label class="col-form-label date-label required" translate>Date To  <span>:</span> &nbsp;</label>
-                        <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" [(ngModel)]="DateTo" class="ReportDropDown" dateFormat="dd/mm/yy"></p-calendar>
+                        <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" [(ngModel)]="DateTo" class="ReportDropDown" dateFormat="dd/mm/yy" styleClass="col-2" ></p-calendar>
                         &nbsp;
-                        <label class="col-form-label date-label required" translate>Supplier<span>:</span>&nbsp;</label>
                         <p-dropdown
                         #inputField
-                        styleClass="ReportDropDown"
+                        styleClass="ReportDropDown col-2"
                         [(ngModel)]="SelectedVendor"
                         [options]="Vendor"
                         optionLabel="vendName"
@@ -30,12 +34,11 @@
                         </ng-template>
                         </p-dropdown>
                         &nbsp; 
-                        <label class="col-form-label date-label required" translate>Category<span>:</span>&nbsp;</label>
                         <!-- <p-autoComplete #inputField [(ngModel)]="SelectedproductGrouplist" [suggestions]="FilterProductGrouplist" (ngModelChange)="changeProductDropdown()" (completeMethod)="filterProductCategory($event)"
                         field="prodGrpName" value="prodGrpID" [minLength]="1" class="ReportDropDown" [dropdown]="true"></p-autoComplete> -->
                         <p-dropdown
                         #inputField
-                        styleClass="ReportDropDown"
+                        styleClass="ReportDropDown col-2"
                         [(ngModel)]="SelectedproductGrouplist"
                         [options]="productGrouplist"
                         optionLabel="prodGrpName"
@@ -46,26 +49,23 @@
                         </p-dropdown>
                          &nbsp;           
                         
+                         <!-- <p-autoComplete #inputField [(ngModel)]="SelectedproductGrouplist" [suggestions]="FilterProductGrouplist" (ngModelChange)="changeProductDropdown()" (completeMethod)="filterProductCategory($event)"
+                         field="prodGrpName" value="prodGrpID" [minLength]="1" class="ReportDropDown" [dropdown]="true"></p-autoComplete> -->
+                         <p-dropdown
+                         #inputField
+                         styleClass="ReportDropDown col-2"
+                         [(ngModel)]="selectedLocation"
+                         [options]="locationlist"
+                         optionLabel="LocationName"
+                         [filter]="true"
+                         [filterBy]="'LocationName'"
+                         [showClear]="true"
+                         >
+                         </p-dropdown>
+                          &nbsp;          
+                         <button #savebtn (click)="submit()" translate class="btn btn-primary btnSetting"> <i class="far fa-paper-plane"></i> Submit</button>
                       </div>
-                        <div calss="col-12 mt-2" style="margin-top: 10px;">
-                          <label class="col-form-label date-label required" translate>Location<span>:</span>&nbsp;</label>
-                          <!-- <p-autoComplete #inputField [(ngModel)]="SelectedproductGrouplist" [suggestions]="FilterProductGrouplist" (ngModelChange)="changeProductDropdown()" (completeMethod)="filterProductCategory($event)"
-                          field="prodGrpName" value="prodGrpID" [minLength]="1" class="ReportDropDown" [dropdown]="true"></p-autoComplete> -->
-                          <p-dropdown
-                          #inputField
-                          styleClass="ReportDropDown"
-                          [(ngModel)]="selectedLocation"
-                          [options]="locationlist"
-                          optionLabel="LocationName"
-                          [filter]="true"
-                          [filterBy]="'LocationName'"
-                          [showClear]="true"
-                          >
-                          </p-dropdown>
-                           &nbsp;          
-                          <button #savebtn (click)="submit()" translate class="btn btn-primary btnSetting"> <i class="far fa-paper-plane"></i> Submit</button>
-                       
-                        </div>
+                        
   
                 </div>
             </div>
