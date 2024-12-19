@@ -124,6 +124,7 @@ namespace eMaestroD.Api.Controllers
         [HttpPost, Authorize]
         public async Task<IActionResult> saveCompanyDetail([FromBody] Companies company)
         {
+            using var transaction = await _AMDbContext.Database.BeginTransactionAsync();
             try
             {
 
@@ -198,6 +199,7 @@ namespace eMaestroD.Api.Controllers
 
                                 _AMDbContext.UserCompanies.Add(uc);
 
+
                                 //Locations locations = new Locations()
                                 //{
                                 //    locTypeID = 1,
@@ -260,69 +262,41 @@ namespace eMaestroD.Api.Controllers
                                 _AMDbContext.FiscalYear.Add(FY);
                                 await _AMDbContext.SaveChangesAsync();
 
-                                var vendParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 83).acctNo;
-                                var vendNewAcctNo = _helperMethods.GenerateAcctNo(vendParentAccCode, company.comID);
-                                
-                                var cstParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 40).acctNo;
-                                var cstNewAcctNo = _helperMethods.GenerateAcctNo(cstParentAccCode, company.comID);
-
-                                COA coa = new COA()
+                                List<COA> coaList = await _AMDbContext.COA
+                                .Where(c => c.isSys == true && c.comID == 1)
+                                .ToListAsync();
+                                coaList.ForEach(coa =>
                                 {
-                                    acctNo = cstNewAcctNo,
-                                    acctName = cst.cstName,
-                                    openBal = 0,
-                                    bal = 0,
-                                    closingBal = 0,
-                                    isSys = false,
-                                    parentCOAID = 40,
-                                    COANo = cst.cstID,
-                                    nextChkNo = cst.cstCode,
-                                    COAlevel = 4,
-                                    active = true,
-                                    treeName = cst.cstName,
-                                    acctType = "Trade Debtors",
-                                    parentAcctType = "Assets",
-                                    parentAcctName = "Trade Debtors",
-                                    path = @"Assets\Current Assets\Account Receivable\Trade Debtors\" + cst.cstName + @"\",
-                                    crtBy = username,
-                                    crtDate = DateTime.Now,
-                                    modBy = username,
-                                    modDate = DateTime.Now,
-                                    comID = cst.comID
-                                };
-                                await _AMDbContext.COA.AddAsync(coa);
+                                    coa.comID = company.comID;
+                                    coa.COAID = 0;
+                                });
+                                await _AMDbContext.COA.AddRangeAsync(coaList);
                                 await _AMDbContext.SaveChangesAsync();
 
-
-                                COA coa1 = new COA()
+                                List<Taxes> taxesList = await _AMDbContext.Taxes
+                                .Where(c => c.comID == 1)
+                                .ToListAsync();
+                                taxesList.ForEach(coa =>
                                 {
-                                    acctNo = vendNewAcctNo,
-                                    acctName = vendor.vendName,
-                                    openBal = 0,
-                                    bal = 0,
-                                    closingBal = 0,
-                                    isSys = false,
-                                    parentCOAID = 83,
-                                    COANo = vendor.vendID,
-                                    nextChkNo = vendor.vendCode,
-                                    COAlevel = 4,
-                                    active = true,
-                                    treeName = vendor.vendName,
-                                    acctType = "Trade Creditors",
-                                    parentAcctType = "Liability",
-                                    parentAcctName = "Trade Creditors",
-                                    path = @"Liability\Current Liability\Current Liability\Trade Creditors\" + vendor.vendName + @"\",
-                                    crtBy = username,
-                                    crtDate = DateTime.Now,
-                                    modBy = username,
-                                    modDate = DateTime.Now,
-                                    comID = cst.comID
-                                };
-                                await _AMDbContext.COA.AddAsync(coa1);
+                                    coa.comID = company.comID;
+                                    coa.TaxID = 0;
+                                });
+                                await _AMDbContext.Taxes.AddRangeAsync(taxesList);
+                                await _AMDbContext.SaveChangesAsync();
+
+                                List<ConfigSetting> ConfigSettingList = await _AMDbContext.ConfigSettings
+                                .Where(c => c.comID == 1)
+                                .ToListAsync();
+                                ConfigSettingList.ForEach(coa =>
+                                {
+                                    coa.comID = company.comID;
+                                    coa.configID = 0;
+                                });
+                                await _AMDbContext.ConfigSettings.AddRangeAsync(ConfigSettingList);
                                 await _AMDbContext.SaveChangesAsync();
 
                                 _notificationInterceptor.SaveNotification("CompanySettingCreate", oldCompany.comID, "");
-
+                                await transaction.CommitAsync();
                                 return Ok(company);
                             }
                             return NotFound("Something Went Wrong...");
@@ -339,7 +313,8 @@ namespace eMaestroD.Api.Controllers
             }
             catch (Exception ex)
             {
-                return Ok();
+                await transaction.RollbackAsync();
+                return BadRequest(ex.Message);
             }
         }
 

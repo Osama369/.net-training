@@ -155,7 +155,7 @@ selectedLocation:any;
     this.userService.getAllUsers().subscribe((us:any)=>{
       this.userList = us;
       this.userList = this.userList.filter(x=>x.RoleID == roleID);
-      
+
     })
   }
   submit() {

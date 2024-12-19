@@ -394,6 +394,8 @@ export class AddNewPurchaseOrderComponent implements OnInit{
             this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
             this.productlist[i].taxPercent =this.taxesList[0].taxValue;
             this.productlist[i].lastCost =this.selectedProductList[0].lastCost;
+            this.productlist[i].units =this.selectedProductList[0].units;
+            this.productlist[i].unit =this.selectedProductList[0].units[0];
             this.Itemcalculation(i);
             // let el: HTMLElement = this.newRowButton.nativeElement;
             // el.click();
@@ -974,7 +976,8 @@ export class AddNewPurchaseOrderComponent implements OnInit{
           this.productlist[i].depName =this.selectedProductList[0].depName;
           this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
           this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
-
+          this.productlist[i].units =this.selectedProductList[0].units;
+          this.productlist[i].unit =this.selectedProductList[0].units[0];
           this.Itemcalculation(i);
           // let el: HTMLElement = this.newRowButton.nativeElement;
           // el.click();

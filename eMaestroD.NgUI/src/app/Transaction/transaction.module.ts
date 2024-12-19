@@ -24,7 +24,7 @@ import { TransactionRoutingModule } from './transaction-routing.module';
     JournalVoucherDetailViewComponent,
     PaymentVoucherComponent,
     ReceiptVoucherComponent,
-    JournalVoucherComponent
+    JournalVoucherComponent,
   ],
   imports: [
     CommonModule,

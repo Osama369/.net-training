@@ -1187,7 +1187,6 @@ export class AddNewRecieptVoucherComponent implements OnInit{
   }
 
   filterCreditCard(event:any) {
-    //in a real application, make a request to a remote url with the query and return filtered results, for demo we filter at client side
     let filtered: any[] = [];
     let query = event.query;
     for (let i = 0; i < this.CreditCardList.length; i++) {
@@ -1207,7 +1206,6 @@ export class AddNewRecieptVoucherComponent implements OnInit{
       {
         this.toastr.error("Please Select Product.");
         this.cdr.detectChanges();
-        //this.onEnterComplex(index+3);
         return false;
       }
       else
@@ -1215,7 +1213,6 @@ export class AddNewRecieptVoucherComponent implements OnInit{
         if (!this.productlist[index].prodName.prodName) {
           this.toastr.error("Please Select Product.");
           this.cdr.detectChanges();
-          //this.onEnterComplex(index+3);
             return false;
         }
       }

@@ -359,6 +359,26 @@ namespace eMaestroD.DataAccess.Repositories
                         _dbContext.Set<GL>().RemoveRange(entriesToDelete);
                         await _dbContext.SaveChangesAsync();
                     }
+                    else
+                    {
+                         var tempGLentriesToDelete = await this.GetTempGLEntriesByVoucherNoAsync(voucherNo);
+                        if (tempGLentriesToDelete.Any())
+                        {
+                            
+                            var tempglDetailsToDelete = tempGLentriesToDelete
+                                .SelectMany(gl => gl.tempGLDetails)
+                                .ToList();
+
+                            if (tempglDetailsToDelete.Any())
+                            {
+                                _dbContext.Set<TempGLDetail>().RemoveRange(tempglDetailsToDelete);
+                            }
+
+                            _dbContext.Set<TempGL>().RemoveRange(tempGLentriesToDelete);
+                            await _dbContext.SaveChangesAsync();
+                        }
+                    }
+
 
                     await transaction.CommitAsync();
                 }
@@ -434,17 +454,20 @@ namespace eMaestroD.DataAccess.Repositories
                             crtDate = DateTime.Now
                         };
 
-                        foreach (var item in entriesToApprove)
+                        var tempGLIDs = entriesToApprove.Select(e => e.TempGLID).ToList();
+                        var trackedEntries = await _dbContext.Set<TempGL>()
+                            .Where(e => tempGLIDs.Contains(e.TempGLID))
+                            .ToListAsync();
+
+                        foreach (var item in trackedEntries)
                         {
                             item.PostedBy = email;
                             item.PostedDate = DateTime.Now;
                             item.TransactionStatus = "Posted";
                         }
 
-
-
                         await _dbContext.Set<TransactionLog>().AddAsync(transactionLog);
-                        _dbContext.Set<TempGL>().UpdateRange(entriesToApprove);
+
                         await _dbContext.SaveChangesAsync();
                     }
 
@@ -457,7 +480,7 @@ namespace eMaestroD.DataAccess.Repositories
                 }
             }
         }
-
+        
         public async Task<List<VendorProduct>> GetVendorProductListAsync(int comID)
         {
             return await _dbContext.VendorProducts.Where(x => x.comID == comID).ToListAsync();
@@ -540,6 +563,82 @@ namespace eMaestroD.DataAccess.Repositories
             {
                 var result = await _dbContext.GLTxLinks.Where(x => x.GLID == GLID).ToListAsync();
                 return result;
+            }
+        }
+
+        public async Task UpdateGLBalSum(string VoucherNo, string convertVoucherNo, string tradeDebtor, string saleLocal, decimal newAmount, bool isEdit)
+        {
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var glRecord = await _dbContext.gl
+                    .FirstOrDefaultAsync(x => x.voucherNo == VoucherNo && x.acctNo == tradeDebtor && x.relAcctNo == saleLocal);
+
+                if (glRecord != null)
+                {
+                    if (isEdit)
+                    {
+                        var oldAmount = await _dbContext.gl
+                            .Where(x => x.voucherNo == convertVoucherNo && x.txID == 0)
+                            .Select(x => x.creditSum)
+                            .FirstOrDefaultAsync();
+
+                        decimal difference = newAmount - oldAmount;
+                        glRecord.balSum -= difference;
+                    }
+                    else
+                    {
+                        glRecord.balSum -= newAmount;
+                    }
+
+                    
+                    _dbContext.gl.Update(glRecord);
+                    await _dbContext.SaveChangesAsync();
+                }
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw; 
+            }
+        }
+        public async Task UpdateGLqtybal(string VoucherNo, string convertVoucherNo, string saleLocal, string saleReturn, int txtypeID, int prodBCID, string batchNo, decimal qty, bool isEdit)
+        {
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+            try
+            {
+                var glRecord = await _dbContext.gl
+                    .FirstOrDefaultAsync(x => x.voucherNo == VoucherNo && x.acctNo == saleLocal && x.txTypeID == 4 && x.batchNo == batchNo && x.prodBCID == prodBCID);
+
+                if (glRecord != null)
+                {
+                    if (isEdit)
+                    {
+                        var oldAmount = await _dbContext.gl
+                            .Where(x => x.voucherNo == convertVoucherNo && x.acctNo == saleReturn && x.prodBCID == prodBCID && x.batchNo == batchNo)
+                            .Select(x => x.qty)
+                            .FirstOrDefaultAsync();
+
+                        decimal difference = qty - oldAmount;
+                        glRecord.qtyBal -= difference;
+                    }
+                    else
+                    {
+                        glRecord.qtyBal -= qty;
+                    }
+
+                    _dbContext.gl.Update(glRecord);
+                    await _dbContext.SaveChangesAsync();
+                }
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw; 
             }
         }
 

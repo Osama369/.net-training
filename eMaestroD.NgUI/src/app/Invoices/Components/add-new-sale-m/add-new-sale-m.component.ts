@@ -557,7 +557,8 @@ export class AddNewSaleMComponent implements OnInit{
 
             this.productlist[i].qtyBal = this.selectedProductList[0].currentStock;
             this.productlist[i].purchRate = this.selectedProductList[0].lastCost;
-
+            this.productlist[i].units =this.selectedProductList[0].units;
+            this.productlist[i].unit =this.selectedProductList[0].units[0];
             this.productlist[i].discount = 0;
             this.Itemcalculation(i);
             this.invoicesService.getInvoiceDetailByCustomer(this.selectedCustomerName.cstID,this.productlist[i].prodID).subscribe({
@@ -848,7 +849,8 @@ export class AddNewSaleMComponent implements OnInit{
 
             this.productlist[i].qtyBal = this.selectedProductList[0].currentStock;
             this.productlist[i].purchRate = this.selectedProductList[0].lastCost;
-
+            this.productlist[i].units =this.selectedProductList[0].units;
+            this.productlist[i].unit =this.selectedProductList[0].units[0];
             this.productlist[i].discount = 0;
             this.Itemcalculation(i);
             this.invoicesService.getInvoiceDetailByCustomer(this.selectedCustomerName.cstID,this.productlist[i].prodID).subscribe({

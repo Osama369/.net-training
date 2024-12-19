@@ -396,7 +396,8 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
             this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
             this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
             this.productlist[i].taxPercent =this.taxesList[0].taxValue;
-
+            this.productlist[i].units =this.selectedProductList[0].units;
+            this.productlist[i].unit =this.selectedProductList[0].units[0];
             this.Itemcalculation(i);
             // let el: HTMLElement = this.newRowButton.nativeElement;
             // el.click();
@@ -956,7 +957,7 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
         this.productlist[index].qty = this.productlist[index].qty+1;
         this.productlist[index].qtyBal = this.productlist[index].qtyBal+1;
         this.Itemcalculation(index);
-        this.onEnterComplexInternal(this.inputFields.length-3);
+        this.onEnterComplexInternal(this.inputFields.length-4);
       }
       else
       {
@@ -979,11 +980,12 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
           this.productlist[i].depName =this.selectedProductList[0].depName;
           this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
           this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
-
+          this.productlist[i].units =this.selectedProductList[0].units;
+          this.productlist[i].unit =this.selectedProductList[0].units[0];
           this.Itemcalculation(i);
-          let el: HTMLElement = this.newRowButton.nativeElement;
-          el.click();
-          this.cdr.detectChanges();
+          // let el: HTMLElement = this.newRowButton.nativeElement;
+          // el.click();
+          // this.cdr.detectChanges();
           this.onEnterComplexInternal(this.inputFields.length-3);
           }
           else
@@ -1016,7 +1018,7 @@ export class AddNewPurchaseReturnMComponent implements OnInit{
         // this.productlist[i].amount = "";
         this.Itemcalculation(i);
         if (event.key === "Enter" || event.key === "Tab") {
-          this.onEnterComplexInternal(this.inputFields.length-2);
+          this.onEnterComplexInternal(this.inputFields.length-3);
         }
       }
 

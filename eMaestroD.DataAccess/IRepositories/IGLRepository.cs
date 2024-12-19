@@ -28,6 +28,8 @@ namespace eMaestroD.DataAccess.IRepositories
         Task<List<InvoiceProduct>> GetProductBatchByProdBCID(int prodID, int prodBCID, int locID, int comID);
         Task<List<VendorProduct>> GetVendorProductListAsync(int comID);
         Task UpsertVendorProductAsync(VendorProduct vendorProduct);
+        Task UpdateGLBalSum(string VoucherNo, string convertVoucherNo, string tradeDebtor, string saleLocal, decimal newAmount, bool isEdit);
+        Task UpdateGLqtybal(string VoucherNo, string convertVoucherNo, string saleLocal, string saleReturn, int txtypeID, int prodBCID, string batchNo, decimal qty, bool isEdit);
 
         //Temp until all method change
         Task<List<GLTxLinks>> GenerateGLTxLinks(string invoiceNo, int? GLID);

@@ -45,6 +45,8 @@ namespace eMaestroD.Api.Controllers
         public async Task<IActionResult> SaveCreditCard([FromBody] CreditCard CC)
         {
             var comID = int.Parse(Request.Headers["comID"].ToString());
+            var creditCardAcctCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CreditCards);
+
             if (CC.cardID != 0)
             {
 
@@ -62,10 +64,9 @@ namespace eMaestroD.Api.Controllers
                 _AMDbContext.CreditCards.Update(CC);
                 await _AMDbContext.SaveChangesAsync();
 
-                var ParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 200).acctNo;
-                var NewAcctNo = _helperMethods.GenerateAcctNo(ParentAccCode, comID);
+                var NewAcctNo = _helperMethods.GenerateAcctNo(creditCardAcctCode, comID);
 
-                var cstCOA = _AMDbContext.COA.Where(x => x.COANo == CC.cardID && x.parentCOAID == 200).FirstOrDefault();
+                var cstCOA = _AMDbContext.COA.Where(x => x.COANo == CC.cardID && x.parentAcctNo == creditCardAcctCode && x.comID == CC.comID).FirstOrDefault();
                 COA coa = new COA()
                 {
                     COAID = cstCOA.COAID == null ? 0 : cstCOA.COAID,
@@ -89,7 +90,8 @@ namespace eMaestroD.Api.Controllers
                     openBal = cstCOA.openBal,
                     bal = cstCOA.bal,
                     closingBal = cstCOA.closingBal,
-                    comID = comID
+                    comID = comID,
+                    parentAcctNo = creditCardAcctCode
                 };
                 _AMDbContext.COA.Update(coa);
                 await _AMDbContext.SaveChangesAsync();
@@ -117,8 +119,7 @@ namespace eMaestroD.Api.Controllers
                 _AMDbContext.CreditCards.Add(CC);
                 await _AMDbContext.SaveChangesAsync();
 
-                var ParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 200).acctNo;
-                var NewAcctNo = _helperMethods.GenerateAcctNo(ParentAccCode, comID);
+                var NewAcctNo = _helperMethods.GenerateAcctNo(creditCardAcctCode, comID);
 
 
                 COA coa = new COA()
@@ -143,7 +144,8 @@ namespace eMaestroD.Api.Controllers
                     crtDate = DateTime.Now,
                     modBy = activeUser,
                     modDate = DateTime.Now,
-                    comID = comID
+                    comID = comID,
+                    parentAcctNo = creditCardAcctCode
                 };
                 _AMDbContext.COA.Add(coa);
                 await _AMDbContext.SaveChangesAsync();
@@ -184,9 +186,10 @@ namespace eMaestroD.Api.Controllers
         [Route("{cardID}")]
         public async Task<IActionResult> DeleteCreditCard(int cardID)
         {
+            var creditCardAcctCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CreditCards);
             var lst = _AMDbContext.CreditCards.Where(a => a.cardID == cardID).ToList();
-            var coa = _AMDbContext.COA.Where(a => a.COANo == cardID && a.acctName == lst[0].bankName && a.parentCOAID == 200).FirstOrDefault();
-            var existlist = _AMDbContext.gl.Where(x => x.COAID == coa.COAID || x.relCOAID == coa.COAID).ToList();
+            var coa = _AMDbContext.COA.Where(a => a.COANo == cardID && a.acctName == lst[0].bankName && a.parentAcctNo == creditCardAcctCode && a.comID == lst[0].comID).FirstOrDefault();
+            var existlist = _AMDbContext.gl.Where(x => x.acctNo == coa.acctNo || x.relAcctNo == coa.acctNo).ToList();
             if (existlist.Count() > 0)
             {
                 return NotFound("Some Invoices Depend on this Credit Card. Please Delete Invoice First");

@@ -41,6 +41,8 @@ import { AddNewSaleDComponent } from './Components/add-new-sale-d/add-new-sale-d
 import { AddNewPurchaseDComponent } from './Components/add-new-purchase-d/add-new-purchase-d.component';
 import { AddNewGrnDComponent } from './Components/add-new-grn-d/add-new-grn-d.component';
 import { AddNewPurchaseOrderDComponent } from './Components/add-new-purchase-order-d/add-new-purchase-order-d.component';
+import { AddNewPurchaseReturnDComponent } from './Components/add-new-purchase-return-d/add-new-purchase-return-d.component';
+import { AddNewSaleReturnDComponent } from './Components/add-new-sale-return-d/add-new-sale-return-d.component';
 
 function getDynamicComponent(componentForPos: any, componentForDistribution: any): any {
   const isPos = localStorage.getItem('isPos') === 'true';
@@ -82,14 +84,14 @@ const routes: Routes = [
   { path: 'AddNewDebitNote/:id', component: AddPurchaseReturnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteEdit' }  },
   // { path: 'AddNewPurchaseReturn', component: AddPurchaseReturn2Component, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteCreate' }  },
   // { path: 'AddNewPurchaseReturn/:id', component: AddPurchaseReturn2Component, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteCreate' }  },
-  { path: 'AddNewPurchaseReturn', component: AddNewPurchaseReturnMComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteCreate' }  },
-  { path: 'AddNewPurchaseReturn/:id', component: AddNewPurchaseReturnMComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteCreate' }  },
+  { path: 'AddNewPurchaseReturn', component: getDynamicComponent(AddNewPurchaseReturnMComponent,AddNewPurchaseReturnDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteCreate' }  },
+  { path: 'AddNewPurchaseReturn/:id', component: getDynamicComponent(AddNewPurchaseReturnMComponent,AddNewPurchaseReturnDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DebitNoteCreate' }  },
   { path: 'CreditNote', component: SaleReturnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CreditNote' }  },
   { path: 'SaleReturn', component: SaleReturn2Component, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CreditNote' }  },
   { path: 'AddNewCreditNote', component: AddSaleReturnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CreditNoteCreate' }  },
   { path: 'AddNewCreditNote/:id', component: AddSaleReturnComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CreditNoteEdit' }  },
-  { path: 'AddNewSaleReturn', component: AddSaleReturn2Component, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CreditNoteCreate' }  },
-  { path: 'AddNewSaleReturn/:id', component: AddSaleReturn2Component, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CreditNoteEdit' }  },
+  { path: 'AddNewSaleReturn', component: getDynamicComponent(AddSaleReturn2Component,AddNewSaleReturnDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CreditNoteCreate' }  },
+  { path: 'AddNewSaleReturn/:id', component: getDynamicComponent(AddSaleReturn2Component,AddNewSaleReturnDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CreditNoteEdit' }  },
   { path: 'StockShortage', component: StockShortageComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'StockShortage' }  },
   { path: 'AddNewStockShortage', component: AddNewStockShortageComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'StockShortageCreate' }  },
   { path: 'AddNewStockShortage/:id', component: AddNewStockShortageComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'StockShortageEdit' }  },

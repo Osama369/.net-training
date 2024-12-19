@@ -91,9 +91,7 @@ export class AdvancedSearchReportComponent {
 
     this.sharedDataService.getProducts$().subscribe({
       next: (products) => {
-        console.log(products);
         this.products = [...(products as { [key: string]: any })["enttityDataSource"]];
-        console.log(this.products);
         this.products.unshift({
             prodName : "---ALL---",
             prodBCID : 0

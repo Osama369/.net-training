@@ -218,6 +218,7 @@
                     pAddRow [table]="dt" [newRow]="newRow()" (click)="focusing()" [style]="{'margin-top': '10px !important','height':'25px !important'}"></button>
                   </td>
 
+                      <td pFrozenColumn></td>
                       <td pFrozenColumn>Total:</td>
                       <td style="text-align: right;">{{ sumField('qty') }}</td>
                       <td style="text-align: right;">{{ sumField('purchRate') }}</td>

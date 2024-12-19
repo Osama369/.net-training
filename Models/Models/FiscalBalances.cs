@@ -22,6 +22,7 @@ namespace eMaestroD.Models.Models
         public DateTime? lastReconciled { get; set; }
         public decimal? bal { get; set; }
         public int? parentCOAID { get; set; }
+        public string? parentAcctNo { get; set; }
         public int? comID { get; set; }
     }
 }

@@ -25,6 +25,7 @@ import { Location } from './../../../Administration/Models/location';
 import { Customer } from 'src/app/Manage/Models/customer';
 import { ReportSettingService } from 'src/app/Reports/Services/report-setting.service';
 import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
+import { GLTxTypes } from '../../Enum/GLTxTypes.enum';
 
 
 @Component({
@@ -1361,17 +1362,17 @@ export class AddSaleReturn2Component implements OnInit{
       this.onEnterComplex(0);
     }
     else{
-      this.invoicesService.GetInvoicesListByID(4,this.selectedCustomerName.cstID).subscribe({
+      this.invoicesService.GetInvoicesListByID(GLTxTypes.SaleInvoice,this.selectedCustomerName.cstID).subscribe({
         next:(result)=>{
           this.productlist = [this.createNewProduct()];
           this.invoiceListForReturn = result.filter(x=>x.txID == 0);
-          this.itemList = result.filter(x=>x.COAID == 141);
+          this.itemList = result.filter(x=>x.acctNo == "3-01-01-01-00000");
           this.invoiceListForReturn.unshift({ voucherNo : "Select Invoice No"});
         },
         error:(responce)=>{
           this.invoiceListForReturn = [];
           this.productlist = [this.createNewProduct()];
-          this.toastr.error("No purchase invoice avalaible for this customer");
+          this.toastr.error("No Sale invoice avalaible for this customer");
         }
       })
     }

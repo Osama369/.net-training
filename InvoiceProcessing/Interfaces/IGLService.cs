@@ -26,7 +26,9 @@ namespace eMaestroD.InvoiceProcessing.Interfaces
         Task InsertGLEntriesAsync<T>(IEnumerable<T> items, DateTime now, string username) where T : GL;
         Task DeleteInvoice(string VoucherNo);
         Task ApproveInvoice(string VoucherNo); 
-        Task PostInvoices(List<Invoice> invoices); 
+        Task PostInvoices(List<Invoice> invoices);
+        Task UpdateGLBalSum(string VoucherNo, string convertVoucherNo, string tradeDebtor, string saleLocal, decimal newAmount, bool isEdit);
+        Task UpdateGLqtybal(string VoucherNo, string convertVoucherNo, string saleLocal, string saleReturn, int txtypeID, int prodBCID, string batchNo, decimal qty, bool isEdit);
         Task<List<InvoiceProduct>> GetItemsBySupplierAndDate(int supplierId, DateTime datefrom, DateTime dateTo);
         Task<List<InvoiceProduct>> GetProductBatchByProdBCID(int prodID, int prodBCID, int locID, int comID);
         
