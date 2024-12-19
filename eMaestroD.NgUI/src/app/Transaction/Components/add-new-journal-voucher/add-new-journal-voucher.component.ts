@@ -265,7 +265,7 @@ export class AddNewJournalVoucherComponent implements OnInit{
       this.voucherList[rownumber].childlist = "";
       this.voucherList[rownumber].debit = 0;
       this.voucherList[rownumber].credit = 0;
-      this.genericService.GetAllCoaByParentCOAID(parentlist.COAID).subscribe({
+      this.genericService.GetAllCoaByParentCOAID(parentlist.acctNo).subscribe({
         next: (CoaAccountListChild) => {
           this.CoaAccountListForChild = CoaAccountListChild;
           this.FilterCoaAccountListForChild = this.CoaAccountListForChild;

@@ -36,23 +36,24 @@ namespace eMaestroD.Api.Controllers
 
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllCOAForGird()
+        [HttpGet("{comID}")]
+        public async Task<IActionResult> GetAllCOAForGird(int comID)
         {
-            coalst = await _AMDbContext.COA.ToListAsync();
+            coalst = await _AMDbContext.COA.Where(x=>x.comID == comID).ToListAsync();
             foreach (var item in coalst.FindAll(x => x.COAlevel == 0))
             {
                 treeNode.Add(item);
-                AddChilds(item.COAID);
+                AddChilds(item.acctNo);
 
             }
             return Ok(treeNode);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllCOA()
+        [HttpGet("{comID}")]
+
+        public async Task<IActionResult> GetAllCOA(int comID)
         {
-            coalst = await _AMDbContext.COA.ToListAsync();
+            coalst = await _AMDbContext.COA.Where(x => x.comID == comID).ToListAsync();
             if (coalst.Count == 0)
             {
                 return NotFound();
@@ -78,7 +79,6 @@ namespace eMaestroD.Api.Controllers
             else
             {
                 var newAcctNo = _helperMethods.GenerateAcctNo(coa.acctNo, comID);
-
                 coa.bal = 0;
                 coa.closingBal = 0;
                 coa.crtDate = DateTime.Now;
@@ -118,39 +118,39 @@ namespace eMaestroD.Api.Controllers
         }
 
         [NonAction]
-        private void AddChilds(int parentID)
+        private void AddChilds(string parentID)
         {
             try
             {
-                if (parentID > 0)
+                if (parentID != "0")
                 {
                     // Bind accounts childs.
-                    foreach (COA coa in coalst.FindAll(x => x.parentCOAID == parentID))
+                    foreach (COA coa in coalst.FindAll(x => x.parentAcctNo == parentID))
                     {
                         var FstChild = coa;
-                        treeNode.Find(x => x.COAID == parentID).children.Add(FstChild);
-                        int FstChdpID = coa.COAID;
-                        foreach (COA ca in coalst.FindAll(x => x.parentCOAID == FstChdpID))
+                        treeNode.Find(x => x.acctNo == parentID).children.Add(FstChild);
+                        string FstChdpID = coa.acctNo;
+                        foreach (COA ca in coalst.FindAll(x => x.parentAcctNo == FstChdpID))
                         {
                             var ScndChild = ca;
-                            treeNode.Find(x => x.COAID == parentID).children.Find(x => x.COAID == FstChdpID).children.Add(ScndChild);
-                            int SndChdPID = ca.COAID;
+                            treeNode.Find(x => x.acctNo == parentID).children.Find(x => x.acctNo == FstChdpID).children.Add(ScndChild);
+                            string SndChdPID = ca.acctNo;
 
-                            if (SndChdPID > 0)
+                            if (SndChdPID != "0")
                             {
-                                foreach (COA c in coalst.FindAll(x => x.parentCOAID == SndChdPID))
+                                foreach (COA c in coalst.FindAll(x => x.parentAcctNo == SndChdPID))
                                 {
 
                                     var thrdChd = c;
-                                    treeNode.Find(x => x.COAID == parentID).children.Find(x => x.COAID == FstChdpID).children.Find(x => x.COAID == SndChdPID).children.Add(thrdChd);
-                                    int ThrdChdID = c.COAID;
+                                    treeNode.Find(x => x.acctNo == parentID).children.Find(x => x.acctNo == FstChdpID).children.Find(x => x.acctNo == SndChdPID).children.Add(thrdChd);
+                                    string ThrdChdID = c.acctNo;
 
-                                    if (ThrdChdID > 0)
+                                    if (ThrdChdID != "0")
                                     {
-                                        foreach (COA thrdCoa in coalst.FindAll(x => x.parentCOAID == ThrdChdID))
+                                        foreach (COA thrdCoa in coalst.FindAll(x => x.parentAcctNo == ThrdChdID))
                                         {
                                             var frthChd = thrdCoa;
-                                            treeNode.Find(x => x.COAID == parentID).children.Find(x => x.COAID == FstChdpID).children.Find(x => x.COAID == SndChdPID).children.Find(x => x.COAID == ThrdChdID).children.Add(frthChd);
+                                            treeNode.Find(x => x.acctNo == parentID).children.Find(x => x.acctNo == FstChdpID).children.Find(x => x.acctNo == SndChdPID).children.Find(x => x.acctNo == ThrdChdID).children.Add(frthChd);
                                         }
                                     }
                                 }
@@ -165,11 +165,12 @@ namespace eMaestroD.Api.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllCoaWithoutTradeDebtors()
+        [HttpGet("{comID}")]
+        public async Task<IActionResult> GetAllCoaWithoutTradeDebtors(int comID)
         {
-            var company = await _AMDbContext.COA.ToListAsync();
-            var comp = company.RemoveAll(x => x.parentCOAID == 40);
+            var company = await _AMDbContext.COA.Where(x => x.comID == comID).ToListAsync();
+            var TradeDebtorsAcctCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeDebtors);
+            var comp = company.RemoveAll(x => x.parentAcctNo == TradeDebtorsAcctCode);
             return Ok(company);
         }
 
@@ -177,22 +178,24 @@ namespace eMaestroD.Api.Controllers
         [Route("{comID}")]
         public async Task<IActionResult> GetAllCoaofLevel2(int comID)
         {
-            var company = await _AMDbContext.COA.Where(x => x.COAlevel == 2 || x.COAID == 40 || x.COAID == 83 || x.COAID == 80 || x.COAID == 79).ToListAsync();
+            //var company = await _AMDbContext.COA.Where(x => x.COAlevel == 2 && x.comID == comID || x.COAID == 40 || x.COAID == 83 || x.COAID == 80 || x.COAID == 79).ToListAsync();
+            var company = await _AMDbContext.COA.Where(x => x.COAlevel == 2 && x.comID == comID).ToListAsync();
             return Ok(company);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCoaofLevel3()
+        [Route("{comID}")]
+        public async Task<IActionResult> GetAllCoaofLevel3(int comID)
         {
-            var company = await _AMDbContext.COA.Where(x => x.COAlevel == 3).ToListAsync();
+            var company = await _AMDbContext.COA.Where(x => x.COAlevel == 3 && x.comID == comID).ToListAsync();
             return Ok(company);
         }
 
         [HttpGet]
-        [Route("{parentCOAID}")]
-        public async Task<IActionResult> GetAllCoaByParentCOAID(int parentCOAID)
+        [Route("{comID}/{parentAcctNo}")]
+        public async Task<IActionResult> GetAllCoaByParentCOAID(int comID, string parentAcctNo)
         {
-            var company = await _AMDbContext.COA.Where(x => x.parentCOAID == parentCOAID).ToListAsync();
+            var company = await _AMDbContext.COA.Where(x => x.comID == comID && x.parentAcctNo == parentAcctNo).ToListAsync();
             return Ok(company);
         }
 
@@ -201,8 +204,9 @@ namespace eMaestroD.Api.Controllers
         [Route("{comID}")]
         public async Task<IActionResult> GetAllBank(int comID)
         {
-            var company = await _AMDbContext.COA.ToListAsync();
-            var comp = company.FindAll(x => x.parentCOAID == 79).ToList();
+            var company = await _AMDbContext.COA.Where(x=>x.comID == comID).ToListAsync();
+            var bankAcctCode = _helperMethods.GetAcctNoByKey(ConfigKeys.BankAccounts);
+            var comp = company.FindAll(x => x.parentAcctNo == bankAcctCode).ToList();
             List<COA> bankList = new List<COA>();
             foreach (var item in comp)
             {
@@ -225,8 +229,9 @@ namespace eMaestroD.Api.Controllers
         [Route("{comID}")]
         public async Task<IActionResult> GetAllCreditCards(int comID)
         {
-            var company = await _AMDbContext.COA.ToListAsync();
-            var comp = company.FindAll(x => x.parentCOAID == 200).ToList();
+            var company = await _AMDbContext.COA.Where(x => x.comID == comID).ToListAsync();
+            var creditCardAcctCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CreditCards);
+            var comp = company.FindAll(x => x.parentAcctNo == creditCardAcctCode).ToList();
             List<COA> creditCardList = new List<COA>();
             foreach (var item in comp)
             {

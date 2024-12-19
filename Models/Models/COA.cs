@@ -26,6 +26,8 @@ namespace eMaestroD.Models.Models
         [HiddenOnRender]
         public string? acctNo { get; set; }
         [HiddenOnRender]
+        public string? parentAcctNo { get; set; }
+        [HiddenOnRender]
         public string? acctType { get; set; }
         [DisplayName(Name = "Bank Name")]
         [UpperCase]
@@ -62,6 +64,7 @@ namespace eMaestroD.Models.Models
         public string? modBy { get; set; }
         [HiddenOnRender]
         public DateTime? modDate { get; set; }
+
         [NotMapped]
         [HiddenOnRender]
         public List<COA>? children = new List<COA>();

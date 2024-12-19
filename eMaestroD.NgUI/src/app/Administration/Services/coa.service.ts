@@ -22,11 +22,13 @@ export class CoaService {
   }
 
   getAllCOA(): Observable<COA[]> {
-    return this.http.get<COA[]>(this.baseApiUrl + '/GetAllCOA');
+    let comID = localStorage.getItem('comID');
+    return this.http.get<COA[]>(this.baseApiUrl + '/GetAllCOA/'+comID);
   }
 
   getAllCOAForGird(): Observable<COA[]> {
-    return this.http.get<COA[]>(this.baseApiUrl + '/GetAllCOAForGird');
+    let comID = localStorage.getItem('comID');
+    return this.http.get<COA[]>(this.baseApiUrl + '/GetAllCOAForGird/'+comID);
   }
 
 

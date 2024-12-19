@@ -84,21 +84,21 @@ selectedLocation:any;
     });
     this.roleOnChange(7);
     this.LoadProducts();
-   
+
   }
   LoadProducts()
   {
     this.locationlist = undefined;
     this.selectedLocation = [];
     this.sharedDataService.getLocations$().subscribe((us:any)=>{
-      this.locationlist = (us as { [key: string]: any })["enttityDataSource"];
+      this.locationlist = [...(us as { [key: string]: any })["enttityDataSource"]];
 
       this.locationlist.unshift({
-          
+
           LocationId : 0,
           LocationName : "---ALL---"});
         })
-    
+
   }
 
   filterProduct(event: any) {
@@ -155,7 +155,7 @@ selectedLocation:any;
     this.userService.getAllUsers().subscribe((us:any)=>{
       this.userList = us;
       this.userList = this.userList.filter(x=>x.RoleID == roleID);
-      
+
     })
   }
   submit() {

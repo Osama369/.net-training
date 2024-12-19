@@ -47,6 +47,6 @@ import { AdministrationRoutingModule } from './administration-routing.module';
     CommonModule,
     AdministrationRoutingModule,
     SharedModule,
-  ]
+  ],
 })
 export class AdministrationModule { }

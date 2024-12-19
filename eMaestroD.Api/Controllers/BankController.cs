@@ -119,8 +119,9 @@ namespace eMaestroD.Api.Controllers
         public async Task<IActionResult> DeleteBank(int bankID)
         {
             var banks = _dbContext.Banks.Where(a => a.bankID == bankID).ToList();
-            var bankCOA = _dbContext.COA.FirstOrDefault(a => a.COANo == bankID && a.acctName == banks.First().bankName && a.parentCOAID == 79);
-            var existlist = _dbContext.gl.Where(x => x.COAID == bankCOA.COAID || x.relCOAID == bankCOA.COAID).ToList();
+            var bankAcctCode = _helperMethods.GetAcctNoByKey(ConfigKeys.BankAccounts);
+            var bankCOA = _dbContext.COA.FirstOrDefault(a => a.COANo == bankID && a.acctName == banks.First().bankName && a.parentAcctNo == bankAcctCode && a.comID == banks.First().comID);
+            var existlist = _dbContext.gl.Where(x => x.acctNo == bankCOA.acctNo || x.relAcctNo == bankCOA.acctNo).ToList();
 
             if (existlist.Any())
             {
@@ -139,10 +140,10 @@ namespace eMaestroD.Api.Controllers
 
         private COA CreateOrUpdateCOA(Bank bank)
         {
-            var cstCOA = _dbContext.COA.FirstOrDefault(x => x.COANo == bank.bankID && x.parentCOAID == 79) ??
-                         _dbContext.COA.FirstOrDefault(x => x.parentCOAID == 79 && x.acctName == bank.bankName);
-            var parentAccCode = _dbContext.COA.FirstOrDefault(x => x.COAID == 79).acctNo;
-            var newAcctNo = _helperMethods.GenerateAcctNo(parentAccCode, bank.comID);
+            var bankAcctCode = _helperMethods.GetAcctNoByKey(ConfigKeys.BankAccounts);
+            var cstCOA = _dbContext.COA.FirstOrDefault(x => x.COANo == bank.bankID && x.comID == bank.comID && x.parentAcctNo == bankAcctCode) ??
+                         _dbContext.COA.FirstOrDefault(x => x.parentAcctNo == bankAcctCode && x.comID == bank.comID && x.acctName == bank.bankName);
+            var newAcctNo = _helperMethods.GenerateAcctNo(bankAcctCode, bank.comID);
             
             return new COA
             {
@@ -167,7 +168,8 @@ namespace eMaestroD.Api.Controllers
                 crtDate = cstCOA?.crtDate ?? DateTime.Now,
                 modBy = ActiveUser,
                 modDate = DateTime.Now,
-                comID = bank.comID
+                comID = bank.comID,
+                parentAcctNo = bankAcctCode
             };
         }
     }

@@ -41,10 +41,7 @@ namespace eMaestroD.Api.Controllers
         public async Task<IActionResult> GetTaxesList(int comID)
         {
             var ParentAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.CurrentLiability);
-            var parentCOAID = _AMDbContext.COA
-                .Where(x => x.acctNo == ParentAccCode && x.comID == comID) // Ensure the correct context for comID
-                .Select(x => x.COAID)
-                .FirstOrDefault();
+          
 
             var SDL = _AMDbContext.Taxes
                 .Where(x => x.comID == comID)
@@ -60,7 +57,7 @@ namespace eMaestroD.Api.Controllers
                     t.modby,
                     t.modDate,
                     acctNo = _AMDbContext.COA
-                                .Where(c => c.parentCOAID == parentCOAID && c.COANo == t.TaxID)
+                                .Where(c => c.parentAcctNo == ParentAccCode && c.acctName == t.TaxName && c.comID == comID)
                                 .Select(c => c.acctNo)
                                 .FirstOrDefault() 
                 })

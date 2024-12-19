@@ -19,8 +19,9 @@ export class GenericService {
     return this.http.get<any>(this.baseApiUrl+'/company/getAllCurrency')
   }
 
-  GetAllCoaByParentCOAID(parentCOAID:any): Observable<COA[]> {
-    return this.http.get<COA[]>(this.baseApiUrl + '/coa/GetAllCoaByParentCOAID/'+parentCOAID);
+  GetAllCoaByParentCOAID(parentacctNo:any): Observable<COA[]> {
+    let comID = localStorage.getItem('comID');
+    return this.http.get<COA[]>(this.baseApiUrl + '/coa/GetAllCoaByParentCOAID/'+comID+"/"+parentacctNo);
   }
 
   GetAllCoaofLevel2(): Observable<COA[]> {
@@ -29,10 +30,12 @@ export class GenericService {
   }
 
   GetAllCoaofLevel3(): Observable<COA[]> {
-    return this.http.get<COA[]>(this.baseApiUrl + '/coa/GetAllCoaofLevel3');
+    let comID = localStorage.getItem('comID');
+    return this.http.get<COA[]>(this.baseApiUrl + '/coa/GetAllCoaofLevel3/'+comID);
   }
   getAllCOAWithoutTradeDebtors(): Observable<COA[]> {
-    return this.http.get<COA[]>(this.baseApiUrl + '/coa/GetAllCoaWithoutTradeDebtors');
+    let comID = localStorage.getItem('comID');
+    return this.http.get<COA[]>(this.baseApiUrl + '/coa/GetAllCoaWithoutTradeDebtors/'+comID);
   }
 
 

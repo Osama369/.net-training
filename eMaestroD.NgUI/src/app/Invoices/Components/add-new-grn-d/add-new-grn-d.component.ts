@@ -592,16 +592,16 @@ export class AddNewGrnDComponent implements OnInit{
     else if (this.productlist.filter(p => p.prodID > 0).length === 0) {
       this.toastr.error("Please add at least one item!");
     }
-    else if (this.productlist.filter(p => p.prodID > 0 && (p.qty === 0 || p.qty == undefined)).length > 0) {
+    else if (this.productlist.filter(p => p.prodID > 0 && (p.qty == 0 || p.qty == undefined)).length > 0) {
       this.toastr.error("Please specify a quantity for all items!");
     }
-    else if (this.productlist.filter(p => p.prodID > 0 && (p.purchRate === 0 || p.purchRate == undefined)).length > 0) {
+    else if (this.productlist.filter(p => p.prodID > 0 && (p.purchRate == 0 || p.purchRate == undefined)).length > 0) {
       this.toastr.error("Please specify the purchase rate for all items!");
     }
-    else if (this.productlist.filter(p => p.prodID > 0 && (p.sellingPrice === 0 || p.sellingPrice == undefined)).length > 0) {
+    else if (this.productlist.filter(p => p.prodID > 0 && (p.sellingPrice == 0 || p.sellingPrice == undefined)).length > 0) {
       this.toastr.error("Please specify the Selling price for all items!");
     }
-    else if (!this.isPos && this.productlist.filter(p => p.prodID > 0 && (p.batchNo === "" || p.batchNo === undefined)).length > 0) {
+    else if (!this.isPos && this.productlist.filter(p => p.prodID > 0 && (p.batchNo == "" || p.batchNo === undefined)).length > 0) {
       this.toastr.error("Please provide the batch number for all items!");
     }
     else if (!this.isPos && this.productlist.filter(p => p.prodID > 0 && (p.expiryDate === undefined)).length > 0) {

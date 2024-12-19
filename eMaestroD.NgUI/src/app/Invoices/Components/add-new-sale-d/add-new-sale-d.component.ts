@@ -654,6 +654,8 @@ export class AddNewSaleDComponent implements OnInit{
     }else if(this.productlist.filter(p => p.prodID > 0).length == 0)
     {
       this.toastr.error("please add alteast one item!");
+    }else if (this.productlist.filter(p => p.prodID > 0 && (p.qty == 0 || p.qty == undefined)).length > 0) {
+      this.toastr.error("Please specify a quantity for all items!");
     }else{
       return true;
     }
@@ -1267,6 +1269,21 @@ async InvoiceOnChange()
     this.totalAdvanceExtraTax = invoiceData.totalAdvanceExtraTax;
     this.totalExtraDiscount = invoiceData.totalExtraDiscount;
     this.totalNetPayable = invoiceData.netTotal;
+
+    const seenProducts = new Set<string>();
+
+    this.productlist = await new Promise(resolve => {
+      const filteredProducts = invoiceData.Products.filter(product => {
+        const uniqueKey = `${product.prodBCID}_${product.batchNo}`; // Combine prodBCID and batchNo
+        if (!seenProducts.has(uniqueKey)) {
+          seenProducts.add(uniqueKey);
+          return true;
+        }
+        return false;
+      });
+      resolve(filteredProducts);
+    });
+
     for (let i = 0; i < this.productlist.length; i++) {
       this.selectedProductList = this.products.filter(f => f.prodID == this.productlist[i].prodID);
 
@@ -1281,20 +1298,44 @@ async InvoiceOnChange()
       this.productlist[i].units =this.selectedProductList[0].units;
       let unit = this.selectedProductList[0].units.find(x=>x.unitType  == this.productlist[i].unit);
       this.productlist[i].unit = unit;
-
+      // var result = await this.getStockofBatch(this.productlist[i].barCode, this.productlist[i].batchNo);
+      // console.log(result);
+      this.productlist[i].purchPrice = this.productlist[i].purchRate;
+      this.productlist[i].sellPrice = this.productlist[i].sellRate;
+      this.productlist[i].unitQty = this.productlist[i].qty;
+      this.productlist[i].qtyBal = this.productlist[i].qty;
       if(invoiceData.Products[i].expiry)
       {
         this.productlist[i].expiryDate = this.formatDate(new Date(invoiceData.Products[i].expiry));
       }
-      this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0;
-      this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0;
-      this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0;
-      this.productlist[i].advanceTaxAmount= invoiceData.Products[i].ProductTaxes[1].taxAmount || 0;
-      this.productlist[i].extraAdvanceTaxPercent= invoiceData.Products[i].ProductTaxes[2].taxPercent || 0;
-      this.productlist[i].extraAdvanceTaxAmount= invoiceData.Products[i].ProductTaxes[2].taxAmount || 0;
+      // this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0;
+      // this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0;
+      // this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0;
+      // this.productlist[i].advanceTaxAmount= invoiceData.Products[i].ProductTaxes[1].taxAmount || 0;
+      // this.productlist[i].extraAdvanceTaxPercent= invoiceData.Products[i].ProductTaxes[2].taxPercent || 0;
+      // this.productlist[i].extraAdvanceTaxAmount= invoiceData.Products[i].ProductTaxes[2].taxAmount || 0;
       this.productlist[i].prodInvoiceID= invoiceData.Products[i].prodInvoiceID || 0;
       this.Itemcalculation(i)
     }
+  }
+
+  async getStockofBatch(barcode:any,batchNo:any) : Promise<any>{
+    const result = await lastValueFrom(
+      this.invoicesService.GetProductBatchByProdBCID(
+        this.selectedProductList[0].prodID,
+        0,
+        this.selectedLocation.LocationId
+      )
+    );
+
+    const data = result.find(
+      r => this.productlist.some(f => f.barCode === barcode && f.batchNo === batchNo)
+    );
+    let unit = this.selectedProductList[0].units.find(x=>x.unitType  == data.unit);
+    data.unitQty = data.unitQty / unit.unitValue;
+    data.sellRate = data.sellRate * unit.unitValue;
+    data.purchRate = data.purchRate * unit.unitValue;
+    return data;
   }
 
   sumField(field: string): number {
