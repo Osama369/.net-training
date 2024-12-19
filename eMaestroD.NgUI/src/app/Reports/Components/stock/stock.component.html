@@ -8,12 +8,17 @@
 
                 <div class="row">
                     <div class="col-12">
-                  <label class="col-form-label date-label required" translate>Category<span>:</span>&nbsp;</label>
+                      <label class="col-2 col-form-label date-label required" style="padding-left: 5px;" translate>Category<span>:</span>&nbsp;</label>
+                      <label class="col-2 col-form-label date-label required" style="padding-left: 15px;" translate>Name<span>:</span>&nbsp;</label>
+                      <label class="col-2 col-form-label date-label required" style="padding-left: 25px;" translate>Product Name<span>:</span>&nbsp;</label>
+                      <label class="col-2 col-form-label Vendor-label required" style="padding-left: 40px;" translate>Location<span>:</span>&nbsp;</label>
+                    </div>
+                  <div class="col-12">
                   <!-- <p-autoComplete #inputField [(ngModel)]="SelectedproductGrouplist" [suggestions]="FilterProductGrouplist" (ngModelChange)="changeProductDropdown()" (completeMethod)="filterProductCategory($event)"
                   field="prodGrpName" value="prodGrpID" [minLength]="1" class="ReportDropDown" [dropdown]="true"></p-autoComplete> -->
                   <p-dropdown
                   #inputField
-                  styleClass="ReportDropDown"
+                  styleClass="ReportDropDown col-2"
                   [(ngModel)]="SelectedproductGrouplist"
                   [options]="productGrouplist"
                   optionLabel="prodGrpName"
@@ -23,10 +28,9 @@
                   >
                   </p-dropdown>
                   &nbsp;
-                  <label class="col-form-label date-label required" translate>Name<span>:</span>&nbsp;</label>
                   <p-dropdown
                   #inputField
-                  styleClass="ReportDropDown"
+                  styleClass="ReportDropDown col-2"
                   [(ngModel)]="SelectedVendor"
                   [options]="Vendor"
                   optionLabel="vendName"
@@ -40,12 +44,11 @@
                   </p-dropdown>
 
                   &nbsp;
-                    <label class="col-form-label date-label required" translate>Product Name<span>:</span>&nbsp;</label>
                     <!-- <p-autoComplete #inputField [(ngModel)]="SelectedProduct" [suggestions]="Filterproductlist" (completeMethod)="filterProduct($event)"
                     field="prodName" value="prodID" [minLength]="1" [dropdown]="true" class="ReportDropDown"></p-autoComplete> -->
                     <p-dropdown
                         #inputField
-                        styleClass="ReportDropDown"
+                        styleClass="ReportDropDown col-2"
                         [(ngModel)]="SelectedProduct"
                         [options]="products"
                         optionLabel="prodName"
@@ -58,10 +61,9 @@
 
 
                     &nbsp;
-                    <label class="col-form-label Vendor-label required" translate>Location<span>:</span>&nbsp;</label>
                     <p-dropdown
                       #inputField
-                      styleClass="ReportDropDown"
+                      styleClass="ReportDropDown col-2"
                       [(ngModel)]="selectedLocation"
                       [options]="locations"
                       optionLabel="LocationName"

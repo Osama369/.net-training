@@ -7,8 +7,13 @@
           </h4>
                     <div class="row">
                         <div class="col-12">
-                        <label class="col-form-label date-label required" translate>As of Date<span>:</span>&nbsp;</label>
-                        <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" [(ngModel)]="DateTo" class="ReportDropDown" dateFormat="dd/mm/yy"></p-calendar>
+                            <label class="col-1 col-form-label date-label required"  translate>As of Date<span>:</span>&nbsp;</label>
+                            <label class="col-2 col-form-label date-label required" style="margin-left:47px" translate>Department<span>:</span>&nbsp;</label>
+                            <label class="col-1 col-form-label Vendor-label required" style="margin-left:10px" translate>Location<span>:</span>&nbsp;</label>
+                        
+                        </div>
+                        <div class="col-12">
+                        <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" [(ngModel)]="DateTo" class="ReportDropDown" styleclass="col-2" dateFormat="dd/mm/yy"></p-calendar>
                         <!-- &nbsp;
                         <label class="col-form-label date-label required" translate>Category<span>:</span>&nbsp;</label>
                         <p-dropdown
@@ -23,10 +28,9 @@
                         >
                         </p-dropdown> -->
                         &nbsp;
-                        <label class="col-form-label date-label required" translate>Department<span>:</span>&nbsp;</label>
                         <p-dropdown
                         #inputField
-                        styleClass="ReportDropDown"
+                        styleClass="ReportDropDown col-2"
                         [(ngModel)]="SelectedproductDepartment"
                         [options]="productDepartmentlist"
                         optionLabel="depName"
@@ -36,10 +40,9 @@
                         >
                         </p-dropdown>
                         &nbsp;
-                        <label class="col-form-label Vendor-label required" translate>Location<span>:</span>&nbsp;</label>
                         <p-dropdown
                         #inputField
-                        styleClass="ReportDropDown"
+                        styleClass="ReportDropDown col-2"
                         [(ngModel)]="selectedLocation"
                         [options]="locations"
                         optionLabel="LocationName"

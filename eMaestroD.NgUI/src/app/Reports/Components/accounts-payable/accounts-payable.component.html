@@ -7,7 +7,13 @@
           </h4>
           <div class="row">
                       <div class="col-12">
-                      <label class="col-form-label date-label required" translate>Name<span>:</span>&nbsp;</label>
+                        <label class="col-2 col-form-label date-label required"  translate>As Of Date <span>:</span>&nbsp;</label>
+                        <label class="col-2 col-form-label date-label required" style="padding-left: 40px;" translate>Supplier<span>:</span>&nbsp;</label>
+                      
+                      </div>
+                      <div class="col-12">
+                        <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" [(ngModel)]="DateTo" dateFormat="dd/mm/yy"></p-calendar>
+                      &nbsp;
                       <!-- <p-autoComplete #inputField styleClass="myclass" [(ngModel)]="SelectedProduct" [suggestions]="Filterproductlist" (completeMethod)="filterProduct($event)"
                       field="vendName" value="vendID" [minLength]="1" [dropdown]="true">
                       <ng-template let-vendor pTemplate="item">
@@ -29,9 +35,7 @@
                     </ng-template>
                     </p-dropdown>
                       &nbsp;
-                      <label class="col-form-label date-label required" translate>As Of Date <span>:</span>&nbsp;</label>
-                      <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" [(ngModel)]="DateTo" dateFormat="dd/mm/yy"></p-calendar>
-                      &nbsp;
+                      
                       <button #savebtn (click)="submit()" translate class="btn btn-primary btnSetting"> <i class="far fa-paper-plane"></i> Submit</button>
                   </div>
 

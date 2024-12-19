@@ -7,18 +7,22 @@
           </h4>
                     <div class="row">
                         <div class="col-12">
-                            <label class="col-form-label date-label required" translate>Date From<span>:</span>&nbsp;</label>
-                            <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" [autofocus]="true" pAutoFocus [(ngModel)]="DateFrom" class="ReportDropDown" dateFormat="dd/mm/yy" ></p-calendar>
+                            <label class="col-1 col-form-label date-label required"  translate>Date From<span>:</span>&nbsp;</label>
+                            <label class="col-1 col-form-label date-label required"  style="margin-left:45px;"  translate>Date To <span>:</span>&nbsp;</label>
+                            <label class="col-1 col-form-label Vendor-label required" style="margin-left:45px;" translate>Location<span>:</span>&nbsp;</label>
+                        
+                        
+                        </div>
+                        <div class="col-12">
+                            <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" [autofocus]="true" pAutoFocus [(ngModel)]="DateFrom" styleClass="col2" class="ReportDropDown" dateFormat="dd/mm/yy" ></p-calendar>
                             &nbsp;
-                            <label class="col-form-label date-label required" translate>Date To <span>:</span>&nbsp;</label>
-                            <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" [(ngModel)]="DateTo" dateFormat="dd/mm/yy" class="ReportDropDown"></p-calendar>
+                            <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" [(ngModel)]="DateTo" styleClass="col2" dateFormat="dd/mm/yy" class="ReportDropDown"></p-calendar>
                             &nbsp;
-                            <label class="col-form-label Vendor-label required" translate>Location<span>:</span>&nbsp;</label>
                             <!-- <p-autoComplete #inputField  [(ngModel)]="selectedLocation" [suggestions]="LocationList"  (completeMethod)="filterLocation($event)" (keyup.enter)="onEnterComplex(3)"
                             field="locName" value="locID" [minLength]="1" [dropdown]="true" class="ReportDropDown"></p-autoComplete> -->
                             <p-dropdown
                             #inputField
-                            styleClass="ReportDropDown"
+                            styleClass="ReportDropDown col-2"
                             [(ngModel)]="selectedLocation"
                             [options]="locations"
                             optionLabel="LocationName"
