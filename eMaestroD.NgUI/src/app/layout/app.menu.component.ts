@@ -175,6 +175,13 @@ export class AppMenuComponent implements OnInit {
                    
                     { label: 'SalesMan Item Wise Sale', routerLink: [APP_ROUTES.reports.accountReports.SalemanItemWiseSaleReport] },
                     { label: 'SalesMan Wise Sale', routerLink: [APP_ROUTES.reports.accountReports.SalemanWiseSaleReport] },
+                    { label: 'Sale Claim', routerLink: [APP_ROUTES.reports.accountReports.SaleClaimReport] },
+                    { label: 'Expense Report', routerLink: [APP_ROUTES.reports.accountReports.ExpenseReport] },
+                    { label: 'Challan Report', routerLink: [APP_ROUTES.reports.accountReports.ChallanReport] },
+                    { label: 'Purchase/Order/GRN Report', routerLink: [APP_ROUTES.reports.accountReports.PurchaseOrderGRNReport] },
+                    { label: 'Payable Aging', routerLink: [APP_ROUTES.reports.accountReports.PayableAging] },
+                    { label: 'Receivable Aging', routerLink: [APP_ROUTES.reports.accountReports.ReceivableAging] },
+                    { label: 'Receipt Journal', routerLink: [APP_ROUTES.reports.accountReports.ReceiptJournal] },
                   ],
                 },
               ],

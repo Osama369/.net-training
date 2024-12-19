@@ -1,4 +1,3 @@
-
 import { HttpClient } from '@angular/common/http';
 import { Component, QueryList, ViewChildren } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -13,16 +12,19 @@ import { Products } from 'src/app/Manage/Models/products';
 import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 import { Users } from 'src/app/Administration/Models/users';
 import { UserService } from 'src/app/Administration/Services/user.service';
+import { CoaService } from 'src/app/Administration/Services/coa.service';
 import { Location } from 'src/app/Administration/Models/location';
-
+import { COA } from 'src/app/Administration/Models/COA';
+import { GenericService } from 'src/app/Shared/Services/generic.service';
+import { JournalVoucher } from 'src/app/Transaction/Models/journal-voucher';
 
 @Component({
-  selector: 'app-sale-man-wise-sale-report',
-  templateUrl: './sale-man-wise-sale-report.component.html',
-  styleUrls: ['./sale-man-wise-sale-report.component.scss']
+  selector: 'app-expense-report',
+  templateUrl: './expense-report.component.html',
+  styleUrls: ['./expense-report.component.scss']
 })
 
-export class SaleManWiseSaleReportComponent {
+export class ExpenseReportComponent {
   constructor(
     private authService : AuthService,
     public bookmarkService: BookmarkService,
@@ -30,9 +32,11 @@ export class SaleManWiseSaleReportComponent {
     private http: HttpClient,
     private sanitizer: DomSanitizer,
     private sharedDataService: SharedDataService,
+    private accountsService: CoaService,
     private datePipe: DatePipe,
     private reportService: ReportService,
-    private userService:UserService
+    private userService:UserService,
+     private genericService:GenericService,
   ) {}
 
   @ViewChildren('inputField') inputFields: QueryList<any>;
@@ -46,10 +50,22 @@ export class SaleManWiseSaleReportComponent {
   data: any[];
   Vendor: Vendor[];
   SelectedVendor: any;
+
   selectedUser:any;
   FilteredUserList:any;
   datalist :any;
   userList : Users[];
+  selectedExpeneAccountName: any;
+  filteredExpenseAccountName:any;
+  ExpenseAccountNameList: COA[];
+  selectedAccCat:any;
+  filteredAccCat:any;
+  AccountCatList:COA[];
+  voucherList : JournalVoucher[];
+  rowNmb: any;
+  CoaAccountListForChild: COA[]
+  FilterCoaAccountListForChild: COA[]
+ 
 
 selectedLocation:any;
   locationlist: Location[];
@@ -82,9 +98,44 @@ selectedLocation:any;
         console.log(response);
       },
     });
+
+    // this.accountsService.getAllCOA().subscribe({
+    //   next:(account)=>{
+    //     this.ExpenseAccountNameList = [... (account) ];
+
+    //     this.ExpenseAccountNameList.unshift({
+    //       acctNo:0, acctName:"---All---",
+    //     })
+    //   }
+      
+    // });
+
+    this.genericService.GetAllCoaofLevel2().subscribe({
+      next:(list=>{
+        this.AccountCatList=[...(list.filter(x=>x.parentAcctName="Expense"))]
+        this.filteredAccCat= this.AccountCatList
+      })
+        
+    })
+
     this.roleOnChange(7);
     //this.LoadProducts();
    
+  }
+
+  getCoaChildList()
+  {
+    if(this.selectedAccCat != undefined)
+    {
+      
+      console.log(this.selectedAccCat);
+      this.genericService.GetAllCoaByParentCOAID(this.selectedAccCat.COAID).subscribe({
+        next: (list) => {
+          this.ExpenseAccountNameList = list;
+          this.filteredExpenseAccountName = this.ExpenseAccountNameList;
+        }
+      });
+    }
   }
   // LoadProducts()
   // {
@@ -155,14 +206,14 @@ selectedLocation:any;
     this.userService.getAllUsers().subscribe((us:any)=>{
       this.userList = us;
       this.userList = this.userList.filter(x=>x.RoleID == roleID);
-
+      
     })
   }
   submit() {
     let d1 = this.datePipe.transform(this.DateFrom, "yyyy-MM-dd");
     let d2 = this.datePipe.transform(this.DateTo, "yyyy-MM-dd");
 
-    this.reportService.runReportWith3Para("SaleManWiseSale", d1, d2,this.selectedUser.UserID,0).subscribe(data => {
+    this.reportService.runReportWith3Para("ExpenseReport", d1, d2,this.selectedExpeneAccountName.acctNo,0).subscribe(data => {
       this.data = (data as { [key: string]: any })["enttityDataSource"];
       this.cols = (data as { [key: string]: any })["entityModel"];
       this.allowBtn = true;

@@ -96,10 +96,18 @@ export const APP_ROUTES = {
       SalesManLedgerReport: 'Reports/SalesManLedgerReport',
       SalemanItemWiseSaleReport: 'Reports/SalemanItemWiseSaleReport',
       SalemanWiseSaleReport: 'Reports/SalemanWiseSaleReport',
+      SaleClaimReport: 'Reports/SaleClaim',
+      ExpenseReport: 'Reports/ExpenseReport',
+      ChallanReport: 'Reports/ChallanReport',
+      PurchaseOrderGRNReport: 'Reports/PurchaseOrderGRNReport',
+      PayableAging: 'Reports/PayableAging',
+      ReceivableAging: 'Reports/ReceivableAging',
+      ReceiptJournal: 'Reports/ReceiptJournal',
       profitReports: {
         itemWiseProfit: 'Reports/ItemWiseProfitReport',
         invoiceWiseProfit: 'Reports/InvoiceWiseProfit',
         profitAndLoss: 'Reports/ProfitAndLossReport',
+        
       },
     },
   },
