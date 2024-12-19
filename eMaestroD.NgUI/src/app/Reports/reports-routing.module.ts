@@ -39,6 +39,14 @@ import { SSRWithAvailabilityComponent } from './Components/ssrwith-availability/
 import { SaleManLedgerReportComponent } from './Components/sale-man-ledger-report/sale-man-ledger-report.component';
 import { SalemanItemWiseSaleReportComponent } from './Components/saleman-item-wise-sale-report/saleman-item-wise-sale-report.component';
 import { SaleManWiseSaleReportComponent } from './Components/sale-man-wise-sale-report/sale-man-wise-sale-report.component';
+import { ExpenseReportComponent } from './Components/expense-report/expense-report.component';
+import { ChallanReportComponent } from './Components/challan-report/challan-report.component';
+import { PurchaseComponent } from '../Invoices/Components/purchase/purchase.component';
+import { PurchaseGrnOrdeReportrComponent } from './Components/purchase-grn-orde-reportr/purchase-grn-orde-reportr.component';
+import { SaleClaimComponent } from './Components/sale-claim/sale-claim.component';
+import { PayableAgingComponent } from './Components/payable-aging/payable-aging.component';
+import { ReceivableAgingComponent } from './Components/receivable-aging/receivable-aging.component';
+import { ReceiptJournalComponent } from './Components/receipt-journal/receipt-journal.component';
 
 const routes: Routes = [
   { path: 'DailySaleReport', component: DailyinvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DailySale' }  },
@@ -80,6 +88,13 @@ const routes: Routes = [
       { path: 'SalesManLedgerReport', component: SaleManLedgerReportComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SalesManLedgerReport' }  },
       { path: 'SalemanItemWiseSaleReport', component: SalemanItemWiseSaleReportComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SalemanItemWiseSaleReport' }  },
       { path: 'SalemanWiseSaleReport', component: SaleManWiseSaleReportComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SalemanWiseSaleReport' }  },
+      { path: 'SaleClaim', component: SaleClaimComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SaleClaim' }  },
+      { path: 'ExpenseReport', component: ExpenseReportComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ExpenseReport' }  },
+      { path: 'ChallanReport', component: ChallanReportComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ChallanReport' }  },
+      { path: 'PurchaseOrderGRNReport', component: PurchaseGrnOrdeReportrComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PurchaseOrderGRN' }  },
+      { path: 'PayableAging', component: PayableAgingComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'PayableAging' }  },
+      { path: 'ReceivableAging', component:ReceivableAgingComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ReceivableAging' }  },
+      { path: 'ReceiptJournal', component:ReceiptJournalComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ReceiptJournal' }  },
 
     ];
 

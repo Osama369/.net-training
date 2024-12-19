@@ -49,7 +49,7 @@
 
               <div class="col-3">
                   <label class="col-form-label date-label required" translate>Product Code&nbsp;</label>
-                  <input pInputText #inputFieldTableCst (blur)="checkExistence(productlist[0].prodCode, 0,0, true)" (keyup.enter)="onEnterTableInput(0)" maxlength="25"
+                  <input pInputText #inputFieldTableCst (blur)="checkExistence(productlist[0].prodCode, productlist[0].prodID,0, true)" (keyup.enter)="onEnterTableInput(0)" maxlength="25"
                       id="code" class="col-form-label col-12" name="code" [(ngModel)]="productlist[0].prodCode" autofocus />
               </div>
 

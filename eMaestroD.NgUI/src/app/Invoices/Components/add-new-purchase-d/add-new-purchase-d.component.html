@@ -147,7 +147,7 @@
                     </p-autoComplete>
                     </td>
                     <td>
-                        <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(0, ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.qty" (ngModelChange)="updateQtyBal(rowData, ri)" class="girdRow">
+                        <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(0, ri)" (keypress)="($event.charCode >= 47 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.qty" (ngModelChange)="updateQtyBal(rowData, ri)" class="girdRow">
                     </td>
                     <td>
                         <input #inputFieldTable [style]="{'width':'75px', 'text-align':'right'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(1, ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.purchRate" (ngModelChange)="Itemcalculation(ri)" class="girdRow">
@@ -156,7 +156,7 @@
                         <input #inputFieldTable [style]="{'width':'75px', 'text-align':'right'}" (keyup.enter)="onEnterTableInput(2, ri)" pInputText [disabled]="!rowData.barCode && !rowData.prodName" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.grossValue" readonly class="girdRow">
                     </td>
                     <td>
-                      <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(3, ri)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.bonusQty" (ngModelChange)="updateQtyBal(rowData, ri)" class="girdRow">
+                      <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(3, ri)" class="p-inputtext-sm" (keypress)="($event.charCode >= 47 && $event.charCode < 58)" type="text" [(ngModel)]="rowData.bonusQty" (ngModelChange)="updateQtyBal(rowData, ri)" class="girdRow">
                     </td>
                     <td>
                         <input #inputFieldTable [style]="{'width':'80px'}" pInputText [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(4, ri)" type="text" [(ngModel)]="rowData.batchNo" class="girdRow">

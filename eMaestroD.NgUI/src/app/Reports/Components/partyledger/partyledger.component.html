@@ -6,7 +6,16 @@
           <div class="col-12">
                   <div class="row">
                       <div class="col-12">
-                      <label class="col-form-label date-label required" translate>Customer Name<span>:</span>&nbsp;</label>
+                        <label class="col-2 col-form-label date-label required" style="padding-left:5px;" translate>Date From<span>:</span>&nbsp;</label>                       
+                        <label class="col-2 col-form-label date-label required" style="padding-left:15px;" translate>Date To <span>:</span>&nbsp;</label>
+                        <label class="col-2 col-form-label date-label required" style="padding-left:29px;" translate>Customer Name<span>:</span>&nbsp;</label>
+                      </div>
+                      <div class="col-12">
+                        <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" styleClass="col-2" [autofocus]="true" pAutoFocus [(ngModel)]="DateFrom" dateFormat="dd/mm/yy"></p-calendar>
+                        &nbsp;
+                        <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" styleClass="col-2" [(ngModel)]="DateTo" dateFormat="dd/mm/yy"></p-calendar>
+                        &nbsp;
+
                       <!-- <p-autoComplete #inputField styleClass="myclass" [(ngModel)]="SelectedCustomer" [suggestions]="Filtercustomerlist" (completeMethod)="filterProduct($event)"
                       field="cstName" value="cstID" [minLength]="1" [dropdown]="true">
                       <ng-template let-customer pTemplate="item">
@@ -16,7 +25,7 @@
 
                     <p-dropdown
                       #inputField
-                      styleClass="myclass"
+                      styleClass="myclass col-2"
                       [(ngModel)]="SelectedCustomer"
                       [options]="customers"
                       optionLabel="cstName"
@@ -29,24 +38,28 @@
                       </ng-template>
                     </p-dropdown>
                       &nbsp;
-                      <label class="col-form-label date-label required" translate>Date From<span>:</span>&nbsp;</label>
-                      <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" styleClass="col-2" [autofocus]="true" pAutoFocus [(ngModel)]="DateFrom" dateFormat="dd/mm/yy"></p-calendar>
-                      &nbsp;
-                      <label class="col-form-label date-label required" translate>Date To <span>:</span>&nbsp;</label>
-                      <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" styleClass="col-2" [(ngModel)]="DateTo" dateFormat="dd/mm/yy"></p-calendar>
-                      &nbsp;
+                   
                       <button #savebtn (click)="submitPartyLedger()" translate class="btn btn-primary btnSetting" > <i class="far fa-paper-plane"></i> Submit</button>
                   </div>
                 </div>
-            </div>
-        </p-tabPanel>
-        <p-tabPanel header="Supplier Ledger Report">
-           <div class="row">
+              </div>
+            </p-tabPanel>
+            <p-tabPanel header="Supplier Ledger Report">
+              <div class="row">
+                <div class="col-12">
+                          <label class="col-2 col-form-label date-label required" style="padding-left:5px;" translate>Date From<span>:</span>&nbsp;</label>
+                          <label class="col-2 col-form-label date-label required" style="padding-left:15px;" translate>Date To <span>:</span>&nbsp;</label>
+                          <label class="col-2 col-form-label date-label required" style="padding-left:29px;" translate>Suppier Name<span>:</span>&nbsp;</label>
+                        
+                        </div>
                         <div class="col-12">
-                        <label class="col-form-label date-label required" translate>Suppier Name<span>:</span>&nbsp;</label>
-                        <p-dropdown
+                          <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" styleClass="col-2" [autofocus]="true" pAutoFocus [(ngModel)]="DateFrom" dateFormat="dd/mm/yy"></p-calendar>
+                          &nbsp;
+                          <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" styleClass="col-2" [(ngModel)]="DateTo" dateFormat="dd/mm/yy"></p-calendar>
+                          &nbsp;
+                          <p-dropdown
                         #inputField
-                        styleClass="myclass"
+                        styleClass="myclass col-2"
                         [(ngModel)]="SelectedVendor"
                         [options]="vendors"
                         optionLabel="vendName"
@@ -61,12 +74,7 @@
                       </p-dropdown>
 
                         &nbsp;
-                        <label class="col-form-label date-label required" translate>Date From<span>:</span>&nbsp;</label>
-                        <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" styleClass="col-2" [autofocus]="true" pAutoFocus [(ngModel)]="DateFrom" dateFormat="dd/mm/yy"></p-calendar>
-                        &nbsp;
-                        <label class="col-form-label date-label required" translate>Date To <span>:</span>&nbsp;</label>
-                        <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" styleClass="col-2" [(ngModel)]="DateTo" dateFormat="dd/mm/yy"></p-calendar>
-                        &nbsp;
+                        
                         <button #savebtn (click)="submitVendorLedger()" translate class="btn btn-primary btnSetting"> <i class="far fa-paper-plane"></i> Submit</button>
                     </div>
                 </div>
@@ -74,7 +82,18 @@
         <p-tabPanel header="Combined Ledger Report">
           <div class="row">
             <div class="col-12">
-              <label class="col-form-label date-label required" translate>Name<span>:</span>&nbsp;</label>
+              
+              <label class="col-2 col-form-label date-label required" style="padding-left:5px;" translate>Date From<span>:</span>&nbsp;</label>
+              <label class="col-2 col-form-label date-label required" style="padding-left:15px;" translate>Date To <span>:</span>&nbsp;</label>
+              <label class="col-2 col-form-label date-label required" style="padding-left:29px;" translate>Name<span>:</span>&nbsp;</label>
+            
+            </div>
+            <div class="col-12">
+              <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" styleClass="col-2" [autofocus]="true" pAutoFocus [(ngModel)]="DateFrom" dateFormat="dd/mm/yy"></p-calendar>
+              &nbsp;
+              <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" styleClass="col-2" [(ngModel)]="DateTo" dateFormat="dd/mm/yy"></p-calendar>
+              &nbsp;
+
               <!-- <p-autoComplete #inputField styleClass="myclass" [(ngModel)]="SelectedCustomer" [suggestions]="Filtercustomerlist" (completeMethod)="filterProduct($event)"
               field="cstName" value="cstID" [minLength]="1" [dropdown]="true">
               <ng-template let-customer pTemplate="item">
@@ -84,7 +103,7 @@
 
             <p-dropdown
               #inputField
-              styleClass="myclass"
+              styleClass="myclass col-2"
               [(ngModel)]="SelectedAccount"
               [options]="combinedlist"
               optionLabel="cstName"
@@ -98,12 +117,7 @@
             </p-dropdown>
               &nbsp;
 
-            <label class="col-form-label date-label required" translate>Date From<span>:</span>&nbsp;</label>
-            <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" styleClass="col-2" [autofocus]="true" pAutoFocus [(ngModel)]="DateFrom" dateFormat="dd/mm/yy"></p-calendar>
-            &nbsp;
-            <label class="col-form-label date-label required" translate>Date To <span>:</span>&nbsp;</label>
-            <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" styleClass="col-2" [(ngModel)]="DateTo" dateFormat="dd/mm/yy"></p-calendar>
-            &nbsp;
+           
             <button #savebtn (click)="submitCustomerVendorLedger()" translate class="btn btn-primary btnSetting"> <i class="far fa-paper-plane"></i> Submit</button>
         </div>
     </div>

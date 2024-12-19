@@ -8,15 +8,24 @@
                   <div class="row">
 
                     <div class="col-12">
-                      <label class="col-form-label date-label required" translate>Date From <span>:</span> &nbsp;</label>
-                      <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" [autofocus]="true" pAutoFocus class="ReportDropDown" [(ngModel)]="DateFrom" dateFormat="dd/mm/yy"></p-calendar>
+                      <label class="col-2 col-form-label date-label required" translate style="padding-left:7px">Date From <span>:</span> &nbsp;</label>
+                      <label class="col-2 col-form-label date-label required" translate style="padding-left:17px">Date To  <span>:</span> &nbsp;</label>
+                      <label class="col-2 col-form-label date-label required" translate style="padding-left:29px">Supplier Name<span>:</span>&nbsp;</label>
+                    
+                      </div>
+                     
+                     
+                      <div class="col-12">
+                      
+                      <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" styleClass="col-2" [autofocus]="true" pAutoFocus class="ReportDropDown" [(ngModel)]="DateFrom" dateFormat="dd/mm/yy"></p-calendar>
                       &nbsp;
-                      <label class="col-form-label date-label required" translate>Date To  <span>:</span> &nbsp;</label>
-                      <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" [(ngModel)]="DateTo" class="ReportDropDown" dateFormat="dd/mm/yy"></p-calendar>
+                      
+                      <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" [(ngModel)]="DateTo" class="ReportDropDown" styleClass="col-2" dateFormat="dd/mm/yy"></p-calendar>
                       &nbsp;
-                      <label class="col-form-label date-label required" translate>Name<span>:</span>&nbsp;</label>
+                     
                       <p-dropdown
                       #inputField
+                      styleClass="col-2"
                       styleClass="ReportDropDown"
                       [(ngModel)]="SelectedVendor"
                       [options]="Vendor"

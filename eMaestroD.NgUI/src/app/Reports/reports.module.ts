@@ -40,6 +40,13 @@ import { SSRWithAvailabilityComponent } from './Components/ssrwith-availability/
 import { SaleManLedgerReportComponent } from './Components/sale-man-ledger-report/sale-man-ledger-report.component';
 import { SalemanItemWiseSaleReportComponent } from './Components/saleman-item-wise-sale-report/saleman-item-wise-sale-report.component';
 import { SaleManWiseSaleReportComponent } from './Components/sale-man-wise-sale-report/sale-man-wise-sale-report.component';
+import { SaleClaimComponent } from './Components/sale-claim/sale-claim.component';
+import { ExpenseReportComponent } from './Components/expense-report/expense-report.component';
+import { ChallanReportComponent } from './Components/challan-report/challan-report.component';
+import { PurchaseGrnOrdeReportrComponent } from './Components/purchase-grn-orde-reportr/purchase-grn-orde-reportr.component';
+import { PayableAgingComponent } from './Components/payable-aging/payable-aging.component';
+import { ReceivableAgingComponent } from './Components/receivable-aging/receivable-aging.component';
+import { ReceiptJournalComponent } from './Components/receipt-journal/receipt-journal.component';
 
 
 
@@ -82,7 +89,15 @@ import { SaleManWiseSaleReportComponent } from './Components/sale-man-wise-sale-
     SSRWithAvailabilityComponent,
     SaleManLedgerReportComponent,
     SalemanItemWiseSaleReportComponent,
-    SaleManWiseSaleReportComponent
+    SaleManWiseSaleReportComponent,
+    
+    SaleClaimComponent,
+          ExpenseReportComponent,
+          ChallanReportComponent,
+          PurchaseGrnOrdeReportrComponent,
+          PayableAgingComponent,
+          ReceivableAgingComponent,
+          ReceiptJournalComponent
 
   ],
   imports: [

@@ -269,7 +269,7 @@ export class AddNewExpenseVoucherComponent implements OnInit{
       this.voucherList[rownumber].debit = 0;
       this.voucherList[rownumber].credit = 0;
       console.log(parentlist);
-      this.genericService.GetAllCoaByParentCOAID(parentlist.COAID).subscribe({
+      this.genericService.GetAllCoaByParentCOAID(parentlist.acctNo).subscribe({
         next: (CoaAccountListChild) => {
           this.CoaAccountListForChild = CoaAccountListChild;
           this.FilterCoaAccountListForChild = this.CoaAccountListForChild;

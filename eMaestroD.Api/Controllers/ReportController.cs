@@ -154,7 +154,16 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
-          
+
+            else if (ReportName == "SaleClaimReport")
+            {
+                var res = await SaleClaimReport(Parameter1, Parameter2, comID);
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
+           
+
+
             return Ok(vM);
             //return File(result, "application/pdf");
         }
@@ -264,6 +273,19 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
+            else if (ReportName == "ExpenseReport")
+            {                                                                   // accNo
+                var res = await ExpenseReport(Parameter1, Parameter2, int.Parse(Parameter3), locID, comID);
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
+
+            else if (ReportName == "ReceiptJournal")
+            {                                                                 // cstID
+                var res = await ReceiptJournal(Parameter1, Parameter2, int.Parse(Parameter3), locID, comID);
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
             return Ok(vM);
 
         }
@@ -311,12 +333,43 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
-            //else if (ReportName == "SalemanItemWiseSaleReport")
-            //{
-            //    var res = await SalemanItemWiseSalesReport(Parameter1, Parameter2, comID, int.Parse(Parameter3), int.Parse(Parameter4));
-            //    vM.enttityDataSource = res;
-            //    vM.entityModel = res?.GetEntity_MetaData();
-            //}
+            if (ReportName == "ChallanReport")
+            {
+                var res = await ChallanepRort(Parameter3, Parameter4, locID,comID);
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
+
+            else if(ReportName == "PurchaseOrderGRN")
+            {
+                //result = await CashBook(Parameter1, Parameter2);
+                var res = await PurchaseOrderGRN(Parameter1, Parameter2, int.Parse(Parameter3), int.Parse(Parameter4),  locID, comID);
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
+
+            else if (ReportName == "ReceivableAging")
+            {
+                try
+                {
+                    //result = await CashBook(Parameter1, Parameter2);
+                    var res = await ReceivableAging(Parameter1, int.Parse(Parameter3), locID, comID);
+                    vM.enttityDataSource = res;
+                    vM.entityModel = res?.GetEntity_MetaData();
+                }
+                catch (Exception ex)
+                {
+
+                    throw;
+                }
+              
+            }
+            else if (ReportName == "PayableAging")
+            {
+                var res = await PayableAging(Parameter1, int.Parse(Parameter3), locID, comID);
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
             return Ok(vM);
         }
 
@@ -333,7 +386,9 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
-           
+
+            
+
             return Ok(vM);
         }
 
@@ -919,6 +974,162 @@ namespace eMaestroD.Api.Controllers
         }
 
         [NonAction]
+        public async Task<List<SaleClaimReport>> SaleClaimReport(DateTime dtfrom, DateTime dtTo, int comID)
+        {
+            List<SaleClaimReport> SDL;
+            string sql = "[Report_SaleClaimByProduct] @dtStart,@dtEnd,@comID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+            };
+            SDL = _AMDbContext.SaleClaimReport.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+               // return SDL.OrderBy(x => x.PrimitiveType).ToList();
+                return SDL;
+            }
+            return null;
+        }
+
+
+        [NonAction]
+        public async Task<List<PayableAging>> PayableAging(DateTime dtfrom,int vendorID , int locID , int comID)
+        {
+            List<PayableAging> SDL;
+            string sql = "[Report_PayableAging]  @vendID, @asOfDate, @locID, @comID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@vendID", Value = vendorID },
+                    new SqlParameter { ParameterName = "@asOfDate", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@locID", Value = locID },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+            };
+            SDL = _AMDbContext.PayableAging.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                // return SDL.OrderBy(x => x.PrimitiveType).ToList();
+                return SDL;
+            }
+            return null;
+        }
+
+        [NonAction]
+        public async Task<List<ReceivableAging>> ReceivableAging(DateTime dtTO, int cstID, int locID, int comID)
+        {
+            List<ReceivableAging> SDL;
+            string sql = "[Report_ReceivableAging] @cstID ,@asOfDate ,@locID,@comID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@cstID ", Value = cstID },
+                    new SqlParameter { ParameterName = "@asOfDate ", Value = dtTO },
+                    new SqlParameter { ParameterName = "@locID", Value = locID },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+            };
+            SDL = _AMDbContext.ReceivableAging.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                // return SDL.OrderBy(x => x.PrimitiveType).ToList();
+                return SDL;
+            }
+            return null;
+        }
+        [NonAction]
+        public async Task<List<ChallanReport>> ChallanepRort( string Vfrom, string VTo, int locID, int comID)
+        {
+            List<ChallanReport> SDL;
+            string sql = "[Report_InvoiceWiseSale] @VFrom,@VTo,@locID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@VFrom", Value = Vfrom },
+                    new SqlParameter { ParameterName = "@VTo", Value = VTo },
+                    new SqlParameter { ParameterName = "@locID", Value = locID },
+            };
+            SDL = _AMDbContext.ChallanReport.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                // return SDL.OrderBy(x => x.PrimitiveType).ToList();
+                return SDL;
+            }
+            return null;
+        }
+
+        [NonAction]
+        public async Task<List<PurchaseOrderGrn>> PurchaseOrderGRN(DateTime dFrom, DateTime dTo,int txTypeID,int vendID, int locID, int comID)
+        {
+            List<PurchaseOrderGrn> SDL;
+            string sql = "[Report_PurchaseHistory] @dtStart,@dtEnd,@txTypId,@vendID,@locID,@comId";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart ", Value = dFrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@txTypId", Value = txTypeID },
+                    new SqlParameter { ParameterName = "@vendID", Value = vendID },
+                    new SqlParameter { ParameterName = "@locID", Value = locID },
+                    new SqlParameter { ParameterName = "@comId ", Value = comID },
+            };
+            SDL = _AMDbContext.PurchaseOrderGrn.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                // return SDL.OrderBy(x => x.PrimitiveType).ToList();
+                return SDL;
+            }
+            return null;
+        }
+
+
+        [NonAction]
         public async Task<List<BonusClaimReport>> BonusClaim(DateTime dtfrom, DateTime dtTo, int comID,int vendID)
         {
             List<BonusClaimReport> SDL;
@@ -1009,7 +1220,81 @@ namespace eMaestroD.Api.Controllers
             }
             return null;
         }
-        
+
+        [NonAction]
+        public async Task<List<ExpenseReport>> ExpenseReport(DateTime dtfrom, DateTime dtTo, int accNo, int locID, int comID)
+        {
+
+            List<ExpenseReport> SDL;
+            string sql = "[dbo].[Report_ExpenseReport] @dtStart, @dtEnd, @accNo, @comID, @locID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@accNo", Value = accNo },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+                    new SqlParameter { ParameterName = "@locID", Value = locID },
+            };
+            SDL = _AMDbContext.ExpenseReport.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                // return SDL.OrderBy(x => x.expiryDate).ToList();
+                return SDL;
+            }
+            return null;
+
+
+        }
+
+
+        [NonAction]
+        public async Task<List<ReceiptJournal>> ReceiptJournal(DateTime dtfrom, DateTime dtTo, int cstID, int locID, int comID)
+        {
+
+            List<ReceiptJournal> SDL;
+            string sql = "[dbo].[Report_ReciptJournal] @dtStart, @dtEnd, @cstId,  @locID, @comID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@cstId", Value = cstID },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+                    new SqlParameter { ParameterName = "@locID", Value = locID },
+            };
+            SDL = _AMDbContext.ReceiptJournal.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                // return SDL.OrderBy(x => x.expiryDate).ToList();
+                return SDL;
+            }
+            return null;
+
+
+        }
 
 
         [NonAction]
@@ -2071,5 +2356,7 @@ namespace eMaestroD.Api.Controllers
 
             return regionInfo.CurrencySymbol;
         }
+
+       
     }
 }

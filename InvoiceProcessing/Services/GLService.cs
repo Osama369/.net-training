@@ -141,6 +141,7 @@ namespace eMaestroD.InvoiceProcessing.Services
                         prodCode = productDetail.FirstOrDefault().barCode,
                         prodName = productDetail.FirstOrDefault().prodName,
                         qty = isConverted ? detail.qty : (detail.qty/ productDetail.FirstOrDefault().baseQty),
+                        unitQty = isConverted ? detail.qtyBal : (detail.qtyBal / productDetail.FirstOrDefault().baseQty),
                         bounsQty = detail.bonusQty,
                         purchRate = isConverted ? detail.unitPrice : (detail.unitPrice * productDetail.FirstOrDefault().baseQty),
                         sellRate = isConverted ? detail.unitPrice : (detail.unitPrice * productDetail.FirstOrDefault().baseQty),
@@ -243,6 +244,7 @@ namespace eMaestroD.InvoiceProcessing.Services
                         prodCode = productDetail.FirstOrDefault().barCode,
                         prodName = productDetail.FirstOrDefault().prodName,
                         qty = isConverted ? detail.qty : (detail.qty/ productDetail.FirstOrDefault().baseQty),
+                        unitQty = isConverted ? detail.qtyBal : (detail.qtyBal / productDetail.FirstOrDefault().baseQty),
                         bounsQty = detail.bonusQty,
                         purchRate = isConverted ? detail.unitPrice : (detail.unitPrice * productDetail.FirstOrDefault().baseQty),
                         sellRate = isConverted ? detail.unitPrice :  (detail.unitPrice * productDetail.FirstOrDefault().baseQty),
@@ -380,8 +382,14 @@ namespace eMaestroD.InvoiceProcessing.Services
 
             throw new InvalidOperationException("No Invoice found for provided voucherNo.");
         }
-
-        
+        public async Task UpdateGLBalSum(string VoucherNo, string convertVoucherNo, string tradeDebtor, string saleLocal, decimal newAmount, bool isEdit)
+        {
+            await _glRepository.UpdateGLBalSum(VoucherNo, convertVoucherNo, tradeDebtor, saleLocal, newAmount, isEdit);
+        }
+        public async Task UpdateGLqtybal(string VoucherNo, string convertVoucherNo, string saleLocal, string saleReturn, int txtypeID, int prodBCID, string batchNo, decimal qty, bool isEdit)
+        {
+            await _glRepository.UpdateGLqtybal(VoucherNo, convertVoucherNo, saleLocal, saleReturn, txtypeID, prodBCID, batchNo, qty, isEdit);
+        }
         private bool IsMasterEntry(GL glEntry)
         {
             return string.IsNullOrEmpty(glEntry.acctNo) && string.IsNullOrEmpty(glEntry.relAcctNo);

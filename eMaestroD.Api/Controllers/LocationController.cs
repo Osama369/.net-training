@@ -42,7 +42,7 @@ namespace eMaestroD.Api.Controllers
         [Route("{comID}")]
         public async Task<IActionResult> GetAllLocation(int comID)
         {
-            var loc = await _AMDbContext.Locations.Where(x => x.comID == comID).ToListAsync();
+            var loc = await _AMDbContext.Locations.ToListAsync();
 
             return Ok(loc);
         }
@@ -63,7 +63,7 @@ namespace eMaestroD.Api.Controllers
             {
                 var tenantID = cm.Decrypt(HttpContext.User.FindFirst(ClaimTypes.Upn).Value);
                 var tenlist = _Context.Tenants.Where(x => x.tenantID == int.Parse(tenantID)).ToList();
-                var locList = _AMDbContext.Locations.Where(x => x.comID == loc.comID && x.LocTypeId == 5).ToList();
+                var locList = _AMDbContext.Locations.Where(x => x.LocTypeId == 5).ToList();
                 if (tenlist[0].maxLocationCount > locList.Count())
                 {
 
@@ -98,7 +98,7 @@ namespace eMaestroD.Api.Controllers
                 return NotFound("Some invoices depend on this location, can't delete this location.");
             }
             var list = _AMDbContext.Locations.Where(x => x.LocationId == locID).ToList();
-            if (_AMDbContext.Locations.Where(x => x.comID == list[0].comID).Count() == 1)
+            if (_AMDbContext.Locations.Count() == 1)
             {
                 return NotFound("Can't Delete Only One Location");
             }

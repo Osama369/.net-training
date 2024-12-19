@@ -14,6 +14,7 @@ import { HttpClient } from '@angular/common/http';
 import { DropdownModule } from 'primeng/dropdown';
 import { DashboardComponent } from './Components/dashboard/dashboard.component';
 import { DashboardRoutingModule } from './dashboard-routing.module';
+import { AdministrationModule } from '../Administration/administration.module';
 
 export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http);

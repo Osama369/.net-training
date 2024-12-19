@@ -9,6 +9,7 @@ export class ReportService {
   constructor(private http: HttpClient) { }
   baseApiUrl: string = environment.BaseApiUrl + '/Report';
 
+
   runReportWith1Para(Reportname : any,para1:any,locID:any, catID:any, vendID?:any) {
 
     const headers = new HttpHeaders({
@@ -42,5 +43,8 @@ export class ReportService {
     let comID = localStorage.getItem('comID');
     return this.http.get<any>(this.baseApiUrl+'/'+Reportname+'/'+para1+'/'+para2+'/'+para3+'/'+para4+'/'+para5+'/'+locID+'/'+comID);
   }
-
+  GetChallanReport(Reportname : any, para1:any, para2:any,locID:any) {
+    let comID = localStorage.getItem('comID');
+    return this.http.get<any>(this.baseApiUrl+'/'+Reportname+'/'+para1+'/'+para2+'/'+locID+'/'+comID);
+  }
 }

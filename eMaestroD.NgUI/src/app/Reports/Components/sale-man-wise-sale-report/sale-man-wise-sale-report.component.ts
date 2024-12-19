@@ -83,23 +83,23 @@ selectedLocation:any;
       },
     });
     this.roleOnChange(7);
-    this.LoadProducts();
+    //this.LoadProducts();
    
   }
-  LoadProducts()
-  {
-    this.locationlist = undefined;
-    this.selectedLocation = [];
-    this.sharedDataService.getLocations$().subscribe((us:any)=>{
-      this.locationlist = (us as { [key: string]: any })["enttityDataSource"];
+  // LoadProducts()
+  // {
+  //   this.locationlist = undefined;
+  //   this.selectedLocation = [];
+  //   this.sharedDataService.getLocations$().subscribe((us:any)=>{
+  //     this.locationlist = (us as { [key: string]: any })["enttityDataSource"];
 
-      this.locationlist.unshift({
+  //     this.locationlist.unshift({
           
-          LocationId : 0,
-          LocationName : "---ALL---"});
-        })
+  //         LocationId : 0,
+  //         LocationName : "---ALL---"});
+  //       })
     
-  }
+  // }
 
   filterProduct(event: any) {
     // In a real application, make a request to a remote URL with the query and return filtered results. For demo, we filter at the client-side.
@@ -155,7 +155,7 @@ selectedLocation:any;
     this.userService.getAllUsers().subscribe((us:any)=>{
       this.userList = us;
       this.userList = this.userList.filter(x=>x.RoleID == roleID);
-      
+
     })
   }
   submit() {

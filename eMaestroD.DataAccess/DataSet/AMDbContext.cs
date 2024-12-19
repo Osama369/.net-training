@@ -64,6 +64,8 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<ProfitAndLoss> ProfitAndLoss { get; set; }
         public DbSet<TrialBalance> TrialBalance { get; set; }
         public DbSet<BalanceSheet> BalanceSheet { get; set; }
+        public DbSet<SaleClaimReport> SaleClaimReport { get; set; }
+        public DbSet<ChallanReport> ChallanReport { get; set; }
         public DbSet<BonusClaimReport> BonusClaim { get; set; }
         public DbSet<DiscountClaimReport> DiscountClaimReport { get; set; }
         public DbSet<SaleHistory> SaleHistory { get; set; }
@@ -111,6 +113,11 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<SaleManWiseSaleReport> SaleManWiseSaleReport { get; set; }
         public DbSet<SSRWithAvailabilityReport> SSRWithAvailabilityReport { get; set; }
         public DbSet<SalemanItemWiseSaleReport> SalemanItemWiseSaleReport { get; set; }
+        public DbSet<ExpenseReport> ExpenseReport { get; set; }
+        public DbSet<PurchaseOrderGrn> PurchaseOrderGrn { get; set; }
+        public DbSet<PayableAging> PayableAging { get; set; }
+        public DbSet<ReceivableAging> ReceivableAging { get; set; }
+        public DbSet<ReceiptJournal> ReceiptJournal { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -153,6 +160,13 @@ namespace eMaestroD.DataAccess.DataSet
             modelBuilder.Entity<SaleManeLedgerReport>().HasNoKey();
             modelBuilder.Entity<SalemanItemWiseSaleReport>().HasNoKey();
             modelBuilder.Entity<SaleManWiseSaleReport>().HasNoKey();
+            modelBuilder.Entity<SaleClaimReport>().HasNoKey();
+            modelBuilder.Entity<ExpenseReport>().HasNoKey();
+            modelBuilder.Entity<ChallanReport>().HasNoKey();
+            modelBuilder.Entity<PurchaseOrderGrn>().HasNoKey();
+            modelBuilder.Entity<PayableAging>().HasNoKey();
+            modelBuilder.Entity<ReceivableAging>().HasNoKey();
+            modelBuilder.Entity<ReceiptJournal>().HasNoKey();
         }
 
     }

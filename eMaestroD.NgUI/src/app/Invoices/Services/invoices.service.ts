@@ -243,9 +243,12 @@ export class InvoicesService {
 
   createInvoiceProduct(product: ProductViewModel, taxesList: any[]): InvoiceProduct {
     const expiryDateString = product.expiryDate;
-    const [day, month, year] = expiryDateString.split('-').map(Number);
-    const expiryDate = new Date(year, month - 1, day);
-
+    const expiryDate = "";
+    if(expiryDateString)
+    {
+      const [day, month, year] = expiryDateString.split('-').map(Number);
+      const expiryDate = new Date(year, month - 1, day);
+    }
     return {
       prodInvoiceID : product.prodInvoiceID,
       prodID: product.prodID,

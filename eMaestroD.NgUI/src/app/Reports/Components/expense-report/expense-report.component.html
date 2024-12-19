@@ -1,0 +1,74 @@
+<div class="container">
+    <div class="card">
+        <div class="col-12">
+            <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Expense Report
+              <a *ngIf="!bookmark"  (click)="UpdateBookmark(true)" title="Add Bookmark"><i class="pi pi-bookmark" style="font-size: 1.5rem;"></i></a>
+              <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark"><i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i></a>
+            </h4>
+                    <div class="row">
+  
+                      <div class="col-12">
+                          <label class="col-2 col-form-label date-label required" style="padding-left:5px;" translate>Date From <span>:</span> &nbsp;</label>
+                          <label class="col-2 col-form-label date-label required" style="padding-left:15px;" translate>Date To  <span>:</span> &nbsp;</label>
+                          <label class="col-2 col-form-label date-label required" style="padding-left:25px;" translate>Acc Category<span>:</span>&nbsp;</label>
+                          <label class="col-2 col-form-label date-label required" style="padding-left:40px;" translate>Account<span>:</span>&nbsp;</label>
+                          
+                        </div>
+                      <div class="col-12">
+                        <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" [autofocus]="true" pAutoFocus class="ReportDropDown" styleClass="col-2" [(ngModel)]="DateFrom" dateFormat="dd/mm/yy"></p-calendar>
+                        &nbsp;
+                        <p-calendar #inputField (keyup.enter)="onEnterComplex(1)"  styleClass="col-2" [(ngModel)]="DateTo" class="ReportDropDown" dateFormat="dd/mm/yy"></p-calendar>
+                        &nbsp;
+                      <p-dropdown
+                      #inputField
+                      styleClass="myclass col-2"
+                      (onChange)="getCoaChildList()"
+                        placeholder="---Select---"
+                      [(ngModel)]="selectedAccCat"
+                      [options]="AccountCatList"
+                      optionLabel="acctName"
+                      [filter]="true"
+                      [filterBy]="'acctName'"
+                      [showClear]="true"
+                    >
+                    </p-dropdown>
+                    &nbsp;                         
+                    
+                     
+                        <p-dropdown
+                        #inputField
+                        styleClass="myclass col-2"
+                        [placeholder]="selectedAccCat? 'select' : 'selecte Account'"
+                        [(ngModel)]="selectedExpeneAccountName"
+                        [options]="ExpenseAccountNameList"
+                        optionLabel="acctName"
+                        [filter]="true"
+                        [filterBy]="'acctName'"
+                        [showClear]="true"
+                        >                       
+                        </p-dropdown>
+                      
+                      &nbsp;                 
+                      <button #savebtn (click)="submit()" translate class="btn btn-primary btnSetting"> <i class="far fa-paper-plane"></i> Submit</button>
+   
+                    </div>
+ 
+  
+                </div>
+            </div>
+        </div>
+  </div>
+  
+  
+  <app-report-gird
+  heading="Expense Report"
+  [dtFrom]="DateFrom"
+  [dtTo]="DateTo"
+  [columns]="cols"
+  [data]="data"
+  [AllowHeaderSetting]="allowBtn"
+  [AllowGlobalFilter]="allowBtn"
+  [AllowPrintButtons]="allowBtn"
+  >
+  </app-report-gird>
+  

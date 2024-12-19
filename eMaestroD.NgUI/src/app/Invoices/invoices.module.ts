@@ -42,6 +42,8 @@ import { AddNewSaleDComponent } from './Components/add-new-sale-d/add-new-sale-d
 import { AddNewPurchaseDComponent } from './Components/add-new-purchase-d/add-new-purchase-d.component';
 import { AddNewGrnDComponent } from './Components/add-new-grn-d/add-new-grn-d.component';
 import { AddNewPurchaseOrderDComponent } from './Components/add-new-purchase-order-d/add-new-purchase-order-d.component';
+import { AddNewPurchaseReturnDComponent } from './Components/add-new-purchase-return-d/add-new-purchase-return-d.component';
+import { AddNewSaleReturnDComponent } from './Components/add-new-sale-return-d/add-new-sale-return-d.component';
 
 
 
@@ -86,7 +88,9 @@ import { AddNewPurchaseOrderDComponent } from './Components/add-new-purchase-ord
     AddNewSaleDComponent,
     AddNewPurchaseDComponent,
     AddNewGrnDComponent,
-    AddNewPurchaseOrderDComponent
+    AddNewPurchaseOrderDComponent,
+    AddNewPurchaseReturnDComponent,
+    AddNewSaleReturnDComponent
   ],
   imports: [
     CommonModule,

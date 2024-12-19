@@ -31,13 +31,23 @@ namespace eMaestroD.Api.Controllers
         private readonly AMDbContext _AMDbContext;
         private readonly NotificationInterceptor _notificationInterceptor;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly HelperMethods _helperMethods;
         string username = "";
-        public FiscalYearController(AMDbContext aMDbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor)
+        string tradeDebtorsAcctCode = "";
+        string tradeCreditorsAcctCode = "";
+        string stockInTradeAcctCode = "";
+        public FiscalYearController(AMDbContext aMDbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor, HelperMethods helperMethods)
         {
             _AMDbContext = aMDbContext;
             _notificationInterceptor = notificationInterceptor;
             _httpContextAccessor = httpContextAccessor;
+            _helperMethods = helperMethods;
             username = GetUsername();
+
+            stockInTradeAcctCode = _helperMethods.GetAcctNoByKey(ConfigKeys.StockInTrade);
+            tradeDebtorsAcctCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeDebtors);
+            tradeCreditorsAcctCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeCreditors);
+
         }
 
 
@@ -244,7 +254,7 @@ namespace eMaestroD.Api.Controllers
                     List<GL> gl = new List<GL>();
 
                     coaLst = new List<COA>();
-                    coaLst = _AMDbContext.COA.Where(x => x.active == true).ToList();
+                    coaLst = _AMDbContext.COA.Where(x => x.active == true && x.comID == int.Parse(comID)).ToList();
                     cstLst = _AMDbContext.Customers.Where(x => x.active == true && x.comID == int.Parse(comID)).ToList();
                     vendLst = _AMDbContext.Vendors.Where(x => x.active == true && x.comID == int.Parse(comID)).ToList();
                     locLst = _AMDbContext.Locations.Where(x => x.comID == int.Parse(comID)).ToList();
@@ -280,13 +290,13 @@ namespace eMaestroD.Api.Controllers
                     {
                         if (coa.COAlevel > 4 || coa.COAlevel < 0 || coa.COAID < 1 || coa.COANo < 0) { continue; }
 
-                        if (coa.parentCOAID == 40 && coa.COAlevel == 4)
+                        if (coa.parentAcctNo == tradeDebtorsAcctCode && coa.COAlevel == 4)
                         {
-                            var customer = cstLst.Find(x => x.cstID == coa.COANo && coa.parentCOAID == 40);
+                            var customer = cstLst.Find(x => x.cstID == coa.COANo && coa.parentAcctNo == tradeDebtorsAcctCode);
                             if (customer != null) //cstLst.Find(x => x.cstID == coa.COANo).locID > 0
                             {
                                 objAcLContain = new List<AccountsReceivable>();
-                                objAcLContain = objAcL.FindAll(x => x.id == coa.COANo && coa.parentCOAID == 40);
+                                objAcLContain = objAcL.FindAll(x => x.id == coa.COANo && coa.parentAcctNo == tradeDebtorsAcctCode);
 
 
                                 if (objAcLContain.Count > 0)
@@ -303,7 +313,8 @@ namespace eMaestroD.Api.Controllers
                                         objFiscalBalances.lastClosing = objAcLContain[0].balSum;
                                         objFiscalBalances.fiscalYear = objFY.period;
                                         objFiscalBalances.bal = objAcLContain[0].balSum;
-                                        objFiscalBalances.parentCOAID = coa.parentCOAID;
+                                        objFiscalBalances.parentCOAID = 0;
+                                        objFiscalBalances.parentAcctNo = coa.parentAcctNo;
                                         objFiscalBalances.crtDate = DateTime.Now;
                                         objFiscalBalances.modDate = DateTime.Now;
                                         objFiscalBalances.comID = int.Parse(comID);
@@ -315,8 +326,8 @@ namespace eMaestroD.Api.Controllers
                                         {
                                             txID = 0,
                                             txTypeID = 40,
-                                            COAID = coa.parentCOAID,
-                                            relCOAID = coa.COAID,
+                                            COAID = 0,
+                                            relCOAID = 0,
                                             cstID = customer.cstID,
                                             comID = customer.comID,
                                             balSum = 0,
@@ -329,6 +340,8 @@ namespace eMaestroD.Api.Controllers
                                             crtDate = DateTime.Now,
                                             modBy = username,
                                             modDate = DateTime.Now,
+                                            acctNo = coa.parentAcctNo,
+                                            relAcctNo = coa.acctNo
                                         };
 
                                         gl.Add(glEntry1);
@@ -338,8 +351,8 @@ namespace eMaestroD.Api.Controllers
                                         {
                                             txID = 0,
                                             txTypeID = 40,
-                                            COAID = coa.COAID,
-                                            relCOAID = coa.parentCOAID,
+                                            COAID = 0,
+                                            relCOAID = 0,
                                             cstID = customer.cstID,
                                             comID = customer.comID,
                                             balSum = objAcLContain[0].balSum,
@@ -352,22 +365,24 @@ namespace eMaestroD.Api.Controllers
                                             crtDate = DateTime.Now,
                                             modBy = username,
                                             modDate = DateTime.Now,
+                                            acctNo = coa.acctNo,
+                                            relAcctNo = coa.parentAcctNo
                                         };
 
                                         gl.Add(glEntry2);
                                     }
                                 }
                             }
-                            // coa.bal = core.GetAccountAmount(fiscalYear, coa.COAID, coa.acctName, coa.COAlevel, coa.parentCOAID, coa.COANo, 0);
+                            // coa.bal = core.GetAccountAmount(fiscalYear, coa.COAID, coa.acctName, coa.COAlevel, 0, coa.COANo, 0);
                         }
-                        else if (coa.parentCOAID == 83 && coa.COAlevel == 4)
+                        else if (coa.parentAcctNo == tradeCreditorsAcctCode && coa.COAlevel == 4)
                         {
-                            var vendor = vendLst.Find(x => x.vendID == coa.COANo && coa.parentCOAID == 83);
+                            var vendor = vendLst.Find(x => x.vendID == coa.COANo && coa.parentAcctNo == tradeCreditorsAcctCode);
                             if (vendor != null) //cstLst.Find(x => x.cstID == coa.COANo).locID > 0
                             {
 
                                 objAcPayContain = new List<AccountsReceivable>();
-                                objAcPayContain = list.FindAll(x => x.id == coa.COANo && coa.parentCOAID == 83);
+                                objAcPayContain = list.FindAll(x => x.id == coa.COANo && coa.parentAcctNo == tradeCreditorsAcctCode);
 
                                 if (objAcPayContain.Count > 0)
                                 {
@@ -384,7 +399,8 @@ namespace eMaestroD.Api.Controllers
                                     objFiscalBalances.lastClosing = coa.bal;
                                     objFiscalBalances.fiscalYear = objFY.period;
                                     objFiscalBalances.bal = coa.bal;
-                                    objFiscalBalances.parentCOAID = coa.parentCOAID;
+                                    objFiscalBalances.parentCOAID = 0;
+                                    objFiscalBalances.parentAcctNo = coa.parentAcctNo;
                                     objFiscalBalances.crtDate = DateTime.Now;
                                     objFiscalBalances.modDate = DateTime.Now;
                                     objFiscalBalances.comID = int.Parse(comID);
@@ -395,8 +411,8 @@ namespace eMaestroD.Api.Controllers
                                     {
                                         txID = 0,
                                         txTypeID = 40,
-                                        COAID = coa.parentCOAID,
-                                        relCOAID = coa.COAID,
+                                        COAID = 0,
+                                        relCOAID = 0,
                                         vendID = vendor.vendID,
                                         comID = vendor.comID,
                                         balSum = 0,
@@ -408,7 +424,9 @@ namespace eMaestroD.Api.Controllers
                                         modBy = username,
                                         modDate = DateTime.Now,
                                         voucherNo = voucherNo,
-                                        depositID = newPeriod
+                                        depositID = newPeriod,
+                                        acctNo = coa.parentAcctNo,
+                                        relAcctNo = coa.acctNo
                                     };
 
                                     gl.Add(glEntry1);
@@ -418,8 +436,8 @@ namespace eMaestroD.Api.Controllers
                                     {
                                         txID = 0,
                                         txTypeID = 40,
-                                        COAID = coa.COAID,
-                                        relCOAID = coa.parentCOAID,
+                                        COAID = 0,
+                                        relCOAID = 0,
                                         vendID = vendor.vendID,
                                         comID = vendor.comID,
                                         balSum = decimal.Parse(coa.bal.ToString()),
@@ -431,7 +449,9 @@ namespace eMaestroD.Api.Controllers
                                         modBy = username,
                                         modDate = DateTime.Now,
                                         voucherNo = voucherNo,
-                                        depositID = newPeriod
+                                        depositID = newPeriod,
+                                        acctNo = coa.acctNo,
+                                        relAcctNo = coa.parentAcctNo
                                     };
 
                                     gl.Add(glEntry2);
@@ -442,7 +462,7 @@ namespace eMaestroD.Api.Controllers
                         {
 
 
-                            //coa.bal = core.GetAccountAmount(fiscalYear, coa.COAID, coa.acctName, coa.COAlevel, coa.parentCOAID, 0, 0);
+                            //coa.bal = core.GetAccountAmount(fiscalYear, coa.COAID, coa.acctName, coa.COAlevel, 0, 0, 0);
                             coa.bal = GetOtherAmount(coa.treeName, coa.COAID, int.Parse(comID));
 
                             coa.openBal = coa.bal;
@@ -456,6 +476,7 @@ namespace eMaestroD.Api.Controllers
                             objFiscalBalances.lastClosing = coa.bal;
                             objFiscalBalances.fiscalYear = objFY.period;
                             objFiscalBalances.parentCOAID = coa.COAID;
+                            objFiscalBalances.parentAcctNo = coa.acctNo;
                             objFiscalBalances.crtDate = DateTime.Now;
                             objFiscalBalances.modDate = DateTime.Now;
                             objFiscalBalances.comID = int.Parse(comID);
@@ -466,8 +487,8 @@ namespace eMaestroD.Api.Controllers
                             {
                                 txID = 0,
                                 txTypeID = 40,
-                                COAID = coa.parentCOAID,
-                                relCOAID = coa.COAID,
+                                COAID = 0,
+                                relCOAID = 0,
                                 cstID = 0,
                                 vendID = 0,
                                 comID = int.Parse(comID),
@@ -480,7 +501,9 @@ namespace eMaestroD.Api.Controllers
                                 modBy = username,
                                 modDate = DateTime.Now,
                                 voucherNo = voucherNo,
-                                depositID = newPeriod
+                                depositID = newPeriod,
+                                acctNo = coa.parentAcctNo,
+                                relAcctNo = coa.acctNo
                             };
 
                             gl.Add(glEntry1);
@@ -490,8 +513,8 @@ namespace eMaestroD.Api.Controllers
                             {
                                 txID = 0,
                                 txTypeID = 40,
-                                COAID = coa.COAID,
-                                relCOAID = coa.parentCOAID,
+                                COAID = 0,
+                                relCOAID = 0,
                                 cstID = 0,
                                 vendID = 0,
                                 comID = int.Parse(comID),
@@ -504,7 +527,9 @@ namespace eMaestroD.Api.Controllers
                                 modBy = username,
                                 modDate = DateTime.Now,
                                 voucherNo = voucherNo,
-                                depositID = newPeriod
+                                depositID = newPeriod,
+                                acctNo = coa.acctNo,
+                                relAcctNo = coa.parentAcctNo
                             };
 
                             gl.Add(glEntry2);
@@ -571,7 +596,9 @@ namespace eMaestroD.Api.Controllers
                                 isVoided = false,
                                 dtTx = fiscalYearList.Find(x => x.period == newPeriod).dtStart,
                                 crtDate = DateTime.Now,
-                                comID = int.Parse(comID)
+                                comID = int.Parse(comID),
+                                acctNo = stockInTradeAcctCode,
+                                relAcctNo = tradeCreditorsAcctCode
                             });
                         }
                     }

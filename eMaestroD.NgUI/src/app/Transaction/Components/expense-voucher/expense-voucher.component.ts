@@ -131,7 +131,7 @@ export class ExpenseVoucherComponent implements OnInit {
      }
      viewInvoiceDetail(invoiceNo:any)
      {
-        this.router.navigateByUrl('/Transactions/JournalVoucherDetail'+invoiceNo);
+        this.router.navigateByUrl('/Transactions/JournalVoucherDetail/'+invoiceNo);
      }
 
 
