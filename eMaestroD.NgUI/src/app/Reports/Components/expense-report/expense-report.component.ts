@@ -129,7 +129,7 @@ selectedLocation:any;
     {
       
       console.log(this.selectedAccCat);
-      this.genericService.GetAllCoaByParentCOAID(this.selectedAccCat.COAID).subscribe({
+      this.genericService.GetAllCoaByParentCOAID(this.selectedAccCat.acctNo).subscribe({
         next: (list) => {
           this.ExpenseAccountNameList = list;
           this.filteredExpenseAccountName = this.ExpenseAccountNameList;
