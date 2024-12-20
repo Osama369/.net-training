@@ -1,0 +1,67 @@
+.step-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin: 30px auto;
+    max-width: 800px;
+    position: relative;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    color: #999; /* Default color */
+    flex: 1;
+    text-align: center;
+}
+
+/* Step Circle */
+.step span {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    background-color: #ddd;
+    color: #333;
+    font-weight: bold;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    font-size: 14px;
+    z-index: 2;
+}
+
+/* Active Step */
+.step.active span {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.step.active {
+    color: #007bff;
+    font-weight: bold;
+}
+
+/* Connecting Lines */
+.step::after {
+    content: '';
+    position: absolute;
+    top: 17px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background-color: #ddd;
+    z-index: 1;
+}
+
+.step:last-child::after {
+    display: none; /* Remove line after the last step */
+}
+
+.step.active::after {
+    background-color: #007bff; /* Highlight line for active steps */
+}

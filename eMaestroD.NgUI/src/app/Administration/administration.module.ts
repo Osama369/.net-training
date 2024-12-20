@@ -20,6 +20,11 @@ import { COAComponent } from './Components/coa/coa.component';
 import { NotificationComponent } from './Components/notification/notification.component';
 import { SharedModule } from '../Shared/shared.module';
 import { AdministrationRoutingModule } from './administration-routing.module';
+import { InitConfigComponent } from './Components/init-config/init-config.component';
+import { CompanyConfigComponent } from './Components/company-config/company-config.component';
+import { LocationConfigComponent } from './Components/location-config/location-config.component';
+import { UserConfigComponent } from './Components/user-config/user-config.component';
+
 
 
 @NgModule({
@@ -42,11 +47,18 @@ import { AdministrationRoutingModule } from './administration-routing.module';
     UsersComponent,
     LocationsComponent,
     RoleAuthorizationComponent,
+    InitConfigComponent,
+    CompanyConfigComponent,
+    LocationConfigComponent,
+    UserConfigComponent,
   ],
   imports: [
     CommonModule,
     AdministrationRoutingModule,
     SharedModule,
+  ],
+  exports:[
+    LocationsComponent
   ]
 })
 export class AdministrationModule { }

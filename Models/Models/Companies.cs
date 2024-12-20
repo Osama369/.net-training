@@ -34,6 +34,7 @@ namespace eMaestroD.Models.Models
         public DateTime? modDate { get; set; }
         public Boolean? isPos { get; set; }
         public int? timeZoneID { get; set; }
+        //public int? isConfigured { get; set; }
         [NotMapped]
         public decimal? taxPercentage { get; set; }
         [NotMapped]

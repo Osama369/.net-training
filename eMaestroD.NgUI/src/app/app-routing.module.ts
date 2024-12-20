@@ -13,6 +13,8 @@ import { SelectCompanyComponent } from './Shared/Components/select-company/selec
 import { SignUpComponent } from './Auth/Components/sign-up/sign-up.component';
 import { SharedDataResolver } from './Shared/Resolver/shared-data.resolver';
 import { APP_ROUTES } from './app-routes';
+// import { IntialCongfigComponent } from './Shared/Components/intial-congfig/intial-congfig.component';
+
 
 const routes: Routes = [
   { path: APP_ROUTES.default, redirectTo: APP_ROUTES.account.login, pathMatch: 'full' },
@@ -22,6 +24,7 @@ const routes: Routes = [
     { path: APP_ROUTES.account.signUp, component: SignUpComponent },
     { path: APP_ROUTES.account.register, component: RegisterComponent },
     { path: APP_ROUTES.topbar, component: AppTopBarComponent },
+    // { path: APP_ROUTES.initialConfig, component:IntialCongfigComponent },
     { path: APP_ROUTES.account.confirmation, component: ConfirmVerificationComponent },
     { path: APP_ROUTES.notFound, component: NotFoundComponent },
     { path: APP_ROUTES.notAuthorized, component: NotAuthorizeComponent },

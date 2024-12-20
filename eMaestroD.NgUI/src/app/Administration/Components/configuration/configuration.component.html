@@ -42,7 +42,7 @@
             <p-autoComplete   #inputField [(ngModel)]="SelectedCurrency" [suggestions]="filterCurrencyList"  (completeMethod)="filterCurrency($event)"
               field="Name" value="CurrencyCode" class="col-5" styleClass="col-5" [disabled]="editable" [minLength]="1"  [dropdown]="true" ></p-autoComplete>
 
-              <p-autoComplete   #inputField [(ngModel)]="SelectedTimeZone" [suggestions]="filterTimeZoneList"  (completeMethod)="filterTimeZone($event)"
+            <p-autoComplete   #inputField [(ngModel)]="SelectedTimeZone" [suggestions]="filterTimeZoneList"  (completeMethod)="filterTimeZone($event)"
               field="timeZone" value="timeZoneID" styleClass="col-12" styleClass="col-5 offset-1" [disabled]="editable" [minLength]="1"  [dropdown]="true" ></p-autoComplete>
             </div>
             <div class="col-12">

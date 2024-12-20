@@ -26,4 +26,5 @@ export interface Companies {
   timeZone?:any
   softwareVersion?:any
   isMultiPayment?:any
+  isConfigured?:any
 }
