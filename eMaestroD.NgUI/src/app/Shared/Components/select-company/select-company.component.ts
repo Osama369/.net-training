@@ -142,6 +142,7 @@ export class SelectCompanyComponent implements OnInit {
       this.genericService.getLogoPath().subscribe(path=>{
         this.logoService.updateLogoPath(path);
        })
+      window.location.reload();
   }
 
   logout(){

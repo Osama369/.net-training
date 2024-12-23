@@ -60,7 +60,7 @@
 
                 <div class="col-3">
                   <p-autoComplete #inputField  [(ngModel)]="selectedLocation" [suggestions]="LocationList"  (completeMethod)="filterLocation($event)" (keyup.enter)="onEnterComplex(3)"
-                  field="locName" value="locID" [minLength]="1" [dropdown]="true" ></p-autoComplete>
+                  field="LocationName" value="LocationId" [minLength]="1" [dropdown]="true" ></p-autoComplete>
               </div>
 
             </div>
@@ -198,23 +198,23 @@
                             </p-dropdown>    -->
                         </td>
                         <td class="d-none">
-                            <input pInputText appFocusNext class="p-inputtext-sm" type="text" [(ngModel)]="rowData.batch" [style]="{'width': '200px !important'}">
+                            <input pInputText  class="p-inputtext-sm" type="text" [(ngModel)]="rowData.batch" [style]="{'width': '200px !important'}">
                         </td>
                         <td class="d-none">
                                 <ng-template pTemplate="input">
-                                    <input pInputText appFocusNext class="p-inputtext-sm" type="text" [(ngModel)]="rowData.unitQty" disabled [style]="{'width': '100px'}">
+                                    <input pInputText  class="p-inputtext-sm" type="text" [(ngModel)]="rowData.unitQty" disabled [style]="{'width': '100px'}">
                                 </ng-template>
                                 <ng-template pTemplate="output">
                                     {{rowData.unitQty}}
                                 </ng-template>
                         </td>
                         <td >
-                                    <input #qtyField  [style]="{'width':'50px !important','min-width':'100%'}" pInputText #inputFieldTable (keyup.enter)="onEnterTableInput(0,ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"  appFocusNext class="p-inputtext-sm" type="text" [(ngModel)]="rowData.qty" (blur)="ShowSerialNoDailog(rowData,rowData.qty, ri)" (change)="Itemcalculation(ri)" class="girdRow">
+                                    <input #qtyField  [style]="{'width':'50px !important','min-width':'100%'}" pInputText #inputFieldTable (keyup.enter)="onEnterTableInput(0,ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"   class="p-inputtext-sm" type="text" [(ngModel)]="rowData.qty" (blur)="ShowSerialNoDailog(rowData,rowData.qty, ri)" (change)="Itemcalculation(ri)" class="girdRow">
                         </td>
                         <td class="d-none">
                             <p-cellEditor>
                                 <ng-template pTemplate="input">
-                                    <input pInputText appFocusNext  class="p-inputtext-sm" type="text" [(ngModel)]="rowData.bonusQty" [style]="{'width': '100px !important'}">
+                                    <input pInputText   class="p-inputtext-sm" type="text" [(ngModel)]="rowData.bonusQty" [style]="{'width': '100px !important'}">
                                 </ng-template>
                                 <ng-template pTemplate="output">
                                     {{rowData.bonusQty}}

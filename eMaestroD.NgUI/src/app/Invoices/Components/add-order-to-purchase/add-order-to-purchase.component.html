@@ -52,7 +52,7 @@
 
               <div class="col-3">
                 <p-autoComplete #inputField  [(ngModel)]="selectedLocation" [suggestions]="LocationList"  (completeMethod)="filterLocation($event)" (keyup.enter)="onEnterComplex(3)"
-                field="locName" value="locID" [minLength]="1" [dropdown]="true" ></p-autoComplete>
+                field="LocationName" value="LocationId" [minLength]="1" [dropdown]="true" ></p-autoComplete>
             </div>
           </div>
           <br>
