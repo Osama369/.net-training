@@ -59,6 +59,11 @@ namespace eMaestroD.Api.Controllers
                 string result1 = await PosA4ReportAsync(Parameter, comID, bool.Parse(locID), isProductCode, isArabic);
                 return Ok(result1);
             }
+            else if (ReportName == "PosA5Report")
+            {
+                string result1 = await PosA5ReportAsync(Parameter, comID, bool.Parse(locID), isProductCode, isArabic);
+                return Ok(result1);
+            }
             else if (ReportName == "StockList")
             {
                 int catID = int.Parse(Request.Headers["catID"].ToString());
@@ -779,6 +784,247 @@ namespace eMaestroD.Api.Controllers
 
             var angularPath = $"../../../assets/pdf/{tenantID}/{comID}/{pdfName}";
             return angularPath;
+        }
+
+
+        [NonAction]
+        public async Task<string> PosA5ReportAsync(string vourcherno, int comID, bool isBankDetail, string isProductCode, bool isArabic)
+        {
+           
+            try
+            {
+                var config = await _AMDbContext.Companies.Where(x => x.comID == comID).ToListAsync();
+                var currencylist = _AMDbContext.Currency.Where(x => x.CurrencyCode == config[0].CurrencyCode).ToList();
+                var currencyName = "";
+                if (currencylist.Count > 0)
+                {
+                    currencyName = currencylist[0].Name;
+                }
+                else
+                {
+                    currencyName = "USD";
+                }
+                string sql = "";
+                List<SaleDelivery2> SDL;
+                if (vourcherno.Split('-').FirstOrDefault() == "PNV" || vourcherno.Split('-').FirstOrDefault() == "POV" || vourcherno.Split('-').FirstOrDefault() == "PRT")
+                {
+                    sql = "EXEC Report_PurchaseInvoice @voucherNo";
+                }
+                else
+                {
+                    sql = "EXEC Report_SaleDelivery2 @voucherNo";
+                }
+                List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@voucherNo", Value = vourcherno },
+            };
+                SDL = _AMDbContext.SaleDelivery2.FromSqlRaw(sql, parms.ToArray()).ToList();
+                decimal amount = 0;
+                decimal tax = 0;
+                string taxName = "";
+                decimal discount = 0;
+                byte[] arrpic = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
+                var type = "";
+                List<int> serialNoArray = new List<int>();
+                if (SDL.Count > 0)
+                {
+                    foreach (var item in SDL)
+                    {
+                        if (item.comments != "")
+                        {
+                            string leadingSpaces = new string(' ', 9);
+                            var numbers = item.comments
+                                         .Split(',')
+                                         .Select(str => str.Trim()) // Trim spaces
+                                         .Select(str => int.TryParse(str, out int num) ? num : (int?)null) // Try parsing
+                                         .Where(num => num.HasValue) // Ensure valid numbers
+                                         .Select(num => num.Value)  // Get the value
+                                         .ToList();
+                            serialNoArray.AddRange(numbers);
+
+
+                            item.comments = leadingSpaces + item.comments.Replace(", ", "\r\n         ");
+                        }
+                        //item.comments = item.comments.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        type = item.relCOAID == 40 || item.relCOAID == 83 ? "Credit" : "Cash";
+                        if (vourcherno.Split('-').FirstOrDefault() == "PRT")
+                        {
+                            item.qty = -item.qty;
+                        }
+
+                        if (vourcherno.Split('-').FirstOrDefault() == "POV" || vourcherno.Split('-').FirstOrDefault() == "SRT")
+                        {
+                            item.creditSum += Convert.ToDecimal(item.debitSum);
+                        }
+                        amount += Convert.ToDecimal(item.creditSum);
+                        if (item.checkName == "tax")
+                        {
+                            taxName = item.taxInWords;
+                            if (vourcherno.Split('-').FirstOrDefault() == "PNV" || vourcherno.Split('-').FirstOrDefault() == "POV" || vourcherno.Split('-').FirstOrDefault() == "SRT")
+                            {
+                                item.taxSum = item.debitSum;
+                                tax = item.debitSum;
+                            }
+                            else
+                            {
+                                item.taxSum = item.creditSum;
+                                tax = item.creditSum;
+                            }
+                        }
+                    }
+                    discount = SDL[0].discountSum;
+                    amount = amount - discount;
+                    SDL[0].amountInWords = $"{AmountInWords(Convert.ToInt32(Math.Round(amount, 0))).ToUpperInvariant()} IN {currencyName.ToUpper()} ONLY";
+
+
+                    QRCoder.QRCodeGenerator qRCodeGenerator = new QRCoder.QRCodeGenerator();
+                    QRCoder.QRCodeData qRCodeData = qRCodeGenerator.CreateQrCode(
+                        "Invoice Details\n" +
+                        "----------------------------------------------\n" +
+                        "Seller's Name: " + config[0].companyName + "\n" +
+                        "Seller's TRN: " + config[0].productionType + "\n" +
+                        "Invoice Date: " + SDL[0].dtTx + "\n" +
+                        "Invoice Total(with " + taxName + "): " + Math.Round(amount, 2) + "\n" +
+                        taxName + " Total: " + Math.Round(tax, 2) + "\n"
+                        , QRCoder.QRCodeGenerator.ECCLevel.Q);
+                    QRCoder.QRCode qRCode = new QRCoder.QRCode(qRCodeData);
+                    Bitmap bmp = qRCode.GetGraphic(5);
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        bmp.Save(ms, ImageFormat.Png);
+                        arrpic = ms.ToArray();
+                    }
+
+                    SDL[0].taxInWords = $"{AmountInWords(Convert.ToInt32(Math.Round(tax, 0))).ToUpperInvariant()} IN {currencyName.ToUpper()} ONLY";
+                }
+                string base64 = Convert.ToBase64String(arrpic);
+                // Set report parameters if needed
+                // localReport.SetParameters(...);
+                var basePath = _configuration.GetSection("AppSettings:ImgPath").Value;
+
+
+                var tenantID = cm.Decrypt(HttpContext.User.FindFirst(ClaimTypes.Upn).Value);
+                var logoPath = "assets\\layout\\images\\" + tenantID + "\\" + config[0].companyName + config[0].comID + ".png";
+                var DefaultlogoPath = "assets\\layout\\images\\logo.png";
+                var defaultsignaturePath = "assets\\Signature\\" + tenantID + "\\" + config[0].comID + "\\signature.jpg";
+                var headerImg = "";
+                var signImage = "";
+
+                bool fileExists = System.IO.File.Exists(Path.Combine(basePath, logoPath));
+                if (fileExists)
+                {
+                    headerImg = new Uri(Path.Combine(basePath, logoPath)).AbsoluteUri;
+
+                }
+                else
+                {
+                    headerImg = new Uri(Path.Combine(basePath, DefaultlogoPath)).AbsoluteUri;
+
+                }
+                signImage = new Uri(Path.Combine(basePath, defaultsignaturePath)).AbsoluteUri;
+                LocalReport localReport = new LocalReport();
+                localReport.EnableExternalImages = true;
+                if (!isArabic)
+                {
+                    localReport.ReportPath = "RDLC/SaleDeliverySpecial2InArabic.rdlc";
+                    ReportParameter comPanyNameInArabic = new ReportParameter("comPanyNameInArabic", config[0].softwareVersion);
+                    localReport.SetParameters(comPanyNameInArabic);
+                }
+                else
+                {
+                    localReport.ReportPath = "RDLC/SaleDelivery2.rdlc";
+                }
+                ReportParameter ReportHeaderImage = new ReportParameter("ReportHeaderImage", headerImg);
+                ReportParameter comPanyName = new ReportParameter("comPanyName", config[0].companyName);
+
+                ReportParameter address = new ReportParameter("address", config[0].address);
+                ReportParameter phone = new ReportParameter("phone", config[0].contactNo);
+                ReportParameter email = new ReportParameter("email", config[0].email);         
+                //ReportParameter VAT = new ReportParameter("VAT", config[0].productionType);
+               // ReportParameter country = new ReportParameter("country", config[0].city+' '+config[0].country);
+               // ReportParameter qrcode = new ReportParameter("qrcode", base64);
+                //ReportParameter taxNameforReport = new ReportParameter("taxName", taxName);
+                //ReportParameter pc = new ReportParameter("isProductCode", isProductCode);
+               // ReportParameter typeParam = new ReportParameter("Type", type);
+                ReportParameter Signature = new ReportParameter("Signature", signImage);
+                //localReport.SetParameters(typeParam);
+                //localReport.SetParameters(pc);
+                if (isBankDetail)
+                {
+                    var bank = _AMDbContext.Banks.Where(x => x.isDefault == true && x.comID == comID).FirstOrDefault();
+                    if (bank != null)
+                    {
+                        ReportParameter bankDetail = new ReportParameter("bankDetail", bank.bankName + "," + bank.accountNo + "," + bank.IBAN + "," + bank.branchCode);
+                        //localReport.SetParameters(bankDetail);
+                    }
+                }
+                //localReport.SetParameters(taxNameforReport);
+                localReport.SetParameters(comPanyName);
+                localReport.SetParameters(email);
+                //localReport.SetParameters(country);
+                localReport.SetParameters(address);
+                localReport.SetParameters(phone);
+                //localReport.SetParameters(VAT);
+                localReport.SetParameters(ReportHeaderImage);
+                localReport.SetParameters(Signature);
+                //localReport.SetParameters(qrcode);
+                localReport.DataSources.Clear();
+                //var rowCount = SDL.Count + (serialNoArray.Count > 30 ? serialNoArray.Count - 10 : serialNoArray.Count > 15 ? serialNoArray.Count - 5 : serialNoArray.Count);
+                //if (rowCount < 25)
+                //{
+                //    for (int i = 0; i < 25 - rowCount; i++)
+                //    {
+                //        SDL.Add(new SaleDelivery { prodID = -1, voucherNo = SDL[0].voucherNo });
+                //    }
+                //}
+                //else if (rowCount < 81)
+                //{
+                //    for (int i = 0; i < 81 - rowCount; i++)
+                //    {
+                //        SDL.Add(new SaleDelivery { prodID = -1, voucherNo = SDL[0].voucherNo });
+                //    }
+                //}
+                //else if (rowCount < 137)
+                //{
+                //    for (int i = 0; i < 137 - rowCount; i++)
+                //    {
+                //        SDL.Add(new SaleDelivery { prodID = -1, voucherNo = SDL[0].voucherNo });
+                //    }
+                //}
+                //else if (rowCount < 193)
+                //{
+                //    for (int i = 0; i < 193 - rowCount; i++)
+                //    {
+                //        SDL.Add(new SaleDelivery { prodID = -1, voucherNo = SDL[0].voucherNo });
+                //    }
+                //}
+                localReport.DataSources.Add(new ReportDataSource("DaliySaleDeliveryDataSet1", SDL));
+
+                byte[] result = localReport.Render("PDF");
+                var pdfName = "InvoiceReport" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".pdf";
+                var relativePath = Path.Combine("assets", "PDF", tenantID, comID.ToString(), pdfName);
+                // Create the directory if it doesn't exist
+                var filePath = Path.Combine(basePath, relativePath);
+                string directoryPath = Path.GetDirectoryName(filePath);
+                if (!Directory.Exists(directoryPath))
+                {
+                    Directory.CreateDirectory(directoryPath);
+                }
+
+                using (FileStream fs = new FileStream(filePath, FileMode.Create))
+                {
+                    fs.Write(result, 0, result.Length);
+                }
+
+                var angularPath = $"../../../assets/pdf/{tenantID}/{comID}/{pdfName}";
+                return angularPath;
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
         }
 
 

@@ -48,6 +48,7 @@ export class InvoiceReportSettingsComponent {
         data.value = true;
       }
     });
+    console.log('radio')
   }
 
   OnRadioChange1(selectedData: any) {
@@ -59,8 +60,9 @@ export class InvoiceReportSettingsComponent {
         data.value = true;
       }
     });
+    console.log('radio1')
   }
-
+  
   save()
   {
     this.reportSettingService.SaveInvoiceReportSettings(this.list).subscribe({

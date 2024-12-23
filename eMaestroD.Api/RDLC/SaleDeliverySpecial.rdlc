@@ -229,7 +229,7 @@
                   <Width>2.12498in</Width>
                 </TablixColumn>
                 <TablixColumn>
-                  <Width>0.63542in</Width>
+                  <Width>0.76042in</Width>
                 </TablixColumn>
                 <TablixColumn>
                   <Width>0.69689in</Width>
@@ -240,18 +240,18 @@
               </TablixColumns>
               <TablixRows>
                 <TablixRow>
-                  <Height>0.59375in</Height>
+                  <Height>0.26348in</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox7">
+                        <Textbox Name="Textbox17">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>="Buyer: "+System.Environment.NewLine+Fields!cstName.Value</Value>
+                                  <Value>="Country"+System.Environment.NewLine+Parameters!country.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -263,16 +263,11 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox7</rd:DefaultName>
+                          <rd:DefaultName>Textbox17</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
                             </Border>
-                            <TopBorder>
-                              <Color>Black</Color>
-                              <Style>Solid</Style>
-                              <Width>1pt</Width>
-                            </TopBorder>
                             <LeftBorder>
                               <Color>Black</Color>
                               <Style>Solid</Style>
@@ -409,18 +404,18 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.60416in</Height>
+                  <Height>0.26348in</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox17">
+                        <Textbox Name="Textbox7">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>="Country"+System.Environment.NewLine+Parameters!country.Value</Value>
+                                  <Value>="Buyer: "+System.Environment.NewLine+Fields!cstName.Value</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -432,11 +427,16 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox17</rd:DefaultName>
+                          <rd:DefaultName>Textbox7</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
                             </Border>
+                            <TopBorder>
+                              <Color>Black</Color>
+                              <Style>Solid</Style>
+                              <Width>1pt</Width>
+                            </TopBorder>
                             <LeftBorder>
                               <Color>Black</Color>
                               <Style>Solid</Style>
@@ -573,7 +573,7 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.55208in</Height>
+                  <Height>0.25306in</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -732,7 +732,7 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.18751in</Height>
+                  <Height>0.18016in</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -788,14 +788,14 @@
                     </TablixCell>
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox40">
+                        <Textbox Name="Textbox50">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Description of Goods</Value>
+                                  <Value>Quantity</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -807,7 +807,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox40</rd:DefaultName>
+                          <rd:DefaultName>Textbox49</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -843,14 +843,14 @@
                     <TablixCell />
                     <TablixCell>
                       <CellContents>
-                        <Textbox Name="Textbox50">
+                        <Textbox Name="Textbox40">
                           <CanGrow>true</CanGrow>
                           <KeepTogether>true</KeepTogether>
                           <Paragraphs>
                             <Paragraph>
                               <TextRuns>
                                 <TextRun>
-                                  <Value>Quantity</Value>
+                                  <Value>Description of Goods</Value>
                                   <Style>
                                     <FontSize>8pt</FontSize>
                                     <FontWeight>Bold</FontWeight>
@@ -862,7 +862,7 @@
                               </Style>
                             </Paragraph>
                           </Paragraphs>
-                          <rd:DefaultName>Textbox49</rd:DefaultName>
+                          <rd:DefaultName>Textbox40</rd:DefaultName>
                           <Style>
                             <Border>
                               <Style>None</Style>
@@ -1000,7 +1000,7 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.17708in</Height>
+                  <Height>0.16973in</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -1229,7 +1229,7 @@
                   </TablixCells>
                 </TablixRow>
                 <TablixRow>
-                  <Height>0.11459in</Height>
+                  <Height>0.10724in</Height>
                   <TablixCells>
                     <TablixCell>
                       <CellContents>
@@ -1521,8 +1521,8 @@
             </TablixRowHierarchy>
             <DataSetName>DaliySaleDeliveryDataSet1</DataSetName>
             <Left>0.0034in</Left>
-            <Height>2.22917in</Height>
-            <Width>7.20052in</Width>
+            <Height>1.23716in</Height>
+            <Width>7.32552in</Width>
             <Style>
               <Border>
                 <Style>None</Style>
@@ -2704,7 +2704,7 @@
         <Height>5.60313in</Height>
         <Style />
       </Body>
-      <Width>7.21885in</Width>
+      <Width>7.32892in</Width>
       <Page>
         <PageHeader>
           <Height>1.11458in</Height>
@@ -2715,9 +2715,9 @@
               <Source>External</Source>
               <Value>=Parameters!ReportHeaderImage.Value</Value>
               <Sizing>FitProportional</Sizing>
-              <Left>0.0034in</Left>
-              <Height>0.80423in</Height>
-              <Width>1.64513in</Width>
+              <Left>0.03118in</Left>
+              <Height>0.7236in</Height>
+              <Width>1.1243in</Width>
               <Style>
                 <Border>
                   <Style>None</Style>
@@ -2731,6 +2731,17 @@
                 <Paragraph>
                   <TextRuns>
                     <TextRun>
+                      <Value xml:space="preserve">  </Value>
+                      <Style>
+                        <FontStyle>Normal</FontStyle>
+                        <FontFamily>Verdana</FontFamily>
+                        <FontSize>14pt</FontSize>
+                        <FontWeight>Normal</FontWeight>
+                        <TextDecoration>None</TextDecoration>
+                        <Color>#000000</Color>
+                      </Style>
+                    </TextRun>
+                    <TextRun>
                       <Value>=Parameters!comPanyName.Value</Value>
                       <Style>
                         <FontStyle>Normal</FontStyle>
@@ -2743,14 +2754,14 @@
                     </TextRun>
                   </TextRuns>
                   <Style>
-                    <TextAlign>Right</TextAlign>
+                    <TextAlign>Center</TextAlign>
                   </Style>
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox19</rd:DefaultName>
-              <Left>1.64853in</Left>
+              <Left>1.15547in</Left>
               <Height>0.25694in</Height>
-              <Width>5.56491in</Width>
+              <Width>3.75241in</Width>
               <ZIndex>1</ZIndex>
               <Style>
                 <Border>
@@ -2777,15 +2788,15 @@
                     </TextRun>
                   </TextRuns>
                   <Style>
-                    <TextAlign>Right</TextAlign>
+                    <TextAlign>Center</TextAlign>
                   </Style>
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox23</rd:DefaultName>
               <Top>0.25694in</Top>
-              <Left>1.64853in</Left>
-              <Height>0.17847in</Height>
-              <Width>5.56491in</Width>
+              <Left>1.16936in</Left>
+              <Height>0.20625in</Height>
+              <Width>3.76019in</Width>
               <ZIndex>2</ZIndex>
               <Style>
                 <Border>
@@ -2813,15 +2824,15 @@
                     </TextRun>
                   </TextRuns>
                   <Style>
-                    <TextAlign>Right</TextAlign>
+                    <TextAlign>Center</TextAlign>
                   </Style>
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox23</rd:DefaultName>
-              <Top>0.43541in</Top>
-              <Left>1.64853in</Left>
-              <Height>0.17785in</Height>
-              <Width>5.56491in</Width>
+              <Top>0.50485in</Top>
+              <Left>1.14159in</Left>
+              <Height>0.25416in</Height>
+              <Width>3.7663in</Width>
               <ZIndex>3</ZIndex>
               <Style>
                 <Border>
@@ -2849,15 +2860,15 @@
                     </TextRun>
                   </TextRuns>
                   <Style>
-                    <TextAlign>Right</TextAlign>
+                    <TextAlign>Center</TextAlign>
                   </Style>
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox23</rd:DefaultName>
-              <Top>0.6236in</Top>
-              <Left>1.64853in</Left>
-              <Height>0.19097in</Height>
-              <Width>5.56491in</Width>
+              <Top>0.78263in</Top>
+              <Left>4.28288in</Left>
+              <Height>0.26805in</Height>
+              <Width>2.07992in</Width>
               <ZIndex>4</ZIndex>
               <Style>
                 <Border>
@@ -2893,10 +2904,10 @@ iif(Split(Fields!voucherNo.Value, "-").GetValue(0) = "PRT", "PURCHASE RETURN", "
                 </Paragraph>
               </Paragraphs>
               <rd:DefaultName>Textbox5</rd:DefaultName>
-              <Top>0.82846in</Top>
-              <Left>0.0034in</Left>
+              <Top>0.80414in</Top>
+              <Left>1.65784in</Left>
               <Height>0.24654in</Height>
-              <Width>7.20664in</Width>
+              <Width>2.1557in</Width>
               <ZIndex>5</ZIndex>
               <Style>
                 <Border>
@@ -2915,8 +2926,8 @@ iif(Split(Fields!voucherNo.Value, "-").GetValue(0) = "PRT", "PURCHASE RETURN", "
             </Border>
           </Style>
         </PageHeader>
-        <PageHeight>11.69in</PageHeight>
-        <PageWidth>8.27in</PageWidth>
+        <PageHeight>8.27in</PageHeight>
+        <PageWidth>5.83in</PageWidth>
         <LeftMargin>0.5in</LeftMargin>
         <RightMargin>0.5in</RightMargin>
         <TopMargin>0.1in</TopMargin>

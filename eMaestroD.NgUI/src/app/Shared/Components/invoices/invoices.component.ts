@@ -50,6 +50,10 @@ export class InvoicesComponent implements OnInit {
     {
       apiUrl = this.baseApiUrl+'/PosReport/'+this.voucherName+'/'+this.isBankInfo+'/'+comID; // Replace with your actual API URL
     }
+    else if(this.type.toLowerCase() == "a5")
+      {
+        apiUrl = this.baseApiUrl+'/PosA5Report/'+this.voucherName+'/'+this.isBankInfo+'/'+comID; // Replace with your actual API URL
+      }
     else
     {
       apiUrl = this.baseApiUrl+'/PosA4Report/'+this.voucherName+'/'+this.isBankInfo+'/'+comID; // Replace with your actual API URL
