@@ -8,13 +8,17 @@
                   <div class="row">
 
                     <div class="col-12">
-                      <label class="col-form-label date-label required" translate>Date From<span>:</span>&nbsp;</label>
+                      <label class="col-2  date-label required"  translate>Date From <span>:</span>&nbsp;</label>
+                      <label class="col-1 col-form-label date-label required" style="margin-left: -37px;" translate>Date To <span>:</span>&nbsp;</label>
+                      <label class="col-2 col-form-label date-label required" style="margin-left: 45px;" translate>Customer Name <span>:</span>&nbsp;</label>
+                      <label class="col-1 col-form-label Vendor-label required" style="margin-left: 5px;" translate>Location <span>:</span>&nbsp;</label>
+                   
+                    </div>
+                    <div class="col-12">
                       <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" class="ReportDropDown" [autofocus]="true" pAutoFocus [(ngModel)]="DateFrom" dateFormat="dd/mm/yy"></p-calendar>
                       &nbsp;
-                      <label class="col-form-label date-label required" translate>Date To <span>:</span>&nbsp;</label>
                       <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" class="ReportDropDown" [(ngModel)]="DateTo" dateFormat="dd/mm/yy"></p-calendar>
                       &nbsp;
-                      <label class="col-form-label date-label required" translate>Name<span>:</span>&nbsp;</label>
                         <!-- <p-autoComplete #inputField [(ngModel)]="SelectedCustomer" [suggestions]="Filtercustomerlist" (completeMethod)="filterCustomer($event)"
                         field="cstName" value="cstID" [minLength]="1" [dropdown]="true" class="ReportDropDown">
                         <ng-template let-customer pTemplate="item">
@@ -36,7 +40,6 @@
                       </ng-template>
                       </p-dropdown>
                       &nbsp;
-                      <label class="col-form-label Vendor-label required" translate>Location<span>:</span>&nbsp;</label>
                       <p-dropdown
                       #inputField
                       styleClass="ReportDropDown"

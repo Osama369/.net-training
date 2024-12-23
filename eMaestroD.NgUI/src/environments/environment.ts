@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  BaseApiUrl:"https://stagingapis.emaestroaccounts.com/api"
+  BaseApiUrl:"https://localhost:44387/api"
 };
 
 /*

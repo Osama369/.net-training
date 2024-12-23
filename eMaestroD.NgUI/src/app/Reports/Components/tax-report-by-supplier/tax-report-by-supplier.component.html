@@ -5,16 +5,19 @@
             <a *ngIf="!bookmark"  (click)="UpdateBookmark(true)" title="Add Bookmark"><i class="pi pi-bookmark" style="font-size: 1.5rem;"></i></a>
             <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark"><i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i></a>
           </h4>
-                  <div class="row">
-
+          <div class="row">
+            
+                   <div class="col-12">
+                      <label class="col-1 col-form-label date-label required"  translate>Date From<span>:</span>&nbsp;</label>
+                      <label class="col-1 col-form-label date-label required" style="margin-left:45px;" translate>Date To <span>:</span>&nbsp;</label>
+                      <label class="col-1 col-form-label date-label required" style="margin-left:45px;" translate>Name<span>:</span>&nbsp;</label>
+                       <label class="col-2 col-form-label Vendor-label required" style="margin-left:88px;" translate>Location<span>:</span>&nbsp;</label>
+                    </div>
                     <div class="col-12">
-                      <label class="col-form-label date-label required" translate>Date From<span>:</span>&nbsp;</label>
                       <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" [autofocus]="true" class="ReportDropDown" pAutoFocus [(ngModel)]="DateFrom" dateFormat="dd/mm/yy"></p-calendar>
                       &nbsp;
-                      <label class="col-form-label date-label required" translate>Date To <span>:</span>&nbsp;</label>
                       <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" [(ngModel)]="DateTo" class="ReportDropDown" dateFormat="dd/mm/yy"></p-calendar>
                       &nbsp;
-                      <label class="col-form-label date-label required" translate>Name<span>:</span>&nbsp;</label>
                       <p-dropdown
                       #inputField
                       styleClass="ReportDropDown"
@@ -32,7 +35,6 @@
 
 
                       &nbsp;
-                      <label class="col-form-label Vendor-label required" translate>Location<span>:</span>&nbsp;</label>
                     <!-- <p-autoComplete #inputField  [(ngModel)]="selectedLocation" [suggestions]="LocationList"  (completeMethod)="filterLocation($event)"
                     field="locName" value="locID" [minLength]="1" [dropdown]="true" class="ReportDropDown"></p-autoComplete> -->
                     <p-dropdown
