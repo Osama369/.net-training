@@ -1062,7 +1062,7 @@ clear()
           if(this.GRNInvoiceList.length > 0){
             this.GRNInvoiceList.unshift({ invoiceVoucherNo : "Select Invoice No"});
           }else{
-            this.GRNInvoiceList.unshift({ invoiceVoucherNo : "No GRN Available"});
+            this.GRNInvoiceList.unshift({ invoiceVoucherNo : "No Invoice Available"});
           }
         },
         error:(responce)=>{
