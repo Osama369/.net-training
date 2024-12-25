@@ -16,7 +16,7 @@ namespace eMaestroD.Models.ReportModels
 		[DisplayName(Name = "Invoice No")]
 		public string? voucherNo { get; set; }
 
-		[DisplayName(Name = "Vendor Name")]
+		[DisplayName(Name = "Supplier")]
 		public string? vendName { get; set; }
 
 		[HiddenOnRender]
@@ -29,11 +29,6 @@ namespace eMaestroD.Models.ReportModels
 		[DisplayName(Name = "Debit Sum")]
 		public decimal debitSum { get; set; }
 
-
-
-
-
-		
 		[DisplayName(Name = "Date Diff")]
 		public int DateDiffx { get; set; }
 		

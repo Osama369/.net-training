@@ -32,11 +32,6 @@ namespace eMaestroD.Models.ReportModels
 		[DisplayName(Name = "Customer Code")]
 		public string? cstCode { get; set; }
 
-		[DisplayName(Name ="Balance Sum")]
-		public decimal balSum { get; set; }
-
-		[DisplayName(Name = "Debit Sum")]
-		public decimal debitSum { get; set; }
 
 		
 
@@ -64,11 +59,16 @@ namespace eMaestroD.Models.ReportModels
 		[DisplayName(Name = "Ninety Days")]
 		public decimal NinetyDays { get; set; }
 			
-
 		[DisplayName(Name = "One Twenty Days")]
 		public decimal OneTwentyDays { get; set; }
 
 		[DisplayName(Name = "One Fifty Days")]
 		public decimal OneFiftyDays { get; set; }
+
+		[DisplayName(Name = "Invoice Amount")]
+		public decimal debitSum { get; set; }
+
+		[DisplayName(Name = "Remaining Amount")]
+		public decimal balSum { get; set; }
 	}
 }
