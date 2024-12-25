@@ -1,0 +1,15 @@
+<div *ngIf="customers">
+
+  <app-gird
+  tableheading="Company CSE"
+  [columns]="cols"
+  [data]="customers"
+  [rowcount]=100
+  [allowColSort]="false"
+  [allowColFilter]="false"
+  [allowGlobalFilter]="true"
+  [allowActionButtons]="true"
+>
+</app-gird>
+
+</div>

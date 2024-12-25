@@ -32,6 +32,7 @@ export const APP_ROUTES = {
     suppliers: 'Manage/Suppliers',
     bank: 'Manage/Bank',
     creditCard: 'Manage/CreditCard',
+    companycse : '/Manage/CompanyCSE',
     bulkStockUpdate: 'Manage/bulkStockUpdate',
   },
 
@@ -107,7 +108,7 @@ export const APP_ROUTES = {
         itemWiseProfit: 'Reports/ItemWiseProfitReport',
         invoiceWiseProfit: 'Reports/InvoiceWiseProfit',
         profitAndLoss: 'Reports/ProfitAndLossReport',
-        
+
       },
     },
   },

@@ -118,6 +118,9 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<PayableAging> PayableAging { get; set; }
         public DbSet<ReceivableAging> ReceivableAging { get; set; }
         public DbSet<ReceiptJournal> ReceiptJournal { get; set; }
+        public DbSet<CompanyCSE> CompanyCSE { get; set; }
+        public DbSet<MseMapArea> MseMapArea { get; set; }
+        public DbSet<CSECustomer> CSECustomer { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
