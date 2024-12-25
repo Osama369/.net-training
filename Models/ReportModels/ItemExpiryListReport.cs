@@ -27,7 +27,7 @@ namespace eMaestroD.Models.ReportModels
         [DisplayName(Name = "VendID")]
         public int vendID { get; set; }
 
-        [DisplayName(Name = "vendName")]
+        [DisplayName(Name = "Supplier")]
       
         public string? vendName { get; set; }
 
@@ -36,31 +36,42 @@ namespace eMaestroD.Models.ReportModels
         [DisplayName(Name = "prodID")]
         public int? prodID { get; set; }
 
+        [DisplayName(Name = "Bar Code")]
+        public string? prodCode { get; set; }
+
+
 
         [DisplayName(Name = "Product Name")]
         public string? prodName { get; set; }
 
 
-        [DisplayName(Name = "prodCode")]
-        public string? prodCode { get; set; }
-
-        [DisplayName(Name = "Expiry Date")]
-        public DateTime expiryDate { get; set; }
-
-        [DisplayName(Name = "Prod Unit")]
-        public string prodUnit { get; set; }
-
-        [DisplayName(Name = "Purchase Price")]
-        public decimal DP { get; set; }
-
-        [DisplayName(Name = "Unit Price")]
-        public decimal TP { get; set; }
+    
 
         [DisplayName(Name = "Batch No")]
         public string BatchNo { get; set; }
 
+        [DisplayName(Name = "Expiry Date")]
+        public DateTime expiryDate { get; set; }
+
+        [HiddenOnRender]
+        [DisplayName(Name = "Prod Unit")]
+        public string prodUnit { get; set; }
+
+        [HiddenOnRender]
+        [DisplayName(Name = "Purchase Price")]
+        public decimal DP { get; set; }
+
+
         [DisplayName(Name = "Quantity")]
         public decimal AvailQty { get; set; }
+
+        [HiddenOnRender]
+        [DisplayName(Name = "Unit Price")]
+        public decimal TP { get; set; }
+
+      
+
+       
 
     }
 }

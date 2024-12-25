@@ -279,8 +279,8 @@ namespace eMaestroD.Api.Controllers
                 vM.entityModel = res?.GetEntity_MetaData();
             }
             else if (ReportName == "ExpenseReport")
-            {                                                                   // accNo
-                var res = await ExpenseReport(Parameter1, Parameter2, int.Parse(Parameter3), locID, comID);
+            {                                                         // accNo
+                var res = await ExpenseReport(Parameter1, Parameter2, Parameter3, locID, comID);
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
@@ -1177,13 +1177,13 @@ namespace eMaestroD.Api.Controllers
             {
                 decimal CRTOTAL = 0;
                 decimal DRTOTAL = 0;
-                foreach (var item in SDL)
-                {
-                    CRTOTAL += item.CR;
-                    DRTOTAL += item.DR;
-                }
+                //foreach (var item in SDL)
+                //{
+                //    CRTOTAL += item.CR;
+                //    DRTOTAL += item.DR;
+                //}
                 SDL = SDL.OrderBy(x => x.PrimitiveType).ToList();
-                SDL.Add(new TrialBalance { acctName = "TOTAL", CR = CRTOTAL, DR = DRTOTAL });
+                //SDL.Add(new TrialBalance { acctName = "TOTAL", CR = CRTOTAL, DR = DRTOTAL });
                 return SDL.Where(x => x.CR != 0 || x.DR != 0).ToList();
             }
             return null;
@@ -1468,38 +1468,47 @@ namespace eMaestroD.Api.Controllers
         }
 
         [NonAction]
-        public async Task<List<ExpenseReport>> ExpenseReport(DateTime dtfrom, DateTime dtTo, int accNo, int locID, int comID)
+        public async Task<List<ExpenseReport>> ExpenseReport(DateTime dtfrom, DateTime dtTo, string accNo, int locID, int comID)
         {
-
-            List<ExpenseReport> SDL;
-            string sql = "[dbo].[Report_ExpenseReport] @dtStart, @dtEnd, @accNo, @comID, @locID";
-
-            List<SqlParameter> parms = new List<SqlParameter>
+            try
             {
-                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
-                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
-                    new SqlParameter { ParameterName = "@accNo", Value = accNo },
-                    new SqlParameter { ParameterName = "@comID", Value = comID },
-                    new SqlParameter { ParameterName = "@locID", Value = locID },
-            };
-            SDL = _AMDbContext.ExpenseReport.FromSqlRaw(sql, parms.ToArray()).ToList();
+                List<ExpenseReport> SDL;
+                string sql = "[dbo].[Report_ExpenseReport] @dtStart, @dtEnd, @accNo, @comID, @locID";
+
+                     List<SqlParameter> parms = new List<SqlParameter>
+                 {
+                         new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                         new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                         new SqlParameter { ParameterName = "@accNo", Value = accNo },
+                         new SqlParameter { ParameterName = "@comID", Value = comID },
+                         new SqlParameter { ParameterName = "@locID", Value = locID },
+                 };
+                     SDL = _AMDbContext.ExpenseReport.FromSqlRaw(sql, parms.ToArray()).ToList();
 
 
 
 
 
-            if (SDL.Count > 0)
-            {
-                //decimal total = 0;
-                //foreach (var item in SDL)
-                //{
-                //    total += item.Totalamount;
-                //}
-                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
-                // return SDL.OrderBy(x => x.expiryDate).ToList();
-                return SDL;
+                if (SDL.Count > 0)
+                {
+                    //decimal total = 0;
+                    //foreach (var item in SDL)
+                    //{
+                    //    total += item.Totalamount;
+                    //}
+                    //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                    // return SDL.OrderBy(x => x.expiryDate).ToList();
+                    return SDL;
+                }
+                return null;
             }
-            return null;
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
+           
 
 
         }
@@ -1623,6 +1632,25 @@ namespace eMaestroD.Api.Controllers
             };
             SDL = _AMDbContext.SaleManLedgerReport.FromSqlRaw(sql, parms.ToArray()).ToList();
 
+            for (int i = 0; i <= SDL.Count - 1; i++)
+            {
+                //if (i == 0) { if (SDL[i].balBF < 0) { plL[i].bal = plL[i].balBF * -1; } if (plL[i].bal == 0) { plL[i].bal = plL[i].balBF; plL[0].DR = 0; }  } //
+                if (i == 0) { if (SDL[i].dr > 0) { SDL[i].balBF = SDL[i].dr; } else { SDL[i].balBF = -SDL[i].cr; } } //
+                else if (i != 0)
+                {
+
+                    if (SDL[i].dr != 0)
+                    {
+                        SDL[i].balBF = SDL[i - 1].balBF + SDL[i].dr;
+
+                    }
+                    else if (SDL[i].cr != 0)
+                    {
+                        SDL[i].balBF = SDL[i - 1].balBF - SDL[i].cr;
+
+                    }
+                }
+            }
 
 
             if (SDL.Count > 0)
@@ -1790,21 +1818,21 @@ namespace eMaestroD.Api.Controllers
             if (SDL.Count > 0)
             {
                 decimal total = 0;
-                foreach (var item in SDL)
-                {
-                    total += item.TotalSalesAmountMonthWise;
-                }
+                //foreach (var item in SDL)
+                //{
+                //    total += item.TotalSalesAmountMonthWise;
+                //}
 
-                SDL.Add(new MonthlySales
-                {
-                    SaleMonth = " "
-                });
+                //SDL.Add(new MonthlySales
+                //{
+                //    SaleMonth = " "
+                //});
 
-                SDL.Add(new MonthlySales
-                {
-                    SaleMonth = "TOTAL",
-                    TotalSalesAmountMonthWise = total
-                });
+                //SDL.Add(new MonthlySales
+                //{
+                //    SaleMonth = "TOTAL",
+                //    TotalSalesAmountMonthWise = total
+                //});
 
                 return SDL;
             }
@@ -2410,21 +2438,21 @@ namespace eMaestroD.Api.Controllers
             if (SDL.Count > 0)
             {
                 decimal total = 0;
-                foreach (var item in SDL)
-                {
-                    total += item.balSum;
-                }
+                //foreach (var item in SDL)
+                //{
+                //    total += item.balSum;
+                //}
 
-                SDL.Add(new AccountsReceivable
-                {
-                    name = " "
-                });
+                //SDL.Add(new AccountsReceivable
+                //{
+                //    name = " "
+                //});
 
-                SDL.Add(new AccountsReceivable
-                {
-                    name = "TOTAL RECEIVABLE",
-                    balSum = total
-                });
+                //SDL.Add(new AccountsReceivable
+                //{
+                //    name = "TOTAL RECEIVABLE",
+                //    balSum = total
+                //});
 
                 return SDL;
             }
@@ -2453,21 +2481,21 @@ namespace eMaestroD.Api.Controllers
             if (SDL.Count > 0)
             {
                 decimal total = 0;
-                foreach (var item in SDL)
-                {
-                    total += item.balSum;
-                }
+                //foreach (var item in SDL)
+                //{
+                //    total += item.balSum;
+                //}
 
-                SDL.Add(new AccountsReceivable
-                {
-                    name = " "
-                });
+                //SDL.Add(new AccountsReceivable
+                //{
+                //    name = " "
+                //});
 
-                SDL.Add(new AccountsReceivable
-                {
-                    name = "TOTAL PAYABLE",
-                    balSum = total
-                });
+                //SDL.Add(new AccountsReceivable
+                //{
+                //    name = "TOTAL PAYABLE",
+                //    balSum = total
+                //});
 
                 return SDL;
             }

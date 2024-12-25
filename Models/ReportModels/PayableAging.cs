@@ -9,24 +9,31 @@ namespace eMaestroD.Models.ReportModels
 {
     public class PayableAging : IEntityBase
     {
+		[DisplayName(Name = "Date")]
+		public DateTime dtTx { get; set; }
+
+		[link]
+		[DisplayName(Name = "Invoice No")]
+		public string? voucherNo { get; set; }
+
+		[DisplayName(Name = "Vendor Name")]
+		public string? vendName { get; set; }
+
+		[HiddenOnRender]
+		[DisplayName(Name = "Vendor Code")]
+		public string? vendCode { get; set; }
+
 		[DisplayName(Name = "Balance Sum")]
 		public decimal balSum { get; set; }
 
 		[DisplayName(Name = "Debit Sum")]
 		public decimal debitSum { get; set; }
 
-		[DisplayName(Name = "Date")]
-		public DateTime dtTx { get; set; }
 
-		[DisplayName(Name = "Invoice No")]
-		public string? voucherNo { get; set; }
 
-		[DisplayName(Name = "Vendor Code")]
-		public string? vendCode { get; set; }
 
-		[DisplayName(Name = "Vendor Name")]
-		public string? vendName { get; set; }
 
+		
 		[DisplayName(Name = "Date Diff")]
 		public int DateDiffx { get; set; }
 		

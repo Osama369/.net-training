@@ -27,7 +27,7 @@ namespace eMaestroD.Models.ReportModels
         //public decimal Q_Box { set; get; }
 
 
-        [DisplayName(Name = "Q_Pcs")]
+        [DisplayName(Name = "Quantity")]
         public decimal Q_Pcs { set; get; }
 
 
@@ -35,24 +35,20 @@ namespace eMaestroD.Models.ReportModels
         public decimal Bonus { set; get; }
 
 
-        [DisplayName(Name = "Amount")]
-        public decimal Amount { set; get; }
-
-
         [DisplayName(Name = "Discount")]
         public decimal Discount { set; get; }
+
 
         [DisplayName(Name = "Tax")]
         public decimal Tax { set; get; }
 
-        //,P.prodName AS ProdName    
+        [DisplayName(Name = "Amount")]
+        public decimal Amount { set; get; }
 
-        //,prodBar.Unit AS Unit    
-        //,0 AS Q_Box
-        //, SUM(G.qty) AS Q_Pcs
-        // , Sum(G.bonusQty) AS Bonus
-        //  , Sum(G.qty * unitPrice) AS Amount--Sum(G.creditSum) AS Amount S    
-        //,Sum(G.discountSum) AS Discount
-        //, Sum(G.taxSum) AS Tax
+
+       
+
+
+        
     }
 }

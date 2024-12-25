@@ -69,6 +69,19 @@
           </ng-container>
         </tr>
       </ng-template>
+      <ng-template *ngIf="AllowTotal" pTemplate="footer" let-columns>
+        <tr>
+          <td *ngFor="let col of columns; let i = index">
+            <ng-container *ngIf="i === 0">
+              <b>Total</b>
+            </ng-container>
+            <ng-container *ngIf="col.controlType != enum_ColTypes.Date && col.controlType == enum_ColTypes.Currency">
+               {{ getColumnSum(col.field) | number : '1.2-2' }}
+            </ng-container>
+          </td>
+        </tr>
+      </ng-template>
+
     </p-table>
 </div>
 </div>

@@ -14,7 +14,7 @@ namespace eMaestroD.Models.ReportModels
           
         public DateTime dtTx { get; set; }
 
-
+        [link]
         [DisplayName(Name = "Invoice No")]
         public string? voucherNo { get; set; }
 

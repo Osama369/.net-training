@@ -37,6 +37,7 @@ namespace eMaestroD.Models.ReportModels
         [DisplayName(Name = "Customer Name")]
         public string? cstName { get; set; }
 
+        [link]
         [DisplayName(Name = "Invoice No")]
         public string? voucherNo { get; set; }
 
