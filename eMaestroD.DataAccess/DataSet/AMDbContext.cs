@@ -119,6 +119,7 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<PayableAging> PayableAging { get; set; }
         public DbSet<ReceivableAging> ReceivableAging { get; set; }
         public DbSet<ReceiptJournal> ReceiptJournal { get; set; }
+        public DbSet<CustomerSaleProdWIse> CustomerSaleProdWIse { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -169,6 +170,7 @@ namespace eMaestroD.DataAccess.DataSet
             modelBuilder.Entity<ReceivableAging>().HasNoKey();
             modelBuilder.Entity<ReceiptJournal>().HasNoKey();
             modelBuilder.Entity<SaleDelivery2>().HasNoKey();
+            modelBuilder.Entity<CustomerSaleProdWIse>().HasNoKey();
         }
 
     }

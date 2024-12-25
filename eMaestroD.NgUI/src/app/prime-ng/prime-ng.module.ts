@@ -11,7 +11,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { AnimateModule } from 'primeng/animate';
 import { SpeedDialModule } from 'primeng/speeddial';
-import { MultiSelectModule } from 'primeng/multiselect';
+import { MultiSelect, MultiSelectModule } from 'primeng/multiselect';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { SliderModule } from 'primeng/slider';
 import { TagModule } from 'primeng/tag';

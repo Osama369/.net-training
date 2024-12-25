@@ -375,6 +375,13 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
+           
+            else if (ReportName == "CustomerSaleProductWise")
+            {
+                var res = await CustomerSaleProductWise(Parameter1, Parameter2, int.Parse(Parameter3), Parameter4, locID, comID);
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
             return Ok(vM);
         }
 
@@ -1281,6 +1288,38 @@ namespace eMaestroD.Api.Controllers
             return null;
         }
 
+        [NonAction]
+        public async Task<List<CustomerSaleProdWIse>> CustomerSaleProductWise(DateTime dtfrom,DateTime dtTo,int cstId, string prodIds, int locID, int comID)
+        {
+            List<CustomerSaleProdWIse> SDL;
+            string sql = "[Report_CustomerSale_ProductWise]  @dtStart,@dtEnd, @cstID, @prodID, @locID, @comID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value =  dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@prodID", Value = prodIds },
+                    new SqlParameter { ParameterName = "@cstID", Value = cstId },
+                    new SqlParameter { ParameterName = "@locID", Value = locID },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+            };
+            SDL = _AMDbContext.CustomerSaleProdWIse.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                // return SDL.OrderBy(x => x.PrimitiveType).ToList();
+                return SDL;
+            }
+            return null;
+        }
         [NonAction]
         public async Task<List<ReceivableAging>> ReceivableAging(DateTime dtTO, int cstID, int locID, int comID)
         {
