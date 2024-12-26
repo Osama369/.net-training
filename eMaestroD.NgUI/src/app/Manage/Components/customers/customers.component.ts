@@ -150,7 +150,8 @@ export class CustomersComponent implements OnInit {
                   "PHONE": "0000000000",
                   "VAT NO": "000000",
                   'VAT %': "0",
-                  "OPENING BALANCE":0
+                  "OPENING BALANCE":0,
+                  "LOCATION":"Current location"
                   // companyName: localStorage.getItem('comName')
                   }]
           this.serviceName = "CustomerService";
