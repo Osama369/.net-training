@@ -637,8 +637,7 @@ namespace eMaestroD.Api.Controllers
                     new SqlParameter { ParameterName = "@comID", Value = comID },
                 };
                 var voucherNo = _AMDbContext.invoiceNo.FromSqlRaw(sql, parms.ToArray()).ToList()[0].voucherNo;
-                var cstParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 40).acctNo;
-
+                
                 foreach (var file in form.Files)
                 {
                     using (var stream = new MemoryStream())
@@ -703,7 +702,7 @@ namespace eMaestroD.Api.Controllers
                                                 await _AMDbContext.SaveChangesAsync();
                                                 list.Add(v);
 
-                                                var cstNewAcctNo = _helperMethods.GenerateAcctNo(cstParentAccCode, comID);
+                                                var cstNewAcctNo = _helperMethods.GenerateAcctNo(tradeDebtorsAcctCode, comID);
                                                 
                                                 COA coa = new COA()
                                                 {
@@ -727,7 +726,8 @@ namespace eMaestroD.Api.Controllers
                                                     crtDate = DateTime.Now,
                                                     modBy = username,
                                                     modDate = DateTime.Now,
-                                                    comID = v.comID
+                                                    comID = v.comID,
+                                                    parentAcctNo = tradeDebtorsAcctCode
                                                 };
                                                 await _AMDbContext.COA.AddAsync(coa);
                                                 await _AMDbContext.SaveChangesAsync();
@@ -741,6 +741,8 @@ namespace eMaestroD.Api.Controllers
                                                         txTypeID = 40,
                                                         COAID = 0,
                                                         relCOAID = 0,
+                                                        acctNo = "",
+                                                        relAcctNo = "",
                                                         cstID = v.cstID,
                                                         balSum = bal,
                                                         creditSum = bal,
@@ -763,6 +765,8 @@ namespace eMaestroD.Api.Controllers
                                                         txTypeID = 40,
                                                         COAID = coa.parentCOAID,
                                                         relCOAID = coa.COAID,
+                                                        acctNo = coa.parentAcctNo,
+                                                        relAcctNo = coa.acctNo,
                                                         cstID = v.cstID,
                                                         balSum = 0,
                                                         debitSum = bal,
@@ -786,6 +790,8 @@ namespace eMaestroD.Api.Controllers
                                                         txTypeID = 40,
                                                         COAID = coa.COAID,
                                                         relCOAID = coa.parentCOAID,
+                                                        acctNo = coa.acctNo,
+                                                        relAcctNo = coa.parentAcctNo,
                                                         cstID = v.cstID,
                                                         balSum = bal,
                                                         creditSum = bal,

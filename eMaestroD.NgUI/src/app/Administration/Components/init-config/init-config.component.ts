@@ -19,7 +19,7 @@ constructor(  private layoutService: LayoutService){
 
 
 ShowNext(event:number){
-   
+
   if(event ===2)
   {
     this.ShowCompanyForm =false;
