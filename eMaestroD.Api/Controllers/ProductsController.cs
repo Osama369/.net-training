@@ -41,14 +41,16 @@ namespace eMaestroD.Api.Controllers
         private CustomMethod cm = new CustomMethod();
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IGLService _glService;
+        private readonly HelperMethods _helperMethods;
         string username = "";
-        public ProductsController(AMDbContext aMDbContext, IWebHostEnvironment webHostEnvironment, NotificationInterceptor notificationInterceptor, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IGLService glService)
+        public ProductsController(AMDbContext aMDbContext, IWebHostEnvironment webHostEnvironment, NotificationInterceptor notificationInterceptor, IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IGLService glService, HelperMethods helperMethods)
         {
             _AMDbContext = aMDbContext;
             _webHostEnvironment = webHostEnvironment;
             _notificationInterceptor = notificationInterceptor;
             _configuration = configuration;
             _httpContextAccessor = httpContextAccessor;
+            _helperMethods = helperMethods;
             username = GetUsername();
             _glService = glService;
         }
@@ -369,24 +371,29 @@ namespace eMaestroD.Api.Controllers
         [HttpPost("uploadProducts")]
         public async Task<IActionResult> uploadProductsAsync()
         {
+            using var transaction = await _AMDbContext.Database.BeginTransactionAsync();
             try
             {
                 var comID = int.Parse(Request.Headers["comID"].ToString());
+                // Validate Fiscal Year
+                var fiscalYear = _AMDbContext.FiscalYear
+                    .Where(x => x.active && x.comID == comID)
+                    .Select(x => x.period)
+                    .FirstOrDefault();
 
-                int fiscalYear = _AMDbContext.FiscalYear.Where(x => x.active == true && x.comID == comID).FirstOrDefault().period;
-                string voucherNo = "";
-                decimal totalAmount = 0M;
-                decimal totalQty = 0M;
+                var vendList = await _AMDbContext.Vendors.Where(x => x.active == true && x.comID == comID && x.vendName.ToUpper() == "OPENING STOCK").FirstOrDefaultAsync();
+                int VendID = vendList != null ? vendList.vendID : 1;
+
+                if (fiscalYear == 0)
+                    return BadRequest("Invalid fiscal year for the company.");
 
                 var form = Request.Form;
-                var list = new List<Product>();
-                int countNotInsertedRow = 0;
-                int countInsertedRow = 0;
-                int countWrongCompanyName = 0;
-                int countEmptyRow = 0;
-                string ExistRowNumber = "";
-                string EmptyRowNumber = "";
-                string EmptyRowNumberForCompany = "";
+                var list = new List<dynamic>();
+                var ExistRowNumber = new StringBuilder();
+                var EmptyRowNumber = new StringBuilder();
+
+                int countInsertedRow = 0, countNotInsertedRow = 0, countEmptyRow = 0;
+
                 foreach (var file in form.Files)
                 {
                     using (var stream = new MemoryStream())
@@ -394,243 +401,186 @@ namespace eMaestroD.Api.Controllers
                         file.CopyTo(stream);
                         using (var workbook = new XLWorkbook(stream))
                         {
-                            var worksheet = workbook.Worksheet(1);
+                            var productSheet = workbook.Worksheet(1);
+                            var unitSheet = workbook.Worksheet(2);
 
-                            // Process the worksheet and extract data
-                            // For example, you can read cells like this:
-                            if (
-                               worksheet.Cell(1, 1).Value.ToString() == "CATEGORY" &&
-                               worksheet.Cell(1, 2).Value.ToString() == "CODE" &&
-                               worksheet.Cell(1, 3).Value.ToString() == "NAME" &&
-                               worksheet.Cell(1, 4).Value.ToString() == "TYPE" &&
-                               worksheet.Cell(1, 5).Value.ToString() == "UNIT" &&
-                               worksheet.Cell(1, 6).Value.ToString() == "PURCHASE RATE" &&
-                               worksheet.Cell(1, 7).Value.ToString() == "SELL RATE" &&
-                               worksheet.Cell(1, 8).Value.ToString() == "MIN QTY" &&
-                               worksheet.Cell(1, 9).Value.ToString() == "MAX QTY" &&
-                               worksheet.Cell(1, 10).Value.ToString() == "OPENING STOCK"
-                               )
+                            // Validate Headers
+                            if (!ValidateProductSheetHeaders(productSheet))
+                                return BadRequest("Incorrect headers in Product sheet.");
+
+                            if (!ValidateUnitSheetHeaders(unitSheet))
+                                return BadRequest("Incorrect headers in Unit sheet.");
+
+                            // Process Product Sheet
+                            foreach (var row in productSheet.RowsUsed().Skip(1))
                             {
-                                for (int i = 2; i <= worksheet.RowsUsed().Count(); i++)
+                                var rowIndex = row.RowNumber();
+                                var supplierName = row.Cell(1).GetValue<string>().Trim();
+                                var departmentName = row.Cell(2).GetValue<string>().Trim();
+                                var categoryName = row.Cell(3).GetValue<string>().Trim();
+                                var productBarcode = row.Cell(4).GetValue<string>().Trim();
+                                var productName = row.Cell(5).GetValue<string>().Trim();
+                                var minQty = row.Cell(6).GetValue<decimal?>() ?? 0;
+                                var maxQty = row.Cell(7).GetValue<decimal?>() ?? 0;
+                                var openingStock = row.Cell(8).GetValue<decimal?>() ?? 0;
+                                var purchaseRate = row.Cell(9).GetValue<decimal?>() ?? 0;
+                                var saleRate = row.Cell(10).GetValue<decimal?>() ?? 0;
+
+                                if (string.IsNullOrWhiteSpace(productBarcode) || string.IsNullOrWhiteSpace(productName) || string.IsNullOrWhiteSpace(categoryName) || string.IsNullOrWhiteSpace(supplierName))
                                 {
-                                    var company = _AMDbContext.Companies.Where(x => x.comID == comID).ToList();
-                                    if (company.Count() == 1)
+                                    countEmptyRow++;
+                                    EmptyRowNumber.Append(rowIndex + ", ");
+                                    continue;
+                                }
+
+                                var department = await GetOrCreateDepartmentAsync(departmentName, comID, username);
+                                var ProdGroups = await GetOrCreateCategoryAsync(categoryName, comID, username);
+                                var supplier = await GetOrCreateSupplierAsync(supplierName, comID, username);
+
+                                var product = await _AMDbContext.Products
+                                    .FirstOrDefaultAsync(p => (p.prodCode.ToLower() == productBarcode.ToLower() || p.prodName.ToLower() == productName.ToLower()) && p.comID == comID);
+
+                                if (product == null)
+                                {
+                                    product = new Product
                                     {
-                                        var vendList = _AMDbContext.Vendors.Where(x => x.active == true && x.comID == company.FirstOrDefault().comID && x.vendName.ToUpper() == "OPENING STOCK").FirstOrDefault();
-                                        int VendID = vendList.vendID;
+                                        prodCode = productBarcode,
+                                        prodName = productName,
+                                        vendID = supplier.vendID,
+                                        prodGrpID = ProdGroups.prodGrpID,
+                                        minQty = minQty,
+                                        maxQty = maxQty,
+                                        descr = "Goods",
+                                        prodUnit = "unit",
+                                        comID = comID,
+                                        depID = department != null ? department.depID : 0,
+                                        active = true,
+                                        crtBy = username,
+                                        crtDate = DateTime.Now,
+                                        modby = username,
+                                        modDate = DateTime.Now
+                                    };
 
-                                        var existList = _AMDbContext.Products.Where(x => x.comID == company.FirstOrDefault().comID && (x.prodCode == worksheet.Cell(i, 2).Value.ToString() || x.prodName == worksheet.Cell(i, 3).Value.ToString()));
-                                        if (existList.Count() == 0)
+                                    _AMDbContext.Products.Add(product);
+                                    await _AMDbContext.SaveChangesAsync();
+                                    list.Add(product);
+                                    countInsertedRow++;
+
+                                    // Add Default Barcode with BaseQty = 1
+                                    var defaultBarcode = new ProductBarCodes
+                                    {
+                                        prodID = product.prodID,
+                                        BarCode = productBarcode,
+                                        Qty = 1,
+                                        Unit = "unit",
+                                        Active = true
+                                    };
+                                    _AMDbContext.ProductBarCodes.Add(defaultBarcode);
+                                    await _AMDbContext.SaveChangesAsync();
+
+                                    if (openingStock > 0)
+                                    {
+                                        await InsertOpeningStock(product, openingStock, fiscalYear, comID, username, VendID, purchaseRate, saleRate, defaultBarcode.prodBCID);
+                                    }
+
+                                }
+                                else
+                                {
+                                    countNotInsertedRow++;
+                                    ExistRowNumber.Append(rowIndex + ", ");
+                                }
+
+                                VendorProduct vendorProduct = new VendorProduct
+                                {
+                                    comVendID = supplier.vendID,
+                                    prodID = product.prodID,
+                                    comID = comID,
+                                    preference = 1, // Default preference
+                                    sharePercentage = supplier.sharePercentage, // Default share percentage
+                                };
+
+                                _AMDbContext.VendorProducts.Add(vendorProduct);
+                                await _AMDbContext.SaveChangesAsync();
+                            }
+
+                            // Process Unit Sheet
+                            foreach (var row in unitSheet.RowsUsed().Skip(1))
+                            {
+                                var productName = row.Cell(1).GetValue<string>().Trim();
+                                var unit = row.Cell(2).GetValue<string>().Trim().ToLower();
+                                var baseQty = row.Cell(3).GetValue<decimal>();
+
+                                if (string.IsNullOrWhiteSpace(productName) || string.IsNullOrWhiteSpace(unit) || string.IsNullOrWhiteSpace(baseQty.ToString()))
+                                {
+                                    countEmptyRow++;
+                                    EmptyRowNumber.Append(row.RowNumber() + ", ");
+                                    continue;
+                                }
+
+                                var product = await _AMDbContext.Products
+                                    .FirstOrDefaultAsync(p => p.prodName.ToLower() == productName.ToLower() && p.comID == comID);
+
+                                if (product != null)
+                                {
+                                    var existingBarcodeUnit = await _AMDbContext.ProductBarCodes.AsNoTracking()
+                                        .FirstOrDefaultAsync(b => b.prodID == product.prodID && b.BarCode == product.prodCode);
+
+                                    if (existingBarcodeUnit != null)
+                                    {
+                                        if (baseQty == 1)
                                         {
-                                            var prdGrpName = worksheet.Cell(i, 1).Value.ToString();
-                                            Product p = new Product();
-                                            p.prodID = 0;
-                                            var categoryList = _AMDbContext.ProdGroups.Where(x => x.prodGrpName == prdGrpName && x.comID == company.FirstOrDefault().comID).ToList();
-                                            if (categoryList.Count > 0) { p.prodGrpID = categoryList[0].prodGrpID; }
-                                            else
+                                            var trackedEntity = _AMDbContext.ChangeTracker
+                                            .Entries<ProductBarCodes>()
+                                            .FirstOrDefault(e => e.Entity.prodBCID == existingBarcodeUnit.prodBCID);
+
+                                            if (trackedEntity != null)
                                             {
-                                                ProdGroups pg = new ProdGroups()
-                                                {
-                                                    active = true,
-                                                    prodGrpName = prdGrpName,
-                                                    prodGrpTypeID = 1,
-                                                    parentProdGrpID = 0,
-                                                    comID = company.FirstOrDefault().comID,
-                                                    crtBy = username,
-                                                    crtDate = DateTime.Now,
-                                                    modby = username,
-                                                    modDate = DateTime.Now
-                                                };
-                                                await _AMDbContext.ProdGroups.AddAsync(pg);
-                                                _AMDbContext.SaveChanges();
-
-                                                p.prodGrpID = pg.prodGrpID;
+                                                _AMDbContext.Entry(trackedEntity.Entity).State = EntityState.Detached;
                                             }
-                                            p.prodCode = worksheet.Cell(i, 2).Value.ToString().Trim();
-                                            p.prodName = worksheet.Cell(i, 3).Value.ToString().Trim();
-                                            if (p.prodCode != "" && p.prodName != "" && company.Count() == 1)
-                                            {
-                                                if (worksheet.Cell(i, 4).Value.ToString().ToLower() == "service")
-                                                {
-                                                    p.descr = "Service";
-                                                }
-                                                else
-                                                {
-                                                    p.descr = "Goods";
-                                                }
-                                                p.prodUnit = worksheet.Cell(i, 5).Value.ToString();
-                                                p.purchRate = decimal.Parse(worksheet.Cell(i, 6).Value.ToString() == "" ? "0" : worksheet.Cell(i, 6).Value.ToString());
-                                                p.sellRate = decimal.Parse(worksheet.Cell(i, 7).Value.ToString() == "" ? "0" : worksheet.Cell(i, 7).Value.ToString());
-                                                p.minQty = decimal.Parse(worksheet.Cell(i, 8).Value.ToString() == "" ? "0" : worksheet.Cell(i, 8).Value.ToString());
-                                                p.maxQty = decimal.Parse(worksheet.Cell(i, 9).Value.ToString() == "" ? "0" : worksheet.Cell(i, 9).Value.ToString());
-                                                p.active = true;
-                                                p.comID = company.FirstOrDefault().comID;
 
-                                                p.crtDate = p.modDate = DateTime.Now;
-                                                p.crtBy = p.modby = username;
-
-                                                await _AMDbContext.Products.AddAsync(p);
-                                                await _AMDbContext.SaveChangesAsync();
-                                                p.prodGrpName = prdGrpName;
-                                                list.Add(p);
-                                                ProductBarCodes pd = new ProductBarCodes()
-                                                {
-                                                    prodID = p.prodID,
-                                                    BarCode = p.prodCode,
-                                                    Qty = 1,
-                                                    Unit = p.prodUnit,
-                                                    Active = true,
-                                                };
-                                                await _AMDbContext.ProductBarCodes.AddAsync(pd);
-                                                await _AMDbContext.SaveChangesAsync();
-                                                countInsertedRow++;
-                                                decimal qty = 0;
-                                                qty = decimal.Parse(worksheet.Cell(i, 10).Value.ToString() == "" ? "0" : worksheet.Cell(i, 10).Value.ToString());
-                                                if (qty > 0)
-                                                {
-                                                    string sql = "EXEC GenerateGLVoucherNo @txType, @comID";
-                                                    List<SqlParameter> parms = new List<SqlParameter>
-                                                {
-                                                new SqlParameter { ParameterName = "@txType", Value = 1 },
-                                                new SqlParameter { ParameterName = "@comID", Value = comID }
-                                                };
-                                                    voucherNo = _AMDbContext.invoiceNo.FromSqlRaw(sql, parms.ToArray()).ToList().FirstOrDefault().voucherNo;
-
-                                                    #region MasterEntryForPurchaseInvoice
-                                                    GL msterEntry = new GL()
-                                                    {
-                                                        relCOAID = 83,
-                                                        crtDate = DateTime.Now,
-                                                        modDate = DateTime.Now,
-                                                        COAID = 98,
-                                                        depositID = fiscalYear,
-                                                        txTypeID = 1,
-                                                        vendID = VendID,
-                                                        // balSum = 0M,//because is not paid completely
-                                                        isPaid = false,
-                                                        isCleared = false,
-                                                        isVoided = false,
-                                                        isDeposited = false,
-                                                        voucherNo = voucherNo,
-                                                        dtTx = DateTime.Now,
-                                                        dtDue = DateTime.Now,
-                                                        glComments = "FromUploadTool",
-                                                        paidSum = 0,
-                                                        crtBy = username,
-                                                        modBy = username
-                                                    };
-
-                                                    GL glItem = new GL();
-
-                                                    glItem.COAID = 98;
-                                                    glItem.relCOAID = 83;
-                                                    glItem.txTypeID = 1;
-                                                    glItem.depositID = fiscalYear;
-                                                    glItem.locID = 1;
-                                                    glItem.vendID = VendID;
-                                                    glItem.prodID = p.prodID;
-                                                    glItem.qty = qty;
-                                                    glItem.qtyBal = glItem.qty;
-                                                    glItem.unitPrice = p.purchRate;
-                                                    glItem.discountSum = 0;
-                                                    glItem.debitSum = p.purchRate * glItem.qty;
-                                                    glItem.dtTx = DateTime.Now;
-                                                    glItem.isVoided = glItem.isDeposited = glItem.isCleared = glItem.isPaid = false;
-                                                    glItem.checkName = p.prodCode;
-                                                    glItem.voucherNo = voucherNo;
-                                                    glItem.crtDate = glItem.modDate = DateTime.Now;
-                                                    glItem.crtBy = glItem.modBy = username;
-
-                                                    totalQty += glItem.qty;
-                                                    totalAmount += glItem.debitSum;
-
-                                                    purchaceInvoiceList.Add(glItem);
-                                                    #endregion
-
-                                                    #region CashLedgerEntry
-
-                                                    GL glPayment = new GL();
-
-                                                    glPayment.COAID = 83;
-                                                    glPayment.relCOAID = 98;
-                                                    glPayment.txTypeID = 1;
-                                                    glPayment.depositID = fiscalYear;
-                                                    glPayment.locID = 1;
-                                                    glPayment.vendID = VendID;
-                                                    glPayment.balSum = glPayment.creditSum = totalAmount;
-                                                    glPayment.dtTx = glPayment.dtDue = DateTime.Now;
-                                                    glPayment.voucherNo = voucherNo;
-                                                    glPayment.crtDate = glPayment.modDate = DateTime.Now;
-                                                    glPayment.crtBy = glPayment.modBy = username;
-                                                    glPayment.isVoided = glPayment.isCleared = glPayment.isDeposited = glPayment.isPaid = false;
-
-                                                    purchaceInvoiceList.Add(glPayment);
-
-                                                    #endregion
-
-
-                                                    msterEntry.balSum = msterEntry.debitSum = totalAmount;
-
-
-                                                    purchaceInvoiceList.Insert(0, msterEntry);
-
-                                                    var gl1 = 0;
-                                                    foreach (var item in purchaceInvoiceList)
-                                                    {
-                                                        if (gl1 != 0)
-                                                        {
-                                                            item.txID = gl1;
-                                                        }
-                                                        await _AMDbContext.gl.AddAsync(item);
-                                                        await _AMDbContext.SaveChangesAsync();
-                                                        if (gl1 == 0)
-                                                        {
-                                                            gl1 = item.GLID;
-                                                        }
-                                                    }
-                                                    purchaceInvoiceList.Clear();
-                                                    totalAmount = 0;
-                                                    totalQty = 0;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                countEmptyRow++;
-                                                EmptyRowNumber = EmptyRowNumber + i + " , ";
-                                            }
+                                            // Now update the entity
+                                            existingBarcodeUnit.Unit = unit;
+                                            _AMDbContext.ProductBarCodes.Update(existingBarcodeUnit);
+                                            await _AMDbContext.SaveChangesAsync();
                                         }
                                         else
                                         {
-                                            countNotInsertedRow++;
-                                            ExistRowNumber = ExistRowNumber + i + " , ";
+                                            var barcodeUnit = new ProductBarCodes
+                                            {
+                                                prodID = product.prodID,
+                                                BarCode = product.prodCode,
+                                                Qty = baseQty,
+                                                Unit = unit,
+                                                Active = true
+                                            };
+                                            _AMDbContext.ProductBarCodes.Add(barcodeUnit);
+                                            await _AMDbContext.SaveChangesAsync();
+
                                         }
                                     }
                                     else
                                     {
-                                        countWrongCompanyName++;
-                                        EmptyRowNumberForCompany = EmptyRowNumberForCompany + i + " , ";
+                                        var barcodeUnit = new ProductBarCodes
+                                        {
+                                            prodID = product.prodID,
+                                            BarCode = product.prodCode,
+                                            Qty = baseQty,
+                                            Unit = unit,
+                                            Active = true
+                                        };
+                                        _AMDbContext.ProductBarCodes.Add(barcodeUnit);
+                                        await _AMDbContext.SaveChangesAsync();
+
                                     }
                                 }
                             }
-                            else
-                            {
-                                return BadRequest("header name is incorrect");
-                            }
+                            await _AMDbContext.SaveChangesAsync();
                         }
                     }
                 }
 
-                if (countInsertedRow == 0 && countNotInsertedRow > 0)
-                {
-                    return NotFound("All Products Already Exists!");
+                await transaction.CommitAsync();
 
-                }
-
-                if (countInsertedRow == 0 && countNotInsertedRow == 0 && countWrongCompanyName > 0)
-                {
-                    return NotFound("Please write correct company name");
-
-                }
                 if (list.Count > 0)
                 {
                     string text = "";
@@ -642,20 +592,264 @@ namespace eMaestroD.Api.Controllers
                     {
                         text = text + " , Fill Empty Blanks On Row Number : " + EmptyRowNumber.Remove(EmptyRowNumber.Length - 2, 1);
                     }
-                    if (countWrongCompanyName > 0)
-                    {
-                        text = text + " , Company name not correct on Row Number : " + EmptyRowNumberForCompany.Remove(EmptyRowNumberForCompany.Length - 2, 1);
-                    }
-                    list[0].comment = countInsertedRow.ToString() + " Out Of " + (countInsertedRow + countNotInsertedRow + countEmptyRow + countWrongCompanyName) + " Inserted Successfully!".ToString() + text;
+
+                    list[0].comment = countInsertedRow.ToString() + " Out Of " +
+                                      (countInsertedRow + countNotInsertedRow + countEmptyRow) +
+                                      " Inserted Successfully!" + text;
                     return Ok(list);
                 }
+
                 return NotFound("Please Upload Correct File.");
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                await transaction.RollbackAsync();
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        private async Task<Vendors> GetOrCreateSupplierAsync(string supplierName, int comID, string username)
+        {
+            var vendor = await _AMDbContext.Vendors
+                .FirstOrDefaultAsync(s => s.vendName.ToLower() == supplierName.ToLower() && s.comID == comID);
+
+            if (vendor == null)
+            {
+                Random random = new Random();
+                string randomNumber = random.Next(1000, 10000).ToString();
+                vendor = new Vendors
+                {
+                    vendCode = randomNumber,
+                    vendName = supplierName,
+                    comID = comID,
+                    active = true,
+                    crtBy = username,
+                    crtDate = DateTime.Now,
+                    modby = username,
+                    modDate = DateTime.Now
+                };
+                _AMDbContext.Vendors.Add(vendor);
+                await _AMDbContext.SaveChangesAsync();
+
+                var tradeCreditorsAcctCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeCreditors);
+                var vendNewAcctNo = _helperMethods.GenerateAcctNo(tradeCreditorsAcctCode, (int)vendor.comID);
+                COA coa = new COA()
+                {
+                    acctNo = vendNewAcctNo,
+                    acctName = vendor.vendName,
+                    openBal = vendor.opnBal,
+                    closingBal = 0,
+                    isSys = false,
+                    parentCOAID = 83,
+                    COANo = vendor.vendID,
+                    nextChkNo = vendor.vendCode,
+                    bal = vendor.opnBal,
+                    COAlevel = 4,
+                    active = true,
+                    treeName = vendor.vendName,
+                    acctType = "Trade Creditors",
+                    parentAcctType = "Liability",
+                    parentAcctName = "Trade Creditors",
+                    path = @"Liability\Current Liability\Current Liability\Trade Creditors\" + vendor.vendName + @"\",
+                    crtBy = username,
+                    crtDate = DateTime.Now,
+                    modBy = username,
+                    modDate = DateTime.Now,
+                    comID = vendor.comID,
+                    parentAcctNo = tradeCreditorsAcctCode
+                };
+                await _AMDbContext.COA.AddAsync(coa);
+                await _AMDbContext.SaveChangesAsync();
             }
 
+            return vendor;
+        }
+
+        
+        private async Task<ProdGroups> GetOrCreateCategoryAsync(string categoryName, int comID, string username)
+        {
+            var category = await _AMDbContext.ProdGroups
+                .FirstOrDefaultAsync(d => d.prodGrpName.ToLower() == categoryName.ToLower() && d.comID == comID);
+
+            if (category == null)
+            {
+                category = new ProdGroups
+                {
+                    active = true,
+                    prodGrpName = categoryName,
+                    prodGrpTypeID = 1,
+                    parentProdGrpID = 0,
+                    comID = comID,
+                    crtBy = username,
+                    crtDate = DateTime.Now,
+                    modby = username,
+                    modDate = DateTime.Now,
+                };
+                _AMDbContext.ProdGroups.Add(category);
+                await _AMDbContext.SaveChangesAsync();
+            }
+
+            return category;
+        }
+
+        private async Task<Department> GetOrCreateDepartmentAsync(string departmentName, int comID, string username)
+        {
+            var department = await _AMDbContext.Departments
+                .FirstOrDefaultAsync(d => d.depName.ToLower() == departmentName.ToLower() && d.comID == comID);
+
+            if (department == null)
+            {
+                department = new Department
+                {
+                    depName = departmentName,
+                    comID = comID,
+                    active = true,
+                    crtBy = username,
+                    crtDate = DateTime.Now,
+                    modby = username,
+                    modDate = DateTime.Now
+                };
+                _AMDbContext.Departments.Add(department);
+                await _AMDbContext.SaveChangesAsync();
+            }
+
+            return department;
+        }
+
+        private bool ValidateProductSheetHeaders(IXLWorksheet sheet)
+        {
+            var requiredHeaders = new List<string>
+            {
+                "SUPPLIER NAME", "DEPARTMENT", "CATEGORY", "PRODUCT BARCODE", "PRODUCT NAME", "MIN QTY", "MAX QTY", "OPENING STOCK","PURCHASE RATE","SALE RATE"
+            };
+
+            var headers = sheet.Row(1).Cells().Select(cell => cell.Value.ToString().Trim().ToUpper()).ToList();
+            return requiredHeaders.All(header => headers.Contains(header));
+        }
+
+        private async Task InsertOpeningStock(Product p, decimal qty, int fiscalYear, int comID, string username, int VendID, decimal purchaseRate, decimal saleRate, int prodBCID)
+        {
+            string sql = "EXEC GenerateGLVoucherNo @txType, @comID";
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+            new SqlParameter { ParameterName = "@txType", Value = 1 },
+            new SqlParameter { ParameterName = "@comID", Value = comID }
+            };
+
+            var voucherNo = _AMDbContext.invoiceNo.FromSqlRaw(sql, parms.ToArray()).ToList().FirstOrDefault().voucherNo;
+            decimal totalAmount = 0M;
+            //98
+            var stockInTradeAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.StockInTrade);
+            //83
+            var TradeCreditorsAccCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeCreditors);
+
+            GL msterEntry = new GL()
+            {
+                relCOAID = 0,
+                crtDate = DateTime.Now,
+                modDate = DateTime.Now,
+                COAID = 0,
+                acctNo = "",
+                relAcctNo = "",
+                depositID = fiscalYear,
+                txTypeID = 1,
+                vendID = VendID,
+                isPaid = false,
+                isCleared = false,
+                isVoided = false,
+                isDeposited = false,
+                voucherNo = voucherNo,
+                dtTx = DateTime.Now,
+                dtDue = DateTime.Now,
+                glComments = "FromUploadTool",
+                paidSum = 0,
+                crtBy = username,
+                modBy = username
+            };
+
+            GL glItem = new GL();
+
+            glItem.COAID = 98;
+            glItem.relCOAID = 83;
+            glItem.acctNo = stockInTradeAccCode;
+            glItem.relAcctNo = TradeCreditorsAccCode;
+            glItem.txTypeID = 1;
+            glItem.depositID = fiscalYear;
+            glItem.locID = 1;
+            glItem.vendID = VendID;
+            glItem.prodID = p.prodID;
+            glItem.prodBCID = prodBCID;
+            glItem.qty = qty;
+            glItem.qtyBal = glItem.qty;
+            glItem.unitPrice = purchaseRate;
+            glItem.sellPrice = saleRate;
+            glItem.batchNo = voucherNo;
+            glItem.expiry = new DateTime().AddDays(60);
+            glItem.discountSum = 0;
+            glItem.debitSum = purchaseRate * glItem.qty;
+            glItem.dtTx = DateTime.Now;
+            glItem.isVoided = glItem.isDeposited = glItem.isCleared = glItem.isPaid = false;
+            glItem.checkName = p.prodCode;
+            glItem.voucherNo = voucherNo;
+            glItem.crtDate = glItem.modDate = DateTime.Now;
+            glItem.crtBy = glItem.modBy = username;
+
+            totalAmount += glItem.debitSum;
+
+            purchaceInvoiceList.Add(glItem);
+
+
+            GL glPayment = new GL();
+
+            glPayment.COAID = 83;
+            glPayment.relCOAID = 98;
+            glPayment.acctNo = TradeCreditorsAccCode;
+            glPayment.relAcctNo = stockInTradeAccCode;
+            glPayment.txTypeID = 1;
+            glPayment.depositID = fiscalYear;
+            glPayment.locID = 1;
+            glPayment.vendID = VendID;
+            glPayment.balSum = glPayment.creditSum = totalAmount;
+            glPayment.dtTx = glPayment.dtDue = DateTime.Now;
+            glPayment.voucherNo = voucherNo;
+            glPayment.crtDate = glPayment.modDate = DateTime.Now;
+            glPayment.crtBy = glPayment.modBy = username;
+            glPayment.isVoided = glPayment.isCleared = glPayment.isDeposited = glPayment.isPaid = false;
+
+            purchaceInvoiceList.Add(glPayment);
+
+
+
+            msterEntry.balSum = msterEntry.debitSum = totalAmount;
+
+
+            purchaceInvoiceList.Insert(0, msterEntry);
+
+            var gl1 = 0;
+            foreach (var item in purchaceInvoiceList)
+            {
+                if (gl1 != 0)
+                {
+                    item.txID = gl1;
+                }
+                await _AMDbContext.gl.AddAsync(item);
+                await _AMDbContext.SaveChangesAsync();
+                if (gl1 == 0)
+                {
+                    gl1 = item.GLID;
+                }
+            }
+        }
+
+        private bool ValidateUnitSheetHeaders(IXLWorksheet sheet)
+        {
+            var requiredHeaders = new List<string>
+            {
+                "PRODUCT NAME", "UNIT", "BASE QTY"
+            };
+
+            var headers = sheet.Row(1).Cells().Select(cell => cell.Value.ToString().Trim().ToUpper()).ToList();
+            return requiredHeaders.All(header => headers.Contains(header));
         }
 
         [HttpPost("confirmProductCategory")]

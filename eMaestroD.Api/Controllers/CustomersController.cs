@@ -447,8 +447,7 @@ namespace eMaestroD.Api.Controllers
                         await _AMDbContext.Customers.AddAsync(customer);
                         await _AMDbContext.SaveChangesAsync();
 
-                        var cstParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 40).acctNo;
-                        var cstNewAcctNo = _helperMethods.GenerateAcctNo(cstParentAccCode, (int)customer.comID);
+                        var cstNewAcctNo = _helperMethods.GenerateAcctNo(tradeDebtorsAcctCode, (int)customer.comID);
 
                         COA coa = new COA()
                         {

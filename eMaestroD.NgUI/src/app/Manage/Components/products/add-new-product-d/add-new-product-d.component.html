@@ -136,7 +136,7 @@
                         </p-button>
                     </div>
 
-                    <div class="col-12 mt-2">
+                    <div class="col-12 mt-2" *ngIf="isPos">
                       <label class="col-4 col-form-label date-label required" translate>Category&nbsp;</label>
                         <p-treeSelect
                         class="select-tree-custom-style"
@@ -158,10 +158,10 @@
 
                     </div>
 
-                    <div class="col-12 mt-2" *ngIf="isPos">
-                      <label class="col-4 col-form-label date-label required" translate>Brand&nbsp;</label>
+                    <div class="col-12 mt-2">
+                      <label class="col-4 col-form-label date-label required" translate>{{isPos ? 'Brand' : 'Category'}}&nbsp;</label>
                       <p-dropdown [options]="productGrouplist" styleClass="col-7"  [(ngModel)]="productlist[0].prodGrpID"
-                        optionLabel="prodGrpName" optionValue="prodGrpID" placeholder="Select a Brand" class="col-form-label col-12" [filter]="true" [filterBy]="'prodGrpName'"
+                        optionLabel="prodGrpName" optionValue="prodGrpID" placeholder="--Select--" class="col-form-label col-12" [filter]="true" [filterBy]="'prodGrpName'"
                         [showClear]="true" (keydown)="openDialog($event, true, 'brand')"></p-dropdown>
                         <p-button
                           icon="pi pi-plus"
@@ -358,6 +358,6 @@
 
 
 <p-dialog #cstDailog [(visible)]="brandVisible" [contentStyle]="{ 'overflow': 'hidden' }"  [style]="{width: '40vw'}">
-  <app-add-new-prod-group [title]="'Brand Registration'" (dataEvent)="handleChildData($event)"></app-add-new-prod-group>
+  <app-add-new-prod-group [title]="'Category Registration'" (dataEvent)="handleChildData($event)"></app-add-new-prod-group>
 </p-dialog>
 

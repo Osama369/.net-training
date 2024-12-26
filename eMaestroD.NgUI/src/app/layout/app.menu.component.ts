@@ -72,10 +72,10 @@ export class AppMenuComponent implements OnInit {
               icon: 'pi pi-fw pi-pencil',
               items: [
                 { label: 'Re-Order Products', routerLink: [APP_ROUTES.manage.reorder] },
-                { label: 'Manufacture', routerLink: [APP_ROUTES.manage.manufacture] },
-                { label: 'Brand', routerLink: [APP_ROUTES.manage.brand] },
+                ...(this.isPos ? [{ label: 'Manufacture', routerLink: [APP_ROUTES.manage.manufacture] }] : []),
+                { label: this.getDynamicLabel(this.isPos, 'Brand', 'Category'), routerLink: [APP_ROUTES.manage.brand] },
                 { label: 'Departments', routerLink: [APP_ROUTES.manage.department] },
-                { label: 'Category', routerLink: [APP_ROUTES.manage.category] },
+                ...(this.isPos ? [{ label: 'Category', routerLink: [APP_ROUTES.manage.category] }] : []),
                 { label: 'Customers', routerLink: [APP_ROUTES.manage.customers] },
                 { label: 'Suppliers', routerLink: [APP_ROUTES.manage.suppliers] },
                 { label: 'Products', routerLink: [APP_ROUTES.manage.products] },

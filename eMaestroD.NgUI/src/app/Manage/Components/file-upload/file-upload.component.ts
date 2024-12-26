@@ -19,9 +19,11 @@ interface UploadEvent {
 export class FileUploadComponent {
   @Input() public uploadHeading: string = 'No Heading';
   @Input() public data: any[] = [];
+  @Input() public barcodeData: any[] = [];
   @Input() public serviceName: any;
   @Input() public methodName: any;
   @Input() public confirmCategory: boolean = false;
+  @Input() public ShowDescription : string = "";
   uploadedFiles: any[] = [];
   @Output() dataEvent = new EventEmitter<any>();
   @ViewChild('file') fileUpload: any;
@@ -91,12 +93,24 @@ export class FileUploadComponent {
 
   exportExcel() {
     import("xlsx").then(xlsx => {
-        const worksheet = xlsx.utils.json_to_sheet(this.data);
-        const workbook = { Sheets: { 'Sheet1': worksheet }, SheetNames: ['Sheet1'] };
+        // Create the first worksheet for 'data'
+        const worksheet1 = xlsx.utils.json_to_sheet(this.data);
+        const name = this.uploadHeading; // Assuming this is a string
+        const workbook: any = {
+            Sheets: { [name]: worksheet1 },
+            SheetNames: [name]
+        };
+
+        if (this.barcodeData && this.barcodeData.length > 0) {
+            const worksheet2 = xlsx.utils.json_to_sheet(this.barcodeData);
+            workbook.Sheets['ProductSubUnits'] = worksheet2;
+            workbook.SheetNames.push('ProductSubUnits');
+        }
+
         const excelBuffer: any = xlsx.write(workbook, { bookType: 'xlsx', type: 'array' });
         this.saveAsExcelFile(excelBuffer, this.uploadHeading.toString());
     });
-  }
+}
 
   saveAsExcelFile(buffer: any, fileName: string): void {
     let EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';

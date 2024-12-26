@@ -1,7 +1,17 @@
 <div class="card">
     <div class="row" style="height: 40px !important;">
         <div class="col-12">
-            <h4 class="col-12" translate><span translate>Upload</span>&nbsp;{{ uploadHeading | translate }} </h4>
+            <h4 class="col-7" translate><span translate>Upload</span>&nbsp;{{ uploadHeading | translate }}
+              <span *ngIf="ShowDescription != ''" style="float: right; margin-right: -20px !important">
+                <div class="custom-tooltip">
+                  <i class="fa fa-info-circle"></i>
+                  <div class="tooltip-text" style="font-size: 14px; width: 350px;">
+                    {{ShowDescription}}
+                  </div>
+                </div>
+              </span>
+            </h4>
+
             <button pButton type="button" style="float:right;padding: 5px !important;top: -40px;" icon="pi pi-download" translate [label]="'Download Template'| translate " (click)="downloadTemplate()"></button>
         </div>
     </div>
