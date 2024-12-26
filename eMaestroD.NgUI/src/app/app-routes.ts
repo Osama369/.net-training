@@ -1,3 +1,5 @@
+import { initial } from "lodash";
+
 export const APP_ROUTES = {
   default: '',
 
@@ -9,7 +11,7 @@ export const APP_ROUTES = {
     confirmation: 'Account/Confirmation',
     selectCompany: 'Account/SelectCompany',
   },
-
+  initialConfig:'CompanyConfig',
   topbar: 'topbar',
 
   notFound: '404',
@@ -124,5 +126,7 @@ export const APP_ROUTES = {
     notification: 'Administration/Notification',
     notificationAlert: 'Administration/NotificationAlert',
     companySetting: 'Administration/Configuration',
+    companyConfig:'Administration/CompanyConfig'
+   
   },
 };

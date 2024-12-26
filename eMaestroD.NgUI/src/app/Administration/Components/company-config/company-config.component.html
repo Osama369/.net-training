@@ -1,0 +1,33 @@
+<div [ngClass]="{'d-none':isDisplay}" class="form-container" id="form-1">
+    <h3>Company Data</h3>
+    <div class="row">
+        <div class="col-6">
+            <label>Company Name</label>
+             <input [(ngModel)]="configurationList[0].companyName" type="text">   
+        </div>
+        <div class="col-6">
+            <label>Tax Number</label>
+            <input [(ngModel)]="configurationList[0].productionType" (input)="TaxValidation($event)" type="text">
+        </div>
+        <div class="col-6">
+            <label>Currency</label>
+            <p-autoComplete   #inputField 
+            field="Name" value="CurrencyCode" [(ngModel)]="SelectedCurrency" [suggestions]="filterCurrencyList" (completeMethod)="filterCurrency($event)"  [disabled]="" [minLength]="1"  [dropdown]="true" ></p-autoComplete>
+          </div>
+          <div class="col-6">
+            <label>Time Zone</label>
+
+            <p-autoComplete   #inputField 
+            field="timeZone" value="timeZoneID" [(ngModel)]="SelectedTimeZone" [suggestions]="filterTimeZoneList"  (completeMethod)="filterTimeZone($event)"  [disabled]="" [minLength]="1"  [dropdown]="true" ></p-autoComplete>
+          </div>
+
+          <div class="col-12">
+            <label class="mt-2">Add logo</label>
+            <p-fileUpload #file class="mt-2" mode="basic" chooseLabel="Browse" name="" url="./upload.php" accept="image/*" ></p-fileUpload>
+            <!-- <p-fileUpload mode="basic" name="demo[]" url="./upload.php" accept="image/*" maxFileSize="1000000" (onUpload)="onBasicUpload($event)"></p-fileUpload> -->
+        
+          </div>
+       
+    </div>  
+    <button (click)="saveCompanyDetail()" id="next-1" class="mt-4">Save</button>
+</div>

@@ -623,9 +623,12 @@ namespace eMaestroD.Api.Controllers
                 int countInsertedRow = 0;
                 int countEmptyRow = 0;
                 int countWrongCompanyName = 0;
+                int rowLocationNotAvlCount = 0;
+                int emptyLocationCount = 0;
                 string ExistRowNumber = "";
                 string EmptyRowNumber = "";
                 string EmptyRowNumberForCompany = "";
+                string rowLocationNotAvailable = "";
 
                 string sql = "EXEC GenerateGLVoucherNo @txType,@comID";
                 List<SqlParameter> parms = new List<SqlParameter>
@@ -654,7 +657,8 @@ namespace eMaestroD.Api.Controllers
                                 worksheet.Cell(1, 4).Value.ToString() == "PHONE" &&
                                 worksheet.Cell(1, 5).Value.ToString() == "VAT NO" &&
                                 worksheet.Cell(1, 6).Value.ToString() == "VAT %" &&
-                                worksheet.Cell(1, 7).Value.ToString() == "OPENING BALANCE"
+                                worksheet.Cell(1, 7).Value.ToString() == "OPENING BALANCE" &&
+                                worksheet.Cell(1, 8).Value.ToString() == "LOCATION"
                                 )
                             {
 
@@ -671,8 +675,13 @@ namespace eMaestroD.Api.Controllers
                                             v.cstID = 0;
                                             v.cstCode = worksheet.Cell(i, 1).Value.ToString().Trim();
                                             v.cstName = worksheet.Cell(i, 2).Value.ToString().Trim();
+                                            var loc = new Locations();
+                                      
+                                            loc = _AMDbContext.Locations.FirstOrDefault(x => x.LocationName == worksheet.Cell(i, 8).Value.ToString());
 
-                                            if (v.cstName != "" && v.cstCode != "" && company.Count() == 1)
+                                           
+
+                                            if (v.cstName != "" && v.cstCode != "" && company.Count() == 1 && loc!=null)
                                             {
 
                                                 v.address = worksheet.Cell(i, 3).Value.ToString();
@@ -687,6 +696,8 @@ namespace eMaestroD.Api.Controllers
                                                 v.crtDate = DateTime.Now;
                                                 v.modby = username;
                                                 v.modDate = DateTime.Now;
+                                                v.cityID = loc.LocationId;
+                                                v.city = loc.LocationName;
 
                                                 await _AMDbContext.Customers.AddAsync(v);
                                                 await _AMDbContext.SaveChangesAsync();
@@ -812,8 +823,16 @@ namespace eMaestroD.Api.Controllers
                                             }
                                             else
                                             {
-                                                countEmptyRow++;
-                                                EmptyRowNumber = EmptyRowNumber + i + " , ";
+                                                //if (loc != null)
+                                                //{
+                                                    countEmptyRow++;
+                                                    EmptyRowNumber = EmptyRowNumber + i + " , ";
+                                                //}
+                                                //else
+                                                //{
+                                                //    rowLocationNotAvlCount++;
+                                                //    rowLocationNotAvailable = rowLocationNotAvailable + i + " , ";
+                                                //}
                                             }
                                         }
                                         else
@@ -860,7 +879,12 @@ namespace eMaestroD.Api.Controllers
                     {
                         text = text + " , Company name not correct on Row Number : " + EmptyRowNumberForCompany.Remove(EmptyRowNumberForCompany.Length - 2, 1);
                     }
-                    list[0].comment = countInsertedRow.ToString() + " Out Of " + (countInsertedRow + countNotInsertedRow + countEmptyRow + countWrongCompanyName) + " Inserted Successfully!".ToString() + text;
+                    //if(rowLocationNotAvlCount > 0)
+                    //{
+
+                    //    text = text + " , Row Number : " + rowLocationNotAvailable.Remove(rowLocationNotAvailable.Length - 2, 1) + "Locations not available";
+                    //}
+                    list[0].comment = countInsertedRow.ToString() + " Out Of " + (countInsertedRow + countNotInsertedRow + countEmptyRow + countWrongCompanyName +rowLocationNotAvlCount) + " Inserted Successfully!".ToString() + text;
                     return Ok(list);
                 }
                 return NotFound("Please Upload Correct File.");

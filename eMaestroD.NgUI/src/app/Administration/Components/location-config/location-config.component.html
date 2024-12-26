@@ -1,0 +1,18 @@
+<div class="form-container " id="form-3">
+    <h3>Add New Location</h3>
+    <div class="row">
+        <div class="col-12">
+                 <label>Parent Location Name</label>
+       </div>
+        <div class="col-12 p-drop-w-100">
+            <p-autoComplete   #inputField [(ngModel)]="SelectedLocation" [suggestions]="filterLocList"  (completeMethod)="filterLocation($event)"
+            field="LocationName" value="LocationId"  [minLength]="1"  [dropdown]="true" ></p-autoComplete>
+         
+        </div>
+    </div>
+    <!-- <input type="text" value="Karachi" disabled> -->
+    <label>Name</label>
+    <input type="text" [(ngModel)]="providedLocName"  placeholder="Enter Location Name">
+    <!-- <button class="back" id="back-3">Back</button> -->
+    <button id="next-3" (click)="Save()">Save</button>
+</div>
