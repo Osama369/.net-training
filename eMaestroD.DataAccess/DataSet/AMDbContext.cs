@@ -45,6 +45,7 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<Roles> Roles { get; set; }
         public DbSet<UserCompanies> UserCompanies { get; set; }
         public DbSet<SaleDelivery> SaleDelivery { get; set; }
+        public DbSet<SaleDelivery2> SaleDelivery2 { get; set; }
         public DbSet<invoices> invoices { get; set; }
         public DbSet<journalVoucher> journalVoucher { get; set; }
         public DbSet<Taxes> Taxes { get; set; }
@@ -121,6 +122,7 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<CompanyCSE> CompanyCSE { get; set; }
         public DbSet<MseMapArea> MseMapArea { get; set; }
         public DbSet<CSECustomer> CSECustomer { get; set; }
+        public DbSet<CustomerSaleProdWIse> CustomerSaleProdWIse { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -170,6 +172,8 @@ namespace eMaestroD.DataAccess.DataSet
             modelBuilder.Entity<PayableAging>().HasNoKey();
             modelBuilder.Entity<ReceivableAging>().HasNoKey();
             modelBuilder.Entity<ReceiptJournal>().HasNoKey();
+            modelBuilder.Entity<SaleDelivery2>().HasNoKey();
+            modelBuilder.Entity<CustomerSaleProdWIse>().HasNoKey();
         }
 
     }

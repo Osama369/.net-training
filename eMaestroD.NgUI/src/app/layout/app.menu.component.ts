@@ -183,6 +183,7 @@ export class AppMenuComponent implements OnInit {
                     { label: 'Payable Aging', routerLink: [APP_ROUTES.reports.accountReports.PayableAging] },
                     { label: 'Receivable Aging', routerLink: [APP_ROUTES.reports.accountReports.ReceivableAging] },
                     { label: 'Receipt Journal', routerLink: [APP_ROUTES.reports.accountReports.ReceiptJournal] },
+                    { label: 'Customer Sale Item Wise', routerLink: [APP_ROUTES.reports.accountReports.CustomerSaleProductWise] },
                   ],
                 },
               ],

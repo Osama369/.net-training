@@ -11,29 +11,34 @@ namespace eMaestroD.Models.ReportModels
     public  class ReceivableAging :IEntityBase
     {
 
- //       G.[balSum], G.[debitSum], G.[dtTx], G.[voucherNo]
-	//,CST.[cstCode], CST.[cstName]
-	//,DATEDIFF(DAY, G.[dtTx], @asOfDate)-CST.[creditDays] AS DateDiffx
-	
-	//,CST.[creditDays]
+		//       G.[balSum], G.[debitSum], G.[dtTx], G.[voucherNo]
+		//,CST.[cstCode], CST.[cstName]
+		//,DATEDIFF(DAY, G.[dtTx], @asOfDate)-CST.[creditDays] AS DateDiffx
 
-		[DisplayName(Name ="Balance Sum")]
-		public decimal balSum { get; set; }
-
-		[DisplayName(Name = "Debit Sum")]
-		public decimal debitSum { get; set; }
+		//,CST.[creditDays]
 
 		[DisplayName(Name = "Date")]
 		public DateTime dtTx { get; set; }
 
+		[link]
 		[DisplayName(Name = "Invoice No")]
 		public string? voucherNo { get; set; }
 
-		[DisplayName(Name = "Customer Code")]
-		public string? cstCode { get; set; }
 
 		[DisplayName(Name = "Customer Name")]
 		public string? cstName { get; set; }
+
+		[HiddenOnRender]
+		[DisplayName(Name = "Customer Code")]
+		public string? cstCode { get; set; }
+
+
+		
+
+	
+
+
+
 
 		[DisplayName(Name = "Date Diff")]
 		public int? DateDiffx { get; set; }
@@ -54,11 +59,16 @@ namespace eMaestroD.Models.ReportModels
 		[DisplayName(Name = "Ninety Days")]
 		public decimal NinetyDays { get; set; }
 			
-
 		[DisplayName(Name = "One Twenty Days")]
 		public decimal OneTwentyDays { get; set; }
 
 		[DisplayName(Name = "One Fifty Days")]
 		public decimal OneFiftyDays { get; set; }
+
+		[DisplayName(Name = "Invoice Amount")]
+		public decimal debitSum { get; set; }
+
+		[DisplayName(Name = "Remaining Amount")]
+		public decimal balSum { get; set; }
 	}
 }

@@ -63,6 +63,16 @@ export class ReportGirdComponent {
   @ViewChild('dt') table!: Table;
   reportSettingVisiblity : boolean = false;
 
+  getColumnSum(field: string): number {
+    return this.data.reduce((sum, item) => {
+      const value = parseFloat(item[field]);
+      return !isNaN(value) ? sum + value : sum;
+    }, 0);
+  }
+
+
+  @Input() AllowTotal : boolean = false;
+
   ngOnChanges(changes: SimpleChanges) {
     this.cols = [];
     this.exportColumns = [];

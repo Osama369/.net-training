@@ -105,6 +105,9 @@ export class SaleInvoiceComponent implements OnInit {
         if(this.reportSettingItemList.find(x=>x.key == "A4" && x.value == true) != undefined){
           this.printtype = "A4"
         }
+        else if(this.reportSettingItemList.find(x=>x.key == "A5" && x.value == true) != undefined){
+          this.printtype = "A5"
+        }
         else{
           this.printtype = "Thermal"
         }

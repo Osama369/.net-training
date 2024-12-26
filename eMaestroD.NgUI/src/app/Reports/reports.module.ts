@@ -47,6 +47,7 @@ import { PurchaseGrnOrdeReportrComponent } from './Components/purchase-grn-orde-
 import { PayableAgingComponent } from './Components/payable-aging/payable-aging.component';
 import { ReceivableAgingComponent } from './Components/receivable-aging/receivable-aging.component';
 import { ReceiptJournalComponent } from './Components/receipt-journal/receipt-journal.component';
+import { CustomerSaleProductWiseComponent } from './Components/customer-sale-product-wise/customer-sale-product-wise.component';
 
 
 
@@ -97,7 +98,8 @@ import { ReceiptJournalComponent } from './Components/receipt-journal/receipt-jo
           PurchaseGrnOrdeReportrComponent,
           PayableAgingComponent,
           ReceivableAgingComponent,
-          ReceiptJournalComponent
+          ReceiptJournalComponent,
+          CustomerSaleProductWiseComponent
 
   ],
   imports: [

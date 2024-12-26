@@ -16,6 +16,7 @@
             <div *ngIf="data.type === 'radioButton1'" class="field-radioButton col-6" style="margin-bottom: 10px;">
               <input type="radio" [value]="data.value" name="radioButton1"  [checked]="data.value" (change)="OnRadioChange1(data)"> {{ data.key | translate }}
             </div>
+          
           </ng-container>
         </div>
       </div>

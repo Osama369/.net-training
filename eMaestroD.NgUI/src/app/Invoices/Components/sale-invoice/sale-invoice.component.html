@@ -100,25 +100,6 @@
 </div>
 
 
-<p-dialog [modal]="true" [(visible)]="PrintringVisible" [style]="{width: '25vw'}">
-    <div class="container">
-          <div class="col-12">
-            <input type="radio" id="css" name="fav_language" (change)="onChangePrint($event)" value="A4"checked>
-            &nbsp;
-            <label class="col-4" for="css" translate>A4 View</label>
-            <input type="radio" id="html" name="fav_language" (change)="onChangePrint($event)" value="thermal">
-            &nbsp;
-            <label class="col-4" for="html" translate>Thermal View</label>
-            <br>
-          </div>
-        <p-checkbox [(ngModel)]="isBankInfo" [hidden]="bankDetail" [binary]="true" [value]="isBankInfo" label=" Include bank detail on print"></p-checkbox>
-        <div style="text-align: right;">
-          <br>
-          <button (click)="onPrinterClick()" translate autofocus class="btn btn-primary"><i class="fa fa-save"></i> Submit</button>
-          &nbsp;<button (click)="PrintringVisible=false" translate class="btn btn-danger"><i class="fa fa-undo"></i> Close</button>
-        </div>
-      </div>
-</p-dialog>
 
 <p-dialog [modal]="true" [(visible)]="Reportvisible" [style]="{width: '60vw'}">
     <div class="container" *ngIf="Reportvisible">
