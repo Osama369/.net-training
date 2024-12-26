@@ -80,7 +80,9 @@
                     <p-button  (onClick)="SetAuthorization(user)" icon="fa-solid fa-user-check" styleClass="p-button-rounded p-button-info p-button-text" title="Authorize"></p-button>
                     <p-button  (onClick)="ResetView(user)" icon="pi pi-unlock" styleClass="p-button-rounded p-button-secondary p-button-text" title="Reset Password"></p-button>
                     <p-button  (onClick)="editView(user)" icon="pi pi-pencil" styleClass="p-button-rounded p-button-success p-button-text" title="Edit"></p-button>
-                    <p-button  (onClick)="deleteView(user.UserID)" icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-text" title="Delete"></p-button>
+                    <p-button *ngIf="isDeleteHidden(user)"   (onClick)="deleteView(user.UserID)" icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-text" title="Delete"></p-button>
+                    <!-- <p-button class="hidden-area-el" [style]="{'display':user.isHidden?'inline':'none','background-color':'white','border':'white'}" ></p-button> -->
+                    
                   </span>
               </td>
               <td>

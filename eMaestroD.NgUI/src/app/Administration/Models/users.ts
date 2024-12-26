@@ -29,4 +29,5 @@ export class Users {
    locID?:any;
    UserName?:any;
    isAllowLogin?:any;
+   isHidden?:any;
 }

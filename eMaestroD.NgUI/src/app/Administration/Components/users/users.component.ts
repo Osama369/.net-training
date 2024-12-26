@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Table } from 'primeng/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as FileSaver from 'file-saver';
@@ -30,17 +30,19 @@ export class UsersComponent implements OnInit {
     newPassword:any = "";
     bookmark : boolean = false;
 
+
     constructor(private userService: UserService,
       private toastr: ToastrService, private router: Router,
       private authService:AuthService,
       public bookmarkService: BookmarkService,
       public route : ActivatedRoute,
-      private sharedDataService : SharedDataService
+      private sharedDataService : SharedDataService,
+      private cdr : ChangeDetectorRef
       ) { }
 
     ngOnInit() {
         this.userService.getAllUsers().subscribe(user => {
-          console.log(this.User);
+          console.log(user);
           if(user.length >0)
           {
             this.User = user;
@@ -57,6 +59,7 @@ export class UsersComponent implements OnInit {
           {
             this.loading = false;
           }
+
       });
 
       this.authService.GetBookmarkScreen(this.route.snapshot?.data['requiredPermission']).subscribe(x=>{
@@ -64,7 +67,7 @@ export class UsersComponent implements OnInit {
     });
 
     }
-
+    
     UpdateBookmark(value:any){
       this.bookmarkService.Updatebookmark(this.route.snapshot.data['requiredPermission'],value).subscribe({
         next: (result: any) => {
@@ -78,6 +81,18 @@ export class UsersComponent implements OnInit {
         table.clear();
     }
 
+    isDeleteHidden(user:Users){
+      if(user.RoleID == 7 || user.RoleID == 6){
+
+      let lenCheck =this.User.filter(x=> x.RoleID == user.RoleID);
+      if(lenCheck.length === 1){
+       return false;
+       }
+       return true;
+      }
+      return true;
+
+    }
     editView(data:any)
     {
       this.authService.checkPermission('UsersEdit').subscribe(x=>{
@@ -136,6 +151,8 @@ export class UsersComponent implements OnInit {
 
     deleteView(ID:any)
     {
+    
+ 
       this.authService.checkPermission('UsersDelete').subscribe(x=>{
         if(x)
         {
