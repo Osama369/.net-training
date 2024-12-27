@@ -23,7 +23,8 @@ export class FileUploadComponent {
   @Input() public serviceName: any;
   @Input() public methodName: any;
   @Input() public confirmCategory: boolean = false;
-  @Input() public ShowDescription : string = "";
+  @Input() public ShowTooltipEnglish : string = "";
+  @Input() public ShowTooltipUrdu : string = "";
   uploadedFiles: any[] = [];
   @Output() dataEvent = new EventEmitter<any>();
   @ViewChild('file') fileUpload: any;

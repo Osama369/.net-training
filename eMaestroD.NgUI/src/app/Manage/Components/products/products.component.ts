@@ -36,11 +36,13 @@ export class ProductsComponent implements OnInit {
     catBool : boolean = false;
 
 
-    UploadDescription: string =
+    UploadDescriptionEnglish: string =
     `These columns are mandatory: Supplier Name, Category, Barcode, Product Name.` +
     `There are two sheets: one for products' main information and another for subunits.` +
     `Please provide one base quantity (Base Qty) for every product.` +
-    `If you add Opening Stock, then you must provide the Purchase Rate and Sale Rate for that stock.    ` +
+    `If you add Opening Stock, then you must provide the Purchase Rate and Sale Rate for that stock.`;
+
+    UploadDescriptionUrdu: string =
     `یہ کالم لازمی ہیں: سپلائر کا نام، زمرہ، بارکوڈ، نام۔` +
     `دو شیٹس ہیں: ایک مصنوعات کی بنیادی معلومات کے لیے اور دوسری ذیلی یونٹس کے لیے۔` +
     `براہ کرم ہر پروڈکٹ کے لیے ایک بنیادی مقدار (Base Qty) فراہم کریں۔` +
@@ -194,7 +196,7 @@ export class ProductsComponent implements OnInit {
             this.exportUnitsData = [{
               "PRODUCT NAME":"Any Name",
               "UNIT":  "Pack",
-              "BASE QTY": "100"
+              "BASE QTY": "1"
               }
             ]
           this.serviceName = "ProductService";
