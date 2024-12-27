@@ -584,7 +584,7 @@ namespace eMaestroD.Api.Controllers
                                 locID = loc.LocationId,
                                 depositID = newPeriod,
                                 prodID = prodItem.prodID,
-                                prodCode = prodItem.BarCode,
+                                //prodCode = prodItem.BarCode,
                                 prodName = prodItem.prodName,
                                 debitSum = prodItem.unitPrice * prodItem.AvailableQty,
                                 qty = prodItem.AvailableQty,

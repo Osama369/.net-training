@@ -36,7 +36,8 @@
                   optionLabel="vendName"
                   [filter]="true"
                   [filterBy]="'vendName'"
-                  [showClear]="true"
+                  [showClear]="true"               
+                  (onChange)="VendorOnChange()" 
                   >
                   <ng-template let-vendor pTemplate="item">
                     <div>{{vendor.vendCode}} - {{vendor.vendName}}</div>
@@ -50,7 +51,7 @@
                         #inputField
                         styleClass="ReportDropDown col-2"
                         [(ngModel)]="SelectedProduct"
-                        [options]="productlist"
+                        [options]="Filterproductlist"
                         optionLabel="prodName"
                         [filter]="true"
                         [filterBy]="'prodName'"

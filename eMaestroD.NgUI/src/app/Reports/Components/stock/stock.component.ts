@@ -13,6 +13,8 @@ import { ReportService } from '../../Services/report.service';
 import { Location } from './../../../Administration/Models/location';
 import { Vendor } from 'src/app/Manage/Models/vendor';
 import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
+import { ToastrService } from 'ngx-toastr';
+import { ProductViewModel } from 'src/app/Manage/Models/product-view-model';
 
 
 @Component({
@@ -23,6 +25,7 @@ import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 export class StockComponent {
   constructor(private authService : AuthService,
     public bookmarkService: BookmarkService,
+     private toastr: ToastrService,
     public route : ActivatedRoute,private productService:ProductsService,
     private productCategoryService : ProductCategoryService ,private sharedDataService:SharedDataService,private http: HttpClient, private sanitizer: DomSanitizer,private reportService: ReportService){}
 
@@ -32,7 +35,8 @@ export class StockComponent {
   Filterproductlist: Products[];
   products: Products[] = [];
   pdfUrl:SafeResourceUrl;
-
+  selectedCustomerName:any;
+  showVendorProductsOnly: boolean = false;
   allowBtn: boolean = false;
   cols:any []= [];
   data:any[];
@@ -40,7 +44,7 @@ export class StockComponent {
   productGrouplist: prodGroups[];
   FilterProductGrouplist: prodGroups[];
   SelectedproductGrouplist: any;
-
+ productsDuplicate: ProductViewModel [] = [];
   selectedLocation:any;
   LocationList : Location[];
   locations : Location[];
@@ -49,7 +53,7 @@ export class StockComponent {
   SelectedVendor:any;
   vendorlist: Vendor[];
   FilterVendorlist: Vendor[];
-
+  
 
   ngOnInit(): void {
     this.sharedDataService.getProducts$().subscribe((us:any)=>{
@@ -61,6 +65,8 @@ export class StockComponent {
           prodName : "---ALL---"
         });
         this.SelectedProduct = {prodID:  0, prodName: '---ALL---'};
+        this.Filterproductlist= this.productlist;
+        
     })
     
 
@@ -195,6 +201,42 @@ export class StockComponent {
       }
     }
     this.Filterproductlist = filtered;
+  }
+  VendorOnChange()
+  {
+    this.showOnlyVendorProduct();
+    if(this.selectedCustomerName == undefined){
+      //this.toastr.error("Please select supplier!");
+      //this.onEnterComplex(0);
+    }
+    else{
+      
+    }
+
+  }
+
+
+  
+  
+  
+  showOnlyVendorProduct(){
+   
+      if(this.SelectedVendor.vendID!=0){
+        this.productsDuplicate = this.productlist.filter(x=>x.vendID == this.SelectedVendor.vendID);
+       
+        this.Filterproductlist = this.productsDuplicate ;
+        this.Filterproductlist.unshift({
+          prodID:0, prodName:"---ALL---"
+        })
+        this.SelectedProduct = {prodID:  0, prodName: '---ALL---'};
+      }
+      else{
+        
+        this.SelectedProduct = {prodID:  0, prodName: '---ALL---'};
+        this.Filterproductlist= this.productlist;
+      }
+    
+      console.log(this.Filterproductlist);
   }
 
   submit()
