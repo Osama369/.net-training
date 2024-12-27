@@ -12,9 +12,9 @@
                       </div>
                       
                       <div class="col-12">
-                      <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" [autofocus]="true" pAutoFocus [(ngModel)]="DateFrom" dateFormat="MM-yy"></p-calendar>
+                      <p-calendar #inputField (keyup.enter)="onEnterComplex(0)" [autofocus]="true" pAutoFocus [(ngModel)]="DateFrom" dateFormat="MM-yy" view="month" [monthNavigator]="true" [yearNavigator]="true" ></p-calendar>
                       &nbsp;
-                      <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" [(ngModel)]="DateTo" dateFormat="MM-yy"></p-calendar>
+                      <p-calendar #inputField (keyup.enter)="onEnterComplex(1)" [(ngModel)]="DateTo" dateFormat="MM-yy" view="month" [monthNavigator]="true" [yearNavigator]="true"></p-calendar>
                       &nbsp;
                       <button #savebtn (click)="submit()" translate class="btn btn-primary btnSetting"> <i class="far fa-paper-plane"></i> Submit</button>
                   </div>

@@ -48,6 +48,10 @@ import { PayableAgingComponent } from './Components/payable-aging/payable-aging.
 import { ReceivableAgingComponent } from './Components/receivable-aging/receivable-aging.component';
 import { ReceiptJournalComponent } from './Components/receipt-journal/receipt-journal.component';
 import { CustomerSaleProductWiseComponent } from './Components/customer-sale-product-wise/customer-sale-product-wise.component';
+import { BulkReceiptComponent } from './Components/bulk-receipt/bulk-receipt.component';
+import { MonthWisePartySaleComponent } from './Components/month-wise-party-sale/month-wise-party-sale.component';
+
+import { ReportGridDynamicComponent } from './Components/report-grid-dynamic/report-grid-dynamic.component';
 
 
 
@@ -99,7 +103,10 @@ import { CustomerSaleProductWiseComponent } from './Components/customer-sale-pro
           PayableAgingComponent,
           ReceivableAgingComponent,
           ReceiptJournalComponent,
-          CustomerSaleProductWiseComponent
+          CustomerSaleProductWiseComponent,
+          BulkReceiptComponent,
+          MonthWisePartySaleComponent,
+          ReportGridDynamicComponent
 
   ],
   imports: [

@@ -91,7 +91,7 @@ SelectedProduct:any;
     this.productlist = undefined;
     this.SelectedProduct = [];
     this.sharedDataService.getProducts$().subscribe((us:any)=>{
-      this.productlist = (us as { [key: string]: any })["enttityDataSource"];
+      this.productlist = [...(us as { [key: string]: any })["enttityDataSource"]];
 
       this.productlist.unshift({
           prodBCID : 0,

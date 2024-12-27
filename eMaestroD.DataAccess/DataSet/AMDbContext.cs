@@ -123,6 +123,7 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<MseMapArea> MseMapArea { get; set; }
         public DbSet<CSECustomer> CSECustomer { get; set; }
         public DbSet<CustomerSaleProdWIse> CustomerSaleProdWIse { get; set; }
+        public DbSet<BulkReceipt> BulkReceipt { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -174,6 +175,7 @@ namespace eMaestroD.DataAccess.DataSet
             modelBuilder.Entity<ReceiptJournal>().HasNoKey();
             modelBuilder.Entity<SaleDelivery2>().HasNoKey();
             modelBuilder.Entity<CustomerSaleProdWIse>().HasNoKey();
+            modelBuilder.Entity<BulkReceipt>().HasNoKey();
         }
 
     }
