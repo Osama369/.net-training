@@ -17,7 +17,7 @@ namespace eMaestroD.Models.ReportModels
         public string? prodName { get; set; }
         [DisplayName(Name = "Unit Price")]
         public decimal unitPrice { get; set; }
-        [DisplayName(Name = "Available Quantity")]
+        [DisplayName(Name = "Available Quantity (in Unit)")]
         public decimal AvailableQty { get; set; }
         [HiddenOnRender]
         public decimal OrderedQty { get; set; }
