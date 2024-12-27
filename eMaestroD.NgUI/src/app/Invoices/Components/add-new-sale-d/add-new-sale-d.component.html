@@ -135,7 +135,7 @@
                       [(ngModel)]="rowData.unit"
                       [suggestions]="rowData.units"
                       [field]="'unitType'"
-                      [disabled]="(!rowData.barCode && !rowData.prodName) || isConverted || isDisabled"
+                      [disabled]="(!rowData.barCode && !rowData.prodName)"
                       [minLength]="1"
                       appendTo="body"
                       class="girdRow girdRowCode"

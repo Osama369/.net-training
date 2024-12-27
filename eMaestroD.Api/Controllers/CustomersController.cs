@@ -447,8 +447,7 @@ namespace eMaestroD.Api.Controllers
                         await _AMDbContext.Customers.AddAsync(customer);
                         await _AMDbContext.SaveChangesAsync();
 
-                        var cstParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 40).acctNo;
-                        var cstNewAcctNo = _helperMethods.GenerateAcctNo(cstParentAccCode, (int)customer.comID);
+                        var cstNewAcctNo = _helperMethods.GenerateAcctNo(tradeDebtorsAcctCode, (int)customer.comID);
 
                         COA coa = new COA()
                         {
@@ -624,9 +623,12 @@ namespace eMaestroD.Api.Controllers
                 int countInsertedRow = 0;
                 int countEmptyRow = 0;
                 int countWrongCompanyName = 0;
+                int rowLocationNotAvlCount = 0;
+                int emptyLocationCount = 0;
                 string ExistRowNumber = "";
                 string EmptyRowNumber = "";
                 string EmptyRowNumberForCompany = "";
+                string rowLocationNotAvailable = "";
 
                 string sql = "EXEC GenerateGLVoucherNo @txType,@comID";
                 List<SqlParameter> parms = new List<SqlParameter>
@@ -635,8 +637,7 @@ namespace eMaestroD.Api.Controllers
                     new SqlParameter { ParameterName = "@comID", Value = comID },
                 };
                 var voucherNo = _AMDbContext.invoiceNo.FromSqlRaw(sql, parms.ToArray()).ToList()[0].voucherNo;
-                var cstParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 40).acctNo;
-
+                
                 foreach (var file in form.Files)
                 {
                     using (var stream = new MemoryStream())
@@ -655,7 +656,8 @@ namespace eMaestroD.Api.Controllers
                                 worksheet.Cell(1, 4).Value.ToString() == "PHONE" &&
                                 worksheet.Cell(1, 5).Value.ToString() == "VAT NO" &&
                                 worksheet.Cell(1, 6).Value.ToString() == "VAT %" &&
-                                worksheet.Cell(1, 7).Value.ToString() == "OPENING BALANCE"
+                                worksheet.Cell(1, 7).Value.ToString() == "OPENING BALANCE" &&
+                                worksheet.Cell(1, 8).Value.ToString() == "LOCATION"
                                 )
                             {
 
@@ -672,8 +674,13 @@ namespace eMaestroD.Api.Controllers
                                             v.cstID = 0;
                                             v.cstCode = worksheet.Cell(i, 1).Value.ToString().Trim();
                                             v.cstName = worksheet.Cell(i, 2).Value.ToString().Trim();
+                                            var loc = new Locations();
+                                      
+                                            loc = _AMDbContext.Locations.FirstOrDefault(x => x.LocationName == worksheet.Cell(i, 8).Value.ToString());
 
-                                            if (v.cstName != "" && v.cstCode != "" && company.Count() == 1)
+                                           
+
+                                            if (v.cstName != "" && v.cstCode != "" && company.Count() == 1 && loc!=null)
                                             {
 
                                                 v.address = worksheet.Cell(i, 3).Value.ToString();
@@ -688,12 +695,14 @@ namespace eMaestroD.Api.Controllers
                                                 v.crtDate = DateTime.Now;
                                                 v.modby = username;
                                                 v.modDate = DateTime.Now;
+                                                v.cityID = loc.LocationId;
+                                                v.city = loc.LocationName;
 
                                                 await _AMDbContext.Customers.AddAsync(v);
                                                 await _AMDbContext.SaveChangesAsync();
                                                 list.Add(v);
 
-                                                var cstNewAcctNo = _helperMethods.GenerateAcctNo(cstParentAccCode, comID);
+                                                var cstNewAcctNo = _helperMethods.GenerateAcctNo(tradeDebtorsAcctCode, comID);
                                                 
                                                 COA coa = new COA()
                                                 {
@@ -717,7 +726,8 @@ namespace eMaestroD.Api.Controllers
                                                     crtDate = DateTime.Now,
                                                     modBy = username,
                                                     modDate = DateTime.Now,
-                                                    comID = v.comID
+                                                    comID = v.comID,
+                                                    parentAcctNo = tradeDebtorsAcctCode
                                                 };
                                                 await _AMDbContext.COA.AddAsync(coa);
                                                 await _AMDbContext.SaveChangesAsync();
@@ -731,6 +741,8 @@ namespace eMaestroD.Api.Controllers
                                                         txTypeID = 40,
                                                         COAID = 0,
                                                         relCOAID = 0,
+                                                        acctNo = "",
+                                                        relAcctNo = "",
                                                         cstID = v.cstID,
                                                         balSum = bal,
                                                         creditSum = bal,
@@ -753,6 +765,8 @@ namespace eMaestroD.Api.Controllers
                                                         txTypeID = 40,
                                                         COAID = coa.parentCOAID,
                                                         relCOAID = coa.COAID,
+                                                        acctNo = coa.parentAcctNo,
+                                                        relAcctNo = coa.acctNo,
                                                         cstID = v.cstID,
                                                         balSum = 0,
                                                         debitSum = bal,
@@ -776,6 +790,8 @@ namespace eMaestroD.Api.Controllers
                                                         txTypeID = 40,
                                                         COAID = coa.COAID,
                                                         relCOAID = coa.parentCOAID,
+                                                        acctNo = coa.acctNo,
+                                                        relAcctNo = coa.parentAcctNo,
                                                         cstID = v.cstID,
                                                         balSum = bal,
                                                         creditSum = bal,
@@ -813,8 +829,16 @@ namespace eMaestroD.Api.Controllers
                                             }
                                             else
                                             {
-                                                countEmptyRow++;
-                                                EmptyRowNumber = EmptyRowNumber + i + " , ";
+                                                //if (loc != null)
+                                                //{
+                                                    countEmptyRow++;
+                                                    EmptyRowNumber = EmptyRowNumber + i + " , ";
+                                                //}
+                                                //else
+                                                //{
+                                                //    rowLocationNotAvlCount++;
+                                                //    rowLocationNotAvailable = rowLocationNotAvailable + i + " , ";
+                                                //}
                                             }
                                         }
                                         else
@@ -861,7 +885,12 @@ namespace eMaestroD.Api.Controllers
                     {
                         text = text + " , Company name not correct on Row Number : " + EmptyRowNumberForCompany.Remove(EmptyRowNumberForCompany.Length - 2, 1);
                     }
-                    list[0].comment = countInsertedRow.ToString() + " Out Of " + (countInsertedRow + countNotInsertedRow + countEmptyRow + countWrongCompanyName) + " Inserted Successfully!".ToString() + text;
+                    //if(rowLocationNotAvlCount > 0)
+                    //{
+
+                    //    text = text + " , Row Number : " + rowLocationNotAvailable.Remove(rowLocationNotAvailable.Length - 2, 1) + "Locations not available";
+                    //}
+                    list[0].comment = countInsertedRow.ToString() + " Out Of " + (countInsertedRow + countNotInsertedRow + countEmptyRow + countWrongCompanyName +rowLocationNotAvlCount) + " Inserted Successfully!".ToString() + text;
                     return Ok(list);
                 }
                 return NotFound("Please Upload Correct File.");

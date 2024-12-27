@@ -482,8 +482,8 @@ export class ConfigurationComponent {
       this.CurrencyList = asd;
     });
 
-    this.sharedDataService.getConfigSettings$().subscribe(data=>{
-      this.configSetting = data;
+      this.sharedDataService.getConfigSettings$().subscribe(data=>{
+       this.configSetting = data;
       })
 
   }

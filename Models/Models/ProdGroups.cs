@@ -12,7 +12,7 @@ namespace eMaestroD.Models.Models
         [Key]
         [HiddenOnRender]
         public int prodGrpID { get; set; }
-        [DisplayName(Name = "BRAND")]
+        [DisplayName(Name = "Name")]
         public string? prodGrpName { get; set; }
         [HiddenOnRender]
         public int? parentProdGrpID { get; set; }

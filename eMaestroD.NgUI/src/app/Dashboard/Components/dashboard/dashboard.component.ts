@@ -102,7 +102,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.DataList =list;
 
             this.topSellingList = this.removeDuplicates(this.DataList, "prodID")
-            this.last5MonthList = this.removeDuplicates(this.DataList, "SaleMonth")
+            this.last5MonthList = this.removeDuplicates(this.DataList, "SaleMonth").sort((a, b) => b.SaleMonthNo - a.SaleMonthNo);
             this.agingDataList = this.removeDuplicates(this.DataList, "cstID");
             this.initChart();
             }
@@ -134,9 +134,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.CreditCard = list[0].CreditCard;
 
         this.DataList =list;
-
+        
         this.topSellingList = this.removeDuplicates(this.DataList, "prodID")
-        this.last5MonthList = this.removeDuplicates(this.DataList, "SaleMonth")
+        this.last5MonthList = this.removeDuplicates(this.DataList, "SaleMonth").sort((a, b) => b.SaleMonthNo - a.SaleMonthNo);
+        
         this.agingDataList = this.removeDuplicates(this.DataList, "cstID");
         this.initChart();
         }

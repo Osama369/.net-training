@@ -28,6 +28,9 @@ export class ProductGroupsComponent {
   methodName : any;
   serviceName : any;
   ProductGroupVisible: boolean = false;
+  isPos : boolean = localStorage.getItem("isPos") === 'true';
+  label = 'Brand';
+
 
   constructor(
       private productCategoryService: ProductCategoryService,
@@ -40,6 +43,8 @@ export class ProductGroupsComponent {
   { }
 
   ngOnInit() {
+    this.label = this.isPos ? "Brand" : "Category";
+
     this.productCategoryService.getAllGroups().subscribe(prd => {
         this.productsGroup = (prd as { [key: string]: any })["enttityDataSource"];
         this.cols = (prd as { [key: string]: any })["entityModel"];
@@ -53,7 +58,7 @@ export class ProductGroupsComponent {
     this.authService.checkPermission('ProductCategoryCreate').subscribe(x=>{
         if(x)
         {
-          this.grouptitle = "Brand Registration";
+          this.grouptitle = this.label+" Registration";
           this.productgrouplist = [];
           this.ProductGroupVisible = true;
         }
@@ -68,7 +73,7 @@ export class ProductGroupsComponent {
     this.authService.checkPermission('ProductCategoryEdit').subscribe(x=>{
         if(x)
         {
-          this.grouptitle = "Brand Edit";
+          this.grouptitle = this.label+" Edit";
           this.productgrouplist = data.value;
           this.ProductGroupVisible = true;
         }
@@ -106,7 +111,7 @@ export class ProductGroupsComponent {
 deleteView(id:any)
 {
   console.log(id);
-    if (confirm("Are you sure you want to delete this Brand?") == true) {
+    if (confirm("Are you sure you want to delete this?") == true) {
         this.loading = true;
        this.productCategoryService.deleteGroup(id).subscribe({
         next : (value:any) => {

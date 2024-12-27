@@ -27,6 +27,7 @@ export interface Dashboard {
   TotalUnitsSold?:any;
   TotalSalesAmount?:any;
 
+  SaleMonthNo?:any;
   SaleMonth?:any;
   TotalSalesAmountMonthWise?:any;
 

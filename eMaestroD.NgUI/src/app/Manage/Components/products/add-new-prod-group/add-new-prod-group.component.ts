@@ -24,6 +24,10 @@ export class AddNewProdGroupComponent {
   @Input() prodData : any;
   @Input() title : any;
   isSaveDisable : boolean = false;
+
+  isPos : boolean = localStorage.getItem("isPos") === 'true';
+  label = 'Brand';
+
   sendDataToParent() {
     this.dataEvent.emit({type:'closeGroup',value:false});
   }
@@ -37,7 +41,7 @@ export class AddNewProdGroupComponent {
 
   ngOnInit(): void {
 
-
+    this.label = this.isPos ? "Brand" : "Category";
     this.productGrouplist = [
       {
         prodGrpID : undefined,
@@ -89,14 +93,14 @@ export class AddNewProdGroupComponent {
       this.isSaveDisable = true;
       this.productGroupService.saveProductGroup(this.productGrouplist[0]).subscribe({
         next: (prd) => {
-          if(this.title == "Brand Registration")
+          if(this.title == this.label+" Registration")
           {
-            this.toastr.success("Brand has been successfully added!");
+            this.toastr.success( this.label+" has been successfully added!");
             this.dataEvent.emit({type:'groupAdded',value:prd});
           }
           else
           {
-            this.toastr.success("Brand has been successfully updated!");
+            this.toastr.success(this.label + " has been successfully updated!");
             this.dataEvent.emit({type:'',value:prd});
           }
           this.isSaveDisable = false;
@@ -110,7 +114,7 @@ export class AddNewProdGroupComponent {
     }
     else
     {
-      this.toastr.error("Please Write Brand Name.");
+      this.toastr.error("Please Write "+this.label+" Name.");
       this.onEnterTableInput(-1);
     }
   }
@@ -130,7 +134,7 @@ export class AddNewProdGroupComponent {
       }
       else
       {
-        this.toastr.error("Please Write Brand Name.");
+        this.toastr.error("Please Write "+ this.label+" Name.");
         this.onEnterTableInput(-1);
       }
     }

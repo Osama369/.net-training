@@ -32,6 +32,8 @@ import { AddNewOfferComponent } from './Components/offer/add-new-offer/add-new-o
 import { SchemesComponent } from './Components/schemes/schemes.component';
 import { AddNewSchemesComponent } from './Components/schemes/add-new-schemes/add-new-schemes.component';
 import { AddNewProductDComponent } from './Components/products/add-new-product-d/add-new-product-d.component';
+import { CompanyMseComponent } from './Components/company-mse/company-mse.component';
+import { AddNewMSEComponent } from './Components/company-mse/add-new-mse/add-new-mse.component';
 
 
 @NgModule({
@@ -65,7 +67,9 @@ import { AddNewProductDComponent } from './Components/products/add-new-product-d
     AddNewOfferComponent,
     SchemesComponent,
     AddNewSchemesComponent,
-    AddNewProductDComponent
+    AddNewProductDComponent,
+    CompanyMseComponent,
+    AddNewMSEComponent
   ],
   imports: [
     CommonModule,

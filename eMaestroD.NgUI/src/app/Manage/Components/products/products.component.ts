@@ -20,6 +20,7 @@ import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 export class ProductsComponent implements OnInit {
     cols:any []= [];
     exportData:any []= [];
+    exportUnitsData:any []= [];
     products: Products[];
     prdID: any;
     loading: boolean = true;
@@ -32,7 +33,20 @@ export class ProductsComponent implements OnInit {
     UploadToolVisibility : boolean = false;
     methodName : any;
     serviceName : any;
-    catBool : boolean = true;
+    catBool : boolean = false;
+
+
+    UploadDescriptionEnglish: string =
+    `These columns are mandatory: Supplier Name, Category, Barcode, Product Name.` +
+    `There are two sheets: one for products' main information and another for subunits.` +
+    `Please provide one base quantity (Base Qty) for every product.` +
+    `If you add Opening Stock, then you must provide the Purchase Rate and Sale Rate for that stock.`;
+
+    UploadDescriptionUrdu: string =
+    `یہ کالم لازمی ہیں: سپلائر کا نام، زمرہ، بارکوڈ، نام۔` +
+    `دو شیٹس ہیں: ایک مصنوعات کی بنیادی معلومات کے لیے اور دوسری ذیلی یونٹس کے لیے۔` +
+    `براہ کرم ہر پروڈکٹ کے لیے ایک بنیادی مقدار (Base Qty) فراہم کریں۔` +
+    `اگر آپ اوپننگ اسٹاک شامل کرتے ہیں تو آپ کو اس اسٹاک کے لیے خریداری کی شرح اور فروخت کی شرح فراہم کرنا ہوگی۔`;
 
     constructor(
         private productService: ProductsService,
@@ -54,12 +68,12 @@ export class ProductsComponent implements OnInit {
             }
             this.cols = (prd as { [key: string]: any })["entityModel"];
 
-          
+
             this.loading = false;
         });
     }
 
-   
+
     handleChildData(data: any) {
       console.log(data)
         if(data.type == 'add')
@@ -166,23 +180,28 @@ export class ProductsComponent implements OnInit {
         if(x)
         {
           this.UploadToolVisibility = data;
-          this.exportData = [{
-              "CATEGORY":"Any Category Name",
-              "CODE":  "0",
-              "NAME": "Any Name",
-              "TYPE": "Goods",
-              "UNIT": "pcs",
-              "PURCHASE RATE": 0,
-              "SELL RATE": 0,
-              "MIN QTY":0,
-              "MAX QTY":0,
-              "OPENING STOCK": 0
-              // companyName: localStorage.getItem('comName')
+            this.exportData = [{
+                "SUPPLIER NAME" : "",
+                "DEPARTMENT" : "",
+                "CATEGORY" : "",
+                "PRODUCT BARCODE" : "",
+                "PRODUCT NAME" : "Any Name",
+                "MIN QTY":0,
+                "MAX QTY":0,
+                "OPENING STOCK": 0,
+                "PURCHASE RATE": 0,
+                "SALE RATE": 0
+                }
+              ]
+            this.exportUnitsData = [{
+              "PRODUCT NAME":"Any Name",
+              "UNIT":  "Pack",
+              "BASE QTY": "1"
               }
             ]
           this.serviceName = "ProductService";
           this.methodName = "uploadProducts";
-          this.catBool = true;
+          this.catBool = false;
         }
         else{
           this.ToastrService.error("Unauthorized Access! You don't have permission to access.");

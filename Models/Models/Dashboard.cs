@@ -25,6 +25,8 @@
         public int? TotalUnitsSold { get; set; }
         public decimal? TotalSalesAmount { get; set; }
 
+        
+        public int? SaleMonthNo { get; set; }
         public string? SaleMonth { get; set; }
         public decimal? TotalSalesAmountMonthWise { get; set; }
 

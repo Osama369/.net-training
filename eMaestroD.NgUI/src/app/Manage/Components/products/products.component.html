@@ -24,7 +24,7 @@
 </p-dialog>
 
 <p-dialog [modal]="true" [(visible)]="UploadToolVisibility" [style]="{width: '40vw'}">
-  <app-file-upload [uploadHeading]="'Products'" [confirmCategory]="catBool" [data]="exportData" [serviceName]="serviceName" [methodName]="methodName" (dataEvent)="getInsertedRows($event)"></app-file-upload>
+  <app-file-upload [uploadHeading]="'Products'" [ShowTooltipEnglish]="UploadDescriptionEnglish" [ShowTooltipUrdu]="UploadDescriptionUrdu" [confirmCategory]="catBool" [data]="exportData" [barcodeData]="exportUnitsData" [serviceName]="serviceName" [methodName]="methodName" (dataEvent)="getInsertedRows($event)"></app-file-upload>
 </p-dialog>
 
 

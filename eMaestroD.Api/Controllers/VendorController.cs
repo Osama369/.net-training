@@ -29,12 +29,16 @@ namespace eMaestroD.Api.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor; 
         private readonly HelperMethods _helperMethods; 
         string username = "";
+        string tradeDebtorsAcctCode = "";
+        string tradeCreditorsAcctCode = "";
         public VendorController(AMDbContext aMDbContext, NotificationInterceptor notificationInterceptor, IHttpContextAccessor httpContextAccessor,HelperMethods helperMethods)
         {
             _AMDbContext = aMDbContext;
             _notificationInterceptor = notificationInterceptor;
             _httpContextAccessor = httpContextAccessor;
             _helperMethods = helperMethods;
+            tradeDebtorsAcctCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeDebtors);
+            tradeCreditorsAcctCode = _helperMethods.GetAcctNoByKey(ConfigKeys.TradeCreditors);
             username = GetUsername();
         }
 
@@ -63,7 +67,7 @@ namespace eMaestroD.Api.Controllers
             var result = await (from vend in _AMDbContext.Vendors
                                 join coa in _AMDbContext.COA
                                 on vend.vendID equals coa.COANo
-                                where vend.comID == comID && vend.active == true && coa.parentCOAID == 83
+                                where vend.comID == comID && vend.active == true && coa.parentAcctNo == tradeCreditorsAcctCode
                                 select new Vendors // Projecting into the extended Customer model
                                 {
                                     vendID = vend.vendID,
@@ -209,7 +213,8 @@ namespace eMaestroD.Api.Controllers
                         openBal = vendor.opnBal,
                         bal = cstCOA.bal - cstCOA.openBal + vendor.opnBal,
                         closingBal = cstCOA.closingBal,
-                        comID = vendor.comID
+                        comID = vendor.comID,
+                        parentAcctNo = tradeCreditorsAcctCode
                     };
                     _AMDbContext.COA.Update(coa);
                     await _AMDbContext.SaveChangesAsync();
@@ -250,6 +255,8 @@ namespace eMaestroD.Api.Controllers
                                 txTypeID = 40,
                                 COAID = coa.parentCOAID,
                                 relCOAID = coa.COAID,
+                                acctNo = coa.parentAcctNo,
+                                relAcctNo = coa.acctNo,
                                 vendID = vendor.vendID,
                                 comID = vendor.comID,
                                 balSum = 0,
@@ -273,6 +280,8 @@ namespace eMaestroD.Api.Controllers
                                 txTypeID = 40,
                                 COAID = coa.COAID,
                                 relCOAID = coa.parentCOAID,
+                                acctNo = coa.acctNo,
+                                relAcctNo = coa.parentAcctNo,
                                 vendID = vendor.vendID,
                                 comID = vendor.comID,
                                 balSum = decimal.Parse(coa.openBal.ToString()),
@@ -338,6 +347,8 @@ namespace eMaestroD.Api.Controllers
                                 txTypeID = 40,
                                 COAID = coa.parentCOAID,
                                 relCOAID = coa.COAID,
+                                acctNo = coa.parentAcctNo,
+                                relAcctNo = coa.acctNo,
                                 vendID = vendor.vendID,
                                 comID = vendor.comID,
                                 balSum = 0,
@@ -361,6 +372,8 @@ namespace eMaestroD.Api.Controllers
                                 txTypeID = 40,
                                 COAID = coa.COAID,
                                 relCOAID = coa.parentCOAID,
+                                acctNo = coa.acctNo,
+                                relAcctNo = coa.parentAcctNo,
                                 vendID = vendor.vendID,
                                 comID = vendor.comID,
                                 balSum = decimal.Parse(coa.openBal.ToString()),
@@ -414,8 +427,7 @@ namespace eMaestroD.Api.Controllers
                     await _AMDbContext.Vendors.AddAsync(vendor);
                     await _AMDbContext.SaveChangesAsync();
 
-                    var vendParentAccCode = _AMDbContext.COA.FirstOrDefault(x => x.COAID == 83).acctNo;
-                    var vendNewAcctNo = _helperMethods.GenerateAcctNo(vendParentAccCode, (int)vendor.comID);
+                    var vendNewAcctNo = _helperMethods.GenerateAcctNo(tradeCreditorsAcctCode, (int)vendor.comID);
 
 
                     COA coa = new COA()
@@ -440,7 +452,8 @@ namespace eMaestroD.Api.Controllers
                         crtDate = DateTime.Now,
                         modBy = username,
                         modDate = DateTime.Now,
-                        comID = vendor.comID
+                        comID = vendor.comID,
+                        parentAcctNo = tradeCreditorsAcctCode
                     };
                     await _AMDbContext.COA.AddAsync(coa);
                     await _AMDbContext.SaveChangesAsync();
@@ -454,6 +467,8 @@ namespace eMaestroD.Api.Controllers
                             txTypeID = 40,
                             COAID = 0,
                             relCOAID = 0,
+                            acctNo = "",
+                            relAcctNo = "",
                             balSum = decimal.Parse(coa.openBal.ToString()),
                             creditSum = decimal.Parse(coa.openBal.ToString()),
                             vendID = vendor.vendID,
@@ -476,6 +491,8 @@ namespace eMaestroD.Api.Controllers
                             txTypeID = 40,
                             COAID = coa.parentCOAID,
                             relCOAID = coa.COAID,
+                            acctNo = coa.parentAcctNo,
+                            relAcctNo = coa.acctNo,
                             vendID = vendor.vendID,
                             comID = vendor.comID,
                             balSum = 0,
@@ -499,6 +516,8 @@ namespace eMaestroD.Api.Controllers
                             txTypeID = 40,
                             COAID = coa.COAID,
                             relCOAID = coa.parentCOAID,
+                            acctNo = coa.acctNo,
+                            relAcctNo = coa.parentAcctNo,
                             vendID = vendor.vendID,
                             comID = vendor.comID,
                             balSum = decimal.Parse(coa.openBal.ToString()),
@@ -588,7 +607,8 @@ namespace eMaestroD.Api.Controllers
                                worksheet.Cell(1, 4).Value.ToString() == "PHONE" &&
                                worksheet.Cell(1, 5).Value.ToString() == "VAT NO" &&
                                worksheet.Cell(1, 6).Value.ToString() == "VAT %" &&
-                               worksheet.Cell(1, 7).Value.ToString() == "OPENING BALANCE"
+                               worksheet.Cell(1, 7).Value.ToString() == "OPENING BALANCE" &&
+                               worksheet.Cell(1, 8).Value.ToString() == "LOCATION"
                                )
                             {
                                 for (int i = 2; i <= worksheet.RowsUsed().Count(); i++)
@@ -601,13 +621,17 @@ namespace eMaestroD.Api.Controllers
                                         if (existList.Count() == 0)
                                         {
                                             var prdGrpName = worksheet.Cell(i, 1).Value.ToString();
+                                            var locationName = worksheet.Cell(i, 8).Value.ToString();
+
+                                            var location = _AMDbContext.Locations.Where(x => x.LocationName.ToLower() == locationName.ToLower() && x.LocTypeId == 5).FirstOrDefault();
+                                            
 
                                             Vendors v = new Vendors();
                                             v.vendID = 0;
                                             v.vendCode = worksheet.Cell(i, 1).Value.ToString().Trim();
                                             v.vendName = worksheet.Cell(i, 2).Value.ToString().Trim();
-
-                                            if (v.vendCode != "" && v.vendName != "" && company.Count() == 1)
+                                            
+                                            if (v.vendCode != "" && v.vendName != "" && company.Count() == 1 && location != null)
                                             {
                                                 v.vendPhone = worksheet.Cell(i, 4).Value.ToString();
                                                 v.address = worksheet.Cell(i, 3).Value.ToString();
@@ -618,6 +642,8 @@ namespace eMaestroD.Api.Controllers
                                                 v.comID = company.FirstOrDefault().comID;
                                                 v.modby = v.crtBy = username;
                                                 v.modDate = v.crtDate = DateTime.Now;
+                                                v.city = location.LocationName;
+                                                v.cityID = location.LocationId;
                                                 await _AMDbContext.Vendors.AddAsync(v);
                                                 await _AMDbContext.SaveChangesAsync();
                                                 list.Add(v);
@@ -646,7 +672,8 @@ namespace eMaestroD.Api.Controllers
                                                     crtDate = DateTime.Now,
                                                     modBy = username,
                                                     modDate = DateTime.Now,
-                                                    comID = v.comID
+                                                    comID = v.comID,
+                                                    parentAcctNo = vendParentAccCode
                                                 };
                                                 await _AMDbContext.COA.AddAsync(coa);
                                                 await _AMDbContext.SaveChangesAsync();
@@ -660,6 +687,8 @@ namespace eMaestroD.Api.Controllers
                                                         txTypeID = 40,
                                                         COAID = 0,
                                                         relCOAID = 0,
+                                                        relAcctNo = "",
+                                                        acctNo = "",
                                                         vendID = v.vendID,
                                                         balSum = bal,
                                                         creditSum = bal,
@@ -682,6 +711,8 @@ namespace eMaestroD.Api.Controllers
                                                         txTypeID = 40,
                                                         COAID = coa.parentCOAID,
                                                         relCOAID = coa.COAID,
+                                                        acctNo = coa.parentAcctNo,
+                                                        relAcctNo = coa.acctNo,
                                                         vendID = v.vendID,
                                                         balSum = 0,
                                                         creditSum = bal,
@@ -705,6 +736,8 @@ namespace eMaestroD.Api.Controllers
                                                         txTypeID = 40,
                                                         COAID = coa.COAID,
                                                         relCOAID = coa.parentCOAID,
+                                                        acctNo = coa.acctNo,
+                                                        relAcctNo = coa.parentAcctNo,
                                                         vendID = v.vendID,
                                                         balSum = bal,
                                                         debitSum = bal,

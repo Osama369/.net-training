@@ -13,6 +13,8 @@ import { ScreenComponent } from './Components/screen/screen.component';
 import { TaxesComponent } from './Components/taxes/taxes.component';
 import { UsersComponent } from './Components/users/users.component';
 import { ConfigurationComponent } from './Components/configuration/configuration.component';
+import { initialConfig } from 'ngx-mask';
+import { InitConfigComponent } from './Components/init-config/init-config.component';
 
 const routes: Routes = [
       { path: 'COA', component: COAComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ChartOfAccounts' }  },
@@ -26,6 +28,8 @@ const routes: Routes = [
       { path: 'Notification', component: NotificationComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Notification' }  },
       { path: 'FiscalYear', component: FiscalYearComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'FiscalYear' }  },
       { path: 'Configuration', component: ConfigurationComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CompanySetting' }  },
+      { path: 'CompanyConfig', component: InitConfigComponent },
+    
     ];
 
 

@@ -20,6 +20,7 @@ import { OfferComponent } from './Components/offer/offer.component';
 import { SchemesComponent } from './Components/schemes/schemes.component';
 import { AddNewSchemesComponent } from './Components/schemes/add-new-schemes/add-new-schemes.component';
 import { AddNewProductDComponent } from './Components/products/add-new-product-d/add-new-product-d.component';
+import { CompanyMseComponent } from './Components/company-mse/company-mse.component';
 
 function getDynamicComponent(componentForPos: any, componentForDistribution: any): any {
   const isPos = localStorage.getItem('isPos') === 'true';
@@ -28,6 +29,7 @@ function getDynamicComponent(componentForPos: any, componentForDistribution: any
 
 const routes: Routes = [
   { path: 'Customers', component: CustomersComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Customers' }  },
+  { path: 'CompanyCSE', component: CompanyMseComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CompanyCSE' }  },
   { path: 'Products', component: ProductsComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Products' }  },
   { path: 'AddProduct', component: getDynamicComponent(AddNewProductComponent, AddNewProductDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ProductsCreate' }  },
   { path: 'AddProduct/:id', component: getDynamicComponent(AddNewProductComponent, AddNewProductDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ProductsEdit' }  },

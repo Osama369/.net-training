@@ -200,7 +200,7 @@ export class AddSaleReturnComponent implements OnInit{
     this.locationService.getAllLoc().subscribe({
       next : (loc:any)=>{
         this.locations = loc.filter(x=>x.LocTypeId == 5);
-        this.selectedLocation = {locID : this.locations[0].LocationId, locName : this.locations[0].LocationName}
+        this.selectedLocation = {LocationId : this.locations[0].LocationId, LocationName : this.locations[0].LocationName};
       }
     })
 

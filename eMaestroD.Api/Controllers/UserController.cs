@@ -255,11 +255,26 @@ namespace eMaestroD.Api.Controllers
             var email = HttpContext.User.FindFirst(ClaimTypes.Email);
             if (email.Value != user[0].Email)
             {
-                var u = await _userManager.FindByEmailAsync(user[0].Email);
-
-                var result = await _userManager.DeleteAsync(u);
-                if (result.Succeeded)
+                if (user.FirstOrDefault().isAllowLogin == true)
                 {
+
+                    var u = await _userManager.FindByEmailAsync(user[0].Email);
+                    var result = await _userManager.DeleteAsync(u);
+                    if (result.Succeeded)
+                    {
+                        _AMDbContext.RemoveRange(_AMDbContext.Users.Where(x => x.UserID == userID));
+                        _AMDbContext.RemoveRange(_AMDbContext.UserCompanies.Where(x => x.UserID == userID));
+                        _AMDbContext.RemoveRange(_AMDbContext.UserLocations.Where(x => x.userID == userID));
+                        _AMDbContext.RemoveRange(_AMDbContext.Authorizations.Where(x => x.userID == userID));
+                        await _AMDbContext.SaveChangesAsync();
+
+                        _notificationInterceptor.SaveNotification("UsersDelete", user[0].ComID, "");
+                        return Ok();
+                    }
+                }
+                else
+                {
+
                     _AMDbContext.RemoveRange(_AMDbContext.Users.Where(x => x.UserID == userID));
                     _AMDbContext.RemoveRange(_AMDbContext.UserCompanies.Where(x => x.UserID == userID));
                     _AMDbContext.RemoveRange(_AMDbContext.UserLocations.Where(x => x.userID == userID));

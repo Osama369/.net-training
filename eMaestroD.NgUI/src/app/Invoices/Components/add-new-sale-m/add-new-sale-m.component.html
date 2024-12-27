@@ -115,7 +115,7 @@
                       </td>
 
                       <td >
-                                  <input #qtyField  [style]="{'width':'50px !important','min-width':'100%'}" pInputText #inputFieldTable [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(0,ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"  appFocusNext class="p-inputtext-sm" type="text" [(ngModel)]="rowData.qty" (blur)="ShowSerialNoDailog(rowData,rowData.qty, ri)" (change)="Itemcalculation(ri)" class="girdRow">
+                                  <input #qtyField  [style]="{'width':'50px !important','min-width':'100%'}" pInputText #inputFieldTable [disabled]="!rowData.barCode && !rowData.prodName" (keyup.enter)="onEnterTableInput(0,ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"   class="p-inputtext-sm" type="text" [(ngModel)]="rowData.qty" (blur)="ShowSerialNoDailog(rowData,rowData.qty, ri)" (change)="Itemcalculation(ri)" class="girdRow">
                       </td>
                       <td>
                                   <input [style]="{'width':'80px !important','min-width':'100%','text-align':'right'}" pInputText #inputFieldTable [disabled]="!rowData.barCode && !rowData.prodName"  (keyup.enter)="onEnterTableInput(1,ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.sellRate" (change)="Itemcalculation(ri)" class="girdRow">

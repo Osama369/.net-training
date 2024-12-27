@@ -12,6 +12,7 @@ import { AppConfigService } from './Shared/Services/app-config.service';
 import { AuthModule } from './Auth/auth.module';
 import { SharedDataService } from './Shared/Services/shared-data.service';
 
+
 export function initializeApp(appConfigService: AppConfigService) {
   return () => {
     return appConfigService.loadAppConfig()

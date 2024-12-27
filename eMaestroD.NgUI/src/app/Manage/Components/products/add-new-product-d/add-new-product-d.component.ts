@@ -328,6 +328,10 @@ onRowEditCancel(product:any, editing:any) {
       this.count++;
       this.onEnterTableInput(1);
     }
+    else if(this.productlist[0].prodGrpID == "" || this.productlist[0].prodGrpID == undefined)
+      {
+        this.toastr.error("Please Select Category.");
+      }
     else
     {
       if(this.productlist[0].purchRate == null) {this.productlist[0].purchRate = 0}

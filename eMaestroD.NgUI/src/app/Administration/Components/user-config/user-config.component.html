@@ -1,0 +1,72 @@
+<div class="form-container " id="form-4">
+    <h3>User Registration</h3>
+    <label for="">First Name</label>
+    <input type="text"  [(ngModel)]="firstName">
+    <label for="">Last Name</label>
+    <input type="text" [(ngModel)]="lastName">
+    <label for="">Email Address</label>
+    <input type="email" [(ngModel)]="emailAddress">
+    <!-- <input type="password" placeholder="Password"> -->
+    <label for="">Mobile</label>
+    <input type="text" [(ngModel)]="mobile">
+    <!-- <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
+        <label class="form-check-label" style="font-size: 14px;
+margin-top: 10px;" for="flexSwitchCheckChecked">Is Allow Login</label>
+      </div> -->
+    <!-- <label for="">Role</label> -->
+    <!-- <p-autoComplete #inputField pAutoFocus [autofocus]="true" [(ngModel)]="SelectedRole" [suggestions]="filterRole"  (completeMethod)="filtersRole($event)" (keyup.enter)="onEnterTableInputCst(5)"
+    field="RoleName" value="RoleID" styleClass="col-5" [minLength]="1" [dropdown]="true" #autoComplete (onFocus)="autoComplete.show()" appendTo="body"></p-autoComplete> -->
+  
+    <!-- <select>
+        <option>Admin</option>
+        <option>Editor</option>
+        <option>Viewer</option>
+    </select> -->
+    <div class="row">
+        <div class="col-6">
+            <div class="form-group">
+                <label>Roles</label>
+                <p-autoComplete #inputField pAutoFocus  [(ngModel)]="SelectedRole" [suggestions]="filterRole"  (completeMethod)="filtersRole($event)"
+                field="RoleName" value="RoleID"  [minLength]="1" [dropdown]="true" #autoComplete  appendTo="body"></p-autoComplete>
+            
+            </div>            
+        </div>
+        <div class="col-6">
+            <label for="">Location</label>
+            <p-dropdown
+            #inputField
+        
+            [(ngModel)]="SelectedLocation"
+            [options]="locations"
+            optionLabel="LocationName"
+            [filter]="true"
+            [filterBy]="'LocationName'"
+            appendTo="body"
+            [showClear]="true"
+            placeholder="Select a Location"            
+            >
+         </p-dropdown>
+
+
+            
+        </div>
+    </div>
+    <!-- <label>Location</label>
+    <p-dropdown
+    #inputField
+
+    [(ngModel)]="SelectedLocation"
+    [options]="locations"
+    optionLabel="LocationName"
+    [filter]="true"
+    [filterBy]="'LocationName'"
+    appendTo="body"
+    [showClear]="true"
+    placeholder="Select a Location"
+
+    >
+    </p-dropdown> -->
+    <button class="back" id="back-4">Save</button>
+    <!-- <button class="cancel">Finish</button> -->
+</div>

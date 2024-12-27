@@ -1,3 +1,5 @@
+import { initial } from "lodash";
+
 export const APP_ROUTES = {
   default: '',
 
@@ -9,7 +11,7 @@ export const APP_ROUTES = {
     confirmation: 'Account/Confirmation',
     selectCompany: 'Account/SelectCompany',
   },
-
+  initialConfig:'CompanyConfig',
   topbar: 'topbar',
 
   notFound: '404',
@@ -32,6 +34,7 @@ export const APP_ROUTES = {
     suppliers: 'Manage/Suppliers',
     bank: 'Manage/Bank',
     creditCard: 'Manage/CreditCard',
+    companycse : '/Manage/CompanyCSE',
     bulkStockUpdate: 'Manage/bulkStockUpdate',
   },
 
@@ -110,7 +113,7 @@ export const APP_ROUTES = {
         itemWiseProfit: 'Reports/ItemWiseProfitReport',
         invoiceWiseProfit: 'Reports/InvoiceWiseProfit',
         profitAndLoss: 'Reports/ProfitAndLossReport',
-        
+
       },
     },
   },
@@ -126,5 +129,7 @@ export const APP_ROUTES = {
     notification: 'Administration/Notification',
     notificationAlert: 'Administration/NotificationAlert',
     companySetting: 'Administration/Configuration',
+    companyConfig:'Administration/CompanyConfig'
+   
   },
 };
