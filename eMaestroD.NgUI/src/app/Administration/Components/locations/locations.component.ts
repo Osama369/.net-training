@@ -51,6 +51,7 @@ export class LocationsComponent implements OnInit {
     this.authService.GetBookmarkScreen(this.route.snapshot?.data['requiredPermission']).subscribe(x => {
       this.bookmark = x;
     });
+   
   }
 
   UpdateBookmark(value: any) {
@@ -67,6 +68,7 @@ export class LocationsComponent implements OnInit {
       this.files = this.convertToTree(loc);
       this.expandAll();
     });
+   
   }
 
   convertToTree(locations: any[]): any[] {
@@ -159,10 +161,16 @@ export class LocationsComponent implements OnInit {
   }
 
   onDelete() {
+   
+    // if(x.)
+    //   this.toastr.error("Cannot delete this location because it has level 3 locations under it.");
+    // let filterList = this.files.filter(x=> )
+   
     this.authService.checkPermission('LocationDelete').subscribe(x => {
       if (x) {
+       
         if (this.parentID != "") {
-          console.log(this.selectedRow);
+        
           const selectedLocation = this.AlllocList.find(loc => loc.LocationId == this.parentID);
 
           if (selectedLocation) {
@@ -179,9 +187,18 @@ export class LocationsComponent implements OnInit {
                   this.toastr.error("Cannot delete this location because it has level 3 locations under it.");
                   return;
                 }
+              } else if(selectedLevel === 5){
+                const hasLevel5Children = this.AlllocList.filter(loc => loc.LocTypeId == 5);
+
+                if (hasLevel5Children.length == 1) {
+                  this.toastr.error("Cannot delete this location because only one location exist.");
+                  return;
+                }
               }
 
               if (confirm("Are you sure you want to delete this Location?")) {
+               
+                
                   this.locationService.deleteLoc(selectedLocation.LocationId).subscribe({
                     next: x => {
                       this.toastr.success("Location has been successfully deleted!");
