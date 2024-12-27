@@ -103,9 +103,8 @@ export class CustomerSaleProductWiseComponent {
 
     this.sharedDataService.getProducts$().subscribe((us:any)=>{
 
-        this.productList= (us as {[key: string]: any})['enttityDataSource']
+        this.productList= [...(us as {[key: string]: any})['enttityDataSource']];
         this.productList.unshift({
-          
           prodID:0,
           prodName:"---All---"
         });

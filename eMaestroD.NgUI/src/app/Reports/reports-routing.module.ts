@@ -48,6 +48,8 @@ import { PayableAgingComponent } from './Components/payable-aging/payable-aging.
 import { ReceivableAgingComponent } from './Components/receivable-aging/receivable-aging.component';
 import { ReceiptJournalComponent } from './Components/receipt-journal/receipt-journal.component';
 import { CustomerSaleProductWiseComponent } from './Components/customer-sale-product-wise/customer-sale-product-wise.component';
+import { BulkReceiptComponent } from './Components/bulk-receipt/bulk-receipt.component';
+import { MonthWisePartySaleComponent } from './Components/month-wise-party-sale/month-wise-party-sale.component';
 
 const routes: Routes = [
   { path: 'DailySaleReport', component: DailyinvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DailySale' }  },
@@ -97,6 +99,8 @@ const routes: Routes = [
       { path: 'ReceivableAging', component:ReceivableAgingComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ReceivableAging' }  },
       { path: 'ReceiptJournal', component:ReceiptJournalComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ReceiptJournal' }  },
       { path: 'CustomerSaleProductWise', component:CustomerSaleProductWiseComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CustomerSaleProductWise' }  },
+      { path: 'BulkReceipt', component:BulkReceiptComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'BulkReceipt' }  },
+      { path: 'MonthWisePartySale', component:MonthWisePartySaleComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'MonthWisePartySale' }  },
 
     ];
 

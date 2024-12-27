@@ -48,7 +48,7 @@
             <!-- <td style="text-align: left !important;min-width:15rem;" *ngIf="!col.isHidden && col.controlType === enum_ColTypes.Date " >{{ obj[col.field] | date:"dd/MM/yyyy" }} </td> -->
             <!-- <td style="text-align: left !important;min-width:15rem;" *ngIf="!col.isHidden && !col.uppercase && col.controlType != enum_ColTypes.Date " >{{ obj[col.field]}} </td> -->
             <td *ngIf="col.controlType == enum_ColTypes.Date">
-              {{obj[col.field] | timezoneDate:"dd-MM-yyyy hh:mm:ss"}}
+              {{obj[col.field] | timezoneDate:"dd-MM-yyyy"}}
             </td>
             <!-- <td *ngIf="col.controlType != enum_ColTypes.Date && col.controlType != enum_ColTypes.CustomDetailControl">
               {{obj[col.field]}}

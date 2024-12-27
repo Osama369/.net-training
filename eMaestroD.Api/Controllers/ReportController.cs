@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 using eMaestroD.DataAccess.DataSet;
 using eMaestroD.Models.ReportModels;
 using eMaestroD.Shared.Common;
+using System.Data;
 
 namespace eMaestroD.Api.Controllers
 {
@@ -288,6 +289,18 @@ namespace eMaestroD.Api.Controllers
             else if (ReportName == "ReceiptJournal")
             {                                                                 // cstID
                 var res = await ReceiptJournal(Parameter1, Parameter2, int.Parse(Parameter3), locID, comID);
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
+            else if (ReportName == "BulkReceipt")
+            {                                                                 // cstID
+                var res = await BulkReceipt(Parameter1, Parameter2, int.Parse(Parameter3), locID, comID);
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
+            else if (ReportName == "MonthWisePartySale")
+            {                                                                 // cstID
+                var res = await MonthWisePartySale(Parameter1, Parameter2, int.Parse(Parameter3), locID, comID);
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
@@ -1039,10 +1052,10 @@ namespace eMaestroD.Api.Controllers
         public async Task<List<StockList>> StockReportAsync(string prodID, int locID, int comID, int catID, int vendID)
         {
             List<StockList> SDL;
-            string sql = "EXEC Report_StockList @prodBCID,@locID,@comID, @catID,@vendID";
+            string sql = "EXEC Report_StockList @prodID,@locID,@comID, @catID,@vendID";
             List<SqlParameter> parms = new List<SqlParameter>
             {
-                    new SqlParameter { ParameterName = "@prodBCID", Value = prodID },
+                    new SqlParameter { ParameterName = "@prodID", Value = prodID },
                     new SqlParameter { ParameterName = "@locID", Value = locID },
                     new SqlParameter { ParameterName = "@comID", Value = comID },
                     new SqlParameter { ParameterName = "@catID", Value = catID },
@@ -1877,7 +1890,120 @@ namespace eMaestroD.Api.Controllers
             }
             return null;
         }
+        [NonAction]
+        public async Task<List<BulkReceipt>> BulkReceipt(DateTime dtfrom, DateTime dtTo, int userId, int locID, int comID)
+        {
+            try
+            {
+                List<BulkReceipt> SDL;
+                string sql = "EXEC Report_BulkReceipt @dtStart,@dtEnd,@userId,@locId , @comId ";
+                List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@userId", Value = userId },
+                    new SqlParameter { ParameterName = "@locId", Value = locID },
+                    new SqlParameter { ParameterName = "@comId", Value = comID },
+            };
 
+                 SDL = _AMDbContext.BulkReceipt.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+                if (SDL.Count > 0)
+                {
+                    decimal total = 0;
+                    //foreach (var item in SDL)
+                    //{
+                    //    total += item.TotalSalesAmountMonthWise;
+                    //}
+
+                    //SDL.Add(new MonthlySales
+                    //{
+                    //    SaleMonth = " "
+                    //});
+
+                    //SDL.Add(new MonthlySales
+                    //{
+                    //    SaleMonth = "TOTAL",
+                    //    TotalSalesAmountMonthWise = total
+                    //});
+
+                    return SDL;
+                }
+                return null;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+           
+        }
+        [NonAction]
+
+        public async Task<List<MonthWisePartySale>> MonthWisePartySale(DateTime dtfrom, DateTime dtTo, int cstID, int locID, int comID)
+        {
+            try
+            {
+                List<MonthWisePartySale> SDL;
+                var results = new List<MonthWisePartySale>();
+                string sql = "EXEC Report_MonthWisePartySale @dtStart,@dtEnd,@cstID,@locId , @comId ";
+                List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value = dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@cstID", Value = cstID },
+                    new SqlParameter { ParameterName = "@locId", Value = locID },
+                    new SqlParameter { ParameterName = "@comId", Value = comID },
+            };
+
+                using (var connection = _AMDbContext.Database.GetDbConnection())
+                {
+                    await connection.OpenAsync();
+                    using (var command = connection.CreateCommand())
+                    {
+                        command.CommandText = sql;
+                        command.CommandType = CommandType.Text;
+                        command.Parameters.AddRange(parms.ToArray());
+
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                var record = new MonthWisePartySale
+                                {
+                                    customerName = reader["customerName"].ToString(), // Assuming "CustomerName" is a fixed column
+                                };
+
+                                // Process dynamic columns
+                                for (int i = 1; i < reader.FieldCount; i++) // Start from 1 if "CustomerName" is the first column
+                                {
+                                    string columnName = reader.GetName(i); // Get column name (e.g., month)
+                                    if (decimal.TryParse(reader[i].ToString(), out decimal value))
+                                    {
+                                        record.MonthWiseSales[columnName] = value; // Add to dynamic dictionary
+                                    }
+                                }
+
+                                // Calculate total sales
+                                record.TotalSales = record.MonthWiseSales.Values.Sum();
+
+                                results.Add(record);
+                            }
+                        }
+                    }
+                }
+                //if (results.Any()) {
+                //    results.RemoveAll(x => x.customerName == "");
+                //}
+                return results.Any() ? results : null;
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions as needed
+                throw;
+            }
+        }
         [NonAction]
         public async Task<List<AdvancedSearch>> AdvancedSearch(DateTime dtfrom, DateTime dtTo, string cstID, string vendID, string prodID, int locID, int comID)
         {

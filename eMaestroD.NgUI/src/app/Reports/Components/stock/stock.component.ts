@@ -52,63 +52,21 @@ export class StockComponent {
 
 
   ngOnInit(): void {
-    this.sharedDataService.getProducts$().subscribe({
-      next: (products) => {
-        this.products = [...(products as { [key: string]: any })["enttityDataSource"]];
-        this.allProductlist = (products as { [key: string]: any })["enttityDataSource"];
-        this.products.unshift({
-            prodBCID : 0,
-            prodGrpID : undefined,
-            comID : undefined,
-            comName : undefined,
-            prodGrpName : undefined,
-            prodCode : undefined,
-            shortName : undefined,
-            prodName : "---ALL---",
-            descr : undefined,
-            prodUnit : undefined,
-            unitQty : undefined,
-            qty:undefined,
-            tax:undefined,
-            discount:undefined,
-            purchRate : undefined,
-            amount:undefined,
-            sellRate : undefined,
-            batch:undefined,
-            retailprice : undefined,
-            bonusQty:undefined,
-            tP : undefined,
-            isDiscount : false,
-            isTaxable : false,
-            isStore : false,
-            isRaw : false,
-            isBonus : false,
-            minQty : undefined,
-            maxQty : undefined,
-            mega : true,
-            active : true,
-            crtBy : undefined,
-            crtDate : undefined,
-            modby : undefined,
-            modDate : undefined,
-            expirydate : undefined,
-            qtyBal:undefined,
-            GLID:undefined,
-            TxID:undefined,
-            unitPrice:undefined
-          }
-    );
+    this.sharedDataService.getProducts$().subscribe((us:any)=>{
+      this.productlist = [...(us as { [key: string]: any })["enttityDataSource"]];
 
-    this.SelectedProduct = {prodBCID:  0, prodName: '---ALL---'};
-      },
-      error: (response) => {
-        console.log(response);
-      },
-    });
+      this.productlist.unshift({
+
+          prodID : 0,
+          prodName : "---ALL---"
+        });
+        this.SelectedProduct = {prodID:  0, prodName: '---ALL---'};
+    })
+    
 
     this.productCategoryService.getAllGroups().subscribe({
       next: (comp) => {
-        this.productGrouplist =(comp as { [key: string]: any })["enttityDataSource"];;
+        this.productGrouplist =[...(comp as { [key: string]: any })["enttityDataSource"]];
         this.productGrouplist.unshift({
           prodGrpID:0,
           prodGrpName:"---ALL---"
@@ -177,6 +135,7 @@ export class StockComponent {
     {
       this.products = this.allProductlist.filter(x=>x.prodGrpID == this.SelectedproductGrouplist.prodGrpID);
       this.products.unshift({
+        prodID:0,
         prodBCID : 0,
         prodGrpID : undefined,
         comID : undefined,
@@ -222,7 +181,7 @@ export class StockComponent {
     }else{
       this.products = this.allProductlist;
     }
-    this.SelectedProduct = {prodBCID:  0, prodName: '---ALL---'};
+    this.SelectedProduct = {prodID:  0, prodName: '---ALL---'};
 
   }
 
@@ -240,7 +199,7 @@ export class StockComponent {
 
   submit()
   {
-    this.reportService.runReportWith1Para("StockList",this.SelectedProduct.prodBCID,this.selectedLocation.LocationId, this.SelectedproductGrouplist.prodGrpID,this.SelectedVendor.vendID).subscribe(data => {
+    this.reportService.runReportWith1Para("StockList",this.SelectedProduct.prodID,this.selectedLocation.LocationId, this.SelectedproductGrouplist.prodGrpID,this.SelectedVendor.vendID).subscribe(data => {
       this.data = (data as { [key: string]: any })["enttityDataSource"];
       this.cols = (data as { [key: string]: any })["entityModel"];
       this.allowBtn = true;

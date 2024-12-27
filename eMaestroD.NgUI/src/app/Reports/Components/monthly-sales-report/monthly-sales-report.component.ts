@@ -70,6 +70,8 @@ export class MonthlySalesReportComponent {
   {
     let d1 = this.datePipe.transform(this.DateFrom, "yyyy-MM-dd");
     let d2 =  this.datePipe.transform(this.DateTo, "yyyy-MM-dd");
+    console.log(this.DateFrom);
+    console.log(d1);
     let locID = 0;
     this.reportService.runReportWith2Para("MonthlySales",d1,d2,0,0).subscribe(data => {
       this.data = (data as { [key: string]: any })["enttityDataSource"];

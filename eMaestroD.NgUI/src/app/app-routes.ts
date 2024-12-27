@@ -104,6 +104,8 @@ export const APP_ROUTES = {
       ReceivableAging: 'Reports/ReceivableAging',
       ReceiptJournal: 'Reports/ReceiptJournal',
       CustomerSaleProductWise: 'Reports/CustomerSaleProductWise',
+      BulkReceipt: 'Reports/BulkReceipt',
+      MonthWisePartySale: 'Reports/MonthWisePartySale',
       profitReports: {
         itemWiseProfit: 'Reports/ItemWiseProfitReport',
         invoiceWiseProfit: 'Reports/InvoiceWiseProfit',
