@@ -455,6 +455,7 @@ export class AddNewSaleDComponent implements OnInit{
         }
       }
       this.toastr.error("No more stock available for this product");
+      this.onEnterComplexInternal(this.inputFields.length - 4);
     } catch (error) {
       console.error("Error fetching product or stock details", error);
       this.toastr.error("Error fetching product or stock details");
@@ -1066,6 +1067,7 @@ export class AddNewSaleDComponent implements OnInit{
         this.addNewRow();
       } else {
         this.toastr.error("No more stock available for this product");
+        this.onEnterComplexInternal(this.inputFields.length - 4);
       }
     } catch (error) {
       console.error("Error fetching product or stock details", error);
@@ -1092,7 +1094,7 @@ export class AddNewSaleDComponent implements OnInit{
     this.productlist[i].discount = product.sharePercentage;
     this.productlist[i].isTaxable = product.isTaxable;
     this.productlist[i].units =product.units;
-    this.productlist[i].unit =product.units.find(x=>x.unitType  == batch.unit);
+    this.productlist[i].unit =product.units.find(x=>x.unitValue == 1) || product.units[0];
     this.productlist[i].batchNo = batch.batchNo;
     this.productlist[i].purchPrice = batch.purchRate;
     this.productlist[i].sellPrice = batch.sellRate;
@@ -1104,7 +1106,7 @@ export class AddNewSaleDComponent implements OnInit{
   }
 
   addNewProductEntry(i: number, product: any, batch: any) {
-    let TempUnit = product.units.find(x=>x.unitType  == batch.unit);
+    let TempUnit = product.units.find(x=>x.unitValue == 1) || product.units[0];
     this.productlist[i] = {
       barCode: product.barCode,
       prodID: product.prodID,
@@ -1349,10 +1351,11 @@ async InvoiceOnChange()
   }
 
   onUnitSelect(event: any, rowData: any, rowIndex: number) {
-    if (rowData.unitQty <= event.unitValue) {
+  if (rowData.unitQty < event.unitValue) {
       this.toastr.error(
         "Cannot select this unit because the available quantity is less than the base quantity of this unit."
       );
+
 
       rowData.unit = { ...rowData.units[0] };
       rowData.qtyBal = rowData.unitQty / rowData.unit.unitValue;
