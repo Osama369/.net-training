@@ -45,12 +45,12 @@ export class ItemledgerComponent {
     this.sharedDataService.getProducts$().subscribe({
       next: (products) => {
         this.products = [...(products as { [key: string]: any })["enttityDataSource"]];
-        this.products.unshift({
-            prodBCID : 0,
-            prodName : "---ALL---",
-          }
-    );
-    this.SelectedProduct = {prodBCID:  0, prodName: '---ALL---'};
+    //     this.products.unshift({
+    //         prodID : 0,
+    //         prodName : "---ALL---",
+    //       }
+    // );
+    // this.SelectedProduct = {prodID:  0, prodName: '---ALL---'};
       },
       error: (response) => {
         console.log(response);
@@ -102,7 +102,7 @@ filterProduct(event: any) {
 
     let d1 = this.datePipe.transform(this.DateFrom, "yyyy-MM-dd");
     let d2 =  this.datePipe.transform(this.DateTo, "yyyy-MM-dd");
-    this.reportService.runReportWith3Para("ItemLedger",d1,d2,this.SelectedProduct.prodBCID,0).subscribe(data => {
+    this.reportService.runReportWith3Para("ItemLedger",d1,d2,this.SelectedProduct.prodID,0).subscribe(data => {
       this.data = (data as { [key: string]: any })["enttityDataSource"];
       this.cols = (data as { [key: string]: any })["entityModel"];
       this.allowBtn = true;
