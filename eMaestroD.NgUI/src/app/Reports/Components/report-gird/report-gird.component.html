@@ -64,7 +64,7 @@
                 </td>
     
                 <td *ngIf="col.controlType != enum_ColTypes.Date && col.controlType == enum_ColTypes.Currency"
-                [ngStyle]="{'color': (obj[col.field]<0) ? 'red' : 'gray-900'}">
+                [ngStyle]="{'color': (obj[col.field]<0) ? 'red' : 'gray-900','text-align':'right'}">
                   {{obj[col.field] | number : '1.2-2'}}
                 </td>
               </ng-container>
@@ -72,12 +72,16 @@
           </ng-template>
           <ng-template *ngIf="AllowTotal" pTemplate="footer" let-columns>
             <tr>
-              <td *ngFor="let col of columns; let i = index">
+              <td  *ngFor="let col of columns; let i = index">
                 <ng-container *ngIf="i === 0">
                   <b>Total</b>
+
                 </ng-container>
-                <ng-container *ngIf="col.controlType != enum_ColTypes.Date && col.controlType == enum_ColTypes.Currency">
-                   {{ getColumnSum(col.field) | number : '1.2-2' }}
+            
+                <ng-container  *ngIf="col.controlType != enum_ColTypes.Date && col.controlType == enum_ColTypes.Currency">
+                  <span style="float: right;">
+                    {{ getColumnSum(col.field) | number : '1.2-2' }}
+                  </span>            
                 </ng-container>
               </td>
             </tr>
