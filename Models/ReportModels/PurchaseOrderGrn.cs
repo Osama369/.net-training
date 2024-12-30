@@ -22,19 +22,19 @@ namespace eMaestroD.Models.ReportModels
         [DisplayName(Name = "Vendor")]
         public string? vendName { get; set; }
 
-        [DisplayName(Name = "Product Name")]
-        public string? prodName { get; set; }
+        //[DisplayName(Name = "Product Name")]
+        //public string? prodName { get; set; }
 
-        [DisplayName(Name ="Qty")]
-        public decimal qty { get; set; }
-
-
-        [DisplayName(Name = "Rate")]
-        public decimal Rate { get; set; }
+        //[DisplayName(Name ="Qty")]
+        //public decimal qty { get; set; }
 
 
-        [DisplayName(Name = "OFFERs")]
-        public decimal OFFERs { get; set; }
+        [DisplayName(Name = "Discount Sum")]
+        public decimal discountSum { get; set; }
+
+
+        [DisplayName(Name = "Tax Sum")]
+        public decimal taxSum { get; set; }
 
 
         [DisplayName(Name = "Amount")]

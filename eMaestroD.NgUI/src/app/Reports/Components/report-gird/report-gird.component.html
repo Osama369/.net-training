@@ -79,7 +79,7 @@
                 </ng-container>
             
                 <ng-container  *ngIf="col.controlType != enum_ColTypes.Date && col.controlType == enum_ColTypes.Currency">
-                  <span style="float: right;">
+                  <span style="float:right;">
                     {{ getColumnSum(col.field) | number : '1.2-2' }}
                   </span>            
                 </ng-container>
