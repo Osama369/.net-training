@@ -29,60 +29,67 @@
             </span>
           </div>
         </div>
-      <p-table #dt [columns]="selectedColumns" selectionMode="single"
-      [value]="data" styleClass="p-datatable-striped"
-      [scrollable]="true" scrollHeight="420px" scrollDirection="vertical">
-      <ng-template pTemplate="header" let-columns>
-        <tr>
-          <th *ngFor="let col of columns">
-            {{col.header | translate}}
-            <!-- <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter> -->
-          </th>
-        </tr>
-      </ng-template>
+        <div >
+          <p-table [hidden]="!data?.length" #dt [columns]="selectedColumns" selectionMode="single"
+          [value]="data"  styleClass="p-datatable-striped"
+          [scrollable]="true" scrollHeight="420px" scrollDirection="vertical">
+          <ng-template  pTemplate="header" let-columns>
+            <tr>
+              <th *ngFor="let col of columns">
+                {{col.header | translate}}
+                <!-- <p-columnFilter type="text" [field]="col.field" display="menu"></p-columnFilter> -->
+              </th>
+            </tr>
+          </ng-template>
+    
+          <ng-template pTemplate="body"
+            let-obj let-columns="columns">
+            <tr  >
+              <ng-container *ngFor="let col of columns">
+                <!-- <td style="text-align: left !important;min-width:15rem;" *ngIf="!col.isHidden && col.controlType === enum_ColTypes.Date " >{{ obj[col.field] | date:"dd/MM/yyyy" }} </td> -->
+                <!-- <td style="text-align: left !important;min-width:15rem;" *ngIf="!col.isHidden && !col.uppercase && col.controlType != enum_ColTypes.Date " >{{ obj[col.field]}} </td> -->
+                <td *ngIf="col.controlType == enum_ColTypes.Date">
+                  {{obj[col.field] | timezoneDate:"dd-MM-yyyy"}}
+                </td>
+                <!-- <td *ngIf="col.controlType != enum_ColTypes.Date && col.controlType != enum_ColTypes.CustomDetailControl">
+                  {{obj[col.field]}}
+                </td> -->
+                <td *ngIf="col.controlType != enum_ColTypes.Date && col.controlType != enum_ColTypes.link && col.controlType != enum_ColTypes.Currency"
+                [ngStyle]="{'color': (obj[col.field]<0) ? 'red' : 'gray-900'}">
+                  {{obj[col.field] }}
+                </td>
+    
+                <td *ngIf="col.controlType != enum_ColTypes.Date && col.controlType == enum_ColTypes.link">
+                   <a (click)="viewInvoiceDetail(obj[col.field])" style="color:blue;" class="invoiceNo">{{obj[col.field]}}</a>
+                </td>
+    
+                <td *ngIf="col.controlType != enum_ColTypes.Date && col.controlType == enum_ColTypes.Currency"
+                [ngStyle]="{'color': (obj[col.field]<0) ? 'red' : 'gray-900','text-align':'right'}">
+                  {{obj[col.field] | number : '1.2-2'}}
+                </td>
+              </ng-container>
+            </tr>
+          </ng-template>
+          <ng-template *ngIf="AllowTotal" pTemplate="footer" let-columns>
+            <tr>
+              <td  *ngFor="let col of columns; let i = index">
+                <ng-container *ngIf="i === 0">
+                  <b>Total</b>
 
-      <ng-template pTemplate="body"
-        let-obj let-columns="columns">
-        <tr>
-          <ng-container *ngFor="let col of columns">
-            <!-- <td style="text-align: left !important;min-width:15rem;" *ngIf="!col.isHidden && col.controlType === enum_ColTypes.Date " >{{ obj[col.field] | date:"dd/MM/yyyy" }} </td> -->
-            <!-- <td style="text-align: left !important;min-width:15rem;" *ngIf="!col.isHidden && !col.uppercase && col.controlType != enum_ColTypes.Date " >{{ obj[col.field]}} </td> -->
-            <td *ngIf="col.controlType == enum_ColTypes.Date">
-              {{obj[col.field] | timezoneDate:"dd-MM-yyyy"}}
-            </td>
-            <!-- <td *ngIf="col.controlType != enum_ColTypes.Date && col.controlType != enum_ColTypes.CustomDetailControl">
-              {{obj[col.field]}}
-            </td> -->
-            <td *ngIf="col.controlType != enum_ColTypes.Date && col.controlType != enum_ColTypes.link && col.controlType != enum_ColTypes.Currency"
-            [ngStyle]="{'color': (obj[col.field]<0) ? 'red' : 'gray-900'}">
-              {{obj[col.field] }}
-            </td>
-
-            <td *ngIf="col.controlType != enum_ColTypes.Date && col.controlType == enum_ColTypes.link">
-               <a (click)="viewInvoiceDetail(obj[col.field])" style="color:blue;" class="invoiceNo">{{obj[col.field]}}</a>
-            </td>
-
-            <td *ngIf="col.controlType != enum_ColTypes.Date && col.controlType == enum_ColTypes.Currency"
-            [ngStyle]="{'color': (obj[col.field]<0) ? 'red' : 'gray-900'}">
-              {{obj[col.field] | number : '1.2-2'}}
-            </td>
-          </ng-container>
-        </tr>
-      </ng-template>
-      <ng-template *ngIf="AllowTotal" pTemplate="footer" let-columns>
-        <tr>
-          <td *ngFor="let col of columns; let i = index">
-            <ng-container *ngIf="i === 0">
-              <b>Total</b>
-            </ng-container>
-            <ng-container *ngIf="col.controlType != enum_ColTypes.Date && col.controlType == enum_ColTypes.Currency">
-               {{ getColumnSum(col.field) | number : '1.2-2' }}
-            </ng-container>
-          </td>
-        </tr>
-      </ng-template>
-
-    </p-table>
+                </ng-container>
+            
+                <ng-container  *ngIf="col.controlType != enum_ColTypes.Date && col.controlType == enum_ColTypes.Currency">
+                  <span style="float:right;">
+                    {{ getColumnSum(col.field) | number : '1.2-2' }}
+                  </span>            
+                </ng-container>
+              </td>
+            </tr>
+          </ng-template>
+    
+        </p-table>
+        </div>
+     
 </div>
 </div>
 

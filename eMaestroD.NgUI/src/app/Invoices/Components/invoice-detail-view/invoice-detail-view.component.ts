@@ -87,7 +87,7 @@ export class InvoiceDetailViewComponent {
 
         this.SubTotal = invoice.grossTotal
         this.TotalTax = invoice.totalTax
-        this.TotalDiscount = invoice.totalDiscount;
+        this.TotalDiscount = invoice.totalDiscount+invoice.totalExtraDiscount;
         this.Total = this.SubTotal + this.TotalTax - this.TotalDiscount;
     }
     catch(error){

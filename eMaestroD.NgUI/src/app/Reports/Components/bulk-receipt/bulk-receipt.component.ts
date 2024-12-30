@@ -397,8 +397,9 @@ LoadLocations()
       this.userList.unshift({
         UserID : 0,
         UserName : "---ALL---"});
-    })
+    });
    // this.selectedUser= this.userList[0].UserID;
+   //this.selectedUser = {UserID : this.userList[0].UserID, UserName : this.userList[0].UserName};
   }
   submit()
   {

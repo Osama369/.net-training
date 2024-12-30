@@ -47,6 +47,8 @@ export class ReportGirdComponent {
 	@Input() AllowPrintButtons : boolean = false;
   logoPath = this.appConfigService.getConfig().LogoPath;
 
+    
+
   row : any;
 	cols: any[] = [];
 	_selectedColumns: any[];
@@ -62,13 +64,20 @@ export class ReportGirdComponent {
   checked: boolean = false;
   @ViewChild('dt') table!: Table;
   reportSettingVisiblity : boolean = false;
+ 
 
   getColumnSum(field: string): number {
-    return this.data.reduce((sum, item) => {
-      const value = parseFloat(item[field]);
-      return !isNaN(value) ? sum + value : sum;
-    }, 0);
+   
+      
+      return this.data.reduce((sum, item) => {
+        const value = parseFloat(item[field]);
+        return !isNaN(value) ? sum + value : sum;
+      }, 0);
+  
+   
   }
+
+ 
 
 
   @Input() AllowTotal : boolean = false;
@@ -100,6 +109,9 @@ export class ReportGirdComponent {
     {
       this.row = 1;
     }
+    if(this.data.length==0){
+     
+    }
   }
 
 
@@ -119,6 +131,7 @@ export class ReportGirdComponent {
     })
 
 		this._selectedColumns = this.cols;
+    
 	}
 
 	@Input() get selectedColumns(): any[] {

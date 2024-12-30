@@ -41,10 +41,10 @@ namespace eMaestroD.Models.ReportModels
         [DisplayName(Name = "Invoice No")]
         public string? voucherNo { get; set; }
 
-        [DisplayName(Name = "Unit Price")]
-        public decimal unitPrice { get; set; }
+        [DisplayName(Name = "Amount")]
+        public decimal Amount { get; set; }
 
-
+        [HiddenOnRender]
         [DisplayName(Name = "Sale Person")]
         public decimal SalePerson { get; set; }
 
