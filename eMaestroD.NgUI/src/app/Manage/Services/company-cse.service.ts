@@ -16,4 +16,13 @@ export class CompanyCSEService {
     let comID = localStorage.getItem('comID');
     return this.http.get<any[]>(this.baseApiUrl+comID);
   }
+
+  delete(cseID: any) {
+    return this.http.delete<any>(this.baseApiUrl+cseID);
+  }
+
+  save(cseList: any): Observable<any[]> {
+    return this.http.post<any[]>(this.baseApiUrl, cseList);
+  }
+
 }

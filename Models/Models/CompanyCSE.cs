@@ -15,9 +15,9 @@ namespace eMaestroD.Models.Models
         [HiddenOnRender]
         public int CSEID { get; set; }
         [HiddenOnRender]
-        public int CompID { get; set; }
+        public int? CompID { get; set; }
         [HiddenOnRender]
-        public int vendID { get; set; }
+        public int? vendID { get; set; }
         [NotMapped]
         [DisplayName(Name ="Supplier Name")]
         public string? vendName { get; set; }
@@ -35,9 +35,9 @@ namespace eMaestroD.Models.Models
         public bool? IsDefault { get; set; }
         [NotMapped]
         [HiddenOnRender]
-        public List<CSECustomer> CSECustomer { get; set; }
-        [NotMapped]
-        [HiddenOnRender]
-        public List<MseMapArea> MseMapArea { get; set; }
+        public List<CSECustomer>? CSECustomer { get; set; }
+        //[NotMapped]
+        //[HiddenOnRender]
+        //public List<MseMapArea> MseMapArea { get; set; }
     }
 }

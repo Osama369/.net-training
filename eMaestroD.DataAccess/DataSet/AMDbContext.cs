@@ -120,7 +120,7 @@ namespace eMaestroD.DataAccess.DataSet
         public DbSet<ReceivableAging> ReceivableAging { get; set; }
         public DbSet<ReceiptJournal> ReceiptJournal { get; set; }
         public DbSet<CompanyCSE> CompanyCSE { get; set; }
-        public DbSet<MseMapArea> MseMapArea { get; set; }
+        //public DbSet<MseMapArea> MseMapArea { get; set; }
         public DbSet<CSECustomer> CSECustomer { get; set; }
         public DbSet<CustomerSaleProdWIse> CustomerSaleProdWIse { get; set; }
         public DbSet<BulkReceipt> BulkReceipt { get; set; }

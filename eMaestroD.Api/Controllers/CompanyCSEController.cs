@@ -54,6 +54,7 @@ namespace eMaestroD.Api.Controllers
                               Address1 = cse.Address1,
                               email = cse.email,
                               Cell = cse.Cell,
+                              vendID = cse.vendID,
                               vendName = (from vnd in _AMDbContext.Vendors
                                           where vnd.vendID == cse.vendID
                                           select vnd.vendName).FirstOrDefault(),
@@ -61,25 +62,17 @@ namespace eMaestroD.Api.Controllers
                               CSECustomer = (from cust in _AMDbContext.CSECustomer
                                            join customerInfo in _AMDbContext.Customers 
                                            on cust.CstID equals customerInfo.cstID
-                                           where cust.CSEID == cse.CSEID
+                                            join locationInfo in _AMDbContext.Locations
+                                            on cust.locationId equals locationInfo.LocationId
+                                             where cust.CSEID == cse.CSEID
                                            select new CSECustomer
                                            {
                                                CSECustomerID = cust.CSECustomerID,
                                                CstID = cust.CstID,
                                                CustomerName = customerInfo.cstName,
+                                               LocationName = locationInfo.LocationName,
                                                Active = cust.Active
-                                           }).ToList(),
-                              MseMapArea = (from map in _AMDbContext.MseMapArea
-                                       join locationInfo in _AMDbContext.Locations 
-                                       on map.AreaID equals locationInfo.LocationId
-                                       where map.mseID == cse.CSEID
-                                       select new MseMapArea
-                                       {
-                                           MseMapID = map.MseMapID,
-                                           AreaID = map.AreaID,
-                                           LocationName = locationInfo.LocationName, 
-                                           Active = map.Active
-                                       }).ToList()
+                                           }).ToList()
                           }).ToList();
 
 
@@ -91,5 +84,91 @@ namespace eMaestroD.Api.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Upsert(CompanyCSE model)
+        {
+            using (var transaction = _AMDbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    // Upsert CompanyCSE
+                    var existingCSE = _AMDbContext.CompanyCSE.FirstOrDefault(c => c.CSEID == model.CSEID);
+                    if (existingCSE == null)
+                    {
+                        _AMDbContext.CompanyCSE.Add(model);
+                    }
+                    else
+                    {
+                        existingCSE.CompID = model.CompID;
+                        existingCSE.RepName = model.RepName;
+                        existingCSE.Address1 = model.Address1;
+                        existingCSE.email = model.email;
+                        existingCSE.Cell = model.Cell;
+                        existingCSE.vendID = model.vendID; // Assuming vendID comes from the model
+                        existingCSE.Active = model.Active;
+                        _AMDbContext.CompanyCSE.Update(existingCSE);
+                    }
+                    await _AMDbContext.SaveChangesAsync();
+
+
+                    // Upsert CSECustomer
+                    var existingCustomers = _AMDbContext.CSECustomer.Where(c => c.CSEID == model.CSEID).ToList();
+                    _AMDbContext.CSECustomer.RemoveRange(existingCustomers);
+                    await _AMDbContext.SaveChangesAsync();
+
+                    if (model.CSECustomer != null)
+                    {
+                        foreach (var customer in model.CSECustomer)
+                        {
+                            customer.CSECustomerID = null;
+                            customer.CSEID = existingCSE?.CSEID ?? model.CSEID; // Use existing or new ID
+                            _AMDbContext.CSECustomer.Add(customer);
+                        }
+                    }
+
+
+                    await _AMDbContext.SaveChangesAsync();
+
+                    transaction.Commit();
+
+                    return Ok(model);
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    return BadRequest(ex.Message);
+                }
+            }
+        }
+
+        [HttpDelete]
+        [Route("{cseID}")]
+        public IActionResult Delete(int cseID)
+        {
+            using (var transaction = _AMDbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var customers = _AMDbContext.CSECustomer.Where(c => c.CSEID == cseID).ToList();
+                    _AMDbContext.CSECustomer.RemoveRange(customers);
+                  
+                    var companyCSE = _AMDbContext.CompanyCSE.FirstOrDefault(c => c.CSEID == cseID);
+                    if (companyCSE != null)
+                    {
+                        _AMDbContext.CompanyCSE.Remove(companyCSE);
+                    }
+
+                    _AMDbContext.SaveChanges();
+                    transaction.Commit();
+
+                    return Ok(new { success = true, message = "Data deleted successfully." });
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                    return BadRequest(new { success = false, message = ex.Message });
+                }
+            }
+        }
     }
 }
