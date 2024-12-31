@@ -997,7 +997,9 @@ export class AddNewSaleReturnDComponent implements OnInit{
       this.invoicesService.GetInvoices(GLTxTypes.SaleInvoice,this.selectedCustomerName.cstID).subscribe({
         next:(result)=>{
           console.log(result);
-          this.invoiceListForReturn = result.filter(x=>x.convertedInvoiceNo == null || x.convertedInvoiceNo == "");
+         // this.invoiceListForReturn = result.filter(x=>x.convertedInvoiceNo == null || x.convertedInvoiceNo == "");
+          this.invoiceListForReturn = result;
+          console.log(this.invoiceListForReturn);
           if(this.invoiceListForReturn.length > 0){
             this.invoiceListForReturn.unshift({ invoiceVoucherNo : "Select Invoice No"});
           }else{
