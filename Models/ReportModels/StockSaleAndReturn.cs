@@ -51,7 +51,7 @@ namespace eMaestroD.Models.ReportModels
 
         [DisplayName(Name = "Net Sale Amount")]
         [NotMapped]
-        public decimal NetSaleAmount { get { return (TOTALQTY - RETQTY * -1) * SP; } }
+        public decimal NetSaleAmount { get { return (TOTALQTY - RETQTY * -1) * TP; } }
 
         [DisplayName(Name = "Closing Qty")]
         [NotMapped]
