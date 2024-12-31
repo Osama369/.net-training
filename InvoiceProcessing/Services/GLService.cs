@@ -166,7 +166,7 @@ namespace eMaestroD.InvoiceProcessing.Services
                         }).ToList()
                     };
 
-                    if (product.extraDiscountAmount > 0 && product.sellRate && product.qty)
+                    if (product.extraDiscountAmount > 0 && product.sellRate > 0  && product.qty > 0)
                     {
                         product.extraDiscountPercent = (product.extraDiscountAmount / (product.sellRate * product.qty)) * 100;
                     }
