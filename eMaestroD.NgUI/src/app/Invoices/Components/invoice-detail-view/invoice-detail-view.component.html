@@ -17,21 +17,25 @@
           <label class="col-form-label col-3 required">{{Name}}</label>
           <label class="col-form-label col-3 required">{{EditVoucherNo}}</label>
       </div>
-      <div class="col-12" style="background-color: #0d6efd;color: white; padding:6px">
+      <div class="col-12" style="background-color: #0d6efd;color: white; padding:1px">
         <label class="col-form-label col-2 required" translate>Code</label>
         <label class="col-form-label col-3 required" translate>Name</label>
-        <label class="col-form-label col-2 required"  style="text-align: right;" translate>Quantity</label>
-        <label class="col-form-label col-2 required" style="text-align: right;" translate>Price</label>
-        <label class="col-form-label col-1 required" style="text-align: right;" translate>Disc (%)</label>
+        <label class="col-form-label col-1 required" translate>Unit</label>
+        <label class="col-form-label col-1 required" translate>Batch</label>
+        <label class="col-form-label col-1 required" translate>Expiry</label>
+        <label class="col-form-label col-1 required"  style="text-align: center;" translate>Quantity</label>
+        <label class="col-form-label col-1 required" style="text-align: right;" translate>Price</label>
         <label class="col-form-label col-2 required" style="text-align: right;" translate>Amount</label>
       </div>
-      <div class="col-12" *ngFor="let list of productlist" style="padding:6px">
+      <div class="col-12" *ngFor="let list of productlist" style="padding:1px">
         <label class="col-form-label col-2 required">{{list.prodCode}}</label>
         <label class="col-form-label col-3 required">{{list.prodName}}</label>
-        <label class="col-form-label col-2 required" style="text-align: right;">{{list.qty | number : '1.2-2'}}</label>
-        <label class="col-form-label col-2 required" style="text-align: right;">{{list.purchRate | number : '1.2-2'}}</label>
-        <label class="col-form-label col-1 required" style="text-align: right;">{{list.discountPercent }}</label>
-        <label class="col-form-label col-2 required" style="text-align: right;">{{list.netAmount | number : '1.2-2'}}</label>
+        <label class="col-form-label col-1 required">{{list.unit}}</label>
+        <label class="col-form-label col-1 required">{{list.batchNo}}</label>
+        <label class="col-form-label col-1 required">{{list.expiry}}</label>
+        <label class="col-form-label col-1 required" style="text-align: center;">{{list.qty | number : '1.2-2'}}</label>
+        <label class="col-form-label col-1 required" style="text-align: right;">{{list.purchRate | number : '1.2-2'}}</label>
+        <label class="col-form-label col-2 required" style="text-align: right;">{{list.qty *list.purchRate | number : '1.2-2'}}</label>
       </div>
       <div class="col-12" style="border-top: 1px solid black;padding:6px">
         <label class="col-form-label col-2 required" style="font-weight: bold;" translate>Sub Total</label>

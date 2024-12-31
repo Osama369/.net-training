@@ -77,6 +77,11 @@ export class InvoiceDetailViewComponent {
        const seenProdBatchKeys = new Set<string>();
 
        this.productlist = invoice.Products.filter(product => {
+        if(product.expiry){
+          product.expiry = this.formatDate(new Date(product.expiry))
+        }
+        product.purchRate = Math.floor(product.purchRate);
+
         const uniqueKey = `${product.prodBCID}-${product.batchNo || 'null'}`;
            if (!seenProdBatchKeys.has(uniqueKey)) {
                seenProdBatchKeys.add(uniqueKey);
@@ -215,4 +220,13 @@ export class InvoiceDetailViewComponent {
   {
     this.location.back();
   }
+
+  formatDate(date: Date): string {
+    const day = String(date.getDate()).padStart(2, '0'); // Ensure 2-digit day
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Ensure 2-digit month
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
+  }
+
 }

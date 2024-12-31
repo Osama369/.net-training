@@ -90,4 +90,6 @@ export interface ProductViewModel {
 
   baseQty?: number | 0;
   units?: { unitType: string; unitValue: number; unitId: number; unitCode : string; }[];
+
+  expiry?:any;
 }
