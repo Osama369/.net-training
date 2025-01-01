@@ -136,6 +136,9 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
   GRNInvoiceList : Invoice[] = [];
 
   selectedVoucherNo : any;
+  showVendorProductsOnly: boolean = false;
+  productsDuplicate: ProductViewModel[] = [];
+  isDisabled : boolean = true;
 
   showReportDialog() {
     if(this.reportSettingItemList.find(x=>x.key == "A4" && x.value == true) != undefined){
@@ -172,6 +175,7 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
     this.sharedDataService.getProducts$().subscribe(products => {
       this.products = (products as { [key: string]: any })["enttityDataSource"];
       this.Filterproductlist = this.products;
+      this.productsDuplicate = this.products;
     });
 
 
@@ -207,14 +211,14 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
     this.sharedDataService.getConfigSettings$().subscribe({
       next : (result:ConfigSetting[])=>{
         this.isShowSideBar = result.find(x=>x.key === "Show Side bar on Purchase Return")?.value ?? false;
+        this.showVendorProductsOnly = result.find(x=>x.key === "Show Vendor Products Only")?.value ?? false;
         console.log(result);
 
       }
     })
 
 
-
-    this.SelectedType[0] = { name: this.type[0].name };
+    this.SelectedType[0] = { name: this.type[1].name };
     this.filterType = this.type;
 
     this.route.params.subscribe(params1 => {
@@ -352,75 +356,79 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
   {
     this.rowNmb = i;
   }
-  onChange(newObj:any, i:number, autComplete:any)
-  {
+  async onChange(newObj: any, i: number, autComplete: any) {
     autComplete.hide();
-    console.log(newObj)
-    if(this.ProductOnChange(i))
-    {
-      if(newObj != undefined && newObj != '' && typeof(newObj) != 'string')
-      {
-        this.rowNmb = i;
-        this.selectedProductList = this.products.filter(f => f.prodBCID == newObj.prodBCID);
-         this.filteredProduct = this.productlist.filter((f, index) => {
-          return f.prodBCID === newObj.prodBCID && index !== i;
-        });
-        if(this.filteredProduct.length > 1)
-        {
-          this.productlist[i].prodName = "";
-          let index = this.productlist.findIndex(f => f.prodBCID == newObj.prodBCID);
-          this.productlist[index].qty = this.productlist[index].qty+1;
-          // this.productlist[index].qtyBal = parseFloat(this.productlist[index].qtyBal)+1;
-          this.Itemcalculation(index);
-          this.onEnterComplexInternal(this.inputFields.length-3);
-        }
-        else
-        {
-            if(this.selectedProductList.length >0)
-            {
-              console.log(this.selectedProductList);
-            this.productlist[i].prodID = this.selectedProductList[0].prodID;
-            this.productlist[i].prodBCID = this.selectedProductList[0].prodBCID;
-            this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
-            this.productlist[i].barCode = this.selectedProductList[0].barCode;
-            this.productlist[i].unitQty = this.selectedProductList[0].unitQty;
-            this.productlist[i].qty = 1;
-            this.productlist[i].qtyBal = 1;
-            this.productlist[i].purchRate = this.selectedProductList[0].costPrice;
-            this.productlist[i].discount = 0;
 
-
-            this.productlist[i].currentStock = this.selectedProductList[0].currentStock;
-            this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
-            this.productlist[i].depName =this.selectedProductList[0].depName;
-            this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
-            this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
-            this.productlist[i].taxPercent =this.taxesList[0].taxValue;
-            this.productlist[i].units =this.selectedProductList[0].units;
-            this.productlist[i].unit =this.selectedProductList[0].units[0];
-            this.Itemcalculation(i);
-            // let el: HTMLElement = this.newRowButton.nativeElement;
-            // el.click();
-            // this.cdr.detectChanges();
-            // this.onEnterComplexInternal(this.inputFields.length-3);
-          }
-            else
-            {
-              this.productlist[i].unitQty = 0;
-              this.productlist[i].qty = 0;
-              this.productlist[i].qtyBal = 0;
-              this.productlist[i].sellRate = 0;
-              this.productlist[i].purchRate = 0;
-              this.productlist[i].discount = 0;
-            }
-
-        }
-      }
-      else{
-        console.log(newObj);
-      }
+    if (!this.ProductOnChange(i)) {
+      return;
     }
-  };
+
+    if (!newObj || newObj === '' || typeof newObj === 'string') {
+      console.log("Invalid object selected", newObj);
+      if(this.productlist.length>1){
+        this.focusOnSaveButton();
+      }
+      return;
+    }
+
+    this.rowNmb = i;
+
+    try {
+      this.selectedProductList = this.products.filter(f => f.prodBCID === newObj.prodBCID);
+
+      if (this.selectedProductList.length === 0) {
+        // this.toastr.error("Invalid product selection");
+        return;
+      }
+
+      const selectedProduct = this.selectedProductList[0];
+
+      const result = await lastValueFrom(
+        this.invoicesService.GetProductBatchByProdBCID(selectedProduct.prodID, 0, this.selectedLocation.LocationId)
+      );
+
+      if (result.length === 0) {
+        this.toastr.error("No stock available for the selected product");
+        Object.keys(this.productlist[i]).forEach(key => {
+          this.productlist[i][key] = null;
+        });
+
+        this.onEnterComplexInternal(this.inputFields.length - 3);
+        return;
+      }
+
+      for (const batch of result) {
+        const existingIndex = this.productlist.findIndex(
+          f => f.prodBCID === newObj.prodBCID && f.batchNo === batch.batchNo
+        );
+
+        if (existingIndex >= 0) {
+          if (this.productlist[existingIndex].qty < (batch.unitQty/this.productlist[existingIndex].unit.unitValue)) {
+            this.productlist[existingIndex].qty = parseInt(this.productlist[existingIndex].qty.toString(), 10) + 1;
+            if(existingIndex != i)
+            {
+              Object.keys(this.productlist[i]).forEach(key => {
+                this.productlist[i][key] = null;
+              });
+            }
+            this.Itemcalculation(existingIndex);
+            return; // Exit the loop once the quantity is updated
+          } else {
+            continue;
+          }
+        } else {
+          this.addNewEntry(i, selectedProduct, batch);
+          this.onEnterComplexInternal(this.inputFields.length - 2);
+          return;
+        }
+      }
+      this.toastr.error("No more stock available for this product");
+      this.onEnterComplexInternal(this.inputFields.length - 4);
+    } catch (error) {
+      console.error("Error fetching product or stock details", error);
+      this.toastr.error("Error fetching product or stock details");
+    }
+  }
 
   Itemcalculation(rowIndex: number) {
     let rowData = this.productlist[rowIndex];
@@ -513,12 +521,7 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
     this.productlist[rowIndex] = rowData;
     this.calculateTotalSummary();
 
-    if(this.totalNetPayable > this.returnTotalAmount)
-    {
-      this.productlist[rowIndex] = {};
-      this.Itemcalculation(rowIndex);
-      this.toastr.error("Maxinum Amount Reached!");
-    }
+
   }
 
   calculateTotalSummary() {
@@ -559,7 +562,7 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
   {
     if(this.EditVoucherNo != undefined)
     {
-      this.router.navigateByUrl('/Invoices/Purchase')
+      this.router.navigateByUrl('/Invoices/PurchaseReturn')
     }
     else
     {
@@ -653,8 +656,8 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
           console.log(this.invoice);
           const result = await lastValueFrom(this.invoicesService.SaveInvoice(this.invoice));
           console.log(result);
-          this.toastr.success("Purchase has been successfully Created!");
-          this.router.navigateByUrl('/Invoices/Purchase')
+          this.toastr.success("Purchase Return has been successfully Created!");
+          this.router.navigateByUrl('/Invoices/PurchaseReturn')
         } catch (result) {
           this.toastr.error(result.error);
           this.savebtnDisable = false;
@@ -733,7 +736,7 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
 
   close()
   {
-    this.router.navigateByUrl('/Invoices/Purchase');
+    this.router.navigateByUrl('/Invoices/PurchaseReturn');
   }
   focusing(){
     this.cdr.detectChanges();
@@ -883,7 +886,7 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
 
   filterProduct(event: any) {
     const query = event.query.toLowerCase().trim();
-    this.Filterproductlist = this.products
+    this.Filterproductlist = this.productsDuplicate
         .filter(product => product.prodName.toLowerCase().includes(query))
         .slice(0, 20);
   }
@@ -942,87 +945,172 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
   }
 
 
-  onCodeChange(newObj:any, i:number, event:any)
-  {
-    if(newObj != '' && newObj != undefined)
-    {
-      this.rowNmb = i;
-      this.selectedProductList = this.products.filter(f => f.barCode == newObj);
-      this.filteredProduct = this.productlist.filter(f => f.barCode == newObj);
-      if(this.filteredProduct.length > 1)
-      {
-        this.productlist[i].prodName = "";
-        this.productlist[i].barCode = "";
-        let index = this.productlist.findIndex(f => f.barCode == newObj);
-        this.productlist[index].qty = this.productlist[index].qty+1;
-        this.productlist[index].qtyBal = this.productlist[index].qtyBal+1;
-        this.Itemcalculation(index);
-        this.onEnterComplexInternal(this.inputFields.length-4);
+  async onCodeChange(newObj: any, i: number, event: any) {
+    if (!newObj || !newObj.barCode) {
+      // Reset the product entry for the current row if barcode is invalid
+      this.Itemcalculation(i);
+
+      if (event.key === "Enter" || event.key === "Tab") {
+        this.onEnterComplexInternal(this.inputFields.length - 3);
       }
-      else
-      {
-          if(this.selectedProductList.length >0)
-          {
-
-          this.productlist[i].prodID = this.selectedProductList[0].prodID;
-          this.productlist[i].prodBCID = this.selectedProductList[0].prodBCID;
-          this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
-          this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
-          this.productlist[i].unitQty = this.selectedProductList[0].unitQty;
-          this.productlist[i].qty = 1;
-          this.productlist[i].qtyBal = 1;
-          this.productlist[i].purchRate = this.selectedProductList[0].costPrice;
-          this.productlist[i].discount = 0;
-          this.productlist[i].taxPercent =this.taxesList[0].taxValue;
-
-          this.productlist[i].currentStock = this.selectedProductList[0].currentStock;
-          this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
-          this.productlist[i].depName =this.selectedProductList[0].depName;
-          this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
-          this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
-          this.productlist[i].units =this.selectedProductList[0].units;
-          this.productlist[i].unit =this.selectedProductList[0].units[0];
-          this.Itemcalculation(i);
-          // let el: HTMLElement = this.newRowButton.nativeElement;
-          // el.click();
-          // this.cdr.detectChanges();
-          this.onEnterComplexInternal(this.inputFields.length-3);
-          }
-          else
-          {
-            // this.productlist[i].prodID = "";
-            // this.productlist[i].prodName = "";
-            // this.productlist[i].unitQty = "";
-            // this.productlist[i].qty = "";
-            // this.productlist[i].qtyBal = "";
-            // this.productlist[i].sellRate = "";
-            // this.productlist[i].purchRate = "";
-            // this.productlist[i].discount = "";
-            // this.productlist[i].amount = "";
-            this.Itemcalculation(i);
-
-          }
-
-        }
-      }
-      else
-      {
-        // this.productlist[i].prodID = "";
-        // this.productlist[i].prodName = "";
-        // this.productlist[i].unitQty = "";
-        // this.productlist[i].qty = 1;
-        // this.productlist[i].qtyBal = "";
-        // this.productlist[i].sellRate = "";
-        // this.productlist[i].purchRate = "";
-        // this.productlist[i].discount = "";
-        // this.productlist[i].amount = "";
-        this.Itemcalculation(i);
-        if (event.key === "Enter" || event.key === "Tab") {
-          this.onEnterComplexInternal(this.inputFields.length-3);
-        }
-      }
-
+      return;
     }
+
+    try {
+      // Fetch the selected product details by barcode
+      this.selectedProductList = this.products.filter(f => f.barCode === newObj.barCode);
+      if (this.selectedProductList.length === 0) {
+        this.toastr.error("Invalid product code");
+        return;
+      }
+
+      // Fetch stock information for the selected product using API
+      const result = await lastValueFrom(
+        this.invoicesService.GetProductBatchByProdBCID(
+          this.selectedProductList[0].prodID,
+          0,
+          this.selectedLocation.LocationId
+        )
+      );
+
+      if (!result || result.length === 0) {
+        this.toastr.error("No stock available for the selected product");
+        this.productlist[i].barCode = "";
+        return;
+      }
+
+      // Iterate over all batches to handle stock and avoid duplication
+      for (const batch of result) {
+        const existingIndex = this.productlist.findIndex(
+          f => f.barCode === newObj.barCode && f.batchNo === batch.batchNo
+        );
+
+        if (existingIndex >= 0) {
+          // If batch exists, update the quantity if within stock limits
+          if (this.productlist[existingIndex].qty < (batch.unitQty/this.productlist[existingIndex].unit.unitValue) ) {
+            this.productlist[existingIndex].qty = parseInt(this.productlist[existingIndex].qty.toString(), 10) + 1;
+            if(existingIndex != i)
+            {
+              Object.keys(this.productlist[i]).forEach(key => {
+                this.productlist[i][key] = null;
+              });
+            }
+            this.addNewRow();
+            this.Itemcalculation(existingIndex);
+            return; // Exit as the update is complete
+          } else {
+            continue; // Skip to the next batch if stock limit is reached
+          }
+        }
+      }
+
+      // Add a new batch if none of the existing batches can accommodate the quantity
+      const nextBatch = result.find(
+        r => !this.productlist.some(f => f.barCode === newObj.barCode && f.batchNo === r.batchNo)
+      );
+
+      if (nextBatch) {
+        this.addNewProductEntry(i, this.selectedProductList[0], nextBatch);
+        this.addNewRow();
+      } else {
+        this.toastr.error("No more stock available for this product");
+        this.onEnterComplexInternal(this.inputFields.length - 4);
+      }
+    } catch (error) {
+      console.error("Error fetching product or stock details", error);
+      this.toastr.error("Error fetching product or stock details");
+    }
+  }
+
+
+  addNewEntry(i: number, product: any, batch: any){
+    this.productlist[i].barCode = product.barCode;
+    this.productlist[i].prodID = product.prodID;
+    this.productlist[i].prodBCID = product.prodBCID;
+    this.productlist[i].prodName = { prodName: product.prodName };
+    this.productlist[i].prodCode = product.prodCode;
+    this.productlist[i].unitQty = batch.unitQty;
+    this.productlist[i].qty = 1;
+    this.productlist[i].taxPercent = this.taxesList[0].taxValue;
+    this.productlist[i].lastCost = product.lastCost;
+    this.productlist[i].currentStock = product.currentStock;
+    this.productlist[i].categoryName = product.categoryName;
+    this.productlist[i].depName = product.depName;
+    this.productlist[i].prodManuName = product.prodManuName;
+    this.productlist[i].prodGrpName = product.prodGrpName;
+    this.productlist[i].discount = product.sharePercentage;
+    this.productlist[i].isTaxable = product.isTaxable;
+    this.productlist[i].units =product.units;
+    this.productlist[i].unit =product.units.find(x=>x.unitValue == 1) || product.units[0];
+    this.productlist[i].batchNo = batch.batchNo;
+    this.productlist[i].purchPrice = batch.purchRate;
+    this.productlist[i].sellPrice = batch.sellRate;
+    this.productlist[i].sellRate = (batch.sellRate*this.productlist[i].unit.unitValue);
+    this.productlist[i].qtyBal = (batch.unitQty/this.productlist[i].unit.unitValue);
+    this.productlist[i].purchRate = (batch.purchRate*this.productlist[i].unit.unitValue),
+    this.productlist[i].expiryDate = batch.expiry ? this.formatDate(new Date(batch.expiry)) : null;
+    this.Itemcalculation(i);
+  }
+
+  addNewProductEntry(i: number, product: any, batch: any) {
+    let TempUnit = product.units.find(x=>x.unitValue == 1) || product.units[0];
+    this.productlist[i] = {
+      barCode: product.barCode,
+      prodID: product.prodID,
+      prodBCID: product.prodBCID,
+      prodName: {prodName:product.prodName},
+      prodCode: product.prodCode,
+      unitQty: batch.unitQty,
+      qty: 1,
+      units : product.units,
+      unit : TempUnit,
+      purchPrice : batch.purchRate,
+      sellPrice : batch.sellRate,
+      sellRate: (batch.sellRate*TempUnit.unitValue),
+      taxPercent: this.taxesList[0].taxValue,
+      lastCost: product.lastCost,
+      currentStock: product.currentStock,
+      categoryName: product.categoryName,
+      depName: product.depName,
+      prodManuName: product.prodManuName,
+      prodGrpName: product.prodGrpName,
+      discount: product.sharePercentage,
+      isTaxable: product.isTaxable,
+      batchNo: batch.batchNo,
+      qtyBal: (batch.unitQty/TempUnit.unitValue),
+      purchRate : (batch.purchRate*TempUnit.unitValue),
+      expiryDate: this.formatDate(new Date(batch.expiry)) || null,
+    };
+
+    this.Itemcalculation(i);
+
+  }
+
+  addNewBatchEntry(i: number, product: any, batch: any) {
+    this.productlist.push({
+      ...product,
+      prodName: {prodName:product.prodName},
+      unitQty: batch.unitQty,
+      qty: 1,
+      purchPrice : batch.purchRate,
+      sellPrice : batch.sellRate,
+      sellRate: (batch.sellRate*product.baseQty),
+      batchNo: batch.batchNo,
+      qtyBal: (batch.unitQty/product.baseQty),
+
+      purchRate : (batch.purchRate*product.baseQty),
+      expiryDate: new Date(batch.expiry) || null,
+    });
+    this.Itemcalculation(this.productlist.length - 1);
+  }
+
+
+  addNewRow() {
+    let el: HTMLElement = this.newRowButton.nativeElement;
+    el.click();
+    this.cdr.detectChanges();
+    this.onEnterComplexInternal(this.inputFields.length - 4);
+  }
 
 
   onChangePrint(e:any) {
@@ -1050,25 +1138,38 @@ clear()
   VendorOnChange()
   {
     this.clear();
+    this.showOnlyVendorProduct();
     if(this.selectedCustomerName == undefined){
       this.toastr.error("Please select supplier!");
       this.onEnterComplex(0);
     }
     else{
-      this.invoicesService.GetInvoices(GLTxTypes.PurchaseInvoice,this.selectedCustomerName.vendID).subscribe({
-        next:(result)=>{
-          console.log(result);
-          this.GRNInvoiceList = result.filter(x=> x.isPaymented == false);
-          if(this.GRNInvoiceList.length > 0){
-            this.GRNInvoiceList.unshift({ invoiceVoucherNo : "Select Invoice No"});
-          }else{
-            this.GRNInvoiceList.unshift({ invoiceVoucherNo : "No GRN Available"});
-          }
-        },
-        error:(responce)=>{
-          this.GRNInvoiceList = [];
-        }
-      })
+      // this.invoicesService.GetInvoices(GLTxTypes.PurchaseInvoice,this.selectedCustomerName.vendID).subscribe({
+      //   next:(result)=>{
+      //     console.log(result);
+      //     this.GRNInvoiceList = result.filter(x=> x.isPaymented == false);
+      //     if(this.GRNInvoiceList.length > 0){
+      //       this.GRNInvoiceList.unshift({ invoiceVoucherNo : "Select Invoice No"});
+      //     }else{
+      //       this.GRNInvoiceList.unshift({ invoiceVoucherNo : "No GRN Available"});
+      //     }
+      //   },
+      //   error:(responce)=>{
+      //     this.GRNInvoiceList = [];
+      //   }
+      // })
+    }
+  }
+
+
+  showOnlyVendorProduct(){
+    if(this.showVendorProductsOnly){
+      this.productlist = [{}];
+      this.productsDuplicate = this.products.filter(x=>x.vendID == this.selectedCustomerName.vendID);
+      this.Filterproductlist = this.productsDuplicate ;
+    }else{
+      this.productsDuplicate = this.products;
+      this.Filterproductlist = this.productsDuplicate ;
     }
   }
 
@@ -1108,7 +1209,7 @@ clear()
     this.totalExtraDiscount = invoiceData.totalExtraDiscount;
     this.totalNetPayable = invoiceData.netTotal;
     for (let i = 0; i < this.productlist.length; i++) {
-      this.selectedProductList = this.products.filter(f => f.prodBCID == this.productlist[i].prodBCID);
+      this.selectedProductList = this.products.filter(f => f.prodID == this.productlist[i].prodID);
 
       this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
       this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
@@ -1118,6 +1219,28 @@ clear()
       this.productlist[i].depName =this.selectedProductList[0].depName;
       this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
       this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
+      this.productlist[i].units =this.selectedProductList[0].units;
+      let unit = this.selectedProductList[0].units.find(x=>x.unitType  == this.productlist[i].unit);
+      this.productlist[i].unit = unit;
+
+      this.productlist[i].purchPrice = this.productlist[i].purchRate;
+      this.productlist[i].sellPrice = this.productlist[i].sellRate;
+      this.productlist[i].qty = this.productlist[i].qty*-1;
+      this.productlist[i].unitQty = this.productlist[i].qty;
+      this.productlist[i].qtyBal = this.productlist[i].qty;
+
+      const result = await lastValueFrom(
+        this.invoicesService.GetProductBatchByProdBCID(this.productlist[i].prodID, 0, invoiceData.locID)
+      );
+      if(result){
+        var data = result.find(x=>x.batchNo == this.productlist[i].batchNo);
+        if(data){
+          this.productlist[i].unitQty += (data.unitQty/unit.unitValue);
+          this.productlist[i].qtyBal += (data.unitQty/unit.unitValue);
+        }
+      }
+
+
 
       if(invoiceData.Products[i].expiry)
       {
@@ -1145,33 +1268,34 @@ clear()
   }
 
   onUnitSelect(event: any, rowData: any, rowIndex: number) {
-    if (rowData.unitQty <= event.unitValue) {
-      this.toastr.error(
-        "Cannot select this unit because the available quantity is less than the base quantity of this unit."
-      );
+    if (rowData.unitQty < event.unitValue) {
+        this.toastr.error(
+          "Cannot select this unit because the available quantity is less than the base quantity of this unit."
+        );
 
-      rowData.unit = { ...rowData.units[0] };
-      rowData.qtyBal = rowData.unitQty / rowData.unit.unitValue;
-      rowData.purchRate = rowData.purchPrice * rowData.unit.unitValue;
-      rowData.sellRate = rowData.sellPrice*rowData.unit.unitValue;
 
+        rowData.unit = { ...rowData.units[0] };
+        rowData.qtyBal = rowData.unitQty / rowData.unit.unitValue;
+        rowData.purchRate = rowData.purchPrice * rowData.unit.unitValue;
+        rowData.sellRate = rowData.sellPrice*rowData.unit.unitValue;
+
+        if(rowData.qty > rowData.qtyBal){
+          rowData.qty = rowData.qtyBal;
+        }
+
+        this.Itemcalculation(rowIndex);
+
+        return;
+      }
+
+      rowData.qtyBal = rowData.unitQty / event.unitValue;
+      rowData.purchRate = rowData.purchPrice * event.unitValue;
+      rowData.sellRate = rowData.sellPrice * event.unitValue;
       if(rowData.qty > rowData.qtyBal){
         rowData.qty = rowData.qtyBal;
       }
-
       this.Itemcalculation(rowIndex);
-
-      return;
     }
-
-    rowData.qtyBal = rowData.unitQty / event.unitValue;
-    rowData.purchRate = rowData.purchPrice * event.unitValue;
-    rowData.sellRate = rowData.sellPrice * event.unitValue;
-    if(rowData.qty > rowData.qtyBal){
-      rowData.qty = rowData.qtyBal;
-    }
-    this.Itemcalculation(rowIndex);
-  }
 
   formatDate(date: Date): string {
     const day = String(date.getDate()).padStart(2, '0'); // Ensure 2-digit day

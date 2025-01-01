@@ -22,15 +22,18 @@ namespace eMaestroD.Models.ReportModels
         [DisplayName(Name = "Open")]
         public decimal OPENING { get; set; }
 
+        [DisplayName(Name = "Purchase QTY")]
         public decimal RCVD { get; set; }
+        [DisplayName(Name = "Purchase RETURN")]
+        public decimal PRETURN { get; set; }
 
         [DisplayName(Name = "Total")]
         [NotMapped]
-        public decimal Total { get { return OPENING + OPENINGSTOCK + shortageQty + RCVD; } }
+        public decimal Total { get { return OPENING + OPENINGSTOCK + shortageQty + RCVD - PRETURN; } }
 
         [DisplayName(Name = "Amount")]
         [NotMapped]
-        public decimal Amount { get { return TP * (OPENING + OPENINGSTOCK + shortageQty + RCVD); } }
+        public decimal Amount { get { return TP * (OPENING + OPENINGSTOCK + shortageQty + RCVD - PRETURN); } }
 
         [DisplayName(Name = "Transfer")]
         public decimal TRANSFERRED { get; set; }
@@ -55,14 +58,12 @@ namespace eMaestroD.Models.ReportModels
 
         [DisplayName(Name = "Closing Qty")]
         [NotMapped]
-        public decimal closingQty { get { return OPENING + OPENINGSTOCK + shortageQty + RCVD - TRANSFERRED - TOTALQTY + RETQTY * -1; } }
+        public decimal closingQty { get { return OPENING + OPENINGSTOCK + shortageQty + RCVD - PRETURN - TRANSFERRED - TOTALQTY + RETQTY * -1; } }
 
         [DisplayName(Name = "Closing Amount")]
         [NotMapped]
-        public decimal closingAmount { get { return (OPENING + OPENINGSTOCK + shortageQty + RCVD - TRANSFERRED - TOTALQTY + RETQTY * -1) * TP; } }
+        public decimal closingAmount { get { return (OPENING + OPENINGSTOCK + shortageQty + RCVD - PRETURN - TRANSFERRED - TOTALQTY + RETQTY * -1) * TP; } }
 
-        [HiddenOnRender]
-        public decimal PRETURN { get; set; }
         [HiddenOnRender]
         public decimal discount { get; set; }
         [HiddenOnRender]

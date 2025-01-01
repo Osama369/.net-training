@@ -33,18 +33,20 @@ namespace eMaestroD.Models.ReportModels
 
 
         [DisplayName(Name = "Open")]
-        public decimal OPENINGSTOCK { get; set; }
+        public decimal OPENING { get; set; }
 
-        [DisplayName(Name = "RCVD")]
+        [DisplayName(Name = "Purchase QTY")]
         public decimal RCVD { get; set; }
+        [DisplayName(Name = "Purchase RETURN")]
+        public decimal PRETURN { get; set; }
 
         [DisplayName(Name = "Total")]
         [NotMapped]
-        public decimal Total { get { return OPENING + OPENINGSTOCK  + RCVD; } }
+        public decimal Total { get { return OPENING + OPENINGSTOCK  + RCVD - PRETURN; } }
 
         [DisplayName(Name = "Amount")]
         [NotMapped]
-        public decimal Amount { get { return TP * (OPENING + OPENINGSTOCK  + RCVD); } }
+        public decimal Amount { get { return TP * (OPENING + OPENINGSTOCK  + RCVD - PRETURN); } }
 
 
         [DisplayName(Name = "Transfered")]
@@ -100,24 +102,22 @@ namespace eMaestroD.Models.ReportModels
 
         [DisplayName(Name = "Closing Qty")]
         [NotMapped]
-        public decimal closeQty { get { return OPENING + OPENINGSTOCK  + RCVD - TRANSFERRED - TOTALQTY + RETQTY * -1; } }
+        public decimal closeQty { get { return OPENING + OPENINGSTOCK  + RCVD - PRETURN - TRANSFERRED - TOTALQTY + RETQTY * -1; } }
 
 
         [DisplayName(Name = "Closing Amount")]
         [NotMapped]
-        public decimal closeAmount { get { return (OPENING + OPENINGSTOCK  + RCVD - TRANSFERRED - TOTALQTY + RETQTY * -1) * TP; } }
+        public decimal closeAmount { get { return (OPENING + OPENINGSTOCK  + RCVD - PRETURN  - TRANSFERRED - TOTALQTY + RETQTY * -1) * TP; } }
 
         [HiddenOnRender]
-        [DisplayName(Name = "OPENING")]
-        public decimal OPENING { get; set; }
+        [DisplayName(Name = "OPENINGSTOCK")]
+        public decimal OPENINGSTOCK { get; set; }
 
         [HiddenOnRender]
         [DisplayName(Name = "Last Month Discount")]
         public decimal LastMonthDiscount { get; set; }
 
-        [HiddenOnRender]
-        [DisplayName(Name = "PRETURN")]
-        public decimal PRETURN { get; set; }
+      
 
         [HiddenOnRender]
         [DisplayName(Name = "Discount")]

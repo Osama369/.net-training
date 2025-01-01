@@ -88,7 +88,7 @@ export class ReportGridDynamicComponent {
                 header:element.header,
                 controlType:element.controlType,
               })
-              this.exportColumns.push(new Object({title: element.header,dataKey: element.field}));
+              // this.exportColumns.push(new Object({title: element.header,dataKey: element.field}));
             }
       });
       this._selectedColumns = this.cols;
@@ -103,8 +103,20 @@ export class ReportGridDynamicComponent {
           Object.keys(record.MonthWiseSales).forEach((month) => months.add(month));
         });
       }
-     
-  
+
+      this.exportColumns.push({
+        title: 'Customer Name', // Header for the column
+        dataKey: 'CustomerName', // Key used for data mapping
+      });
+
+
+      Array.from(months).forEach(month => {
+        this.exportColumns.push({
+          title: month, // Month name as the title
+          dataKey: month, // Month key as the dataKey
+        });
+      });
+
       this._selectedColumns = Array.from(months);
       console.log(this._selectedColumns);
     }
@@ -155,7 +167,27 @@ export class ReportGridDynamicComponent {
 
 
 
+
   exportPdf() {
+
+    this.data = this.data.filter(x=>x.customerName != '');
+    const formattedData = this.data.map((record: any) => {
+      const row: any = {};
+
+      // Dynamically map data using exportColumns
+      this.exportColumns.forEach((col: any) => {
+        if (col.dataKey === 'CustomerName') {
+          // Map customer name
+          row[col.dataKey] = record.customerName || '';
+        } else {
+          // Map month-wise sales or default to 0
+          row[col.dataKey] = record.MonthWiseSales[col.dataKey] || 0;
+        }
+      });
+
+      return row;
+    });
+
     let footerLen  = this.headerlist.filter(x=>x.value == true && (x.key == "Footer Date" || x.key == "Page Number")).length;
     let totalheight = (this.headerlist.filter(x=>x.value == true && x.key != "Company Logo").length)-footerLen;
     if(totalheight < 3)
@@ -179,7 +211,7 @@ export class ReportGridDynamicComponent {
     }
     autoTable(doc, {
       columns: this.exportColumns,
-      body: this.data,
+      body: formattedData,
       didParseCell: (data) => {
         if (data.section === 'body') {
             if (this.isArabic(data.cell.raw)) {

@@ -153,7 +153,7 @@
                       <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName) || isConverted || isDisabled" (keyup.enter)="onEnterTableInput(0, ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.qtyBal" class="girdRow">
                     </td>
                     <td>
-                        <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName)" (keyup.enter)="onEnterTableInput(3, ri)" (keypress)="($event.charCode >= 47 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.qty"  (change)="updateQtyBal(rowData, ri)" class="girdRow">
+                        <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName)" (keyup.enter)="rowData.isTaxable ? onEnterTableInput(9, ri) : onEnterTableInput(13, ri)" (keypress)="($event.charCode >= 47 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.qty"  (change)="updateQtyBal(rowData, ri)" class="girdRow">
                     </td>
                     <td>
                         <input #inputFieldTable [style]="{'width':'75px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName) || isConverted || isDisabled" (keyup.enter)="onEnterTableInput(1, ri)" (keypress)="($event.charCode >= 46 && $event.charCode < 58)" readonly class="p-inputtext-sm" type="text" [(ngModel)]="rowData.sellRate" (ngModelChange)="Itemcalculation(ri)"  class="girdRow">
@@ -162,7 +162,7 @@
                         <input #inputFieldTable [style]="{'width':'75px', 'text-align':'right'}" (keyup.enter)="onEnterTableInput(2, ri)" pInputText [disabled]="(!rowData.barCode && !rowData.prodName) || isConverted || isDisabled" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.grossValue" readonly class="girdRow">
                     </td>
                     <td>
-                      <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName) || isConverted" (keyup.enter)="rowData.isTaxable ? onEnterTableInput(9, ri) : onEnterTableInput(13, ri)" (keypress)="($event.charCode >= 47 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.bonusQty" (change)="updateQtyBal(rowData, ri)" class="girdRow">
+                      <input #inputFieldTable [style]="{'width':'51px', 'text-align':'right'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName) || isConverted || isDisabled" (keyup.enter)="rowData.isTaxable ? onEnterTableInput(9, ri) : onEnterTableInput(13, ri)" (keypress)="($event.charCode >= 47 && $event.charCode < 58)" class="p-inputtext-sm" type="text" [(ngModel)]="rowData.bonusQty" (change)="updateQtyBal(rowData, ri)" class="girdRow">
                     </td>
                     <td>
                         <input #inputFieldTable [style]="{'width':'80px'}" pInputText [disabled]="(!rowData.barCode && !rowData.prodName) || isConverted || isDisabled" readonly (keyup.enter)="onEnterTableInput(4, ri)" type="text" [(ngModel)]="rowData.batchNo" readonly class="girdRow">

@@ -80,7 +80,10 @@ export class InvoiceDetailViewComponent {
         if(product.expiry){
           product.expiry = this.formatDate(new Date(product.expiry))
         }
-        product.purchRate = Math.floor(product.purchRate);
+        
+        if (product.qty < 0) {
+          product.qty = product.qty * -1;
+        }
 
         const uniqueKey = `${product.prodBCID}-${product.batchNo || 'null'}`;
            if (!seenProdBatchKeys.has(uniqueKey)) {

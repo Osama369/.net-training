@@ -236,8 +236,6 @@ export class AddNewPurchaseDComponent implements OnInit{
       next : (result:ConfigSetting[])=>{
         this.isShowSideBar = result.find(x=>x.key === "Show Side bar on Purchase")?.value ?? false;
         this.showVendorProductsOnly = result.find(x=>x.key === "Show Vendor Products Only")?.value ?? false;
-        console.log(result);
-
       }
     })
 

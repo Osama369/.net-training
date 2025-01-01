@@ -1100,7 +1100,7 @@ export class AddNewSaleDComponent implements OnInit{
     this.productlist[i].sellPrice = batch.sellRate;
     this.productlist[i].sellRate = (batch.sellRate*this.productlist[i].unit.unitValue);
     this.productlist[i].qtyBal = (batch.unitQty/this.productlist[i].unit.unitValue);
-    this.productlist[i].purchRate = (batch.purchRate*this.productlist[i].unit.unitValuey),
+    this.productlist[i].purchRate = (batch.purchRate*this.productlist[i].unit.unitValue),
     this.productlist[i].expiryDate = batch.expiry ? this.formatDate(new Date(batch.expiry)) : null;
     this.Itemcalculation(i);
   }
@@ -1300,12 +1300,26 @@ async InvoiceOnChange()
       this.productlist[i].units =this.selectedProductList[0].units;
       let unit = this.selectedProductList[0].units.find(x=>x.unitType  == this.productlist[i].unit);
       this.productlist[i].unit = unit;
+      console.log(this.productlist[i]);
       // var result = await this.getStockofBatch(this.productlist[i].barCode, this.productlist[i].batchNo);
       // console.log(result);
+
       this.productlist[i].purchPrice = this.productlist[i].purchRate;
       this.productlist[i].sellPrice = this.productlist[i].sellRate;
       this.productlist[i].unitQty = this.productlist[i].qty;
       this.productlist[i].qtyBal = this.productlist[i].qty;
+
+      const result = await lastValueFrom(
+        this.invoicesService.GetProductBatchByProdBCID(this.productlist[i].prodID, 0, invoiceData.locID)
+      );
+      if(result){
+        var data = result.find(x=>x.batchNo == this.productlist[i].batchNo);
+        if(data){
+          this.productlist[i].unitQty += (data.unitQty/unit.unitValue);
+        this.productlist[i].qtyBal += (data.unitQty/unit.unitValue);
+        }
+      }
+
       if(invoiceData.Products[i].expiry)
       {
         this.productlist[i].expiryDate = this.formatDate(new Date(invoiceData.Products[i].expiry));

@@ -479,7 +479,7 @@ export class AddNewSaleReturnDComponent implements OnInit{
 
     // Calculate gross value based on quantity and purchase rate
     rowData.grossValue = parseFloat((rowData.qty * rowData.sellRate).toFixed(2));
-    
+
     // Determine if discount is based on percentage or amount
     rowData.discountAmount = parseFloat(((rowData.grossValue * rowData.discount) / 100).toFixed(2)) || 0;
     // if (fieldName == undefined || fieldName == "" || fieldName == "discount") {
@@ -1125,7 +1125,7 @@ export class AddNewSaleReturnDComponent implements OnInit{
     this.productlist[i].sellPrice = batch.sellRate;
     this.productlist[i].sellRate = (batch.sellRate*this.productlist[i].unit.unitValue);
     this.productlist[i].qtyBal = (batch.unitQty/this.productlist[i].unit.unitValue);
-    this.productlist[i].purchRate = (batch.purchRate*this.productlist[i].unit.unitValuey),
+    this.productlist[i].purchRate = (batch.purchRate*this.productlist[i].unit.unitValue),
     this.productlist[i].expiryDate = batch.expiry ? this.formatDate(new Date(batch.expiry)) : null;
     this.Itemcalculation(i);
   }
@@ -1276,8 +1276,10 @@ async InvoiceOnChange()
       this.productlist[i].unit = unit;
       this.productlist[i].qty = 1;
       this.productlist[i].qtyBal = this.productlist[i].unitQty;
-      this.productlist[i].purchRate = this.productlist[i].purchRate;
-      console.log(unit);
+      this.productlist[i].purchPrice = this.productlist[i].purchRate;
+      this.productlist[i].sellPrice = this.productlist[i].sellRate;
+
+      console.log(this.productlist);
       this.productlist[i].taxPercent= invoiceData.Products[i].ProductTaxes[0].taxPercent || 0,
       this.productlist[i].taxAmount= invoiceData.Products[i].ProductTaxes[0].taxAmount || 0,
       this.productlist[i].advanceTaxPercent= invoiceData.Products[i].ProductTaxes[1].taxPercent || 0,
@@ -1313,6 +1315,7 @@ async InvoiceOnChange()
     this.totalAdvanceExtraTax = invoiceData.totalAdvanceExtraTax;
     this.totalExtraDiscount = invoiceData.totalExtraDiscount;
     this.totalNetPayable = invoiceData.netTotal;
+    this.selectedVoucherNo= {invoiceVoucherNo:invoiceData.convertedInvoiceNo};
     for (let i = 0; i < this.productlist.length; i++) {
       this.selectedProductList = this.products.filter(f => f.prodID == this.productlist[i].prodID);
 
@@ -1327,6 +1330,11 @@ async InvoiceOnChange()
       this.productlist[i].units =this.selectedProductList[0].units;
       let unit = this.selectedProductList[0].units.find(x=>x.unitType  == this.productlist[i].unit);
       this.productlist[i].unit = unit;
+
+      this.productlist[i].purchPrice = this.productlist[i].purchRate;
+      this.productlist[i].sellPrice = this.productlist[i].sellRate;
+      this.productlist[i].unitQty = this.productlist[i].qty;
+      this.productlist[i].qtyBal = this.productlist[i].qty;
 
       if(invoiceData.Products[i].expiry)
       {
@@ -1356,7 +1364,7 @@ async InvoiceOnChange()
   onUnitSelect(event: any, rowData: any, rowIndex: number) {
     console.log(rowData.unitQty);
     console.log(event.unitValue);
-    if (rowData.unitQty <= event.unitValue) {
+    if (rowData.unitQty < event.unitValue) {
       this.toastr.error(
         "Cannot select this unit because the available quantity is less than the base quantity of this unit."
       );
