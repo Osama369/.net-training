@@ -2,18 +2,22 @@
   <div class="row">
     <div class="col-12">
       <h4 style="border-left: 3px solid #3B82F6;">&nbsp;{{heading}}
-        <a *ngIf="!bookmark" (click)="UpdateBookmark(true)" title="Add Bookmark">
+      
+      <a *ngIf="!bookmark" (click)="UpdateBookmark(true)" title="Add Bookmark">
           <i class="pi pi-bookmark" style="font-size: 1.5rem;"></i>
         </a>
         <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark">
           <i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i>
         </a>
       </h4>
+      <p style="color: red; font-size: medium;">&nbsp;You can Drag and Drop to move Provice to any Region!</p>
     </div>
     <div class="col-12">
       <p-treeTable #dt1 [value]="files" selectionMode="single" [(selection)]="selectedRow"
         [scrollable]="true" [tableStyle]="{'min-width':'50rem'}" scrollHeight="330px" rowExpandMode="single"
-        [globalFilterFields]="['name']" (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)">
+        [globalFilterFields]="['name']" (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)"
+        dragdrop (onNodeDrop)="onNodeDrop($event)"
+        >
 
         <ng-template pTemplate="caption">
           <div class="table-header row">
@@ -44,19 +48,22 @@
         <ng-template pTemplate="header">
           <tr>
             <th class="col-6" translate>Location Name</th>
-            <th class="col-6" translate>Level</th>
+            <th class="col-6" translate>Type</th>
           </tr>
         </ng-template>
 
         <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-          <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode"  >
+          <tr [ttRow]="rowNode" [ttSelectableRow]="rowNode"
+          draggable="true" (dragstart)="onDragStart($event, rowData)"
+          (dragover)="onDragOver($event, rowData)" (drop)="onDrop($event, rowData)">
+
 
             <td class="col-6">
               <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
               {{ rowData.name | translate }}
             </td>
             <td class="col-6">
-                {{rowData.level | translate}}
+                {{ShowlocationType(rowData.level) | translate}}
             </td>
           </tr>
         </ng-template>
@@ -73,5 +80,5 @@
 </p-dialog> -->
 
 <p-dialog #cstDailog  [modal]="true" [(visible)]="AddNewLocationVisibility" [style]="{width: '40vw'}">
-  <app-add-location [LocData]="locList" [title]="title" [isEdit]="IsEdit" (dataEvent)="handleChildData($event)"></app-add-location>
+  <app-add-location [LocData]="locList" [title]="title" [parentLabel]="parentLabel" [childLabel]="childLabel" [isEdit]="IsEdit" (dataEvent)="handleChildData($event)"></app-add-location>
 </p-dialog>

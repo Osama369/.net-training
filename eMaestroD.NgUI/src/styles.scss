@@ -368,6 +368,19 @@ ol, ul{
   padding: 0 !important;
 }
 
+.p-treetable .p-treetable-tbody > tr.p-highlight {
+  background: #7a7f85;
+  color:white;
+}
+.p-treetable .p-treetable-tbody > tr.p-highlight > td button :hover {
+  background-color:#7a7f85 ;
+  color:white;
+}
+
+.p-treetable .p-treetable-tbody > tr.p-highlight > td button  {
+  background-color:#7a7f85 ;
+  color:white;
+}
 // .p-drop-w-100, .p-autocomplete, .p-autocomplete-dd{
 //   width:100%;
 // }

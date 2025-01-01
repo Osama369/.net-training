@@ -24,12 +24,16 @@ export class LocationsComponent implements OnInit {
   files: TreeNode[];
   AddNewLocationVisibility: boolean = false;
   title: any = "";
+  childLabel:any="";
+  parentLabel:any="";
   locationData: Location[] = [];
   parentID: any = "";
   IsEdit: boolean = false;
   selectedRow: any;
   bookmark: boolean = false;
-
+  flag: any;
+  dragProviceID: number;
+  onDropRegionID: number;
   constructor(
     private router: Router,
     private locationService: LocationService,
@@ -61,12 +65,37 @@ export class LocationsComponent implements OnInit {
       },
     });
   }
+  ShowlocationType(level:number){
+   
+        if(level===1){
+          this.flag= 'Country';
+        }
+        else if(level===2){
+          this.flag ='Region';
+        }
+      else if(level===3){
+        this.flag ='Province';
+        }
+      else if(level===4){
+        this.flag ='City';
+        }
+      else if(level===5){
+       this.flag = "Area";
+        }
+        return this.flag;
+        
+  }
 
   SetLocationTableTree() {
+
     this.locationService.getAllLoc().subscribe(loc => {
-      this.locList = this.AlllocList = loc;
-      this.files = this.convertToTree(loc);
-      this.expandAll();
+      if(this.AlllocList==undefined || this.AlllocList.length<loc.length){
+        this.locList = this.AlllocList = loc.sort((a, b) => a.LocTypeId - b.LocTypeId);
+        this.files = this.convertToTree(loc);
+        this.expandAll();
+
+      }
+   
     });
    
   }
@@ -106,9 +135,18 @@ export class LocationsComponent implements OnInit {
     if (data.type == 'added') {
       this.SetLocationTableTree();
       this.AddNewLocationVisibility = false;
-    } else {
+    } 
+  
+    else if(data.type=='edit') {
+      this.AlllocList=[];
+      this.SetLocationTableTree();
       this.AddNewLocationVisibility = false;
     }
+    else{
+      this.SetLocationTableTree();
+      this.AddNewLocationVisibility = false;
+    }
+    
   }
 
   onAdd() {
@@ -119,11 +157,19 @@ export class LocationsComponent implements OnInit {
           const selectedLevel = this.selectedRow.data.level;
           if (selectedLevel === 1 || selectedLevel === 4) {
             this.title = "Add New Location";
+            if(selectedLevel===1){
+               this.parentLabel="Country"
+              this.childLabel="Region"
+            }else if(selectedLevel===4){
+              this.parentLabel="City"
+              this.childLabel="Area"
+
+            }
             this.IsEdit = false;
             this.AddNewLocationVisibility = true;
             this.locList = this.selectedRow.data;
           } else {
-            this.toastr.error("You can only add a location at level 1 or 4.");
+            this.toastr.error("Only Regions or Areas can be added!");
           }
         } else {
           this.toastr.error("Select Any Location.");
@@ -142,6 +188,14 @@ export class LocationsComponent implements OnInit {
           const selectedLevel = this.selectedRow.data.level;
           if (selectedLevel === 2 || selectedLevel === 5) {
             this.title = "Update Location";
+            if(selectedLevel===2){
+              this.parentLabel="Country"
+             this.childLabel="Region"
+           }else if(selectedLevel===5){
+             this.parentLabel="City"
+             this.childLabel="Area"
+
+           }
             this.IsEdit = true;
             this.AddNewLocationVisibility = true;
             const parentName = this.AlllocList.find(loc => loc.LocationId == this.selectedRow.data.parentlocID).LocationName;
@@ -149,7 +203,7 @@ export class LocationsComponent implements OnInit {
             console.log(this.selectedRow.data);
             this.locList = this.selectedRow.data;
           } else {
-            this.toastr.error("You can only edit a location at level 2 or 5.");
+            this.toastr.error("Only Regions and Areas can be edited!");
           }
         } else {
           this.toastr.error("Select Any Location.");
@@ -210,7 +264,7 @@ export class LocationsComponent implements OnInit {
                   });
               }
             } else {
-              this.toastr.error("You can only delete locations at level 2 or 5.");
+              this.toastr.error("Only Regions or Areas can be deleted!");
             }
           } else {
             this.toastr.error("Select Any Location.");
@@ -255,6 +309,87 @@ export class LocationsComponent implements OnInit {
 
   nodeUnselect(event: any) {
     this.parentID = "";
+  }
+
+
+  onDragStart(event: DragEvent, rowData: any): void {
+    if (rowData.level !== 3) {
+        event.preventDefault();
+        console.warn('Only level 3 rows can be dragged');
+    } else {
+        event.dataTransfer?.setData('text/plain', JSON.stringify(rowData));
+      //  console.log(`Dragging row: ${rowData.name}`);
+        this.dragProviceID= rowData.id
+        console.log(`Dragging locId: ${rowData.id}`);
+        console.log(`provice ID :${this.dragProviceID}`);
+
+    }
+}
+
+onDragOver(event: DragEvent, rowData: any): void {
+    if (rowData.level === 2) {
+        event.preventDefault(); // Allow drop
+        console.log(`Row: ${rowData.name} is droppable`);
+        this.onDropRegionID= rowData.id
+
+        console.log(`Drop LocID: ${rowData.id } is droppable`);
+        console.log(`Region ID : ${this.onDropRegionID} is on dropped`);
+
+    }
+}
+
+onDrop(event: DragEvent, targetRowData: any): void {
+    const draggedData = JSON.parse(event.dataTransfer?.getData('text/plain') || '{}');
+    if (targetRowData.level === 2 && draggedData.level === 3) {
+        console.log(`Dropped row: ${draggedData.name} onto ${targetRowData.name}`);
+        // Perform necessary updates to your data
+        this.locationService.ReplaceParentLoc(this.dragProviceID, this.onDropRegionID).subscribe({
+          next: (loc) => {
+            this.toastr.success("Lacation has been Moved Successfully.");
+            this.AlllocList=[];
+            this.SetLocationTableTree();
+  
+          },
+          error: (response) => {
+            this.toastr.error(response.error);
+            
+          },
+        });
+       
+    } else {
+       // console.warn('Invalid drop operation');
+    }
+}
+
+  
+
+  onNodeDrop(event: any): void {
+    const draggedNode = event.dragNode.data;
+    const targetNode = event.dropNode.data;
+
+    if (draggedNode.level === 3 && targetNode.level === 2) {
+        // Handle the drop logic here
+        console.log('Dropped', draggedNode, 'onto', targetNode);
+
+        // Example: Add the dragged node as a child of the target node
+        if (!event.dropNode.children) {
+            event.dropNode.children = [];
+        }
+        event.dropNode.children.push(event.dragNode);
+        event.dropNode.expanded = true; // Expand the target node to show the new child
+
+        // Remove the node from its previous parent (optional)
+        const parent = event.dragNode.parent;
+        if (parent) {
+            const index = parent.children.indexOf(event.dragNode);
+            if (index !== -1) {
+                parent.children.splice(index, 1);
+            }
+        }
+    } else {
+        // Invalid drop
+        console.warn('Invalid drop: Level 3 can only be dropped onto Level 2');
+    }
   }
 
 }

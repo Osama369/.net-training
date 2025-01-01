@@ -179,6 +179,7 @@ export class AddNewPurchaseDComponent implements OnInit{
   }
 
   @ViewChildren('inputField') inputFields: QueryList<any>;
+  
   @ViewChildren('inputFieldTable') inputFieldsTable: QueryList<any>;
   @ViewChild('newRowButton') newRowButton: ElementRef<HTMLElement>;
   @ViewChild('savebtn') savebtn: ElementRef<HTMLElement>;
