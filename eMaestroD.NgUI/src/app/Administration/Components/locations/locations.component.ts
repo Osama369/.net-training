@@ -24,6 +24,8 @@ export class LocationsComponent implements OnInit {
   files: TreeNode[];
   AddNewLocationVisibility: boolean = false;
   title: any = "";
+  childLabel:any="";
+  parentLabel:any="";
   locationData: Location[] = [];
   parentID: any = "";
   IsEdit: boolean = false;
@@ -130,19 +132,21 @@ export class LocationsComponent implements OnInit {
   }
 
   handleChildData(data: any) {
-    // if (data.type == 'added') {
-    //   this.SetLocationTableTree();
-    //   this.AddNewLocationVisibility = false;
-    // } 
-    // // else if(data.type=="addMore"){
-    // //   this.SetLocationTableTree();
-    // // }
-    // else {
-    //   this.AddNewLocationVisibility = false;
-    // }
-
-    this.SetLocationTableTree();
-    this.AddNewLocationVisibility = false;
+    if (data.type == 'added') {
+      this.SetLocationTableTree();
+      this.AddNewLocationVisibility = false;
+    } 
+  
+    else if(data.type=='edit') {
+      this.AlllocList=[];
+      this.SetLocationTableTree();
+      this.AddNewLocationVisibility = false;
+    }
+    else{
+      this.SetLocationTableTree();
+      this.AddNewLocationVisibility = false;
+    }
+    
   }
 
   onAdd() {
@@ -153,6 +157,14 @@ export class LocationsComponent implements OnInit {
           const selectedLevel = this.selectedRow.data.level;
           if (selectedLevel === 1 || selectedLevel === 4) {
             this.title = "Add New Location";
+            if(selectedLevel===1){
+               this.parentLabel="Country"
+              this.childLabel="Region"
+            }else if(selectedLevel===4){
+              this.parentLabel="City"
+              this.childLabel="Area"
+
+            }
             this.IsEdit = false;
             this.AddNewLocationVisibility = true;
             this.locList = this.selectedRow.data;
@@ -176,6 +188,14 @@ export class LocationsComponent implements OnInit {
           const selectedLevel = this.selectedRow.data.level;
           if (selectedLevel === 2 || selectedLevel === 5) {
             this.title = "Update Location";
+            if(selectedLevel===2){
+              this.parentLabel="Country"
+             this.childLabel="Region"
+           }else if(selectedLevel===5){
+             this.parentLabel="City"
+             this.childLabel="Area"
+
+           }
             this.IsEdit = true;
             this.AddNewLocationVisibility = true;
             const parentName = this.AlllocList.find(loc => loc.LocationId == this.selectedRow.data.parentlocID).LocationName;

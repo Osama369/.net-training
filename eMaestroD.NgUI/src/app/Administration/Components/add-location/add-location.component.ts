@@ -22,10 +22,14 @@ export class AddLocationComponent {
   @Output() dataEvent = new EventEmitter<any>();
   @Input() LocData : any;
   @Input() title : any;
+  @Input() parentLabel:any;
+  @Input() childLabel:any;
   @Input() isEdit: boolean = false;
   parentLocationName : any;
 
   newtitle : any;
+  rcvParentLabel : any;
+  rcvChildLabel : any;
 
   sendDataToParent() {
     this.clear();
@@ -34,6 +38,8 @@ export class AddLocationComponent {
 
   ngOnInit(): void {
     this.newtitle = this.title;
+    this.rcvParentLabel=this.parentLabel;
+    this.rcvChildLabel= this.childLabel
     this.locationList = [{
     }]
   }
@@ -47,6 +53,8 @@ export class AddLocationComponent {
 
   ngOnChanges(changes: SimpleChanges) {
     this.newtitle = this.title;
+    this.rcvParentLabel=this.parentLabel;
+    this.rcvChildLabel= this.childLabel
     if(this.LocData != undefined && this.LocData.length != 0)
     {
 
@@ -100,7 +108,7 @@ export class AddLocationComponent {
           else
           {
             this.toastr.success("Location has been successfully updated");
-            this.dataEvent.emit({type:'added',value:loc});
+            this.dataEvent.emit({type:'edit',value:loc});
           }
 
         },
