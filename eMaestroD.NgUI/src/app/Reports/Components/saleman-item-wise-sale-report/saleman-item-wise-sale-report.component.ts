@@ -96,8 +96,9 @@ SelectedProduct:any;
       this.productlist.unshift({
           prodBCID : 0,
           prodID : 0,
-          prodName : "---ALL---"});
-        })
+          prodName : "---ALL---"
+        });
+    })
     
   }
 

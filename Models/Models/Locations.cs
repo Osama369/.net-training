@@ -15,5 +15,6 @@ namespace eMaestroD.Models.Models
         public string? modBy { get; set; }
         public DateTime? modDate { get; set; }
         public int? comID { get; set; }
+
     }
 }

@@ -17,6 +17,7 @@ export class AddLocationComponent {
   @Input() locationVisible : boolean;
   locationList: Location[] = [];
   @ViewChildren('inputFieldTable') inputFieldTable: QueryList<any>;
+  @ViewChild('inputFieldTable') inputField!: ElementRef;
   @ViewChild('savebtn') savebtn: ElementRef<HTMLElement>;
   @Output() dataEvent = new EventEmitter<any>();
   @Input() LocData : any;
@@ -101,6 +102,43 @@ export class AddLocationComponent {
             this.toastr.success("Location has been successfully updated");
             this.dataEvent.emit({type:'added',value:loc});
           }
+
+        },
+        error: (response) => {
+          this.toastr.error(response.error);
+          this.onEnterTableInputCst(-1);
+        },
+      });
+    }
+
+  }
+
+  saveAndAddLoc()
+  {
+    if(this.locationList[0].LocationName == "" || this.locationList[0].LocationName == undefined)
+    {
+      this.toastr.error("Please write location name");
+      this.onEnterTableInputCst(0);
+    }
+    else
+    {
+      this.locationList[0].comID= localStorage.getItem('comID');
+      this.locationList[0].active = true;
+      this.locaitonService.saveLoc(this.locationList[0]).subscribe({
+        next: (loc) => {
+          this.sharedDataService.updateLocations$(loc);
+          if(this.title == "Add New Location")
+          {
+            this.toastr.success("Location has been successfully added");
+            this.locationList[0].LocationName="";
+            this.inputField.nativeElement.focus();
+            //this.dataEvent.emit({type:'addMore',value:loc});
+          }
+          // else
+          // {
+          //   this.toastr.success("Location has been successfully updated");
+          //   this.dataEvent.emit({type:'added',value:loc});
+          // }
 
         },
         error: (response) => {

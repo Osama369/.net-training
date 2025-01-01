@@ -1,5 +1,5 @@
 <div class="container">
-  <h4 translate>{{newtitle}}</h4>
+  <h4 >{{newtitle}}</h4>
   <div style="border-Top: 3px solid #eee;" class="row">
       <div class="col-12">
         <div class="col-12">
@@ -13,6 +13,7 @@
         </div>
           <br>
           <div class="col-12" style="text-align: right;">
+              <button *ngIf="newtitle?.trim().toLowerCase()!== 'update location'" #savebtn (click)="saveAndAddLoc()" class="btn btn-primary col-3" translate><i class="fa fa-save"></i> Save & Add</button>&nbsp;
               <button #savebtn (click)="saveLoc()" class="btn btn-primary col-3" translate><i class="fa fa-save"></i> Save</button>&nbsp;
               <button #cancelbtn (click)="sendDataToParent()" class="btn btn-danger col-3" translate><i class="fa fa-undo"></i> Cancel</button>
           </div>

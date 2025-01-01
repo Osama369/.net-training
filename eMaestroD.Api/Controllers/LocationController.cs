@@ -50,12 +50,22 @@ namespace eMaestroD.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> saveLocation([FromBody] Locations loc)
         {
+            var locList = _AMDbContext.Locations.ToList();
             if (loc.LocationId != 0)
             {
-                loc.modBy = username;
-                loc.modDate = DateTime.Now;
-                _AMDbContext.Locations.Update(loc);
-                await _AMDbContext.SaveChangesAsync();
+                var existingloc = locList.Find(x => x.LocationName?.ToLower() == loc.LocationName?.ToLower() && x.LocationId!=loc.LocationId);
+            
+                if (existingloc == null)
+                {
+
+                    loc.modBy = username;
+                    loc.modDate = DateTime.Now;
+                    _AMDbContext.Locations.Update(loc);
+                    await _AMDbContext.SaveChangesAsync();
+                }
+                else {
+                    return NotFound("Location Already Exist!.");
+                }
 
                 _notificationInterceptor.SaveNotification("LocationEdit", loc.comID, "");
             }
@@ -63,8 +73,12 @@ namespace eMaestroD.Api.Controllers
             {
                 var tenantID = cm.Decrypt(HttpContext.User.FindFirst(ClaimTypes.Upn).Value);
                 var tenlist = _Context.Tenants.Where(x => x.tenantID == int.Parse(tenantID)).ToList();
-                var locList = _AMDbContext.Locations.Where(x => x.LocTypeId == 5).ToList();
-                if (tenlist[0].maxLocationCount > locList.Count())
+                //var locList = _AMDbContext.Locations.Where(x => x.LocTypeId == 5).ToList();
+              
+                var existingloc = locList.Find(x => x.LocationName?.ToLower() == loc.LocationName?.ToLower());
+           
+                //if (tenlist[0].maxLocationCount > locList.Count())
+                if (existingloc==null)
                 {
 
                     loc.crtBy = username;
@@ -79,14 +93,42 @@ namespace eMaestroD.Api.Controllers
                 }
                 else
                 {
-                    return NotFound("Location limit reached. No new location can be added.");
+                    //return NotFound("Location limit reached. No new location can be added.");
+                    return NotFound("Location Already Exist!.");
                 }
             }
             return Ok(loc);
         }
 
+        [HttpPost("ReplaceParentLoc")]
+        //public async Task<IActionResult> ReplaceParentLoc([FromBody] Locations obj)
+        public async Task<IActionResult> ReplaceParentLoc([FromBody] Locations obj)
+        {
+            try
+            {
+                var locList = _AMDbContext.Locations.ToList();
+                var getProvince = locList.Find(x => x.LocationId == obj.LocationId);
+                var getRegion = locList.Find(x => x.LocationId == obj.ParentLocationId);
+                if (getProvince==null) {
+                    return NotFound("Province Not Found");
+                }
+                if (getRegion==null) {
+                    return NotFound("Region Not Found");
+                }
+                getProvince.ParentLocationId = obj.ParentLocationId;
+                _AMDbContext.Update(getProvince);
+                await _AMDbContext.SaveChangesAsync();
 
+                return Ok(getProvince);
 
+            }
+            catch (Exception ex )
+            {
+
+                throw;
+            }
+        
+        }
 
         [HttpDelete]
         [Route("{locID}")]
