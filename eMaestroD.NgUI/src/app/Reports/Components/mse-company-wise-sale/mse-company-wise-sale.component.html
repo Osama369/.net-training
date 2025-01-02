@@ -1,7 +1,7 @@
 <div class="container">
     <div class="card">
         <div class="col-12">
-            <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;MSE Company Wise Sale
+            <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;CSE Company Wise Sale
               <a *ngIf="!bookmark"  (click)="UpdateBookmark(true)" title="Add Bookmark"><i class="pi pi-bookmark" style="font-size: 1.5rem;"></i></a>
               <a *ngIf="bookmark" (click)="UpdateBookmark(false)" title="Remove Bookmark"><i class="pi pi-bookmark-fill" style="font-size: 1.5rem;"></i></a>
           </h4>
@@ -87,6 +87,7 @@
                         </p-dropdown>
                         &nbsp;
                         <button #savebtn (click)="submit()" translate class="btn btn-primary btnSetting"> <i class="far fa-paper-plane"></i> Submit</button>
+                        
                     </div>
                 </div>
             </div>

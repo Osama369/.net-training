@@ -18,6 +18,7 @@ import { Vendor } from 'src/app/Manage/Models/vendor';
 import { CSECustomer } from 'src/app/Manage/Models/csecustomer';
 import { CompanyCSE } from 'src/app/Manage/Models/company-cse';
 import { CompanyCSEService } from 'src/app/Manage/Services/company-cse.service';
+import { interval,concat,from,of, merge, Observable, fromEvent } from 'rxjs';
 
 
 @Component({
@@ -47,7 +48,7 @@ export class MseCompanyWiseSaleComponent {
   allowBtn: boolean = false;
   cols:any []= [];
   data:any[];
-
+  
   selectedLocation:any;
   LocationList : Location[];
   locations : Location[];
@@ -57,7 +58,12 @@ export class MseCompanyWiseSaleComponent {
     vendorlist:Vendor[];
     selectedVendor:any;
   bookmark : boolean = false;
+
+  
   ngOnInit(): void {
+    
+
+
     let today = new Date();
     this.DateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
     this.DateTo = today;
@@ -205,6 +211,7 @@ onVendorChange(){
     this.selectedCSE={vendID:0, vendName:'---All---'}
   console.log(`product list ${this.productList}`)
 }
+
 
   submit()
   {
