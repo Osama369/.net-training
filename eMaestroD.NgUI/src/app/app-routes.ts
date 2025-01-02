@@ -78,6 +78,7 @@ export const APP_ROUTES = {
       cashBook: 'Reports/CashBookReport',
       cashRegister: 'Reports/CashRegisterReport',
       monthlySales: 'Reports/MonthlySales',
+      mseCompanyWiseSale: 'Reports/mseCompanyWiseSale',
       taxReports: {
         taxDetail: 'Reports/TaxDetail',
         taxDetailByCustomer: 'Reports/TaxDetailByCustomer',
@@ -109,6 +110,7 @@ export const APP_ROUTES = {
       CustomerSaleProductWise: 'Reports/CustomerSaleProductWise',
       BulkReceipt: 'Reports/BulkReceipt',
       MonthWisePartySale: 'Reports/MonthWisePartySale',
+      
       profitReports: {
         itemWiseProfit: 'Reports/ItemWiseProfitReport',
         invoiceWiseProfit: 'Reports/InvoiceWiseProfit',

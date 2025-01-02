@@ -143,6 +143,7 @@ export class AppMenuComponent implements OnInit {
                     { label: 'Cash Book', routerLink: [APP_ROUTES.reports.accountReports.cashBook] },
                     { label: 'Cash Register', routerLink: [APP_ROUTES.reports.accountReports.cashRegister] },
                     { label: 'Monthly Sales', routerLink: [APP_ROUTES.reports.accountReports.monthlySales] },
+                   
                     {
                       label: 'Tax Reports',
                       items: [
@@ -189,6 +190,7 @@ export class AppMenuComponent implements OnInit {
                     { label: 'Customer Sale Item Wise', routerLink: [APP_ROUTES.reports.accountReports.CustomerSaleProductWise] },
                     { label: 'Bulk Receipt', routerLink: [APP_ROUTES.reports.accountReports.BulkReceipt] },
                     { label: 'Month Wise Party Sale', routerLink: [APP_ROUTES.reports.accountReports.MonthWisePartySale] },
+                    { label: 'MSE Company WIse Sale', routerLink: [APP_ROUTES.reports.accountReports.mseCompanyWiseSale] },
                   ],
                 },
               ],

@@ -50,6 +50,7 @@ import { ReceiptJournalComponent } from './Components/receipt-journal/receipt-jo
 import { CustomerSaleProductWiseComponent } from './Components/customer-sale-product-wise/customer-sale-product-wise.component';
 import { BulkReceiptComponent } from './Components/bulk-receipt/bulk-receipt.component';
 import { MonthWisePartySaleComponent } from './Components/month-wise-party-sale/month-wise-party-sale.component';
+import { MseCompanyWiseSaleComponent } from './Components/mse-company-wise-sale/mse-company-wise-sale.component';
 
 const routes: Routes = [
   { path: 'DailySaleReport', component: DailyinvoiceComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'DailySale' }  },
@@ -101,6 +102,7 @@ const routes: Routes = [
       { path: 'CustomerSaleProductWise', component:CustomerSaleProductWiseComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CustomerSaleProductWise' }  },
       { path: 'BulkReceipt', component:BulkReceiptComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'BulkReceipt' }  },
       { path: 'MonthWisePartySale', component:MonthWisePartySaleComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'MonthWisePartySale' }  },
+      { path: 'mseCompanyWiseSale', component:MseCompanyWiseSaleComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'mseCompanyWiseSale' }  },
 
     ];
 

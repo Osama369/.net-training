@@ -79,6 +79,6 @@
   </app-add-location>
 </p-dialog> -->
 
-<p-dialog #cstDailog  [modal]="true" [(visible)]="AddNewLocationVisibility" [style]="{width: '40vw'}">
+<p-dialog #cstDailog  [modal]="true" [(visible)]="AddNewLocationVisibility" [style]="{width: '40vw'}" (onHide)="SetLocationTableTree()">
   <app-add-location [LocData]="locList" [title]="title" [parentLabel]="parentLabel" [childLabel]="childLabel" [isEdit]="IsEdit" (dataEvent)="handleChildData($event)"></app-add-location>
 </p-dialog>

@@ -395,6 +395,7 @@ namespace eMaestroD.Api.Controllers
                 vM.enttityDataSource = res;
                 vM.entityModel = res?.GetEntity_MetaData();
             }
+           
             return Ok(vM);
         }
 
@@ -412,7 +413,12 @@ namespace eMaestroD.Api.Controllers
                 vM.entityModel = res?.GetEntity_MetaData();
             }
 
-            
+            else if (ReportName == "MSECompanyWiseSale")
+            {
+                var res = await MSECompanyWiseSale(Parameter1, Parameter2, int.Parse(Parameter3), int.Parse(Parameter4), int.Parse(Parameter5), locID, comID);
+                vM.enttityDataSource = res;
+                vM.entityModel = res?.GetEntity_MetaData();
+            }
 
             return Ok(vM);
         }
@@ -1317,6 +1323,40 @@ namespace eMaestroD.Api.Controllers
                     new SqlParameter { ParameterName = "@comID", Value = comID },
             };
             SDL = _AMDbContext.CustomerSaleProdWIse.FromSqlRaw(sql, parms.ToArray()).ToList();
+
+
+
+            if (SDL.Count > 0)
+            {
+                //decimal total = 0;
+                //foreach (var item in SDL)
+                //{
+                //    total += item.Totalamount;
+                //}
+                //SDL.Add(new Models.BalanceSheet { acctName = "TOTAL", Totalamount = total });
+                // return SDL.OrderBy(x => x.PrimitiveType).ToList();
+                return SDL;
+            }
+            return null;
+        }
+
+        [NonAction]
+        public async Task<List<MSECompanyWiseSale>> MSECompanyWiseSale(DateTime dtfrom, DateTime dtTo, int vendId, int cseID ,int prodIds, int locID, int comID)
+        {
+            List<MSECompanyWiseSale> SDL;
+            string sql = "[Report_CseCompanyWiseSales]  @dtStart,@dtEnd, @vendorID,@cseID , @prodID, @locID, @comID";
+
+            List<SqlParameter> parms = new List<SqlParameter>
+            {
+                    new SqlParameter { ParameterName = "@dtStart", Value = dtfrom },
+                    new SqlParameter { ParameterName = "@dtEnd", Value =  dtTo.AddDays(1).AddSeconds(-1) },
+                    new SqlParameter { ParameterName = "@prodID", Value = prodIds },
+                    new SqlParameter { ParameterName = "@vendorID", Value = vendId },
+                    new SqlParameter { ParameterName = "@cseID", Value = cseID },
+                    new SqlParameter { ParameterName = "@locID", Value = locID },
+                    new SqlParameter { ParameterName = "@comID", Value = comID },
+            };
+            SDL = _AMDbContext.MSECompanyWiseSale.FromSqlRaw(sql, parms.ToArray()).ToList();
 
 
 

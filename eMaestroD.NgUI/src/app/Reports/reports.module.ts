@@ -52,6 +52,7 @@ import { BulkReceiptComponent } from './Components/bulk-receipt/bulk-receipt.com
 import { MonthWisePartySaleComponent } from './Components/month-wise-party-sale/month-wise-party-sale.component';
 
 import { ReportGridDynamicComponent } from './Components/report-grid-dynamic/report-grid-dynamic.component';
+import { MseCompanyWiseSaleComponent } from './Components/mse-company-wise-sale/mse-company-wise-sale.component';
 
 
 
@@ -106,7 +107,8 @@ import { ReportGridDynamicComponent } from './Components/report-grid-dynamic/rep
           CustomerSaleProductWiseComponent,
           BulkReceiptComponent,
           MonthWisePartySaleComponent,
-          ReportGridDynamicComponent
+          ReportGridDynamicComponent,
+          MseCompanyWiseSaleComponent
 
   ],
   imports: [
