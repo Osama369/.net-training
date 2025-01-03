@@ -417,6 +417,7 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
             continue;
           }
         } else {
+          console.log(batch);
           this.addNewEntry(i, selectedProduct, batch);
           this.onEnterComplexInternal(this.inputFields.length - 2);
           return;
@@ -454,42 +455,42 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
     rowData.grossValue = parseFloat((rowData.qty * rowData.purchRate).toFixed(2));
 
     // Determine if discount is based on percentage or amount
-    if (fieldName == "discount") {
-      rowData.discountAmount = parseFloat(((rowData.grossValue * rowData.discount) / 100).toFixed(2)) || 0;
-    } else {
-      rowData.discount = parseFloat(((rowData.discountAmount / rowData.grossValue) * 100).toFixed(2)) || 0;
-    }
+    rowData.discountAmount = parseFloat(((rowData.grossValue * rowData.discount) / 100).toFixed(2)) || 0;
+    // if (fieldName == "discount") {
+    // } else {
+    //   rowData.discount = parseFloat(((rowData.discountAmount / rowData.grossValue) * 100).toFixed(2)) || 0;
+    // }
 
     // Calculate discounted gross value
     rowData.discountedGross = parseFloat((rowData.grossValue - rowData.discountAmount).toFixed(2)) || 0;
 
     // Determine if tax is based on percentage or amount
-    if (fieldName == "tax") {
-      rowData.taxAmount = parseFloat(((rowData.discountedGross * rowData.taxPercent) / 100).toFixed(2)) || 0;
-    } else {
-      rowData.taxPercent = parseFloat(((rowData.taxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
-    }
+    rowData.taxAmount = parseFloat(((rowData.discountedGross * rowData.taxPercent) / 100).toFixed(2)) || 0;
+    // if (fieldName == "tax") {
+    // } else {
+    //   rowData.taxPercent = parseFloat(((rowData.taxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
+    // }
 
     // Determine if extra discount is based on percentage or amount
-    if (fieldName == "extraDiscount") {
-      rowData.extraDiscountAmount = parseFloat(((rowData.discountedGross * rowData.extraDiscountPercent) / 100).toFixed(2)) || 0;
-    } else {
-      rowData.extraDiscountPercent = parseFloat(((rowData.extraDiscountAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
-    }
+    rowData.extraDiscountAmount = parseFloat(((rowData.discountedGross * rowData.extraDiscountPercent) / 100).toFixed(2)) || 0;
+    // if (fieldName == "extraDiscount") {
+    // } else {
+    //   rowData.extraDiscountPercent = parseFloat(((rowData.extraDiscountAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
+    // }
 
     // Calculate advance tax amount
-    if (fieldName == "advanceTax") {
-      rowData.advanceTaxAmount = parseFloat(((rowData.discountedGross * rowData.advanceTaxPercent) / 100).toFixed(2)) || 0;
-    } else {
-      rowData.advanceTaxPercent = parseFloat(((rowData.advanceTaxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
-    }
+    rowData.advanceTaxAmount = parseFloat(((rowData.discountedGross * rowData.advanceTaxPercent) / 100).toFixed(2)) || 0;
+    // if (fieldName == "advanceTax") {
+    // } else {
+    //   rowData.advanceTaxPercent = parseFloat(((rowData.advanceTaxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
+    // }
 
     // Calculate extra advance tax amount
-    if (fieldName == "extraTax") {
-      rowData.extraAdvanceTaxAmount = parseFloat(((rowData.discountedGross * rowData.extraAdvanceTaxPercent) / 100).toFixed(2)) || 0;
-    } else {
-      rowData.extraAdvanceTaxPercent = parseFloat(((rowData.extraAdvanceTaxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
-    }
+    rowData.extraAdvanceTaxAmount = parseFloat(((rowData.discountedGross * rowData.extraAdvanceTaxPercent) / 100).toFixed(2)) || 0;
+    // if (fieldName == "extraTax") {
+    // } else {
+    //   rowData.extraAdvanceTaxPercent = parseFloat(((rowData.extraAdvanceTaxAmount / rowData.discountedGross) * 100).toFixed(2)) || 0;
+    // }
 
     // Calculate net amount before rebate
     rowData.netAmountBeforeRebate = parseFloat(
@@ -503,11 +504,11 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
     );
 
     // Determine if rebate is based on percentage or amount
-    if (fieldName == "rebate") {
-      rowData.rebateAmount = parseFloat(((rowData.netAmountBeforeRebate * rowData.rebatePercent) / 100).toFixed(2)) || 0;
-    } else {
-      rowData.rebatePercent = parseFloat(((rowData.rebateAmount / rowData.netAmountBeforeRebate) * 100).toFixed(2)) || 0;
-    }
+    rowData.rebateAmount = parseFloat(((rowData.netAmountBeforeRebate * rowData.rebatePercent) / 100).toFixed(2)) || 0;
+    // if (fieldName == "rebate") {
+    // } else {
+    //   rowData.rebatePercent = parseFloat(((rowData.rebateAmount / rowData.netAmountBeforeRebate) * 100).toFixed(2)) || 0;
+    // }
 
     // Calculate net amount after rebate
     rowData.netAmount = parseFloat((rowData.netAmountBeforeRebate - rowData.rebateAmount).toFixed(2)) || 0;
@@ -1049,6 +1050,17 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
     this.productlist[i].qtyBal = (batch.unitQty/this.productlist[i].unit.unitValue);
     this.productlist[i].purchRate = (batch.purchRate*this.productlist[i].unit.unitValue),
     this.productlist[i].expiryDate = batch.expiry ? this.formatDate(new Date(batch.expiry)) : null;
+    this.productlist[i].discount = batch.discountPercent;
+    this.productlist[i].extraDiscountPercent = batch.extraDiscountPercent;
+    this.productlist[i].rebatePercent = batch.rebatePercent;
+
+    this.productlist[i].taxPercent= batch.ProductTaxes[0].taxPercent || 0;
+    this.productlist[i].taxAmount= batch.ProductTaxes[0].taxAmount || 0;
+    this.productlist[i].advanceTaxPercent= batch.ProductTaxes[1].taxPercent || 0;
+    this.productlist[i].advanceTaxAmount= batch.ProductTaxes[1].taxAmount || 0;
+    this.productlist[i].extraAdvanceTaxPercent= batch.ProductTaxes[2].taxPercent || 0;
+    this.productlist[i].extraAdvanceTaxAmount= batch.ProductTaxes[2].taxAmount || 0;
+
     this.Itemcalculation(i);
   }
 
@@ -1067,19 +1079,26 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
       purchPrice : batch.purchRate,
       sellPrice : batch.sellRate,
       sellRate: (batch.sellRate*TempUnit.unitValue),
-      taxPercent: this.taxesList[0].taxValue,
       lastCost: product.lastCost,
       currentStock: product.currentStock,
       categoryName: product.categoryName,
       depName: product.depName,
       prodManuName: product.prodManuName,
       prodGrpName: product.prodGrpName,
-      discount: product.sharePercentage,
       isTaxable: product.isTaxable,
       batchNo: batch.batchNo,
       qtyBal: (batch.unitQty/TempUnit.unitValue),
       purchRate : (batch.purchRate*TempUnit.unitValue),
       expiryDate: this.formatDate(new Date(batch.expiry)) || null,
+      discount : batch.discountPercent,
+      extraDiscountPercent : batch.extraDiscountPercent,
+      rebatePercent : batch.rebatePercent,
+      taxPercent: batch.ProductTaxes[0].taxPercent || 0,
+      taxAmount: batch.ProductTaxes[0].taxAmount || 0,
+      advanceTaxPercent: batch.ProductTaxes[1].taxPercent || 0,
+      advanceTaxAmount: batch.ProductTaxes[1].taxAmount || 0,
+      extraAdvanceTaxPercent: batch.ProductTaxes[2].taxPercent || 0,
+      extraAdvanceTaxAmount: batch.ProductTaxes[2].taxAmount || 0,
     };
 
     this.Itemcalculation(i);
@@ -1117,11 +1136,19 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
     this.printtype= e.target.value;
  }
 
- updateQtyBal(data:Products,index:any)
- {
-  data.qtyBal = data.qty;
+ updateQtyBal(data: any, index: any) {
+  data.qty = Number(data.qty);
+
+  if (data.qty > data.qtyBal) {
+
+    this.toastr.error("Return Quantity is less than input quantity.");
+    Object.assign(this.productlist[index], {
+      qty: data.qtyBal,
+    });
+  }
+
   this.Itemcalculation(index);
- }
+}
 
  handleChildData() {
   this.ProductsVisible = false;

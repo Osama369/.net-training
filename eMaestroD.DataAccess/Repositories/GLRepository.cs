@@ -547,6 +547,20 @@ namespace eMaestroD.DataAccess.Repositories
             };
 
             var SDL = await _dbContext.InvoiceProducts.FromSqlRaw(sql, parms.ToArray()).ToListAsync();
+
+            foreach (var item in SDL)
+            {
+                var detail = await _dbContext.GLDetails.Where(x => x.GLID == item.prodInvoiceID).ToListAsync();
+                item.ProductTaxes = detail.Select(detail => new InvoiceProductTax
+                {
+                    taxDetailID = 0,
+                    taxAcctNo = detail.acctNo,
+                    taxAmount = detail.GLAmount,
+                    taxPercent = detail.rate
+                }).ToList();
+
+                item.prodInvoiceID = 0;
+            }
             return SDL;
         }
 
