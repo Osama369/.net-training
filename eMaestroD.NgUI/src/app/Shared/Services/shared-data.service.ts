@@ -266,25 +266,35 @@ export class SharedDataService {
     const updatedData = [...currentData];
 
     data.forEach(product => {
-      const existingProduct = updatedData.find(p => p.barCode === product.barCode);
+      var existingProduct = updatedData.find(p => p.barCode === product.barCode);
+      var UdpatedIndex= updatedData.findIndex(p => p.barCode === product.barCode);
 
       const newUnit = {
         unitType: product.unit,
         unitValue: product.baseQty,
         unitId: product.prodBCID,
         unitCode: product.barCode,
+       
       };
 
       if (existingProduct) {
         const index = existingProduct.units.findIndex(unit => unit.unitId === newUnit.unitId);
         if (index === -1) {
           existingProduct.units.push(newUnit);
+        
+
         } else {
           existingProduct.units[index] = newUnit;
+        
         }
         existingProduct.unit = existingProduct.units
         .map(unit => `${unit.unitType}(${unit.unitValue})`)
         .join(', ');
+        Object.assign(existingProduct, {
+          ...product, // Update fields from the new product
+          units: existingProduct.units, // Retain updated units
+          unit: existingProduct.unit,   // Retain updated unit string
+        });
       } else {
         // Add a new product entry
         updatedData.unshift({

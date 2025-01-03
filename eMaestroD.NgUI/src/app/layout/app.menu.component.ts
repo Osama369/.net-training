@@ -86,7 +86,7 @@ export class AppMenuComponent implements OnInit {
                 { label: 'Bank', routerLink: [APP_ROUTES.manage.bank] },
                 { label: 'Credit Card', routerLink: [APP_ROUTES.manage.creditCard] },
                 { label: 'Bulk Stock Update', routerLink: [APP_ROUTES.manage.bulkStockUpdate] },
-                { label: 'Location', routerLink: [APP_ROUTES.administration.location] },
+                { label: 'Locations', routerLink: [APP_ROUTES.administration.location] },
                 { label: 'Taxes', routerLink: [APP_ROUTES.administration.taxes] },
                 { label: 'Re-Order Products', routerLink: [APP_ROUTES.manage.reorder] },
               ],
