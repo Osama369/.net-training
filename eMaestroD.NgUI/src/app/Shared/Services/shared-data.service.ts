@@ -266,9 +266,10 @@ export class SharedDataService {
     const updatedData = [...currentData];
 
     data.forEach(product => {
-      var existingProduct = updatedData.find(p => p.barCode === product.barCode);
-      var UdpatedIndex= updatedData.findIndex(p => p.barCode === product.barCode);
-
+      // var existingProduct = updatedData.find(p => p.barCode === product.barCode);
+      const existingProduct = updatedData.find(p => p.prodID === product.prodID);
+      var UdpatedIndex= updatedData.findIndex(p => p.prodID === product.prodID);
+      
       const newUnit = {
         unitType: product.unit,
         unitValue: product.baseQty,
@@ -293,7 +294,8 @@ export class SharedDataService {
         Object.assign(existingProduct, {
           ...product, // Update fields from the new product
           units: existingProduct.units, // Retain updated units
-          unit: existingProduct.unit,   // Retain updated unit string
+          unit: existingProduct.unit, 
+          barCode : existingProduct.barCode  // Retain updated unit string
         });
       } else {
         // Add a new product entry
