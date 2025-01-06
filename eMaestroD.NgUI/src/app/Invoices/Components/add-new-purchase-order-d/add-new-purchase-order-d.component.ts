@@ -596,8 +596,12 @@ export class AddNewPurchaseOrderDComponent implements OnInit{
     else if (this.selectedLocation.LocationId === undefined) {
       this.toastr.error("Please select a location!");
     }
+
     else if (this.productlist.filter(p => p.prodID > 0).length === 0) {
       this.toastr.error("Please add at least one item!");
+    }
+    else if (this.productlist.filter(p => p.prodID > 0 && (p.unit == "" || p.unit == undefined)).length > 0) {
+      this.toastr.error("Unit can not be empty!");
     }
     else if (this.productlist.filter(p => p.prodID > 0 && (p.qty == 0 || p.qty == undefined)).length > 0) {
       this.toastr.error("Please specify a quantity for all items!");

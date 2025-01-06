@@ -619,10 +619,16 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
     }
     else if(this.selectedLocation.LocationId == undefined) {
       this.toastr.error("Please select location!");
-    }else if(this.productlist.filter(p => p.prodID > 0).length == 0)
+    }
+    else if(this.productlist.filter(p => p.prodID > 0 &&(p.unit=="" || p.unit==undefined)).length > 0)
+      {
+        this.toastr.error("Unit can not be empty!");
+      }
+    else if(this.productlist.filter(p => p.prodID > 0).length == 0)
     {
       this.toastr.error("please add alteast one item!");
-    }else{
+    }
+    else{
       return true;
     }
     return false;

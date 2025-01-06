@@ -655,11 +655,16 @@ export class AddNewSaleDComponent implements OnInit{
     else if(this.selectedLocation.LocationId == undefined) {
       this.toastr.error("Please select location!");
     }else if(this.productlist.filter(p => p.prodID > 0).length == 0)
-    {
-      this.toastr.error("please add alteast one item!");
-    }else if (this.productlist.filter(p => p.prodID > 0 && (p.qty == 0 || p.qty == undefined)).length > 0) {
+      {
+        this.toastr.error("please add alteast one item!"); 
+      }
+      else if (this.productlist.filter(p => p.prodID > 0 && (p.unit == "" || p.unit == undefined)).length > 0) {
+        this.toastr.error("Products Unit Can not be Empty!");
+      }
+      else if (this.productlist.filter(p => p.prodID > 0 && (p.qty == 0 || p.qty == undefined)).length > 0) {
       this.toastr.error("Please specify a quantity for all items!");
-    }else{
+    }
+    else{
       return true;
     }
     return false;

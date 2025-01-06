@@ -1255,6 +1255,7 @@ export class NewInvoiceComponent implements OnInit{
           this.toastr.error("Unit Price must be greater than 0");
           return;
         }
+        
         this.gl.push(this.createNewGLList());
         this.gl[i].GLID = this.productlist[i].GLID;
         this.gl[i].txID = this.productlist[i].TxID;
@@ -1332,6 +1333,7 @@ export class NewInvoiceComponent implements OnInit{
       this.toastr.error("Please select location!");
       this.onEnterComplex(2);
     }
+    
     // else if(this.BankVisible && this.SelectedBank == undefined)
     // {
     //     this.toastr.error("Please select bank!");
@@ -1357,7 +1359,7 @@ export class NewInvoiceComponent implements OnInit{
           if(this.productlist[i].qty == 0)
           {
             this.savebtnDisable = false;
-            this.toastr.error("Quantity must be greater than 0");
+            this.toastr.error("Quantity must be greater than 0 or can not be null!");
             return;
           }
           if(this.productlist[i].sellRate == 0)
@@ -1366,6 +1368,12 @@ export class NewInvoiceComponent implements OnInit{
             this.toastr.error("Unit Price must be greater than 0");
             return;
           }
+          if(this.productlist[i].prodUnit == undefined)
+            {
+              this.savebtnDisable = false;
+              this.toastr.error("Product Unit can not be Empty!");
+              return;
+            }
           this.gl.push(this.createNewGLList());
           this.gl[i].GLID = this.productlist[i].GLID;
           this.gl[i].txID = this.productlist[i].TxID;
