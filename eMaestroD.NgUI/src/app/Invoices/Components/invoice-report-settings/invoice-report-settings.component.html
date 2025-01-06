@@ -10,9 +10,11 @@
             <div *ngIf="data.type === 'checkbox'" class="field-checkbox col-6" style="margin-bottom: 10px;">
               <p-checkbox [(ngModel)]="data.value" [binary]="true" [value]="data" label="{{ data.key | translate }}"></p-checkbox>
             </div>
-            <div *ngIf="data.type === 'radioButton'" class="field-radioButton col-6" style="margin-bottom: 10px;">
+            <br/>
+            <div *ngIf="data.type === 'radioButton'" [class]="data.screenName?.toLowerCase()==='sale' ? 'col-4':'col-6'" class="field-radioButton col-4" style="margin-bottom: 10px;">
               <input type="radio" [value]="data.value" name="printView"  [checked]="data.value" (change)="OnRadioChange(data)"> {{ data.key | translate }}
             </div>
+          <br/>
             <div *ngIf="data.type === 'radioButton1'" class="field-radioButton col-6" style="margin-bottom: 10px;">
               <input type="radio" [value]="data.value" name="radioButton1"  [checked]="data.value" (change)="OnRadioChange1(data)"> {{ data.key | translate }}
             </div>

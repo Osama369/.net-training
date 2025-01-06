@@ -34,6 +34,7 @@ import { AddNewSchemesComponent } from './Components/schemes/add-new-schemes/add
 import { AddNewProductDComponent } from './Components/products/add-new-product-d/add-new-product-d.component';
 import { CompanyMseComponent } from './Components/company-mse/company-mse.component';
 import { AddNewMSEComponent } from './Components/company-mse/add-new-mse/add-new-mse.component';
+import { AddNewSchemeDComponent } from './Components/schemes/add-new-scheme-d/add-new-scheme-d.component';
 
 
 @NgModule({
@@ -69,7 +70,8 @@ import { AddNewMSEComponent } from './Components/company-mse/add-new-mse/add-new
     AddNewSchemesComponent,
     AddNewProductDComponent,
     CompanyMseComponent,
-    AddNewMSEComponent
+    AddNewMSEComponent,
+    AddNewSchemeDComponent
   ],
   imports: [
     CommonModule,

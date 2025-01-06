@@ -29,6 +29,9 @@ export class InvoiceReportSettingsComponent {
       this.subscription = this.reportSettingService.GetInvoiceReportSettings()
         .subscribe(rptlist => {
           this.list = rptlist.filter(x => x.screenName.trim().toLowerCase() === this.screenName.trim().toLowerCase());
+          console.log(this.list)
+          this.list= this.list.sort((x,y)=> y.type.localeCompare(x.type));
+          console.log(this.list)
         });
     }
   }

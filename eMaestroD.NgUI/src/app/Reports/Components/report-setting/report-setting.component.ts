@@ -21,6 +21,7 @@ export class ReportSettingComponent {
   ngOnInit() {
     this.reportSettingService.getReportSettings().subscribe(rptlist=>{
       this.list = rptlist;
+    
     });
   }
 

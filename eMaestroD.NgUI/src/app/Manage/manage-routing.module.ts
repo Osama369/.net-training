@@ -19,8 +19,10 @@ import { AddNewProductComponent } from './Components/products/add-new-product/ad
 import { OfferComponent } from './Components/offer/offer.component';
 import { SchemesComponent } from './Components/schemes/schemes.component';
 import { AddNewSchemesComponent } from './Components/schemes/add-new-schemes/add-new-schemes.component';
+
 import { AddNewProductDComponent } from './Components/products/add-new-product-d/add-new-product-d.component';
 import { CompanyMseComponent } from './Components/company-mse/company-mse.component';
+import { AddNewSchemeDComponent } from './Components/schemes/add-new-scheme-d/add-new-scheme-d.component';
 
 function getDynamicComponent(componentForPos: any, componentForDistribution: any): any {
   const isPos = localStorage.getItem('isPos') === 'true';
@@ -40,8 +42,8 @@ const routes: Routes = [
   { path: 'Category', component: CategoryComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Category' }  },
   { path: 'Offer', component: OfferComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Offer' }  },
   { path: 'Schemes', component: SchemesComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Schemes' }  },
-  { path: 'AddSchemes', component: AddNewSchemesComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SchemesCreate' }  },
-  { path: 'AddSchemes/:id', component: AddNewSchemesComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SchemesEdit' }  },
+  { path: 'AddSchemes', component:getDynamicComponent( AddNewSchemesComponent,AddNewSchemeDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SchemesCreate' }  },
+  { path: 'AddSchemes/:id', component:getDynamicComponent( AddNewSchemesComponent,AddNewSchemeDComponent), canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'SchemesEdit' }  },
   { path: 'Bank', component: BankComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'Bank' }  },
   { path: 'ReOrder', component: LowStockComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'ReOrderProducts' }  },
   { path: 'CreditCard', component: CreditCardComponent, canActivate:[AuthGuard, PermissionGuard], data: { requiredPermission: 'CreditCard' }  },

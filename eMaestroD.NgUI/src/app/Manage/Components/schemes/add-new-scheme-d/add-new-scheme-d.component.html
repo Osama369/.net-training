@@ -1,0 +1,134 @@
+<div class="card container">
+    <div class="row">
+      <div class="col-6">
+          <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;{{title}}
+          </h4>
+      </div>
+    </div>
+    <div style="border-top: 3px solid #eee;" class="row">
+        <div class="col-12">
+          <div class="row">
+            <div class="col-3">
+                <label class="col-form-label date-label required" translate>From Date&nbsp;</label>
+                <input type="date" pInputText id="dtStart" class="col-12"
+                       name="dtStart" [(ngModel)]="dtStart" required />
+            </div>
+            <div class="col-3">
+                <label class="col-form-label date-label required" translate>To Date&nbsp;</label>
+                <input type="date" pInputText id="dtEnd" class="col-12"
+                       name="dtEnd" [(ngModel)]="dtEnd" required />
+            </div>
+            <div class="col-3">
+                <label class="col-form-label date-label required" translate>Scheme Type&nbsp;</label>
+                <p-dropdown [options]="offerlist" styleClass="col-12" [(ngModel)]="offerID"
+                optionLabel="offerName" optionValue="offerID" placeholder="Select a Type"  [filter]="true" [filterBy]="'depName'"
+                [showClear]="true"></p-dropdown>
+            </div>
+            <div class="col-3">
+                <label class="col-form-label date-label required" translate>Scheme Name&nbsp;</label>
+                <input pInputText id="descr" class="col-12"
+                       name="descr" [(ngModel)]="schemeName" maxlength="100" required />
+            </div>
+        </div>
+            <br>
+            <!-- Tabs Section -->
+             <p-tabView>
+                <p-tabPanel header="Items">
+                  <div class="row">
+                    <div class="col-12">
+                      <label class="col-4 col-form-label date-label required" translate>Department&nbsp;</label>
+                      <label class="col-4 col-form-label date-label required" translate>Category&nbsp;</label>
+                      <!-- <label class="col-3 col-form-label date-label required" translate>Brand&nbsp;</label>
+                      <label class="col-3 col-form-label date-label required" translate>Manufacturer&nbsp;</label>
+                     -->
+                    </div>
+                    <div class="col-12">
+                      <p-dropdown [options]="departmentList" styleClass="col-3" [(ngModel)]="SelectedDepartment"
+                      optionLabel="depName"  placeholder="Select a Department" class="col-form-label col-12" [filter]="true" [filterBy]="'depName'"
+                          [showClear]="true" (onChange)="GetFilteredProductList()"></p-dropdown>
+<!--   
+                          <p-treeSelect
+                          class="select-tree-custom-style1"
+                          [options]="categoryListByDepartment"
+                          [(ngModel)]="SelectedCategory"
+                          placeholder="Select a Category"
+                          [filter]="true"
+                          (ngModelChange)="GetFilteredProductList()">
+                      </p-treeSelect> -->
+  
+                        <p-dropdown [options]="productGrouplist" styleClass="col-3 offset-1"  [(ngModel)]="SelectedBrand"
+                          optionLabel="prodGrpName"  placeholder="Select a Category" class="col-form-label col-12" [filter]="true" [filterBy]="'prodGrpName'"
+                          [showClear]="true"  (onChange)="GetFilteredProductList()"></p-dropdown>
+  
+                        <!-- <p-dropdown [options]="prodManufactureList"  styleClass="col-2 offset-1"   [(ngModel)]="SelectedManufacture"
+                          optionLabel="prodManuName" optionValue="prodManuID" placeholder="Select a Manufacturer" class="col-form-label col-12" [filter]="true" [filterBy]="'prodManuName'"
+                          [showClear]="true" (onChange)="GetFilteredProductList()"></p-dropdown> -->
+                  </div>
+                  <div clas="col-12" style="margin-top:12px">
+                    <p-table [value]="filterProductlist || []" dataKey="prodID" styleClass="fixed-table-height">
+                      <ng-template pTemplate="header">
+                        <tr>
+                          <th>Code</th>
+                          <th>Item Name</th>
+                          <th>On Every</th>
+                          <th>Max QTY</th>
+                          <th>Max Amount</th>
+                          <th>Discount Qty</th>
+                          <th>Active</th>
+                        </tr>
+                      </ng-template>
+                      <ng-template pTemplate="body" let-product  let-i="rowIndex">
+                        <tr>
+                          <td>
+                            <input [style]="{'width':'50px !important','min-width':'100%'}" pInputText [(ngModel)]="product.prodCode" disabled>
+                          </td>
+                          <td>
+                            <input [style]="{'width':'100% !important','min-width':'100%'}" pInputText [(ngModel)]="product.prodName" disabled>
+                          </td>
+                          <td>
+                            <input [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="schemesList[i].startQty">
+                          </td>
+                          <td>
+                            <input [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="schemesList[i].maxQty">
+                          </td>
+                          <td>
+                            <input [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="schemesList[i].maxAmount">
+                          </td>
+                          <td>
+                            <input [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="schemesList[i].discount">
+                          </td>
+                          <td>
+                            <p-inputSwitch [(ngModel)]="schemesList[i].active"></p-inputSwitch>
+                          </td>
+                        </tr>
+                      </ng-template>
+                      <!-- <ng-template pTemplate="footer">
+                        <tr>
+                          <td colspan="8">
+                            <button pButton type="button" icon="pi pi-plus" (click)="addNewRow()"></button>
+                          </td>
+                        </tr>
+                      </ng-template> -->
+                    </p-table>
+                  </div>
+  
+                </div>
+              </p-tabPanel>
+  
+            </p-tabView>
+  
+            <!-- Save and Cancel Buttons -->
+            <div class="col-12" style="text-align: right;">
+                <button #savebtn [disabled]="isSaveDisable" (click)="saveSchemes()" translate class="btn btn-primary col-2">
+                    <i class="fa fa-save"></i> Save
+                </button>&nbsp;
+                <button #cancelbtn (click)="sendDataToParent()" translate class="btn btn-danger col-2">
+                    <i class="fa fa-undo"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+  </div>
+  
+  
+  
