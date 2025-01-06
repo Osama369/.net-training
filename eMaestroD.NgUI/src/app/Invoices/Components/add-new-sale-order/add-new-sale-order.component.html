@@ -126,7 +126,7 @@
                     </td>
                     <td pFrozenColumn style="z-index: 1;">
                       <p-autoComplete #inputField styleClass="myclass" [disabled]="!selectedCustomerName" appendTo="body" [(ngModel)]="rowData.prodName" [suggestions]="Filterproductlist" (completeMethod)="filterProduct($event)"
-                      field="prodName" value="prodBCID" [minLength]="1" (keydown)="productVisible($event)" (keyup.enter)="onEnterComplex(inputFields.length-2)" (onBlur)="onChange(rowData.prodName,ri, autoComplete3)" class="myClass girdRow" [style]="{ 'width':'100% !important','min-width':'100%'}" #autoComplete3 (onFocus)="autoComplete3.show()" ></p-autoComplete>
+                      field="prodName" value="prodBCID" [minLength]="1" (keydown)="productVisible($event)" (keyup.enter)="onEnterComplex(inputFields.length-2)" (onBlur)="onChange(rowData,ri, autoComplete3)" class="myClass girdRow" [style]="{ 'width':'100% !important','min-width':'100%'}" #autoComplete3 (onFocus)="autoComplete3.show()" ></p-autoComplete>
                     </td>
                     <td pFrozenColumn style="z-index: 1;">
                         <p-autoComplete

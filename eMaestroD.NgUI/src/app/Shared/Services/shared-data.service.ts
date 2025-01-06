@@ -91,7 +91,7 @@ export class SharedDataService {
     const currentData = (this.productsSubject.value as { [key: string]: any })["enttityDataSource"] || [];
     const updatedData = [...currentData];
     const transformedProducts = updatedData.reduce((acc: ProductViewModel[], product: any) => {
-      const existingProduct = acc.find(p => p.barCode === product.barCode);
+      const existingProduct = acc.find(p => p.prodID === product.prodID);
 
       if (existingProduct) {
         existingProduct.units.push({

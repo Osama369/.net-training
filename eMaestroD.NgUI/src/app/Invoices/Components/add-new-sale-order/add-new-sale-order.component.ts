@@ -381,6 +381,8 @@ export class AddNewSaleOrderComponent implements OnInit{
     {
       if(newObj != undefined && newObj != '' && typeof(newObj) != 'string')
       {
+        newObj = newObj.prodBCID && newObj.prodID == newObj.prodName.prodID ? newObj : newObj.prodName;
+
         this.rowNmb = i;
         this.selectedProductList = this.products.filter(f => f.prodBCID == newObj.prodBCID);
          this.filteredProduct = this.productlist.filter((f, index) => {
@@ -978,7 +980,10 @@ export class AddNewSaleOrderComponent implements OnInit{
     if(newObj != '' && newObj != undefined)
     {
       this.rowNmb = i;
-      this.selectedProductList = this.products.filter(f => f.barCode == newObj);
+      // this.selectedProductList = this.products.filter(f => f.barCode == newObj);
+      this.selectedProductList = this.products.filter(product =>
+        product.units.some(unit => unit.unitCode === newObj)
+      );
       this.filteredProduct = this.productlist.filter(f => f.barCode == newObj);
       if(this.filteredProduct.length > 1)
       {
@@ -996,7 +1001,8 @@ export class AddNewSaleOrderComponent implements OnInit{
           {
 
           this.productlist[i].prodID = this.selectedProductList[0].prodID;
-          this.productlist[i].prodBCID = this.selectedProductList[0].prodBCID;
+          // this.productlist[i].prodBCID = this.selectedProductList[0].prodBCID;
+          this.productlist[i].prodBCID = this.selectedProductList[0].units.find(unit => unit.unitCode === newObj).unitId;
           this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
           this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
           this.productlist[i].unitQty = this.selectedProductList[0].unitQty;
@@ -1017,7 +1023,8 @@ export class AddNewSaleOrderComponent implements OnInit{
           this.productlist[i].batchNo = " ";
           this.productlist[i].expiryDate = this.formatDate(new Date());
           this.productlist[i].units =this.selectedProductList[0].units;
-          this.productlist[i].unit =this.selectedProductList[0].units[0];
+          // this.productlist[i].unit =this.selectedProductList[0].units[0];
+          this.productlist[i].unit =this.selectedProductList[0].units.find(unit => unit.unitCode === newObj);
 
           this.Itemcalculation(i);
           // let el: HTMLElement = this.newRowButton.nativeElement;
@@ -1102,8 +1109,8 @@ export class AddNewSaleOrderComponent implements OnInit{
       this.selectedProductList = this.products.filter(f => f.prodID == this.productlist[i].prodID);
 
       this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
-      this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
-      this.productlist[i].barCode = this.selectedProductList[0].barCode;
+      // this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
+      this.productlist[i].barCode = this.productlist[i].prodCode;
       this.productlist[i].isTaxable = this.selectedProductList[0].isTaxable;
 
       this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
@@ -1142,6 +1149,20 @@ export class AddNewSaleOrderComponent implements OnInit{
   onUnitSelect(event: any, rowData: any, rowIndex: number) {
     rowData.lastCost = rowData.purchPrice * event.unitValue;
     rowData.sellRate = rowData.sellPrice * event.unitValue;
+
+    rowData.selectedUnit = event.unitType;
+    const matchedProduct = this.Filterproductlist.find(product =>
+      product.units.some(unit => unit.unitCode === event.unitCode)  // Assuming unitCode is what you're matching
+    );
+
+    // If a matched product is found, update prodBCID and barcode
+    if (matchedProduct) {
+      rowData.prodBCID = matchedProduct.units.find(unit => unit.unitCode === event.unitCode).unitId;  // Update prodBCID
+      rowData.barCode = matchedProduct.units.find(unit => unit.unitCode === event.unitCode).unitCode;    // Update barcode
+    } else {
+      rowData.prodBCID = null;
+      rowData.barcode = null;
+    }
 
     this.Itemcalculation(rowIndex);
   }

@@ -179,7 +179,7 @@ export class AddNewPurchaseDComponent implements OnInit{
   }
 
   @ViewChildren('inputField') inputFields: QueryList<any>;
-  
+
   @ViewChildren('inputFieldTable') inputFieldsTable: QueryList<any>;
   @ViewChild('newRowButton') newRowButton: ElementRef<HTMLElement>;
   @ViewChild('savebtn') savebtn: ElementRef<HTMLElement>;
@@ -386,6 +386,7 @@ export class AddNewPurchaseDComponent implements OnInit{
     {
       if(newObj != undefined && newObj != '' && typeof(newObj) != 'string')
       {
+        newObj = newObj.prodBCID && newObj.prodID == newObj.prodName.prodID ? newObj : newObj.prodName;
         this.rowNmb = i;
         this.selectedProductList = this.productsDuplicate.filter(f => f.prodBCID == newObj.prodBCID);
         this.filteredProduct = this.productlist.filter((f, index) => {
@@ -970,7 +971,11 @@ export class AddNewPurchaseDComponent implements OnInit{
     if(newObj != '' && newObj != undefined)
     {
       this.rowNmb = i;
-      this.selectedProductList = this.productsDuplicate.filter(f => f.barCode == newObj);
+      // this.selectedProductList = this.productsDuplicate.filter(f => f.barCode == newObj);
+      this.selectedProductList = this.productsDuplicate.filter(product =>
+        product.units.some(unit => unit.unitCode === newObj)
+      );
+
       this.filteredProduct = this.productlist.filter(f => f.barCode == newObj);
       if(this.filteredProduct.length > 1)
       {
@@ -988,7 +993,7 @@ export class AddNewPurchaseDComponent implements OnInit{
           {
 
           this.productlist[i].prodID = this.selectedProductList[0].prodID;
-          this.productlist[i].prodBCID = this.selectedProductList[0].prodBCID;
+          this.productlist[i].prodBCID = this.selectedProductList[0].units.find(unit => unit.unitCode === newObj).unitId;
           this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
           this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
           this.productlist[i].unitQty = this.selectedProductList[0].unitQty;
@@ -1004,7 +1009,7 @@ export class AddNewPurchaseDComponent implements OnInit{
           this.productlist[i].prodManuName =this.selectedProductList[0].prodManuName;
           this.productlist[i].prodGrpName =this.selectedProductList[0].prodGrpName;
           this.productlist[i].units =this.selectedProductList[0].units;
-          this.productlist[i].unit =this.selectedProductList[0].units[0];
+          this.productlist[i].unit =this.selectedProductList[0].units.find(unit => unit.unitCode === newObj);
 
           this.Itemcalculation(i);
           // let el: HTMLElement = this.newRowButton.nativeElement;
@@ -1169,8 +1174,8 @@ export class AddNewPurchaseDComponent implements OnInit{
       this.selectedProductList = this.products.filter(f => f.prodID == this.productlist[i].prodID);
 
       this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
-      this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
-      this.productlist[i].barCode = this.selectedProductList[0].barCode;
+      this.productlist[i].barCode = this.productlist[i].prodCode;
+      // this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
 
       this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
       this.productlist[i].depName =this.selectedProductList[0].depName;
@@ -1212,6 +1217,7 @@ export class AddNewPurchaseDComponent implements OnInit{
   }
 
 
+
   filterUnitSuggestions(rowData: any) {
     rowData.units = rowData?.units || []; // Populate units for the selected product
     console.log(rowData.units);
@@ -1220,7 +1226,21 @@ export class AddNewPurchaseDComponent implements OnInit{
 
   onUnitSelect(event: any, rowData: any, rowIndex: number) {
     console.log('Selected Unit:', event);
-    rowData.selectedUnit = event.unitType; // Update the selected unit
+
+    rowData.selectedUnit = event.unitType;
+    const matchedProduct = this.productsDuplicate.find(product =>
+      product.units.some(unit => unit.unitCode === event.unitCode)  // Assuming unitCode is what you're matching
+    );
+
+    // If a matched product is found, update prodBCID and barcode
+    if (matchedProduct) {
+      rowData.prodBCID = matchedProduct.units.find(unit => unit.unitCode === event.unitCode).unitId;  // Update prodBCID
+      rowData.barCode = matchedProduct.units.find(unit => unit.unitCode === event.unitCode).unitCode;    // Update barcode
+    } else {
+      rowData.prodBCID = null;
+      rowData.barcode = null;
+    }
+
   }
 
   formatDate(date: Date): string {

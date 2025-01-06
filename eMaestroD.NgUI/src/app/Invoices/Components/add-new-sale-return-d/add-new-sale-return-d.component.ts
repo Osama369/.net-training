@@ -1219,7 +1219,7 @@ export class AddNewSaleReturnDComponent implements OnInit{
 async InvoiceOnChange()
 {
   if(this.selectedVoucherNo == undefined || this.selectedVoucherNo.invoiceVoucherNo == "Select Invoice No") {
-    this.toastr.error("Please select Invoice!");
+    // this.toastr.error("Please select Invoice!");
     this.onEnterComplex(2);
     this.productlist = [{}];
     return;
@@ -1261,8 +1261,8 @@ async InvoiceOnChange()
     for (let i = 0; i < this.productlist.length; i++) {
       this.selectedProductList = this.products.filter(f => f.prodID == this.productlist[i].prodID);
       this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
-      this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
-      this.productlist[i].barCode = this.selectedProductList[0].barCode;
+      // this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
+      this.productlist[i].barCode = this.productlist[i].prodCode;
       this.productlist[i].isTaxable = this.selectedProductList[0].isTaxable;
 
       if(invoiceData.Products[i].expiry)
@@ -1322,8 +1322,8 @@ async InvoiceOnChange()
       this.selectedProductList = this.products.filter(f => f.prodID == this.productlist[i].prodID);
 
       this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
-      this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
-      this.productlist[i].barCode = this.selectedProductList[0].barCode;
+      // this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
+      this.productlist[i].barCode = this.productlist[i].prodCode;
       this.productlist[i].isTaxable = this.selectedProductList[0].isTaxable;
       this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
       this.productlist[i].depName =this.selectedProductList[0].depName;

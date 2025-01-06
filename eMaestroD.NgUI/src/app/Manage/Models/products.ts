@@ -92,5 +92,5 @@ export class ProductBarCodes {
   SalePrice? : any;
   TradePrice? : any;
   FOBPrice? : any;
-
+  isEditable?: any = false;
 }

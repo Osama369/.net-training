@@ -374,6 +374,7 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
     this.rowNmb = i;
 
     try {
+      newObj = newObj.prodBCID && newObj.prodID == newObj.prodName.prodID ? newObj : newObj.prodName;
       this.selectedProductList = this.products.filter(f => f.prodBCID === newObj.prodBCID);
 
       if (this.selectedProductList.length === 0) {
@@ -947,7 +948,7 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
 
 
   async onCodeChange(newObj: any, i: number, event: any) {
-    if (!newObj || !newObj.barCode) {
+    if (!newObj) {
       // Reset the product entry for the current row if barcode is invalid
       this.Itemcalculation(i);
 
@@ -959,7 +960,12 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
 
     try {
       // Fetch the selected product details by barcode
-      this.selectedProductList = this.products.filter(f => f.barCode === newObj.barCode);
+      // this.selectedProductList = this.products.filter(f => f.barCode === newObj.barCode);
+
+      this.selectedProductList = this.productsDuplicate.filter(product =>
+        product.units.some(unit => unit.unitCode === newObj)
+      );
+
       if (this.selectedProductList.length === 0) {
         this.toastr.error("Invalid product code");
         return;
@@ -982,8 +988,9 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
 
       // Iterate over all batches to handle stock and avoid duplication
       for (const batch of result) {
+        if(batch.prodCode == newObj){
         const existingIndex = this.productlist.findIndex(
-          f => f.barCode === newObj.barCode && f.batchNo === batch.batchNo
+          f => f.unit === newObj && f.batchNo === batch.batchNo
         );
 
         if (existingIndex >= 0) {
@@ -1003,11 +1010,14 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
             continue; // Skip to the next batch if stock limit is reached
           }
         }
+        }else{
+          continue;
+        }
       }
 
       // Add a new batch if none of the existing batches can accommodate the quantity
       const nextBatch = result.find(
-        r => !this.productlist.some(f => f.barCode === newObj.barCode && f.batchNo === r.batchNo)
+        r => r.prodCode == newObj && !this.productlist.some(f => f.barCode === newObj && f.batchNo === r.batchNo)
       );
 
       if (nextBatch) {
@@ -1065,7 +1075,7 @@ export class AddNewPurchaseReturnDComponent implements OnInit{
   }
 
   addNewProductEntry(i: number, product: any, batch: any) {
-    let TempUnit = product.units.find(x=>x.unitValue == 1) || product.units[0];
+    let TempUnit = product.units.find(x=>x.unitId == batch.prodBCID);
     this.productlist[i] = {
       barCode: product.barCode,
       prodID: product.prodID,
@@ -1239,8 +1249,8 @@ clear()
       this.selectedProductList = this.products.filter(f => f.prodID == this.productlist[i].prodID);
 
       this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
-      this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
-      this.productlist[i].barCode = this.selectedProductList[0].barCode;
+      // this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
+      this.productlist[i].barCode = this.productlist[i].prodCode;
 
       this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
       this.productlist[i].depName =this.selectedProductList[0].depName;

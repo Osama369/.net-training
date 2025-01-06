@@ -128,7 +128,7 @@ export class AddNewProductDComponent {
       this.categoryList = data.Category;
       this.categoryListByDepartment = this.buildCategoryTree(this.categoryList);
 
-      this.productlist[0].ProductBarCodes?.push({ prodBCID : 0, prodID: this.productlist[0].prodID, BarCode: this.productlist[0].prodCode, Unit: 'Unit', Qty: 1, Active: true})
+      this.productlist[0].ProductBarCodes?.push({ prodBCID : 0, prodID: this.productlist[0].prodID, BarCode: this.productlist[0].prodCode, Unit: 'Unit', Qty: 1, Active: true, isEditable : true})
       this.productlist[0].isTaxable = true;
 
       this.sharedDataService.getVendors$().subscribe(vnd => {
@@ -205,10 +205,47 @@ export class AddNewProductDComponent {
 selectedProducts: any;
 
 addNewRow() {
-  if(this.productlist[0].ProductBarCodes?.find(x=>x.BarCode == empty.toString() && x.Qty == 0 )){
+  if(this.productlist[0].ProductBarCodes?.find(x=>x.BarCode == "" || x.Qty === 0 || x.Unit == "" )){
     this.toastr.info("Please Fill Empty row first to add new row!");
   }else{
-    this.productlist[0].ProductBarCodes?.push({ prodBCID : 0, prodID: this.productlist[0].prodID, BarCode: this.productlist[0].prodCode, Unit: '', Qty: 0, Active: true})
+    this.productlist[0].ProductBarCodes?.push({ prodBCID : 0, prodID: this.productlist[0].prodID, BarCode: "", Unit: '', Qty: 0, Active: true})
+  }
+}
+
+removeRow(productbarcode: any) {
+  if (this.productlist[0]?.ProductBarCodes) {
+    const index = this.productlist[0].ProductBarCodes.indexOf(productbarcode);
+    if (index !== -1) {
+      this.productlist[0].ProductBarCodes.splice(index, 1);
+    }
+  }
+}
+
+onQtyChange(product: any) {
+  // Check if the new quantity already exists in the ProductBarCodes list
+  const isDuplicate = this.productlist[0]?.ProductBarCodes.some(
+    (p: any) => p !== product && p.Qty === product.Qty
+  );
+
+  if (isDuplicate) {
+    this.toastr.error('Quantity must be unique across all barcodes.');
+    product.Qty = 0; // Reset the value if duplicate
+
+    return;
+  }
+}
+
+onUnitChange(product: any) {
+  // Check if the new quantity already exists in the ProductBarCodes list
+  const isDuplicate = this.productlist[0]?.ProductBarCodes.some(
+    (p: any) => p !== product && p.Unit === product.Unit
+  );
+
+  if (isDuplicate) {
+    this.toastr.error('Unit must be unique across all barcodes.');
+    product.Unit = ""; // Reset the value if duplicate
+
+    return;
   }
 }
 
@@ -581,6 +618,7 @@ onRowEditCancel(product:any, editing:any) {
   }
 
   async checkExistence(field: string, fieldID: any, index: number = 0, isCode:boolean) {
+    console.log(index);
     if (field != undefined && field != "") {
       try {
         const result = await lastValueFrom(this.productService.IsBarcodeExist(field, this.productlist[0].prodID ?? 0));
@@ -588,17 +626,15 @@ onRowEditCancel(product:any, editing:any) {
           this.toastr.error("This barcode already exists.");
           if (isCode) {
             this.productlist[0].prodCode = "";
-            this.productlist[0].ProductBarCodes.forEach(element => {
-              element.BarCode = this.productlist[0].prodCode;
-            });
+            this.productlist[0].ProductBarCodes[index].BarCode = this.productlist[0].prodCode;
+
             this.focusOnTableInput(1);
           } else {
-            this.productlist[0].ProductBarCodes[index].BarCode = "";
+            const i = this.productlist[0].ProductBarCodes.findIndex((product: any) => product.BarCode === field);
+            this.productlist[0].ProductBarCodes[i].BarCode = "";
           }
         }else{
-          this.productlist[0].ProductBarCodes.forEach(element => {
-            element.BarCode = this.productlist[0].prodCode;
-          });
+          this.productlist[0].ProductBarCodes[index].BarCode = this.productlist[0].prodCode;
         }
       } catch {
         this.toastr.error("An error occurred while checking the code/barcode.");

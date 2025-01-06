@@ -271,7 +271,7 @@
                       <p-table #dt [value]="productlist[0]?.ProductBarCodes || []" dataKey="prodBCID" editMode="row" styleClass="fixed-table-height" [scrollable]="true"  scrollHeight="100px" scrollDirection="vertical">
                       <ng-template pTemplate="header">
                         <tr>
-                          <th *ngIf="false">Barcode</th>
+                          <th>Barcode</th>
                           <th>Unit</th>
                           <th>Base Qty</th>
                           <th *ngIf="false">Cost Price</th>
@@ -279,18 +279,19 @@
                           <th *ngIf="false">Trade Price</th>
                           <th *ngIf="false">FOB Price</th>
                           <th *ngIf="false">Active</th>
+                          <th>Delete</th>
                         </tr>
                       </ng-template>
                       <ng-template pTemplate="body" let-product let-i="index" let-editing="editing">
                         <tr [pEditableRow]="product">
-                          <td *ngIf="false">
-                            <input  [disabled]="true" [style]="{'width':'100% !important','min-width':'100%'}" pInputText  (blur)="checkExistence(product.BarCode, product.prodBCID, i, false)"  [(ngModel)]="product.BarCode">
+                          <td>
+                            <input  [disabled]="product.isEditable" [style]="{'width':'100% !important','min-width':'100%'}" pInputText  (blur)="checkExistence(product.BarCode, product.prodBCID, i, false)"  [(ngModel)]="product.BarCode">
                           </td>
                           <td>
-                            <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="text" [(ngModel)]="product.Unit">
+                            <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="text" [(ngModel)]="product.Unit" (change)="onUnitChange(product)">
                           </td>
                           <td>
-                            <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.Qty">
+                            <input   [disabled]="product.isEditable" [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.Qty" (change)="onQtyChange(product)">
                           </td>
                           <td *ngIf="false">
                             <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.CostPrice">
@@ -306,6 +307,9 @@
                           </td>
                           <td *ngIf="false">
                             <p-inputSwitch [(ngModel)]="product.Active"></p-inputSwitch>
+                          </td>
+                          <td>
+                            <button [disabled]="product.isEditable" pButton type="button" icon="pi pi-trash"  class="p-button-rounded p-button-text" [style]="{'height': '32px !important','width': '30px !important',color:'var(--gray-900)'}" (click)="removeRow(product)"></button>
                           </td>
                         </tr>
                       </ng-template>

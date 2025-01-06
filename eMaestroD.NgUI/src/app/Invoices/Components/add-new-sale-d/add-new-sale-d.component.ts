@@ -406,6 +406,8 @@ export class AddNewSaleDComponent implements OnInit{
     this.rowNmb = i;
 
     try {
+
+      newObj = newObj.prodBCID && newObj.prodID == newObj.prodName.prodID ? newObj : newObj.prodName;
       this.selectedProductList = this.products.filter(f => f.prodBCID === newObj.prodBCID);
 
       if (this.selectedProductList.length === 0) {
@@ -1011,7 +1013,11 @@ export class AddNewSaleDComponent implements OnInit{
 
     try {
       // Fetch the selected product details by barcode
-      this.selectedProductList = this.products.filter(f => f.barCode === newObj.barCode);
+      // this.selectedProductList = this.products.filter(f => f.barCode === newObj.barCode);
+      this.selectedProductList = this.products.filter(product =>
+        product.units.some(unit => unit.unitCode === newObj.barCode)
+      );
+
       if (this.selectedProductList.length === 0) {
         this.toastr.error("Invalid product code");
         return;
@@ -1034,6 +1040,9 @@ export class AddNewSaleDComponent implements OnInit{
 
       // Iterate over all batches to handle stock and avoid duplication
       for (const batch of result) {
+        console.log(this.productlist);
+        if(batch.prodCode == newObj.barCode){
+
         const existingIndex = this.productlist.findIndex(
           f => f.barCode === newObj.barCode && f.batchNo === batch.batchNo
         );
@@ -1055,11 +1064,14 @@ export class AddNewSaleDComponent implements OnInit{
             continue; // Skip to the next batch if stock limit is reached
           }
         }
+        }else{
+          continue;
+        }
       }
 
       // Add a new batch if none of the existing batches can accommodate the quantity
       const nextBatch = result.find(
-        r => !this.productlist.some(f => f.barCode === newObj.barCode && f.batchNo === r.batchNo)
+        r => r.prodCode == newObj.barCode &&  !this.productlist.some(f => f.barCode === newObj.barCode && f.batchNo === r.batchNo)
       );
 
       if (nextBatch) {
@@ -1077,11 +1089,11 @@ export class AddNewSaleDComponent implements OnInit{
 
 
   addNewEntry(i: number, product: any, batch: any){
-    this.productlist[i].barCode = product.barCode;
+    this.productlist[i].barCode = product.prodCode;
     this.productlist[i].prodID = product.prodID;
-    this.productlist[i].prodBCID = product.prodBCID;
+    this.productlist[i].prodBCID = batch.prodBCID;
     this.productlist[i].prodName = { prodName: product.prodName };
-    this.productlist[i].prodCode = product.prodCode;
+    this.productlist[i].prodCode = batch.prodCode;
     this.productlist[i].unitQty = batch.unitQty;
     this.productlist[i].qty = 1;
     this.productlist[i].taxPercent = this.taxesList[0].taxValue;
@@ -1106,13 +1118,13 @@ export class AddNewSaleDComponent implements OnInit{
   }
 
   addNewProductEntry(i: number, product: any, batch: any) {
-    let TempUnit = product.units.find(x=>x.unitValue == 1) || product.units[0];
+    let TempUnit = product.units.find(x=>x.unitId == batch.prodBCID);
     this.productlist[i] = {
-      barCode: product.barCode,
+      barCode: batch.prodCode,
       prodID: product.prodID,
-      prodBCID: product.prodBCID,
+      prodBCID: batch.prodBCID,
       prodName: {prodName:product.prodName},
-      prodCode: product.prodCode,
+      prodCode: batch.prodCode,
       unitQty: batch.unitQty,
       qty: 1,
       units : product.units,
@@ -1290,8 +1302,9 @@ async InvoiceOnChange()
       this.selectedProductList = this.products.filter(f => f.prodID == this.productlist[i].prodID);
 
       this.productlist[i].prodName = {prodName:this.selectedProductList[0].prodName};
-      this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
-      this.productlist[i].barCode = this.selectedProductList[0].barCode;
+      // this.productlist[i].prodCode = this.selectedProductList[0].prodCode;
+
+      this.productlist[i].barCode = this.productlist[i].prodCode;
       this.productlist[i].isTaxable = this.selectedProductList[0].isTaxable;
       this.productlist[i].categoryName =this.selectedProductList[0].categoryName;
       this.productlist[i].depName =this.selectedProductList[0].depName;
@@ -1372,6 +1385,8 @@ async InvoiceOnChange()
 
 
       rowData.unit = { ...rowData.units[0] };
+      rowData.prodBCID = rowData.unit.unitId;
+      rowData.barCode = rowData.unit.unitCode;
       rowData.qtyBal = rowData.unitQty / rowData.unit.unitValue;
       rowData.purchRate = rowData.purchPrice * rowData.unit.unitValue;
       rowData.sellRate = rowData.sellPrice*rowData.unit.unitValue;
@@ -1385,6 +1400,9 @@ async InvoiceOnChange()
       return;
     }
 
+    
+    rowData.prodBCID = event.unitId;
+    rowData.barCode = event.unitCode;
     rowData.qtyBal = rowData.unitQty / event.unitValue;
     rowData.purchRate = rowData.purchPrice * event.unitValue;
     rowData.sellRate = rowData.sellPrice * event.unitValue;
