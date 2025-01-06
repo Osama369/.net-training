@@ -42,7 +42,7 @@ import { AdministrationRoutingModule } from './administration-routing.module';
     TaxesComponent,
     UsersComponent,
     LocationsComponent,
-    RoleAuthorizationComponent,
+    RoleAuthorizationComponent
   ],
   imports: [
     CommonModule,
