@@ -487,7 +487,7 @@ onRowEditCancel(product:any, editing:any) {
   openDialog(event: MouseEvent | KeyboardEvent, isKey: boolean, dialogType: string): void {
     const keyboardEvent = event as KeyboardEvent;
     if (isKey && !(event as KeyboardEvent).altKey) {
-      if (keyboardEvent.key === 'Tab') {
+      if (keyboardEvent.key === 'Tab') {    
         this.focusNextElement(event.target as HTMLElement);
         return;
     }
