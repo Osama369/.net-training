@@ -123,30 +123,39 @@
                   <div class="col-4">
                     <div class="col-12">
                       <label class="col-4 col-form-label date-label required" translate>Department&nbsp;</label>
-                      <p-dropdown [options]="departmentList" styleClass="col-7" [(ngModel)]="productlist[0].depID"
-                        optionLabel="depName" optionValue="depID" placeholder="Select a Department" class="col-form-label col-12" [filter]="true" [filterBy]="'depName'"
-                        [showClear]="true" (onChange)="onDepartmentChange($event.value, 0)" (keydown)="openDialog($event, true, 'department')"></p-dropdown>
+                   
+                       <p-dropdown 
+                       [options]="departmentList"
+                        styleClass="col-7" 
+                        [(ngModel)]="productlist[0].depID"
+                        optionLabel="depName"
+                        optionValue="depID"
+                        placeholder="Select a Department"
+                        class="col-form-label col-12"
+                        [filter]="true" 
+                        [filterBy]="'depName'"
+                        [showClear]="true"  
+                        (onChange)="onDepartmentChange($event.value, 0)" 
+                        (keydown)="openDialog($event, true, 'department')"></p-dropdown>
                         <p-button
                           icon="pi pi-plus"
                           title="Add New Supplier"
                           styleClass="p-button col-1"
-                          (keydown)="openDialog($event, false, 'department')"
+                          (onClick)="openDialog($event, false, 'department')"
                           [style]="{'height': '42.5px'}">
                         </p-button>
                     </div>
 
                     <div class="col-12 mt-2" *ngIf="isPos">
                       <label class="col-4 col-form-label date-label required" translate>Category&nbsp;</label>
-                        <p-treeSelect
+                        <p-dropdown                        
                         class="select-tree-custom-style"
                         [options]="categoryListByDepartment"
                         [(ngModel)]="SelectedCategory"
                         [placeholder]="(categoryListByDepartment && categoryListByDepartment.length > 0
                            ? 'Select a Category'
                            : 'No Category Found')"[filter]="true"
-                        (keydown)="openDialog($event, true, 'category')"
-                        >
-                      </p-treeSelect>
+                        (keydown)="openDialog($event, true, 'category')"></p-dropdown>
                       <p-button
                         icon="pi pi-plus"
                         title="Add New Category"
@@ -161,7 +170,7 @@
                       <label class="col-4 col-form-label date-label required" translate>{{isPos ? 'Brand' : 'Category'}}&nbsp;</label>
                       <p-dropdown [options]="productGrouplist" styleClass="col-7"  [(ngModel)]="productlist[0].prodGrpID"
                         optionLabel="prodGrpName" optionValue="prodGrpID" placeholder="--Select--" class="col-form-label col-12" [filter]="true" [filterBy]="'prodGrpName'"
-                        [showClear]="true" (keydown)="openDialog($event, true, 'brand')"></p-dropdown>
+                        [showClear]="true"  (keydown)="openDialog($event, true, 'brand')"></p-dropdown>
                         <p-button
                           icon="pi pi-plus"
                           title="Add New Brand"

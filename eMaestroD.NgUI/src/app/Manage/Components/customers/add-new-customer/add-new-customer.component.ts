@@ -293,6 +293,23 @@ export class AddNewCustomerComponent {
     }
 
   }
+FoucsOnTab(event: KeyboardEvent){
+  if(event.key==="Tab"){
+    this.focusNextElement(event.target as HTMLElement);
+    return;
+  }
+}
+focusNextElement(currentElement: HTMLElement): void {
+  const focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+  const focusableElements = Array.from(document.querySelectorAll<HTMLElement>(focusableSelectors));
+
+  const currentIndex = focusableElements.indexOf(currentElement);
+  if (currentIndex >= 0 && currentIndex < focusableElements.length - 1) {
+      const nextElement = focusableElements[currentIndex + 1];
+      nextElement.focus();
+  }
+}
+
 
   onEnterTableInputCst(index: number) {
     if (index < this.inputFieldsTableCst.length-1) {

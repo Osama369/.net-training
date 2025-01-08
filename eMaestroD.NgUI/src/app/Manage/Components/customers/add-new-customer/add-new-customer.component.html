@@ -106,7 +106,7 @@
             <div class="col-12">
               <label class="col-form-label date-label col-7 required" translate>Customer Opening Balance</label>
               <label *ngIf="isCstSupp" class="col-form-label date-label col-5 required" translate>Supplier Opening Balance</label>
-              <input pInputText id="cstBal" #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(4)" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="10" class="col-form-label" [ngClass]="isCstSupp?'col-5':'col-12'" name="vat"   [(ngModel)]="customerList[0].opnBal" />
+              <input pInputText id="cstBal" #inputFieldTableCst (keydown)="FoucsOnTab($event)" (keyup.enter)="onEnterTableInputCst(4)" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="10" class="col-form-label" [ngClass]="isCstSupp?'col-5':'col-12'" name="vat"   [(ngModel)]="customerList[0].opnBal" />
               <input *ngIf="isCstSupp" pInputText id="vendbal" #inputFieldTableCst (keyup.enter)="onEnterTableInputCst(5)" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="10" class="col-form-label offset-2 col-5" name="vat"   [(ngModel)]="customerList[0].vendorBal" />
             </div>
             <div class="col-12">

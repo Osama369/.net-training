@@ -473,11 +473,28 @@ onRowEditCancel(product:any, editing:any) {
     // this.saleCom.ProductsVisible = false;
     // this.quotationCom.ProductsVisible = false;
   }
+  focusNextElement(currentElement: HTMLElement): void {
+    const focusableSelectors = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const focusableElements = Array.from(document.querySelectorAll<HTMLElement>(focusableSelectors));
 
+    const currentIndex = focusableElements.indexOf(currentElement);
+    if (currentIndex >= 0 && currentIndex < focusableElements.length - 1) {
+        const nextElement = focusableElements[currentIndex + 1];
+        nextElement.focus();
+    }
+}
   dailogType : string = "";
   openDialog(event: MouseEvent | KeyboardEvent, isKey: boolean, dialogType: string): void {
+    const keyboardEvent = event as KeyboardEvent;
     if (isKey && !(event as KeyboardEvent).altKey) {
+      if (keyboardEvent.key === 'Tab') {
+        this.focusNextElement(event.target as HTMLElement);
+        return;
+    }
+    else{
       return;
+    
+    }
     }
 
     this.dailogType = dialogType;
