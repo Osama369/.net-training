@@ -149,7 +149,7 @@
                 </tbody>
             </table> -->
 
-            <p-table #dt [value]="productlist" dataKey="prodID" editMode="row" styleClass="p-datatable-sm" [scrollable]="true" class="AddTable" scrollHeight="300px" scrollDirection="vertical">
+            <p-table #dt [value]="products" dataKey="prodID" editMode="row" styleClass="p-datatable-sm" [scrollable]="true" class="AddTable" scrollHeight="300px" scrollDirection="vertical">
                 <ng-template pTemplate="header">
                     <tr>
                         <!-- <th style="width:8em d-none"></th> -->
@@ -184,7 +184,7 @@
                             </div>
                         </td> -->
                         <td >
-                            <p-autoComplete #inputField  [disabled]="rowData.isRaw" [(ngModel)]="rowData.prodCode" [minLength]="1"  (keyup.enter)="onCodeChange(rowData.prodCode,ri, $event)" (onBlur)="onCodeChange(rowData.prodCode,ri, $event)"  class="girdRow girdRowCode codeInput" [style]="{ 'width':'100% !important','min-width':'100%'}"></p-autoComplete>
+                            <p-autoComplete #inputField  [disabled]="rowData.isRaw"   [(ngModel)]="rowData.prodCode" [minLength]="1"  (keyup.enter)="onCodeChange(rowData.prodCode,ri, $event)" (onBlur)="onCodeChange(rowData.prodCode,ri, $event)"  class="girdRow girdRowCode codeInput" [style]="{ 'width':'100% !important','min-width':'100%'}"></p-autoComplete>
                         </td>
 
                         <td >

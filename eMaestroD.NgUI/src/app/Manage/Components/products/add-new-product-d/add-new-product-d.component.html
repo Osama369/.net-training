@@ -63,7 +63,7 @@
                     styleClass="col-11"
                      (onSelect)="onSupplierSelect($event)"
                     [style]="{'border-radius':'6px 0px 0px 6px'}"
-                    pAutoFocus [autofocus]="true"
+                    pAutoFocus [autofocus]="true" (keydown)="openDialog($event, true, 'supplier')"
                   >
                     <!-- Custom Template for Dropdown Suggestions -->
                     <ng-template let-supplier pTemplate="item">
@@ -73,13 +73,12 @@
 
                   <!-- Add New Supplier Button -->
                   <p-button
-                    icon="pi pi-plus"
-                    title="Add New Supplier"
-                    styleClass="p-button col-1"
-                    (onClick)="openDialog($event, false, 'supplier')"
-                    [style]="{'height': '44px'}"
-                  >
-                  </p-button>
+                  icon="pi pi-plus"
+                  title="Add New Supplier"
+                  styleClass="p-button col-1"
+                  (onClick)="openDialog($event, false, 'supplier')"
+                  [style]="{'height': '42.5px'}">
+                </p-button>
                 </div>
 
 
@@ -131,7 +130,7 @@
                           icon="pi pi-plus"
                           title="Add New Supplier"
                           styleClass="p-button col-1"
-                          (onClick)="openDialog($event, false, 'department')"
+                          (keydown)="openDialog($event, false, 'department')"
                           [style]="{'height': '42.5px'}">
                         </p-button>
                     </div>
@@ -150,7 +149,7 @@
                       </p-treeSelect>
                       <p-button
                         icon="pi pi-plus"
-                        title="Add New Supplier"
+                        title="Add New Category"
                         styleClass="p-button col-1"
                         (onClick)="openDialog($event, false, 'category')"
                         [style]="{'height': '42.5px'}">

@@ -71,6 +71,7 @@ export class GirdComponent {
     this.productCategoryService.getAllGroups().subscribe({
       next: (comp) => {
         this.productGrouplist =(comp as { [key: string]: any })["enttityDataSource"];
+       
         this.productsForFilter = this.data;
         this.productGrouplist.unshift({
           prodGrpID:0,

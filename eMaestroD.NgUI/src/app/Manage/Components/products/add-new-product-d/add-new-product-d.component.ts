@@ -23,7 +23,7 @@ import { SharedDataService } from 'src/app/Shared/Services/shared-data.service';
 })
 export class AddNewProductDComponent {
 
-
+ 
   productGrouplist: prodGroups[];
   Supplierlist: Vendor[] =  [];
   departmentList: Department[] = [];
@@ -547,7 +547,9 @@ onRowEditCancel(product:any, editing:any) {
         this.closeDialog();
         break;
       case 'brand':
-        this.productGrouplist.push(newItem.data);
+        this.productGrouplist.push(newItem.value);
+        console.log(newItem.data);
+        console.log(newItem.data);
         this.productlist[0].prodGrpID = newItem.value.prodGrpID;
         this.closeDialog();
         break;

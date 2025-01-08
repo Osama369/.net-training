@@ -1732,6 +1732,7 @@ export class NewInvoiceComponent implements OnInit{
         filtered.push(product);
       }
     }
+    
     this.Filterproductlist = filtered;
   }
 

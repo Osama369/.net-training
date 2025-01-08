@@ -190,7 +190,7 @@ export class AppMenuComponent implements OnInit {
                     { label: 'Customer Sale Item Wise', routerLink: [APP_ROUTES.reports.accountReports.CustomerSaleProductWise] },
                     { label: 'Bulk Receipt', routerLink: [APP_ROUTES.reports.accountReports.BulkReceipt] },
                     { label: 'Month Wise Party Sale', routerLink: [APP_ROUTES.reports.accountReports.MonthWisePartySale] },
-                    { label: 'MSE Company WIse Sale', routerLink: [APP_ROUTES.reports.accountReports.mseCompanyWiseSale] },
+                    { label: 'CSE Company WIse Sale', routerLink: [APP_ROUTES.reports.accountReports.mseCompanyWiseSale] },
                   ],
                 },
               ],

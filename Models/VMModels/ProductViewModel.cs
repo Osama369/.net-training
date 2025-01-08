@@ -22,10 +22,12 @@ namespace Models.VMModels
         public string? prodManuName { get; set; }
         [DisplayName(Name = "Department")]
         public string? depName { get; set; }
-        [DisplayName(Name = "Category")]
-        public string? categoryName { get; set; }
-        [DisplayName(Name = "Brand")]
+       
         [HiddenOnRender]
+        [DisplayName(Name = "Brand")]
+        public string? categoryName { get; set; }
+
+        [DisplayName(Name = "Category")]
         public string? prodGrpName { get; set; }
         [DisplayName(Name = "Purchase Rate")]
         [HiddenOnRender]
