@@ -285,7 +285,12 @@ export class AddNewCustomerComponent {
               },
             });
 
-          }
+          },
+          error: (response) => {
+            this.toastr.error(response.error);
+            this.onEnterTableInputCst(-1);
+            this.isSaveDisable = false;
+          },
         });
 
 
