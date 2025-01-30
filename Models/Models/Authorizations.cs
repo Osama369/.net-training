@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace eMaestroD.Models.Models
+namespace aiPriceGuard.Models.Models
 {
     public class Authorizations
     {

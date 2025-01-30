@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace eMaestroD.Models.Models
+namespace aiPriceGuard.Models.Models
 {
     public class EmailTemplates
     {

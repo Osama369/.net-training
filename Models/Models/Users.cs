@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace eMaestroD.Models.Models
+namespace aiPriceGuard.Models.Models
 {
     public class Users
     {
@@ -12,7 +12,7 @@ namespace eMaestroD.Models.Models
         public int? RoleID { get; set; }
         [NotMapped]
         public int? locID { get; set; }
-        
+
         [NotMapped]
         public string? RoleName { get; set; }
         [NotMapped]

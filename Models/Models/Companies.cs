@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace eMaestroD.Models.Models
+namespace aiPriceGuard.Models.Models
 {
     public class Companies
     {
@@ -32,8 +32,11 @@ namespace eMaestroD.Models.Models
         public DateTime? crtDate { get; set; }
         public string? modBy { get; set; }
         public DateTime? modDate { get; set; }
-        public Boolean? isPos { get; set; }
+        public bool? isPos { get; set; }
         public int? timeZoneID { get; set; }
+        public string? FileSize { get; set; }
+        public string? FileTypes { get; set; }
+        
         //public int? isConfigured { get; set; }
         [NotMapped]
         public decimal? taxPercentage { get; set; }

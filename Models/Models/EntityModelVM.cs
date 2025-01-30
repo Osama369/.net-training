@@ -1,4 +1,4 @@
-﻿namespace eMaestroD.Models.Models
+﻿namespace aiPriceGuard.Models.Models
 {
     public class EntityModelVM
     {
@@ -45,6 +45,7 @@
         Date = 11,
         CustomDetailControl = 12,
         Dropdown = 13,
-        link = 14
+        link = 14,
+        Button =15
     }
 }

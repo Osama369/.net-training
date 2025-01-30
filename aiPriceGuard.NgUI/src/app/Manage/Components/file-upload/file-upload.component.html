@@ -1,0 +1,30 @@
+<app-gird
+tableheading="Files"
+[columns]="cols"
+[data]="FileList"
+[rowcount]=100
+[allowColSort]="false"
+[allowColFilter]="false"
+[allowGlobalFilter]="true"
+[allowActionButtons]="false"
+(dataEvent)="handleChildData($event)"
+[allowUploadButtons]="false">
+</app-gird>
+<!-- <app-gird
+tableheading="Files"
+[columns]="cols"
+[data]="FileList"
+[rowcount]=100
+[allowColSort]="false"
+[allowColFilter]="false"
+[allowGlobalFilter]="true"
+[allowActionButtons]="true"
+(dataEvent)="handleChildData($event)"
+[allowUploadButtons]="false">
+</app-gird> -->
+
+<p-dialog [modal]="true" #cstDailog [(visible)]="FileModelVisible" [style]="{width: '60vw'}" >
+    <!-- <app-add-file [vndData]="vndList" [title]="title" (dataEvent)="handleChildData($event)"></app-add-file> -->
+    <app-add-file   (dataEvent)="handleChildData($event)"></app-add-file>
+ 
+  </p-dialog> 

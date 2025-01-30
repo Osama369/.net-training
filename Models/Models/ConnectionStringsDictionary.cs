@@ -1,4 +1,4 @@
-﻿namespace eMaestroD.Models.Models
+﻿namespace aiPriceGuard.Models.Models
 {
     public class Item
     {

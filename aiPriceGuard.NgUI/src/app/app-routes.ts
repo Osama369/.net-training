@@ -1,0 +1,138 @@
+import { initial } from "lodash";
+
+export const APP_ROUTES = {
+  default: '',
+
+  account: {
+    base: 'Account',
+    login: 'Account/login',
+    signUp: 'Account/SignUp',
+    register: 'Account/Register',
+    confirmation: 'Account/Confirmation',
+    selectCompany: 'Account/SelectCompany',
+  },
+  initialConfig:'CompanyConfig',
+  topbar: 'topbar',
+
+  notFound: '404',
+  notAuthorized: 'not-authorized',
+
+  dashboard: 'Dashboard',
+
+  manage: {
+    base: 'Manage',
+    reorder: 'Manage/ReOrder',
+    manufacture: 'Manage/Manufacture',
+    brand: 'Manage/Brand',
+    department: 'Manage/Department',
+    category: 'Manage/Category',
+    products: 'Manage/Products',
+    productBarcode: 'Manage/ProductBarcode',
+    offer: 'Manage/Offer',
+    schemes: 'Manage/Schemes',
+    customers: 'Manage/Customers',
+    suppliers: 'Manage/Suppliers',
+    bank: 'Manage/Bank',
+    creditCard: 'Manage/CreditCard',
+    companycse : '/Manage/CompanyCSE',
+    bulkStockUpdate: 'Manage/bulkStockUpdate',
+    Files:'Manage/Files'
+  },
+
+  invoices: {
+    base: 'Invoices',
+    purchaseOrder: 'Invoices/PurchaseOrder',
+    grn: 'Invoices/GRN',
+    purchase: 'Invoices/Purchase',
+    purchaseReturn: 'Invoices/PurchaseReturn',
+    quotations: 'Invoices/Quotations',
+    saleInvoices: 'Invoices/SaleInvoices',
+    saleReturn: 'Invoices/SaleReturn',
+    serviceInvoices: 'Invoices/ServiceInvoices',
+    invoicePosting: 'Invoices/invoicePosting',
+  },
+
+  transactions: {
+    base: 'Transactions',
+    receipt: 'Transactions/Receipt',
+    payment: 'Transactions/Payment',
+    journal: 'Transactions/Journal',
+    expense: 'Transactions/Expense',
+    dayBook: 'Transactions/DayBook',
+  },
+
+  reports: {
+    base: 'Reports',
+    inventoryReports: {
+      dailySale: 'Reports/DailySaleReport',
+      saleHistory: 'Reports/SaleHistoryReport',
+      stock: 'Reports/StockReport',
+      stockValuation: 'Reports/StockValuationReport',
+      stockSaleAndReturn: 'Reports/StockSaleAndReturnReport',
+    },
+    accountReports: {
+      advancedSearch: 'Reports/AdvancedSearchReport',
+      accountReceivable: 'Reports/AccountReceivable',
+      accountPayable: 'Reports/AccountPayable',
+      bankBook: 'Reports/BankBookReport',
+      creditCard: 'Reports/CreditCardReport',
+      cashBook: 'Reports/CashBookReport',
+      cashRegister: 'Reports/CashRegisterReport',
+      monthlySales: 'Reports/MonthlySales',
+      mseCompanyWiseSale: 'Reports/mseCompanyWiseSale',
+      taxReports: {
+        taxDetail: 'Reports/TaxDetail',
+        taxDetailByCustomer: 'Reports/TaxDetailByCustomer',
+        taxDetailBySupplier: 'Reports/TaxDetailBySupplier',
+        taxSummary: 'Reports/TaxSummary',
+      },
+      generalJournal: 'Reports/GeneralJournalReport',
+      ledgerReports: {
+        generalLedger: 'Reports/GeneralLedgerReport',
+        itemLedger: 'Reports/ItemLedgerReport',
+        partyLedger: 'Reports/PartyLedgerReport',
+      },
+      trialBalance: 'Reports/TrialBalanceReport',
+      balanceSheet: 'Reports/BalanceSheetReport',
+      BonusClaim: 'Reports/BonusClaimReport',
+      DiscountClaim: 'Reports/DiscountClaimReport',
+      ItemExpiryList: 'Reports/ItemExpiryListReport',
+      SSRWithAvailability: 'Reports/SSRWithAvailability',
+      SalesManLedgerReport: 'Reports/SalesManLedgerReport',
+      SalemanItemWiseSaleReport: 'Reports/SalemanItemWiseSaleReport',
+      SalemanWiseSaleReport: 'Reports/SalemanWiseSaleReport',
+      SaleClaimReport: 'Reports/SaleClaim',
+      ExpenseReport: 'Reports/ExpenseReport',
+      ChallanReport: 'Reports/ChallanReport',
+      PurchaseOrderGRNReport: 'Reports/PurchaseOrderGRNReport',
+      PayableAging: 'Reports/PayableAging',
+      ReceivableAging: 'Reports/ReceivableAging',
+      ReceiptJournal: 'Reports/ReceiptJournal',
+      CustomerSaleProductWise: 'Reports/CustomerSaleProductWise',
+      BulkReceipt: 'Reports/BulkReceipt',
+      MonthWisePartySale: 'Reports/MonthWisePartySale',
+      
+      profitReports: {
+        itemWiseProfit: 'Reports/ItemWiseProfitReport',
+        invoiceWiseProfit: 'Reports/InvoiceWiseProfit',
+        profitAndLoss: 'Reports/ProfitAndLossReport',
+
+      },
+    },
+  },
+
+  administration: {
+    base: 'Administration',
+    location: 'Administration/Location',
+    taxes: 'Administration/Taxes',
+    chartOfAccounts: 'Administration/COA',
+    users: 'Administration/Users',
+    fiscalYear: 'Administration/FiscalYear',
+    authorization: 'Administration/PermissionScreen',
+    notification: 'Administration/Notification',
+    notificationAlert: 'Administration/NotificationAlert',
+    companySetting: 'Administration/Configuration',
+    companyConfig:'Administration/CompanyConfig'
+   
+  },
+};

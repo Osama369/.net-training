@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace eMaestroD.Models.Models
+namespace aiPriceGuard.Models.Models
 {
     public class ConfigSetting
     {

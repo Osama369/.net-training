@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace eMaestroD.Models.VMModels
+namespace aiPriceGuard.Models.VMModels
 {
     public class UserDetailsViewModel
     {
@@ -18,7 +18,7 @@ namespace eMaestroD.Models.VMModels
         public string? UserName { get; set; }
         public int? RoleID { get; set; }
         public string? RoleName { get; set; }
-        public Boolean? active { get; set; }
+        public bool? active { get; set; }
         public string? Companies { get; set; }
         public string? CompaniesID { get; set; }
         public int? locID { get; set; }
