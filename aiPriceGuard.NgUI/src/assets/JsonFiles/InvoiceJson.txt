@@ -1,0 +1,82 @@
+{
+    "voucherNo": "PNV-250101000004",
+    "DtTx": "2025-01-26",
+    "Customer": "SUPER CRISP",
+    "SalesManID": null,
+    "Qty": 210850.76,
+    "CreditSum": 0.00,
+    "DebitSum": 0.00,
+    "TaxSum": 0.00,
+    "BalSum": 210851.01,
+    "GlComments": "Withholding / Advance Tax u/s 236H On Net Total @ 0.00% on 210850.76",
+    "IsPaid": false,
+    "ComID": null,
+    "CrtDate": "2025-01-30T11:12:23",
+    "CrtBy": "IMRAN TRADERS",
+    "ModBy": null,
+    "ModDate": null,
+    "Active": true,
+    "Products": [
+      {
+        "prodName": "Supr Crsp Slt 48p Rs20",
+        "prodUnit": "unit",
+        "purchRate": 20,
+        "sellRate": 794.86,
+        "Expiry": "2025-04",
+        "Qty": 8,
+        "BonusQty": 0,
+        "TotalAmount": 6358.88
+      },
+      {
+        "prodName": "Supr Crsp Msla 48p Rs20",
+        "prodUnit": "unit",
+        "purchRate": 20,
+        "sellRate": 794.86,
+        "Expiry": "2025-04",
+        "Qty": 5,
+        "BonusQty": 0,
+        "TotalAmount": 3974.30
+      },
+      {
+        "prodName": "Supr Crsp Ches 48p Rs20",
+        "prodUnit": "unit",
+        "purchRate": 20,
+        "sellRate": 794.86,
+        "Expiry": "2025-04",
+        "Qty": 3,
+        "BonusQty": 0,
+        "TotalAmount": 2384.58
+      },
+      {
+        "prodName": "Supr Crsp S.Chli48p Rs20",
+        "prodUnit": "unit",
+        "purchRate": 20,
+        "sellRate": 794.86,
+        "Expiry": "2025-04",
+        "Qty": 8,
+        "BonusQty": 0,
+        "TotalAmount": 6358.88
+      },
+      {
+        "prodName": "Catty Chin (24x1) Rs.40",
+        "prodUnit": "unit",
+        "purchRate": 40,
+        "sellRate": 789.10,
+        "Expiry": "2025-04",
+        "Qty": 22,
+        "BonusQty": 0,
+        "TotalAmount": 17360.20
+      },
+      {
+        "prodName": "Catty Chin (12x1) Rs.60",
+        "prodUnit": "unit",
+        "purchRate": 60,
+        "sellRate": 592.11,
+        "Expiry": "2025-04",
+        "Qty": 31,
+        "BonusQty": 0,
+        "TotalAmount": 18355.41
+      }
+    ]
+ 
+}

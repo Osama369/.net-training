@@ -1,0 +1,79 @@
+<div class="container">
+    <h4 translate>Add Supplier</h4>
+    <div style="border-Top: 3px solid #eee;" class="row">
+        <div class="col-12">
+
+            <!-- <div class="col-12">
+                <label class="col-form-label date-label col-4 required" translate>Code</label>
+                <label class="col-form-label date-label col-8 required" translate>Name</label>
+                <input pInputText #inputFieldTableVend  maxlength="10"  (keyup.enter)="onEnterTableInputCst(0)" name="code" class="col-form-label col-3" />
+                <input pInputText #inputFieldTableVend  id="name" class="col-form-label offset-1 col-8"  name="name"  />
+            </div> -->
+            <input hidden [(ngModel)]="supplierId">
+            <div class="col-12">
+                    <label class="col-form-label date-label col-4 required"  translate>Code</label>
+                    <label class="col-form-label date-label offset-1 col-7 required" translate>Name</label>
+                    <input pInputText #inputFieldTableVend class="col-form-label col-4"  maxlength="10" [(ngModel)]="suppCode" [disabled]="notEditFieldDisable"  name="code"  />
+                    <input pInputText #inputFieldTableVend maxlength="200" class="col-form-label offset-1 col-7"  id="name"   [(ngModel)]="name"  name="name"  />
+            </div>
+
+          
+
+            <div class="col-12">
+              <label class="col-form-label date-label col-9 required" translate>Address</label>
+              <label class="col-form-label date-label  col-2 required" translate>Phone No</label>
+
+
+              <input pInputText [(ngModel)]="address" class="col-8" maxlength="200"/>
+              <p-inputMask mask="+99 999 999 9999" [(ngModel)]="phone" class=" offset-1 col-3"  #inputFieldTableVend placeholder="+92 000 0000000"  ></p-inputMask>            
+     
+          </div>
+
+        <div class="col-12">            
+                <label class="col-form-label date-label  col-4 required" translate>State</label>
+                <label class="col-form-label date-label offset-1  col-2 required" translate>Post Code</label>   
+                <label class="col-form-label date-label offset-1 col-4 required" translate>Fax</label>
+
+                <input pInputText  #inputFieldTableVend [(ngModel)]="state"   class="col-form-label  col-4 "     maxlength="15"/>                
+               <input pInputText  [(ngModel)]="postCode" class="col-form-label offset-1  col-2" #inputFieldTableVend   maxlength="6"      />  
+                <input pInputText id="taxValue"  [(ngModel)]="fax"   maxlength="13" #inputFieldTableVend  class="col-form-label offset-1 number col-4" name="taxValue"  />
+            </div>
+
+
+
+            <!-- <div class="col-12">
+              <label class="col-form-label date-label col-7 required" translate>Supplier Opening Balance</label>
+              <label *ngIf="isCstSupp" class="col-form-label date-label col-5 required" translate>Customer Opening Balance</label>
+              <input pInputText id="cstBal" #inputFieldTableVend (keyup.enter)="onEnterTableInputCst(7)" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="10" class="col-form-label" [ngClass]="isCstSupp?'col-5':'col-12'" name="vat"   [(ngModel)]="vendorList[0].opnBal" />
+              <input *ngIf="isCstSupp" pInputText id="vendbal" #inputFieldTableVend (keyup.enter)="onEnterTableInputCst(8)" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="10" class="col-form-label offset-2 col-5" name="vat"   [(ngModel)]="customerList[0].opnBal"/>
+            </div> -->
+
+
+               
+            <div class="col-12" style="text-align: right;">
+              <br>
+                <button #savebtn (click)="AddSupplier()"  translate class="btn btn-primary col-3"><i class="fa fa-save"></i> Save</button>&nbsp;
+                <button #cancelbtn (click)="Cancel()"  translate class="btn btn-danger col-3"><i class="fa fa-undo"></i> Cancel</button>
+            </div>
+<!-- 
+            <label class="col-form-label date-label col-6 required" translate>TAX No</label>
+            <label class="col-form-label date-label col-6 required" translate>TAX %</label>
+            <input pInputText id="taxNo" #inputFieldTableVend (keyup.enter)="isCstSupp? onEnterTableInputCst(9) : onEnterTableInputCst(8)" (keypress)="($event.charCode >= 48 && $event.charCode < 58)" class="col-form-label col-5 " name="taxNo"  [(ngModel)]="vendorList[0].taxNo"  maxlength="15"/>
+
+            <input pInputText id="taxValue"  (keypress)="($event.charCode >= 48 && $event.charCode < 58)" maxlength="2" #inputFieldTableVend (keyup.enter)="isCstSupp? onEnterTableInputCst(10) : onEnterTableInputCst(9)" class="col-form-label number col-6 offset-1" name="taxValue"  [(ngModel)]="vendorList[0].taxValue"/>
+
+        <div class="col-12" style="text-align: right;">
+          <br>
+            <button #savebtn [disabled]="isSaveDisable" (click)="saveVendor()" translate class="btn btn-primary col-3"><i class="fa fa-save"></i> Save</button>&nbsp;
+            <button #cancelbtn (click)="sendDataToParent()" translate class="btn btn-danger col-3"><i class="fa fa-undo"></i> Cancel</button>
+        </div> -->
+        </div>
+    </div>
+</div>
+<style>
+  .active-style {
+  font-weight: bold;
+  background-color: gainsboro;
+  cursor: pointer;
+}
+</style>

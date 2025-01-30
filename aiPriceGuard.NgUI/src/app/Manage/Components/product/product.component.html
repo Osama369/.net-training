@@ -1,0 +1,19 @@
+<!-- <div *ngIf="products"> -->
+
+    <app-gird
+    tableheading="Products"
+    [columns]="cols"
+    [data]="products"
+    [rowcount]=100
+    [allowColSort]="false"
+    [allowColFilter]="false"
+    [allowGlobalFilter]="true"
+    [allowActionButtons]="true"
+    (dataEvent)="handleChildData($event)"
+    [allowUploadButtons]="false"
+    >
+    </app-gird>
+  
+  <!-- (dataEvent)="handleChildData($event)" -->
+  <!-- (handleToolVisibility)="handleTool($event)" -->
+<!-- </div> -->

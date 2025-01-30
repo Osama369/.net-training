@@ -1,0 +1,361 @@
+<div class="card">
+    <div class="row">
+      <div class="col-6">
+          <h4 style="border-left: 3px solid #3B82F6;" translate>&nbsp;Product Registration
+          </h4>
+      </div>
+    </div>
+    <div style="border-top: 3px solid #eee;" class="row">
+        <div class="col-12">
+          <div class="row">
+          
+                      
+  
+            <div class="col-6">
+              <span class="col-form-label date-label required" translate>
+                Supplier Name
+              </span>
+                <!-- AutoComplete Component -->
+                <p-multiSelect
+                #inputField
+                styleClass="offset-1 col-6 locMultiSelect"
+                [(ngModel)]="SelectedSupplier"
+                [options]="filteredSuppliers"
+                optionLabel="SupplierName"
+                [filter]="true"
+                [filterBy]="'LocationName'"
+                appendTo="body"
+                [showClear]="true"
+                placeholder="Select a Location"
+                >
+              
+               </p-multiSelect>
+                <!-- <p-autoComplete
+                  (keyup.enter)="onEnterTableInput(-1)"
+                  #autCompleteEl
+                  [(ngModel)]="SelectedSupplier"
+                  [suggestions]="filteredSuppliers"
+                  (completeMethod)="filterSuppliers($event)"
+                  field="SupplierName"
+                  [dropdown]="true"
+                  [forceSelection]="true"
+                  [showClear]="true"
+                  placeholder="Select a Supplier"
+                  styleClass="col-11"
+                  [style]="{'border-radius':'6px 0px 0px 6px'}"
+                  pAutoFocus  (keydown)="openDialog($event, true, 'supplier')"
+                  
+                > -->
+                 
+                  <!-- <ng-template pTemplate="header">
+                    <button style="margin-top: 8px;color:blue !important" (click)="openDialog($event, false, 'supplier')" translate  class="btn col-12" ><i class="pi pi-plus"></i> Add New Supplier</button>
+                  </ng-template> -->
+                  <!-- <ng-template let-supplier pTemplate="item">
+                    <div>{{ supplier.SupplierCode }} - {{ supplier.SupplierName }}</div>
+                  </ng-template>
+                </p-autoComplete>
+                 -->
+                <!-- (onSelect)="onSupplierSelect($event)" -->
+                <!-- Add New Supplier Button -->
+               
+              </div>
+  
+          </div>
+            <!-- Main Information Section -->
+            <div class="row">
+  <!--
+              <div class="col-12">
+                    <label class="col-form-label date-label col-12 required" translate>Category&nbsp;</label>
+                    <p-autoComplete styleClass="myclass col-11" [(ngModel)]="SelectedproductGrouplist"
+                        [suggestions]="FilterProductGrouplist" (completeMethod)="filterProduct($event)"
+                        field="prodGrpName" value="prodGrpID" [minLength]="1" (keyup.enter)="onEnterTableInput(0)"
+                        [dropdown]="true"
+                        [style]="{'width':'50% !important','min-width':'50%'}"
+                        #autoComplete (onFocus)="autoComplete.show()">
+                    </p-autoComplete>
+                    <p-button icon="pi pi-plus" title="Add New Category"
+                        styleClass="p-button col-1" (onClick)="OpenAddGroupByParent('openGroup',undefined)">
+                    </p-button>
+                </div>
+  
+                <div class="col-6">
+                    <label class="col-form-label date-label required" translate>Type&nbsp;</label>
+                    <p-autoComplete #inputFieldTableCst styleClass="myclass col-12" [(ngModel)]="selectedType"
+                        [suggestions]="filterType" (completeMethod)="filtersType($event)"
+                        [minLength]="1" (keyup.enter)="onEnterTableInput(0)" (ngModelChange)="hideFields()"
+                        [dropdown]="true" class="col-form-label" #autoComplete1 (onFocus)="autoComplete1.show()">
+                    </p-autoComplete>
+                </div>
+  
+                <div class="col-6">
+                    <label class="col-form-label date-label required" translate>Supplier Name&nbsp;</label>
+                    <p-dropdown #inputField (keyup.enter)="onEnterTableInput(0)"  styleClass="myclass col-11" [style]="{'border-radius':'6px 0px 0px 6px'}" [(ngModel)]="SelectedSupplier"
+                        placeholder="Select a Supplier" [options]="Supplierlist"
+                        optionLabel="vendName" [filter]="true" [filterBy]="'vendName'"
+                        [showClear]="true">
+                      </p-dropdown>
+                        <p-button  icon="pi pi-plus" title="Add New Supplier"
+                        styleClass="p-button col-1" (onClick)="openAddSupplier()">
+                      </p-button>
+                </div> -->
+  
+                
+  
+  
+               
+  
+               
+  
+                <div class="col-3">
+                    <span class="col-form-label date-label required" translate>Product Code&nbsp;</span>
+                    <input pInputText [disabled]="disableProdID" #inputFieldTableCst (blur)="checkExistence(productlist[0].prodCode, 0,0, true)" (keyup.enter)="onEnterTableInput(0)" maxlength="25"
+                  
+                   
+                    id="code" class="col-form-label col-12" name="code" [(ngModel)]="productlist[0].prodCode" />
+                </div>
+  
+                <div class="col-3">
+                    <span class="col-form-label date-label required" translate>Name&nbsp;</span>
+                    <input pInputText id="name" #inputFieldTableCst (keyup.enter)="onEnterTableInput(1)"
+                        maxlength="95" class="col-form-label col-12" name="name" [(ngModel)]="productlist[0].prodName">
+                </div>
+  
+                <div class="col-3">
+                  <span class="col-form-label date-label required" translate>Short Name&nbsp;</span>
+                  <input pInputText id="shortName" #inputFieldTableCst (keyup.enter)="onEnterTableInput(3)"
+                      maxlength="95" class="col-form-label col-12" name="shortName" [(ngModel)]="productlist[0].shortName">
+              </div>
+              <div class="col-3">
+  
+              </div>
+  
+  
+            </div>
+  
+            <br>
+            <!-- Tabs Section -->
+            <div>
+                <!-- Additional Information Tab -->
+                <!-- <p-tabPanel header="MAIN"> -->
+                  <div class="row">
+                    <!-- <div class="col-4"> -->
+                      <!-- <div class="col-12">
+                        <label class="col-4 col-form-label date-label required" translate>Department&nbsp;</label>
+                     
+                        
+                      </div> -->
+  
+                      <!-- <div class="col-12 mt-2" *ngIf="isPos">
+                      
+  
+                      </div> -->
+  
+                      <!-- <div class="col-12 mt-2">
+                        <label class="col-4 col-form-label date-label required" translate>{{isPos ? 'Brand' : 'Category'}}&nbsp;</label>
+                        <p-dropdown [options]="productGrouplist" styleClass="col-7"  [(ngModel)]="productlist[0].prodGrpID"
+                          optionLabel="prodGrpName" optionValue="prodGrpID" placeholder="--Select--" class="col-form-label col-12" [filter]="true" [filterBy]="'prodGrpName'"
+                          [showClear]="true"  (keydown)="openDialog($event, true, 'brand')"></p-dropdown>
+                          <p-button
+                            icon="pi pi-plus"
+                            title="Add New Brand"
+                            styleClass="p-button col-1"
+                            (onClick)="openDialog($event, false, 'brand')"
+                            [style]="{'height': '42.5px'}">
+                          </p-button>
+                      </div> -->
+  
+                      <div class="col-12 mt-2" *ngIf="isPos">
+                        
+                      </div>
+                  <!-- </div> -->
+  
+                  <div class="col-5">
+                    <div class="row" *ngIf="hiddenField">
+                        <div class="col-6" *ngIf="false">
+                            <label class="col-form-label date-label required" translate>Cost&nbsp;</label>
+                            <input pInputText id="purchRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"
+                                #inputFieldTableCst (keyup.enter)="onEnterTableInput(6)" class="col-form-label col-12"
+                                name="purchRate" [(ngModel)]="productlist[0].purchRate" />
+                        </div>
+  
+                        <div class="col-6" *ngIf="false">
+                            <label class="col-form-label date-label required" translate>Trade&nbsp;</label>
+                            <input pInputText id="sellRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"
+                                #inputFieldTableCst (keyup.enter)="onEnterTableInput(7)" class="col-form-label col-12"
+                                name="sellRate" [(ngModel)]="productlist[0].sellRate" />
+                        </div>
+                        <div class="col-6" *ngIf="false">
+                          <label class="col-form-label date-label required" translate>MRP&nbsp;</label>
+                          <input pInputText id="purchRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"
+                              #inputFieldTableCst (keyup.enter)="onEnterTableInput(8)" class="col-form-label col-12"
+                              name="purchRate" [(ngModel)]="productlist[0].retailprice" />
+                      </div>
+  
+                      <div class="col-6" *ngIf="false">
+                          <label class="col-form-label date-label required" translate>F.O.B&nbsp;</label>
+                          <input pInputText id="sellRate" (keypress)="($event.charCode >= 46 && $event.charCode < 58)"
+                              #inputFieldTableCst (keyup.enter)="onEnterTableInput(9)" class="col-form-label col-12"
+                              name="sellRate" [(ngModel)]="productlist[0].tP" />
+                      </div>
+                      
+                      <div class="col-4" *ngIf="!isPos">
+                        <span class="col-form-label date-label required" translate>Share Percentage</span>
+                        <input pInputText id="shortName" disabled #inputFieldTableCst (keyup.enter)="onEnterTableInput(10)"
+                            maxlength="95" class="col-form-label col-12" name="shortName" [(ngModel)]="productlist[0].sharePercentage">
+                      </div>
+                      
+                      <div class="col-4">
+                            <span class="col-form-label date-label required" translate>Min Qty&nbsp;</span>
+                            <input pInputText id="minqty" (keypress)="($event.charCode >= 48 && $event.charCode < 58)"
+                                #inputFieldTableCst (keyup.enter)="onEnterTableInput(4)" class="col-form-label col-12"
+                                name="minQty" [(ngModel)]="productlist[0].minQty" />
+                        </div>
+  
+                        <div class="col-4">
+                            <span class="col-form-label date-label required" translate>Max Qty&nbsp;</span>
+                            <input pInputText id="maxqty" (keypress)="($event.charCode >= 48 && $event.charCode < 58)"
+                                #inputFieldTableCst (keyup.enter)="onEnterTableInput(5)" class="col-form-label col-12"
+                                name="maxQty" [(ngModel)]="productlist[0].maxQty" />
+                        </div>
+                    </div>
+                  </div>
+                    <div class="col-4">
+                      <div class="row" *ngIf="hiddenField">
+                        <div class="col-4" *ngIf="isPos">
+                          <span class="col-form-label date-label required" translate>Size</span>
+                          <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInput(13)" maxlength="25"
+                              id="code" class="col-form-label col-12" name="code" [(ngModel)]="productlist[0].prodSize" />
+                        </div>
+                        <div class="col-4" *ngIf="isPos">
+                          <span class="col-form-label date-label required" translate>Color&nbsp;</span>
+                          <input pInputText #inputFieldTableCst (keyup.enter)="onEnterTableInput(14)" maxlength="25"
+                              id="code" class="col-form-label col-12" name="code" [(ngModel)]="productlist[0].prodColor" />
+                        </div>
+                        <div class="col-4" *ngIf="isPos">
+                          <span class="col-form-label date-label required" translate>Is Imported?</span>
+                          <p-inputSwitch [(ngModel)]="productlist[0].isImported" [style]="{'vertical-align': 'middle'}" styleClass="offset-1"></p-inputSwitch>
+                        </div>
+                        <div class="col-4">
+                          <span class="col-form-label date-label required" translate>Is Taxable?</span>
+                          <p-inputSwitch [(ngModel)]="productlist[0].isTaxable" [style]="{'vertical-align': 'middle'}" styleClass="offset-1"></p-inputSwitch>
+                        </div>
+                        <div class="col-4">
+                          <span class="col-form-label date-label required" translate>Discount?</span>
+                          <p-inputSwitch [(ngModel)]="productlist[0].isDiscount" [style]="{'vertical-align': 'middle'}" styleClass="offset-1"></p-inputSwitch>
+                        </div>
+                        <div class="col-4">
+                          <span class="col-form-label date-label required" translate>Is Bonus?</span>
+                          <p-inputSwitch [(ngModel)]="productlist[0].isBonus" [style]="{'vertical-align': 'middle'}" styleClass="offset-1"></p-inputSwitch>
+                        </div>
+  
+                      </div>
+                  </div>
+                </div>
+              <!-- </p-tabPanel> -->
+  
+                <!-- Barcode Tab -->
+                <!-- <p-tabPanel header="Barcode"> -->
+                  <br>
+                  <div class="row">
+                    <div class="col-9" style="height: 300px; overflow-y: auto;" >
+                        <p-table #dt [value]="productlist[0]?.ProductBarCodes || []" dataKey="prodBCID" editMode="row" styleClass="fixed-table-height" [scrollable]="true"  scrollHeight="100px" scrollDirection="vertical">
+                        <ng-template pTemplate="header">
+                          <tr>
+                            <th>Barcode</th>
+                            <th>Unit</th>
+                            <th>Base Qty</th>
+                            <th *ngIf="false">Cost Price</th>
+                            <th *ngIf="false">Sale Price</th>
+                            <th *ngIf="false">Trade Price</th>
+                            <th *ngIf="false">FOB Price</th>
+                            <th *ngIf="false">Active</th>
+                            <th>Delete</th>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-product let-i="index" let-editing="editing">
+                          <tr [pEditableRow]="product">
+                            <td>
+                              <input  [disabled]="product.isEditable" [style]="{'width':'100% !important','min-width':'100%'}" pInputText  (blur)="checkExistence(product.BarCode, product.prodBCID, i, false)"  [(ngModel)]="product.BarCode">
+                            </td>
+                            <td>
+                              <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="text" [(ngModel)]="product.Unit" (change)="onUnitChange(product)">
+                            </td>
+                            <td>
+                              <input   [disabled]="product.isEditable" [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.Qty" (change)="onQtyChange(product)">
+                            </td>
+                            <td *ngIf="false">
+                              <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.CostPrice">
+                            </td>
+                            <td *ngIf="false">
+                              <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.SalePrice">
+                            </td>
+                            <td *ngIf="false">
+                              <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.TradePrice">
+                            </td>
+                            <td *ngIf="false">
+                              <input  [style]="{'width':'50px !important','min-width':'100%'}" pInputText type="number" [(ngModel)]="product.FOBPrice">
+                            </td>
+                            <td *ngIf="false">
+                              <p-inputSwitch [(ngModel)]="product.Active"></p-inputSwitch>
+                            </td>
+                            <td>
+                              <button [disabled]="product.isEditable" pButton type="button" icon="pi pi-trash"  class="p-button-rounded p-button-text" [style]="{'height': '32px !important','width': '30px !important',color:'var(--gray-900)'}" (click)="removeRow(product)"></button>
+                            </td>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="footer">
+                          <tr>
+                            <td colspan="8">
+                              <button pButton type="button" icon="pi pi-plus" (click)="addNewRow()"></button>
+                            </td>
+                          </tr>
+                        </ng-template>
+                      </p-table>
+                    </div>
+                  </div>
+                <!-- </p-tabPanel> -->
+  
+                </div>
+  <br>
+            <!-- Save and Cancel Buttons -->
+            <div class="col-9" style="text-align: right;">
+                <!-- <button #savebtn [disabled]="savebtnDisable" [disabled]="savebtnDisable" (click)="saveProduct()" translate class="btn btn-primary col-2">
+                    <i class="fa fa-save"></i> Save
+                </button>&nbsp; -->
+                <button (click)="saveProduct()"   translate class="btn btn-primary col-2">
+                    <i class="fa fa-save"></i> Save
+                </button>&nbsp;
+                <button  (click)="sendDataToParent()"  translate class="btn btn-danger col-2">
+                    <i class="fa fa-undo"></i> Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+  </div>
+  
+  
+  <!-- <p-dialog #cstDailog [(visible)]="SupplierVisible" [contentStyle]="{ 'overflow': 'hidden' }"  [style]="{width: '60vw'}">
+    <app-add-new-vendor [title]="'Supplier Registration'" (dataEvent)="handleChildData($event)"></app-add-new-vendor>
+  </p-dialog>
+  
+  
+  <p-dialog #cstDailog [(visible)]="departmentVisible" [contentStyle]="{ 'overflow': 'hidden' }"  [style]="{width: '40vw'}">
+    <app-add-new-department [title]="'Department Registration'" (dataEvent)="handleChildData($event)"></app-add-new-department>
+  </p-dialog>
+  
+  
+  <p-dialog #cstDailog [(visible)]="categoryVisible" [contentStyle]="{ 'overflow': 'hidden' }"  [style]="{width: '40vw'}">
+    <app-add-new-category [title]="'Category Registration'" [DepartmentList]="departmentList" (dataEvent)="handleChildData($event)"></app-add-new-category>
+  </p-dialog>
+  
+  
+  <p-dialog #cstDailog [(visible)]="manufactureVisible" [contentStyle]="{ 'overflow': 'hidden' }"  [style]="{width: '40vw'}">
+    <app-add-new-prod-manufacture [title]="'Manufacture Registration'" (dataEvent)="handleChildData($event)"></app-add-new-prod-manufacture>
+  </p-dialog>
+  
+  
+  <p-dialog #cstDailog [(visible)]="brandVisible" [contentStyle]="{ 'overflow': 'hidden' }"  [style]="{width: '40vw'}">
+    <app-add-new-prod-group [title]="'Category Registration'" (dataEvent)="handleChildData($event)"></app-add-new-prod-group>
+  </p-dialog> -->
+  
+  

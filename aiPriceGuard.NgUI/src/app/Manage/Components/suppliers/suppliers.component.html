@@ -1,0 +1,34 @@
+<div *ngIf="suppliers">
+
+    <app-gird
+    tableheading="Suppliers"
+    [columns]="cols"
+    [data]="suppliers"
+    [rowcount]=100
+    [allowColSort]="false"
+    [allowColFilter]="false"
+    [allowGlobalFilter]="true"
+    [allowActionButtons]="true"
+    (dataEvent)="handleTool($event)"
+    [allowUploadButtons]="false">
+    </app-gird>
+  
+  <!-- (dataEvent)="handleChildData($event)" -->
+
+
+  <!-- (handleToolVisibility)="handleTool($event)" -->
+</div>
+  
+  
+<!-- <p-dialog [modal]="true" #cstDailog [(visible)]="SupplierVisible" [style]="{width: '60vw'}" (onHide)="closeVendorRegistration()"> -->
+  
+  <p-dialog [modal]="true" #cstDailog [(visible)]="SupplierVisible" [style]="{width: '60vw'}" >
+    <!-- <app-add-new-vendor [vndData]="vndList" [title]="title" (dataEvent)="handleChildData($event)"></app-add-new-vendor> -->
+    <app-add-suppliers [suppModel]="suppData" [notEditable]="notEditable" (cancelPopup)="CancelPopup($event)"  (supplierData)="GetChildCompData($event)"></app-add-suppliers>
+
+  </p-dialog> 
+  
+
+ <!--<p-dialog [modal]="true" [(visible)]="UploadToolVisibility" [style]="{width: '40vw'}">
+    <app-file-upload [uploadHeading]="'Supplier'" [data]="exportedCol" [serviceName]="serviceName" [methodName]="methodName" (dataEvent)="getInsertedRow($event)"></app-file-upload>
+  </p-dialog> -->

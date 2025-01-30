@@ -1,0 +1,60 @@
+<div class="card">
+    <!-- <div class="row" style="height: 40px !important;">
+        <div class="col-12">
+            <h4 class="col-12" translate><span translate>Upload</span>&nbsp;{{ uploadHeading | translate }}
+             
+              <button pButton type="button" style="float:right;padding: 5px !important;" icon="pi pi-download" translate [label]="'Download Template'| translate " (click)="downloadTemplate()"></button>
+              <span *ngIf="ShowTooltipEnglish != ''" style="float: right;">
+                <div class="custom-tooltip">
+                  <i class="fa fa-info-circle"></i>
+                  <div class="tooltip-text" style="font-size: 14px; width: 350px;">
+                    {{ShowTooltipEnglish}}
+                    <br>
+                    <br>
+                    {{ShowTooltipUrdu}}
+                  </div>
+                </div>
+              </span>
+            </h4>
+
+        </div>
+    </div> -->
+    <p-autoComplete
+    [(ngModel)]="SelectedSupplier"
+    [suggestions]="filteredSuppliers"
+    (completeMethod)="filterSupplier($event)"
+    field="SupplierName"
+    appendTo="body"
+    placeholder="Select a Supplier"
+    [dropdown]="true"
+    (onSelect)="ValidationCheck()"
+    styleClass="col-4">
+</p-autoComplete>
+<!-- <p-autoComplete
+[(ngModel)]="SelectedSupplier"
+[suggestions]="filteredSuppliers"
+(completeMethod)="filterSupplier($event)"
+field="SupplierName"
+appendTo="body"
+placeholder="Select a Supplier"
+[dropdown]="true"
+(onSelect)="onSupplierSelect()"
+styleClass="col-4">
+
+</p-autoComplete> -->
+    
+   <p-fileUpload #file name="demo"   [accept]="fileTypes" (onSelect)="ValidationCheck()" [maxFileSize]="fileSize" [showCancelButton]="false" [showUploadButton]="false">
+
+   <ng-template pTemplate="content">
+
+   </ng-template>
+    <!-- <ng-template pTemplate="content">
+        <ul *ngIf="uploadedFiles.length">
+            <li translate *ngFor="let file of uploadedFiles">{{ file.name }} - {{ file.size }} bytes</li>
+        </ul>
+    </ng-template> -->
+    </p-fileUpload>
+    <br>
+    <button pButton type="button"   translate [label]="'Upload'|translate" [disabled]="UploadBtnDisable" (click)="onUpload()"></button>
+
+</div>
