@@ -1,0 +1,47 @@
+﻿@model List<Studentproject.Models.Student>
+
+@{
+    ViewData["Title"] = "Student List";
+}
+
+<h2>Student List</h2>
+
+<a asp-action="UpsertStudent" class="btn btn-primary mb-3">+ Create Student</a>
+
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Roll No</th>
+            <th>Profile</th>
+            <th colspan="2">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Name</td>
+                <td>@item.RollNumber</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.url))
+                    {
+                        <img src="@item.url" width="100" height="100" />
+                    }
+                </td>
+                <td>
+                    <a asp-action="UpsertStudent" asp-route-id="@item.Id" class="btn btn-warning">Edit</a>
+                </td>
+                <td>
+                    <form asp-action="Delete" asp-route-id="@item.Id" method="post" 
+                          onsubmit="return confirm('Are you sure you want to delete this student?');">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

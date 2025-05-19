@@ -1,0 +1,43 @@
+﻿@model List<Studentproject.Models.Course>
+
+
+@{
+    ViewData["Title"] = "Courses List";
+}
+
+<p>Course Overview</p>
+
+
+<table class="table table-bordered table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>TITLE</th>
+            <th>DESC</th>
+            <th colspan="2">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cours in Model)
+        {
+            <tr>
+                <td>@cours.Id</td>
+                <td>@cours.Title</td>
+                <td>@cours.Description</td>
+                <td>
+                    <a asp-action="EditCourse" asp-route-id="@cours.Id" class="btn btn-warning">Edit</a>
+                </td>
+
+                 <td>
+                    <form asp-action="Delete" asp-route-id="@cours.Id" method="post" 
+                          onsubmit="return confirm('Are you sure you want to delete this student?');">
+                        <input type="hidden" name="id" value="@cours.Id" />
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+              
+            </tr>
+        }
+    </tbody>
+</table>
+
