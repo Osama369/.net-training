@@ -1,0 +1,14 @@
+C:\Users\IT Support\source\repos\myMvcapp\MyDb\bin\Debug\MyDb.dll.config
+C:\Users\IT Support\source\repos\myMvcapp\MyDb\bin\Debug\MyDb.dll
+C:\Users\IT Support\source\repos\myMvcapp\MyDb\bin\Debug\MyDb.pdb
+C:\Users\IT Support\source\repos\myMvcapp\MyDb\bin\Debug\EntityFramework.dll
+C:\Users\IT Support\source\repos\myMvcapp\MyDb\bin\Debug\EntityFramework.SqlServer.dll
+C:\Users\IT Support\source\repos\myMvcapp\MyDb\bin\Debug\EntityFramework.xml
+C:\Users\IT Support\source\repos\myMvcapp\MyDb\bin\Debug\EntityFramework.SqlServer.xml
+C:\Users\IT Support\source\repos\myMvcapp\MyDb\obj\Debug\MyDb.csproj.AssemblyReference.cache
+C:\Users\IT Support\source\repos\myMvcapp\MyDb\obj\Debug\MyDb.csproj.CoreCompileInputs.cache
+C:\Users\IT Support\source\repos\myMvcapp\MyDb\obj\Debug\MyDb.csproj.CopyComplete
+C:\Users\IT Support\source\repos\myMvcapp\MyDb\obj\Debug\MyDb.dll
+C:\Users\IT Support\source\repos\myMvcapp\MyDb\obj\Debug\MyDb.pdb
+C:\Users\IT Support\source\repos\myMvcapp\MyDb\bin\Debug\MyApp.Model.dll
+C:\Users\IT Support\source\repos\myMvcapp\MyDb\bin\Debug\MyApp.Model.pdb

@@ -1,0 +1,6 @@
+C:\Users\IT Support\source\repos\myMvcapp\MyAppModel\bin\Debug\MyApp.Model.dll
+C:\Users\IT Support\source\repos\myMvcapp\MyAppModel\bin\Debug\MyApp.Model.pdb
+C:\Users\IT Support\source\repos\myMvcapp\MyAppModel\obj\Debug\MyAppModel.csproj.AssemblyReference.cache
+C:\Users\IT Support\source\repos\myMvcapp\MyAppModel\obj\Debug\MyAppModel.csproj.CoreCompileInputs.cache
+C:\Users\IT Support\source\repos\myMvcapp\MyAppModel\obj\Debug\MyApp.Model.dll
+C:\Users\IT Support\source\repos\myMvcapp\MyAppModel\obj\Debug\MyApp.Model.pdb
