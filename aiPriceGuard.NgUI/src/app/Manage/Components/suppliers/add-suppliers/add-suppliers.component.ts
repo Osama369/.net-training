@@ -3,6 +3,7 @@ import { Router } from 'express';
 import { SupplierService } from '../../../Services/supplier.service';
 import { Supplier } from '../../../Models/supplier.model';
 import { ToastrService } from 'ngx-toastr';
+import { error } from 'console';
 
 
 
@@ -21,6 +22,9 @@ export class AddSuppliersComponent implements OnInit,OnChanges {
   suppCode:any;
   supplierId:any;
   notEditFieldDisable:boolean=true;
+  Suburb:any;
+  saveBtnDisabled:boolean =false;
+
  @Output() supplierData = new EventEmitter<any>();
  @Output() cancelPopup = new EventEmitter<any>();
 
@@ -81,10 +85,15 @@ export class AddSuppliersComponent implements OnInit,OnChanges {
     this.cancelPopup.emit(false);
   }
   AddSupplier(){
+    this.saveBtnDisabled=true;
     if(this.suppCode === '' || this.suppCode === undefined){
       this.toastr.error('Please provide supplier code');
+    this.saveBtnDisabled=false;
+
     }else if(this.name === '' || this.name === undefined){
       this.toastr.error('Please provide supplier name');
+    this.saveBtnDisabled=false;
+
     }else{
 
       let suppModel = new Supplier();
@@ -96,16 +105,28 @@ export class AddSuppliersComponent implements OnInit,OnChanges {
       suppModel.State = this.state;
       suppModel.PostCode = this.postCode;
       suppModel.comID = localStorage.getItem('comID');
-
+      suppModel.Suburb =this.Suburb;
       if(this.supplierId!=undefined){
         suppModel.SupplierId = this.supplierId;
-      }else{
+      }else{ 
         suppModel.SupplierId =0;
       }
 
       console.log('supModel:',suppModel)
       this.supplierService.UpsertSupplier(suppModel).subscribe(response =>{
+        this.toastr.success('Supplier added successfully.');
+   
+        this.saveBtnDisabled=false;
+        this.clearVM();
           this.supplierData.emit(response);
+
+      },
+      (error) =>{
+        if(error && error.error){
+          this.saveBtnDisabled=false;
+          this.toastr.error(error.error);
+        }
+                
       });
 
 

@@ -12,11 +12,12 @@ namespace aiPriceGuard.Models.Models
         [Key]
         public int SupplierProdId { get; set; }  // Identity column (auto-increment)
         public int SupplierId { get; set; }     // Nullable int, since it's nullable in the table
-        public int ComID { get; set; }          // Nullable int
-        public decimal? Price { get; set; }      // Nullable decimal (18, 0)
-        public int? Preference { get; set; }     // Nullable int
-        public int? ProdID { get; set; }         // Nullable int
+        public int comID { get; set; }          // Nullable int
+        public decimal? price { get; set; }      // Nullable decimal (18, 0)
+        public int? preference { get; set; }     // Nullable int
+        public int? prodID { get; set; }         // Nullable int
         public int? MinOrderQty { get; set; }    // Nullable int
-        public decimal? SharePercentage { get; set; } // Nullable decimal (18, 0)
+        public decimal? sharePercentage { get; set; } // Nullable decimal (18, 0)
+        public string? SupplierProductCode { get; set; }
     }
 }

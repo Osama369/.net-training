@@ -12,6 +12,7 @@ import { RegisterComponent } from './Auth/Components/register/register.component
 import { SelectCompanyComponent } from './Shared/Components/select-company/select-company.component';
 import { SignUpComponent } from './Auth/Components/sign-up/sign-up.component';
 import { APP_ROUTES } from './app-routes';
+import { sharedResolverResolver } from './Shared/Resolver/shared-resolver.resolver';
 // import { IntialCongfigComponent } from './Shared/Components/intial-congfig/intial-congfig.component';
 
 
@@ -29,7 +30,11 @@ const routes: Routes = [
     { path: APP_ROUTES.notAuthorized, component: NotAuthorizeComponent },
     { path: APP_ROUTES.account.selectCompany, component: SelectCompanyComponent, canActivate:[loginGuard] },
     { path: APP_ROUTES.administration.base, loadChildren: () => import('./Administration/administration.module').then(m => m.AdministrationModule), canActivate: [AuthGuard] },
-    {path: APP_ROUTES.manage.base,loadChildren:()=> import('./Manage/manage.module').then(m=> m.ManageModule)}
+    {path: APP_ROUTES.manage.base,loadChildren:()=> import('./Manage/manage.module').then(m=> m.ManageModule) ,
+    //   resolve:{
+    //   sharedData:sharedResolverResolver
+    // }
+  }
   ]},
   { path: '**', redirectTo: APP_ROUTES.notFound }
 ];

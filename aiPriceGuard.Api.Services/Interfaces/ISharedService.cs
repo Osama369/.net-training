@@ -1,0 +1,14 @@
+﻿using aiPriceGuard.Models.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace aiPriceGuard.Api.Services.Interfaces
+{
+    public interface ISharedService
+    {
+        ResponsedGroupListVM GetDataWithcolumns(dynamic? obj);
+    }
+}

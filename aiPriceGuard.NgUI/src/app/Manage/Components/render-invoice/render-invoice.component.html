@@ -1,0 +1,73 @@
+<div class="container" >
+    <div class="row justify-content-center">
+        <div class="col-11" >
+                <div class="row justify-content-between">
+                    <div class="col-3">
+                        <label>Order Date</label>
+                        <input class="form-control" type="text" [value]="JsonData.OrderDate" disabled/>
+                    </div>
+                    <div class="col-3">
+                        <label>Supplier Name</label>
+                        <input class="form-control" type="text" [(ngModel)]="JsonData.SupplierName"/>
+                    </div>
+                    <div class="col-3">
+                        <label>Order no</label>
+                        <input class="form-control" type="text" [(ngModel)]="JsonData.OrderNo"/>
+                    </div>
+                </div>
+
+                <div class="row px-3 " >
+                    <!-- <Table class="mt-4 table w-100" >
+                        <thead>
+                            <tr style="background: #0d6efd;
+                            color: white;">
+                                <th >Product Code</th>
+                                <th >Item Code</th>
+                                <th >Serial No</th>
+                                <th >Name</th>
+                                <th >Quantity</th>
+                                <th >Price</th>
+                                <th >Total</th>
+                            </tr>
+                        </thead>
+                    </Table> -->
+                   <div style="overflow-y: auto; max-height: 500px; overflow-x: hidden;">
+
+                    <Table class="table w-100 mt-5" >
+                        <thead style="position: sticky; top: 0; background-color: #0d6efd; color: white;">
+                            <tr style="background: #0d6efd;
+                            color: white;">
+                                <th >Product Code</th>
+                                <th >Name</th>
+                                <th >Item Code</th>
+                                <th >Serial No</th>                              
+                                <th >Quantity</th>
+                                <th >Price</th>
+                                <th >Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <tr  *ngFor="let product of JsonData.ProductDetails">
+                        <td  style="padding:0px"><input (blur)="ValidateDuplicate($event)" [(ngModel)]="product.ProductCode"  type="text" class="form-control"/></td>
+                        <td style="padding:0px"><input [value]="product.Name" type="text" disabled class="form-control"/></td>
+                        <td style="padding:0px"><input [value]="product.ItemCode" type="text" disabled class="form-control"/></td>
+                        <td style="padding:0px"><input [value]="product.SerialNo" type="text" disabled class="form-control"/></td>
+                        <td style="padding:0px"><input [value]="product.Quantity" type="text" disabled class="form-control"/></td>
+                        <td style="padding:0px"><input [value]="product.Price" type="text" disabled class="form-control"/></td>
+                        <td style="padding:0px"><input [value]="product.Total" type="text" disabled class="form-control"/></td>
+                        </tr>
+
+
+                        </tbody>
+                    </Table>
+                </div>
+                </div>
+                <div class="row justify-content-end mt-3">
+                    <div class="col-1">
+                            <button class="btn btn-primary" [ngStyle]="{'display':hideSaveBtn ? 'none':'block'}" [disabled]="hideSaveBtn" (click)="save()">Save</button>
+                    </div>
+                </div>
+
+        </div>
+    </div>
+</div>

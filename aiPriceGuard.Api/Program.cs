@@ -15,6 +15,10 @@ using aiPriceGuard.DataAccess.DataSet;
 using aiPriceGuard.Api.Common;
 using aiPriceGuard.Api.Data;
 using aiPriceGuard.Api.Hub;
+using aiPriceGuard.DataAccess.IRepositories;
+using aiPriceGuard.DataAccess.Repositories;
+using aiPriceGuard.Api.Services.Interfaces;
+using aiPriceGuard.Api.Services.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,8 +35,24 @@ builder.Services.AddDbContext<Context>(options =>
 
 builder.Services.AddSingleton<EmailService>(); 
 builder.Services.AddScoped<IEmailService, EmailService>();
-
+builder.Services.AddScoped<PdfProcessingService>();
 builder.Services.AddScoped<AMDbContext>();
+builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IFileUploadRepository, FileUploadRepository>();
+builder.Services.AddScoped<ICompanySupplierRepository, CompanySupplierRepository>();
+builder.Services.AddScoped<IProductBarCodeRepository, ProductBarCodeRepository>();
+builder.Services.AddScoped<ISupplierProductRepository, SupplierProductRepository>();
+builder.Services.AddScoped<ISupplierFileRepository, SupplierFileRepository>();
+builder.Services.AddScoped<ISharedService, SharedService>();
+builder.Services.AddScoped<ISupplierService, SupplierService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+builder.Services.AddScoped<IinvoiceService, InvoiceService>();
+builder.Services.AddScoped<IinvoiceRepository, InvoiceRepository>();
+builder.Services.AddScoped<IinvoiceDetailRepository, InvoiceDetailRepository>();
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSingleton<ConnectionStringsDictionary>();
 builder.Services.AddSingleton<CustomDbContextFactory>();

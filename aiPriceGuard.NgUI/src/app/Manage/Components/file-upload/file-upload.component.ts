@@ -4,6 +4,8 @@ import { FileVM } from '../../Models/file-vm.model';
 import { SupplierService } from '../../Services/supplier.service';
 import { lastValueFrom } from 'rxjs';
 import { FileUploadService } from '../../Services/file-upload.service';
+import {  Router } from '@angular/router';
+import { InvoiceServiceService } from '../../Services/invoice-service.service';
 
 @Component({
   selector: 'app-file-upload',
@@ -17,7 +19,7 @@ cols:any[];
 
 // supplierData:any;
 constructor(private sharedService:SharedDataService,private supplierService:SupplierService
-  ,private fileService:FileUploadService
+  ,private fileService:FileUploadService,private route:Router,private invoiceService:InvoiceServiceService
 ){}
 async ngOnInit() {
 
@@ -28,11 +30,20 @@ async ngOnInit() {
   // this.FileList =this.sharedService.GetAllFile();
 
 }
+call(){
+  this.route.navigateByUrl('/Manage/Invoice');
+}
 async handleChildData(childData:any){
-  // console.log('child',childData);
+  console.log('child',childData);
   if(childData.FileObj){
-    const Response =await lastValueFrom(this.fileService.ProcessFile(childData.FileObj.FileId));
-    this.sharedService.UpsertFile(Response);
+    // console.log('fileOBJ:',childData.FileObj);
+    // console.log('supplierID:',childData.FileObj.supplierID);
+    console.log('fileOBJ',childData.FileObj);
+    let Response =await lastValueFrom(this.invoiceService.ProcessFile(childData.FileObj.FileId,childData.FileObj.supplierID));
+    Response.fileURL =  childData.FileObj.FileUrl;
+    this.sharedService.SetJsonData(Response);
+    this.route.navigateByUrl('/Manage/Invoice');
+    // console.log("response:",Response);
 
   }
   if(!childData.flag && childData.data===undefined){
@@ -40,7 +51,7 @@ async handleChildData(childData:any){
     this.FileModelVisible = childData.flag;
   }
     if(childData && childData.type){
-      console.log('type');
+      // console.log('type');
       if(childData.type =='add'){
         this.FileModelVisible =true;
       }

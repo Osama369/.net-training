@@ -23,6 +23,7 @@ export class SuppliersComponent implements OnInit{
 
       this.suppliers = (suppList as { [key: string]: any })["enttityDataSource"];
       this.cols = (suppList as { [key: string]: any })["entityModel"];
+ 
       // this.vendors.filter(x=>x.vendName.toLowerCase() == "opening stock")[0].isActionBtn  = true;
     });
     

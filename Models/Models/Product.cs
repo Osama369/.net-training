@@ -15,7 +15,7 @@ namespace aiPriceGuard.Models.Models
         [HiddenOnRender]
         public int prodID { get; set; }
         [HiddenOnRender]
-        public int prodGrpID { get; set; }
+        public int? prodGrpID { get; set; }
         //public Int32 prodGrpID { get; set; }
         [HiddenOnRender]
         public int? comID { get; set; }
@@ -32,16 +32,16 @@ namespace aiPriceGuard.Models.Models
         [DisplayName(Name = "Unit")]
         public string? prodUnit { get; set; } = "";
         [HiddenOnRender]
-        public decimal unitQty { get; set; } = 0;
+        public decimal? unitQty { get; set; } = 0;
         [DisplayName(Name = "Purchase Rate")]
-        public decimal purchRate { get; set; } = 0;
+        public decimal? purchRate { get; set; } = 0;
 
         [DisplayName(Name = "Sell Rate")]
-        public decimal sellRate { get; set; } = 0;
+        public decimal? sellRate { get; set; } = 0;
         [HiddenOnRender]
-        public decimal retailprice { get; set; } = 0;
+        public decimal? retailprice { get; set; } = 0;
         [HiddenOnRender]
-        public decimal tP { get; set; } = 0;
+        public decimal? tP { get; set; } = 0;
         [HiddenOnRender]
         public bool? isTaxable { get; set; }
         [HiddenOnRender]
@@ -53,7 +53,7 @@ namespace aiPriceGuard.Models.Models
         [DisplayName(Name = "Allow Serial No")]
         public bool? isStore { get; set; }
         [HiddenOnRender]
-        public bool active { get; set; }
+        public bool? active { get; set; }
         [HiddenOnRender]
         public string? productList { get { return prodName + " " + prodCode; } }
         [HiddenOnRender]
@@ -104,16 +104,25 @@ namespace aiPriceGuard.Models.Models
         public byte[]? barcodeImage { get; set; }
         [HiddenOnRender]
         [NotMapped]
-        public List<ProductBarCode> ProductBarCodes { get; set; }
+        public List<ProductBarCode>? ProductBarCodes { get; set; }
         [NotMapped]
         [HiddenOnRender]
         public decimal? tax { get; set; }
         [HiddenOnRender]
         [NotMapped]
-        public decimal qty { get; set; } = 0;
+        public decimal? qty { get; set; } = 0;
         [NotMapped]
         [DisplayName(Name = "BRAND")]
         public string? prodGrpName { get; set; }
+        [HiddenOnRender]
+        [NotMapped]
+        public decimal? totalAmount { get; set; } = 0;
+        [HiddenOnRender]
+        [NotMapped]
+        public decimal? discountAmount { get; set; } = 0;
+        [HiddenOnRender]
+        [NotMapped]
+        public string? SupplierProductCode { get; set; }
 
     }
 }

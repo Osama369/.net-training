@@ -1,0 +1,638 @@
+{
+  "SupplierDetails": {
+    "SupplierName": "Kashi Enterprises Inc.",
+    "Address": "230 Fifth Ave # 503",
+    "Suburb": "New York, NY 10001",
+    "Phone": "(212) 213-4161",
+    "Fax": "(212) 213-9194",
+    "Website": "www.kashihome.com"
+  },
+  "InvoiceDetails": {
+    "InvNo": "240828",
+    "Date": "8/20/2024",
+    "OrderDate": "8/20/2024",
+    "SalesOrderNumber": "102331",
+    "PurchaseOrderNumber": "71011",
+    "Terms": "Net 20",
+    "Rep": "09FY",
+    "ShippedOn": "8/20/2024",
+    "ShipVia": "SLS",
+    "FreightOnBoard": "NJ",
+    "TotalCasesPallets": "73 / PALLETS",
+    "LineItems": [
+      {
+        "SerialNo": 1,
+        "Quantity": 48,
+        "ItemCode": "K-BT116740",
+        "Description": "Irene 30x54 Zero Twist Ribbed Bath Towel- Assorted Colors PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 216.00
+      },
+      {
+        "SerialNo": 2,
+        "Quantity": 48,
+        "ItemCode": "K-BT127050",
+        "Description": "Apiary 27X54 Honeycomb Bath Towel- Assorted Colors PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 216.00
+      },
+      {
+        "SerialNo": 3,
+        "Quantity": 48,
+        "ItemCode": "K-BT127074",
+        "Description": "Nile Lined border Bath towel Assorted color PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 216.00
+      },
+      {
+        "SerialNo": 4,
+        "Quantity": 12,
+        "ItemCode": "K-KC103634",
+        "Description": "Wine Kitchen Curtain Swag Set PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.00,
+        "Backordered": 0,
+        "Amount": 48.00
+      },
+      {
+        "SerialNo": 5,
+        "Quantity": 12,
+        "ItemCode": "K-KC103658",
+        "Description": "Mr. Rooster Kitchen Curtain Swag Set PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.00,
+        "Backordered": 0,
+        "Amount": 48.00
+      },
+      {
+        "SerialNo": 6,
+        "Quantity": 12,
+        "ItemCode": "K-KC103665",
+        "Description": "Apple Kitchen Curtain Swag Set PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.00,
+        "Backordered": 0,
+        "Amount": 48.00
+      },
+      {
+        "SerialNo": 7,
+        "Quantity": 12,
+        "ItemCode": "K-KC104303",
+        "Description": "Solid with Printed Ruffle Kitchen Curtain Paris PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.00,
+        "Backordered": 0,
+        "Amount": 48.00
+      },
+      {
+        "SerialNo": 8,
+        "Quantity": 12,
+        "ItemCode": "K-KC108806",
+        "Description": "Italian Kitchen - Kitchen Curtain PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 6.50,
+        "Backordered": 0,
+        "Amount": 78.00
+      },
+      {
+        "SerialNo": 9,
+        "Quantity": 12,
+        "ItemCode": "K-KC108844",
+        "Description": "Fresh Fruit - Kitchen Curtain PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 6.50,
+        "Backordered": 0,
+        "Amount": 78.00
+      },
+      {
+        "SerialNo": 10,
+        "Quantity": 12,
+        "ItemCode": "K-RS083875",
+        "Description": "Charleston Collection - 18x28 Printed Coir Mats PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 54.00
+      },
+      {
+        "SerialNo": 11,
+        "Quantity": 12,
+        "ItemCode": "K-RS083967",
+        "Description": "Penn Collection - 18x28 Heavy Stud Door Mats PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 3.50,
+        "Backordered": 0,
+        "Amount": 42.00
+      },
+      {
+        "SerialNo": 12,
+        "Quantity": 12,
+        "ItemCode": "K-RS085428",
+        "Description": "Deco 3pc Bath Rug Set - Red PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 54.00
+      },
+      {
+        "SerialNo": 13,
+        "Quantity": 12,
+        "ItemCode": "K-RS085442",
+        "Description": "Baxter 3pc Bath Rug Set - Apricot PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 54.00
+      },
+      {
+        "SerialNo": 14,
+        "Quantity": 12,
+        "ItemCode": "K-RS085626",
+        "Description": "Montgomery 3pc Bath Set - Brown PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 54.00
+      },
+      {
+        "SerialNo": 15,
+        "Quantity": 12,
+        "ItemCode": "K-RS091603",
+        "Description": "Baxter 3pc Bath Rug Set - Coral PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 54.00
+      },
+      {
+        "SerialNo": 16,
+        "Quantity": 12,
+        "ItemCode": "K-RS093171",
+        "Description": "Maxine Shaggy 3pc Bath Rug Set- Beige PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.50,
+        "Backordered": 0,
+        "Amount": 66.00
+      },
+      {
+        "SerialNo": 17,
+        "Quantity": 12,
+        "ItemCode": "K-RS093188",
+        "Description": "Maxine Shaggy 3pc Bath Rug Set- Sage PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.50,
+        "Backordered": 0,
+        "Amount": 66.00
+      },
+      {
+        "SerialNo": 18,
+        "Quantity": 12,
+        "ItemCode": "K-RS093195",
+        "Description": "Maxine Shaggy 3pc Bath Rug Set- Burgundy PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.50,
+        "Backordered": 0,
+        "Amount": 66.00
+      },
+      {
+        "SerialNo": 19,
+        "Quantity": 12,
+        "ItemCode": "K-RS093201",
+        "Description": "Maxine Shaggy 3pc Bath Rug Set- Grey PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.50,
+        "Backordered": 0,
+        "Amount": 66.00
+      },
+      {
+        "SerialNo": 20,
+        "Quantity": 12,
+        "ItemCode": "K-RS093218",
+        "Description": "Maxine Shaggy 3pc Bath Rug Set- Black PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.50,
+        "Backordered": 0,
+        "Amount": 66.00
+      },
+      {
+        "SerialNo": 21,
+        "Quantity": 12,
+        "ItemCode": "K-RS096769",
+        "Description": "Maxine Shaggy 3pc Bath Rug Set- Brown PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.50,
+        "Backordered": 0,
+        "Amount": 66.00
+      },
+      {
+        "SerialNo": 22,
+        "Quantity": 12,
+        "ItemCode": "K-RS096776",
+        "Description": "Maxine Shaggy 3pc Bath Rug Set- Blue PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.50,
+        "Backordered": 0,
+        "Amount": 66.00
+      },
+      {
+        "SerialNo": 23,
+        "Quantity": 12,
+        "ItemCode": "K-RS096790",
+        "Description": "Maxine Shaggy 3pc Bath Rug Set- Cream PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.50,
+        "Backordered": 0,
+        "Amount": 66.00
+      },
+      {
+        "SerialNo": 24,
+        "Quantity": 12,
+        "ItemCode": "K-RS098763",
+        "Description": "Fenway Collection - 18x30 Sand Coated Outdoor Mat Assorted PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 6.50,
+        "Backordered": 0,
+        "Amount": 78.00
+      },
+      {
+        "SerialNo": 25,
+        "Quantity": 12,
+        "ItemCode": "K-RS099005",
+        "Description": "Norwalk Collection- 16x24 Rubber Pin Outdoor Mat PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 2.00,
+        "Backordered": 0,
+        "Amount": 24.00
+      },
+      {
+        "SerialNo": 26,
+        "Quantity": 12,
+        "ItemCode": "K-RS099272",
+        "Description": "Buon Appetito Pizza Printed Kitchen Rug 18x30 PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 1.50,
+        "Backordered": 0,
+        "Amount": 18.00
+      },
+      {
+        "SerialNo": 27,
+        "Quantity": 12,
+        "ItemCode": "K-RS099326",
+        "Description": "Farmers Market Chefs Printed Kitchen Rug 18x30 PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 1.50,
+        "Backordered": 0,
+        "Amount": 18.00
+      },
+      {
+        "SerialNo": 28,
+        "Quantity": 6,
+        "ItemCode": "K-RS100435",
+        "Description": "Penny 27x42 Printed PV Fur Rug - White/Taupe PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 27.00
+      },
+      {
+        "SerialNo": 29,
+        "Quantity": 6,
+        "ItemCode": "K-RS100459",
+        "Description": "Penny 27x42 Printed PV Fur Rug - Taupe/White PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 27.00
+      },
+      {
+        "SerialNo": 30,
+        "Quantity": 6,
+        "ItemCode": "K-RS100497",
+        "Description": "Nina 27x42 Printed PV Fur Rug - White/Black PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 27.00
+      },
+      {
+        "SerialNo": 31,
+        "Quantity": 6,
+        "ItemCode": "K-RS100510",
+        "Description": "Nina 27x42 Printed PV Fur Rug - Charcoal/White PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 27.00
+      },
+      {
+        "SerialNo": 32,
+        "Quantity": 6,
+        "ItemCode": "K-RS100572",
+        "Description": "Rosa 27x42 Printed PV Fur Rug - Navy/White PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 27.00
+      },
+      {
+        "SerialNo": 33,
+        "Quantity": 12,
+        "ItemCode": "K-RS100978",
+        "Description": "Land of Shells 18x30 Rectangle Kitchen Rug PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 1.50,
+        "Backordered": 0,
+        "Amount": 18.00
+      },
+      {
+        "SerialNo": 34,
+        "Quantity": 12,
+        "ItemCode": "K-RS101043",
+        "Description": "Grandma's Kitchen 18x30 Rectangle Kitchen Rug PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 1.50,
+        "Backordered": 0,
+        "Amount": 18.00
+      },
+      {
+        "SerialNo": 35,
+        "Quantity": 12,
+        "ItemCode": "K-RS101081",
+        "Description": "Mr Rooster 18x30 Rectangle Kitchen Rug PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 1.50,
+        "Backordered": 0,
+        "Amount": 18.00
+      },
+      {
+        "SerialNo": 36,
+        "Quantity": 12,
+        "ItemCode": "K-RS128613",
+        "Description": "Arthur 2pc Space Dyed Bathroom Rug- Taupe/Beige PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 7.50,
+        "Backordered": 0,
+        "Amount": 90.00
+      },
+      {
+        "SerialNo": 37,
+        "Quantity": 12,
+        "ItemCode": "K-RS128610",
+        "Description": "Arthur 2pc Space Dyed Bathroom Rug-Taupe/Space/Beige PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 7.50,
+        "Backordered": 0,
+        "Amount": 90.00
+      },
+      {
+        "SerialNo": 38,
+        "Quantity": 12,
+        "ItemCode": "K-RS128637",
+        "Description": "Arthur 2pc Space Dyed Bathroom Rug-Space Dyed Turquoise/Beige PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 7.50,
+        "Backordered": 0,
+        "Amount": 90.00
+      },
+      {
+        "SerialNo": 39,
+        "Quantity": 12,
+        "ItemCode": "K-RS128644",
+        "Description": "Arthur 2pc Space Dyed Bathroom Rug-Charcoal/Beige PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 7.50,
+        "Backordered": 0,
+        "Amount": 90.00
+      },
+      {
+        "SerialNo": 40,
+        "Quantity": 12,
+        "ItemCode": "K-RS128712",
+        "Description": "Sarah 2pc Bathroom Rug- Yellow/Grey/Off White PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 7.00,
+        "Backordered": 0,
+        "Amount": 84.00
+      },
+      {
+        "SerialNo": 41,
+        "Quantity": 12,
+        "ItemCode": "K-RS128729",
+        "Description": "Sarah 2pc Bathroom Rug- Royal Blue/Grey/Off White PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 7.00,
+        "Backordered": 0,
+        "Amount": 84.00
+      },
+      {
+        "SerialNo": 42,
+        "Quantity": 12,
+        "ItemCode": "K-RS128736",
+        "Description": "Sarah 2pc Bathroom Rug- Ruby/Taupe/Off White PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 7.00,
+        "Backordered": 0,
+        "Amount": 84.00
+      },
+      {
+        "SerialNo": 43,
+        "Quantity": 12,
+        "ItemCode": "K-RS128743",
+        "Description": "Sarah 2pc Bathroom Rug- Charcoal/Grey/Off White PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 7.00,
+        "Backordered": 0,
+        "Amount": 84.00
+      },
+      {
+        "SerialNo": 44,
+        "Quantity": 12,
+        "ItemCode": "K-RS128750",
+        "Description": "Sarah 20x32 Bathroom Rug- Yellow/Grey/Off White PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.00,
+        "Backordered": 0,
+        "Amount": 60.00
+      },
+      {
+        "SerialNo": 45,
+        "Quantity": 12,
+        "ItemCode": "K-RS128767",
+        "Description": "Sarah 20x32 Bathroom Rug- Royal Blue/Grey/Off White PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.00,
+        "Backordered": 0,
+        "Amount": 60.00
+      },
+      {
+        "SerialNo": 46,
+        "Quantity": 12,
+        "ItemCode": "K-RS128774",
+        "Description": "Sarah 20x32 Bathroom Rug- Ruby/Taupe/Off White PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.00,
+        "Backordered": 0,
+        "Amount": 60.00
+      },
+      {
+        "SerialNo": 47,
+        "Quantity": 12,
+        "ItemCode": "K-RS128781",
+        "Description": "Sarah 20x32 Bathroom Rug- Charcoal/Grey/Off White PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.00,
+        "Backordered": 0,
+        "Amount": 60.00
+      },
+      {
+        "SerialNo": 48,
+        "Quantity": 12,
+        "ItemCode": "K-RS128873",
+        "Description": "William 20x32 Bathroom Rug- Charcoal PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.00,
+        "Backordered": 0,
+        "Amount": 60.00
+      },
+      {
+        "SerialNo": 49,
+        "Quantity": 12,
+        "ItemCode": "K-RS128880",
+        "Description": "William 20x32 Bathroom Rug- Taupe PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.00,
+        "Backordered": 0,
+        "Amount": 60.00
+      },
+      {
+        "SerialNo": 50,
+        "Quantity": 12,
+        "ItemCode": "K-RS128897",
+        "Description": "William 20x32 Bathroom Rug- Light Grey PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.00,
+        "Backordered": 0,
+        "Amount": 60.00
+      },
+      {
+        "SerialNo": 51,
+        "Quantity": 12,
+        "ItemCode": "K-RS128903",
+        "Description": "William 20x32 Bathroom Rug- Ruby PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.00,
+        "Backordered": 0,
+        "Amount": 60.00
+      },
+      {
+        "SerialNo": 52,
+        "Quantity": 12,
+        "ItemCode": "K-RS128927",
+        "Description": "William 20x32 Bathroom Rug- White PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 5.00,
+        "Backordered": 0,
+        "Amount": 60.00
+      },
+      {
+        "SerialNo": 53,
+        "Quantity": 12,
+        "ItemCode": "K-RS129016",
+        "Description": "Theresa 18x30 Bathroom Rug-Black/Grey/Light Grey/White PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.00,
+        "Backordered": 0,
+        "Amount": 48.00
+      },
+      {
+        "SerialNo": 54,
+        "Quantity": 12,
+        "ItemCode": "K-RS129023",
+        "Description": "Theresa 18x30 Bathroom Rug-Red/Grey/Gold/White PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.00,
+        "Backordered": 0,
+        "Amount": 48.00
+      },
+      {
+        "SerialNo": 55,
+        "Quantity": 12,
+        "ItemCode": "K-RS129030",
+        "Description": "Theresa 18x30 Bathroom Rug-Dark Grey/Teal/Light Grey/ White PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.00,
+        "Backordered": 0,
+        "Amount": 48.00
+      },
+      {
+        "SerialNo": 56,
+        "Quantity": 12,
+        "ItemCode": "K-SC103337",
+        "Description": "Cameron Printed 13pc Canvas Shower Curtain Set with 12 Hooks PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.00,
+        "Backordered": 0,
+        "Amount": 48.00
+      },
+      {
+        "SerialNo": 57,
+        "Quantity": 12,
+        "ItemCode": "K-SC103375",
+        "Description": "Kyle Printed 13pc Canvas Shower Curtain Set with Hooks PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.00,
+        "Backordered": 0,
+        "Amount": 48.00
+      },
+      {
+        "SerialNo": 58,
+        "Quantity": 12,
+        "ItemCode": "K-SC103429",
+        "Description": "Wren Printed 13pc Canvas Shower Curtain Set with Hooks PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.00,
+        "Backordered": 0,
+        "Amount": 48.00
+      },
+      {
+        "SerialNo": 59,
+        "Quantity": 24,
+        "ItemCode": "K-SC108639",
+        "Description": "African Woman Polyester Shower Curtain PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 108.00
+      },
+      {
+        "SerialNo": 60,
+        "Quantity": 12,
+        "ItemCode": "K-SC108646",
+        "Description": "Summer Stroll Polyester Shower Curtain PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 54.00
+      },
+      {
+        "SerialNo": 61,
+        "Quantity": 12,
+        "ItemCode": "K-SC115644",
+        "Description": "Brielle 13pc Printed Canvas Shower Curtain PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.00,
+        "Backordered": 0,
+        "Amount": 48.00
+      },
+      {
+        "SerialNo": 62,
+        "Quantity": 24,
+        "ItemCode": "K-SC115682",
+        "Description": "Droplet 70x70 Printed Canvas Shower Curtain PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 108.00
+      },
+      {
+        "SerialNo": 63,
+        "Quantity": 12,
+        "ItemCode": "K-SC115699",
+        "Description": "Diane 13pc Printed Canvas Shower Curtain PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.00,
+        "Backordered": 0,
+        "Amount": 48.00
+      },
+      {
+        "SerialNo": 64,
+        "Quantity": 12,
+        "ItemCode": "K-SC119000",
+        "Description": "Elegant Fashion 70x70 Polyester Shower Curtain PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 4.50,
+        "Backordered": 0,
+        "Amount": 54.00
+      },
+      {
+        "SerialNo": 65,
+        "Quantity": 24,
+        "ItemCode": "K-SL080201",
+        "Description": "PEVA Shower Liner Lite (0.070mm) - Beige PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 1.25,
+        "Backordered": 0,
+        "Amount": 30.00
+      },
+      {
+        "SerialNo": 66,
+        "Quantity": 24,
+        "ItemCode": "K-SL080256",
+        "Description": "PEVA Shower Liner Lite (0.070mm) - Frosty PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 1.25,
+        "Backordered": 0,
+        "Amount": 30.00
+      },
+      {
+        "SerialNo": 67,
+        "Quantity": 24,
+        "ItemCode": "K-SL080263",
+        "Description": "PEVA Shower Liner Lite (0.070mm) - Gold PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 1.25,
+        "Backordered": 0,
+        "Amount": 30.00
+      },
+      {
+        "SerialNo": 68,
+        "Quantity": 24,
+        "ItemCode": "K-SL080379",
+        "Description": "PEVA Shower Liner Lite (0.070mm) - Neon Fuschia PRICE OVERRIDE MANUALLY.",
+        "PriceEach": 1.25,
+        "Backordered": 0,
+        "Amount": 30.00
+      }
+    ],
+    "InvoiceTotal": 4227.00
+  }
+}

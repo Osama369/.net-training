@@ -20,12 +20,14 @@
           
 
             <div class="col-12">
-              <label class="col-form-label date-label col-9 required" translate>Address</label>
-              <label class="col-form-label date-label  col-2 required" translate>Phone No</label>
+              <label class="col-form-label date-label col-5 required" translate>Address</label>
+              <label class="col-form-label date-label offset-1  col-2 required" translate>Suburb</label>
+              <label class="col-form-label date-label offset-1  col-2 required" translate>Phone No</label>
 
 
-              <input pInputText [(ngModel)]="address" class="col-8" maxlength="200"/>
-              <p-inputMask mask="+99 999 999 9999" [(ngModel)]="phone" class=" offset-1 col-3"  #inputFieldTableVend placeholder="+92 000 0000000"  ></p-inputMask>            
+              <input pInputText [(ngModel)]="address" class="col-5" maxlength="200"/>
+              <input pInputText  [(ngModel)]="Suburb" class="col-form-label offset-1  col-2" #inputFieldTableVend   maxlength="6"      />  
+              <p-inputMask mask="+99 999 999 9999" [(ngModel)]="phone" class=" offset-1 col-1"  #inputFieldTableVend placeholder="+92 000 0000000"  ></p-inputMask>            
      
           </div>
 
@@ -52,7 +54,7 @@
                
             <div class="col-12" style="text-align: right;">
               <br>
-                <button #savebtn (click)="AddSupplier()"  translate class="btn btn-primary col-3"><i class="fa fa-save"></i> Save</button>&nbsp;
+                <button #savebtn (click)="AddSupplier()" [disabled]="saveBtnDisabled"  translate class="btn btn-primary col-3"><i class="fa fa-save"></i> Save</button>&nbsp;
                 <button #cancelbtn (click)="Cancel()"  translate class="btn btn-danger col-3"><i class="fa fa-undo"></i> Cancel</button>
             </div>
 <!-- 

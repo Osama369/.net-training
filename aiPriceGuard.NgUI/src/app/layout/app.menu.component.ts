@@ -90,7 +90,8 @@ export class AppMenuComponent implements OnInit {
               items:[
                 { label: 'Suppliers', routerLink: [APP_ROUTES.manage.suppliers] },
                 { label:'Products',routerLink:APP_ROUTES.manage.products},
-                { label:'Files',routerLink:APP_ROUTES.manage.Files }
+                { label:'Files',routerLink:APP_ROUTES.manage.Files },
+                // { label:'Invoice',routerLink:APP_ROUTES.manage.Invoice }
               ]
             },
           

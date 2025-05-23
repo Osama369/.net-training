@@ -45,6 +45,8 @@ namespace aiPriceGuard.DataAccess.DataSet
 
         public DbSet<Store> Stores { get; set; }
         public DbSet<Invoice> Invoice { get; set; }
+        public DbSet<InvoiceDetail> InvoiceDetail { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

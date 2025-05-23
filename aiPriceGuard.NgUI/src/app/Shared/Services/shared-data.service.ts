@@ -3,7 +3,12 @@ import { Product } from '../../Manage/Models/product';
 import { FileVM } from '../../Manage/Models/file-vm.model';
 import { GenericService } from './generic.service';
 import { Companies } from 'src/app/Administration/Models/companies';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, of } from 'rxjs';
+import { RenderJson } from '../../Manage/Models/render-json';
+import { ProductService } from '../../Manage/Services/product.service';
+import { FileUploadService } from '../../Manage/Services/file-upload.service';
+import { SupplierService } from '../../Manage/Services/supplier.service';
+import { Supplier } from '../../Manage/Models/supplier.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,8 +16,14 @@ import { lastValueFrom } from 'rxjs';
 export class SharedDataService {
   producList: Product[] =[{}] ;
   fileList:FileVM[]=[];
+  jsonDataObj:RenderJson={};
   CompanyConfig:any;
-  constructor(private genericService:GenericService) { }
+  supplierList:Supplier[]=[];
+  constructor(private genericService:GenericService,private productService: ProductService,
+      private supplierService:SupplierService,private fileService:FileUploadService) { 
+        // this.loadAllData();
+      }
+ 
   GetAllProducts():Product[]{
     return this.producList;
   }
@@ -40,8 +51,7 @@ export class SharedDataService {
     this.producList = ProduList;
   }
   DeleteProduct(product:Product){
-    this.producList = this.producList.filter(x=> x.prodID!= product.prodID);
-    
+    this.producList = this.producList.filter(x=> x.prodID!= product.prodID);  
   }
   UpsertFile(filedt:FileVM){
     const FileExist =this.fileList.find(x=> x.FileId=== filedt.FileId);
@@ -73,5 +83,22 @@ export class SharedDataService {
   SetFileList(fileList:any){
     this.fileList = fileList;
   }
-  
+  SetJsonData(JsonDt:RenderJson){
+      this.jsonDataObj=JsonDt;
+  }
+  GetJsonData():any{
+    return this.jsonDataObj;
+  }
+  async loadAllData(){
+    try{
+      this.producList = await  lastValueFrom(this.productService.GetAllProducts());
+      this.fileList = await lastValueFrom(this.fileService.GetAllFiles());
+      this.supplierList = await lastValueFrom(this.supplierService.GetAllSuppliers());
+      return  of(true);
+    }catch{
+      return of(false);
+    }
+    
+
+  }
 }

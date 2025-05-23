@@ -9,6 +9,7 @@ import { AddProductComponent } from './Components/Product/add-product/add-produc
 import { FileUploadComponent } from './Components/file-upload/file-upload.component';
 // import { AddFilesComponent } from './Components/FileUpload/add-files/add-files.component';
 import { AddFileComponent } from './Components/file-upload/add-file/add-file.component';
+import { RenderInvoiceComponent } from './Components/render-invoice/render-invoice.component';
 
 @NgModule({
   declarations: 
@@ -18,7 +19,8 @@ import { AddFileComponent } from './Components/file-upload/add-file/add-file.com
     ProductComponent,
     AddProductComponent,
     FileUploadComponent,
-    AddFileComponent
+    AddFileComponent,
+    RenderInvoiceComponent
   ],
   imports: [
     CommonModule,

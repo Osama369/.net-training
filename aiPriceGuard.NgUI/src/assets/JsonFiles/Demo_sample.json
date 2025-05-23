@@ -1,0 +1,220 @@
+{
+  "Delivery_Note": "241731",
+  "Delivery_Date": "09-06-2024",
+  "Order_Date": "09-05-2024",
+  "Customer_Code": "992587",
+  "Company_Name": "DCON DISCOUNT INC",
+  "Delivery_Address": {
+    "Street": "4412 White Plains Rd",
+    "City": "Bronx",
+    "State_Zip": "NY 10470-1607"
+  },
+  "Tel": "732-582-0200",
+  "Fax": "732-596-1308",
+  "Customer_Ref_No": "3828-090524-1081",
+  "Sales_Order_Number": "293118",
+  "Items": [
+    {
+      "#": 1,
+      "Item_No": "ABP-PW25A",
+      "Description": "MULTI PACK ALUM 2-1/4 W/ DOME LID 12 CT",
+      "CasePk": 29,
+      "Shipped_Qty": 1,
+      "Unit_Price": 68.15,
+      "Line_Total": 68.15
+    },
+    {
+      "#": 2,
+      "Item_No": "ABP-PW20A",
+      "Description": "MULTI PACK ALUM 9 W/ DOME LID 12 CT 26",
+      "CasePk": 26,
+      "Shipped_Qty": 1,
+      "Unit_Price": 75.14,
+      "Line_Total": 75.14
+    },
+    {
+      "#": 3,
+      "Item_No": "ABP-PW25A-1",
+      "Description": "MULTI PACK ALUM 9 W/ BOARD LID 12 CT 21",
+      "CasePk": 21,
+      "Shipped_Qty": 1,
+      "Unit_Price": 60.69,
+      "Line_Total": 60.69
+    },
+    {
+      "#": 4,
+      "Item_No": "ABP-PW25A-2",
+      "Description": "MULTI PACK ALUM 7 W/ DOME LID 12 CT 38",
+      "CasePk": 38,
+      "Shipped_Qty": 1,
+      "Unit_Price": 70.30,
+      "Line_Total": 70.30
+    },
+    {
+      "#": 5,
+      "Item_No": "ABP-PW25A-4",
+      "Description": "MULTI PACK ALUM 1LB W/ DOME LID 12 CT 56",
+      "CasePk": 56,
+      "Shipped_Qty": 1,
+      "Unit_Price": 112.00,
+      "Line_Total": 112.00
+    },
+    {
+      "#": 6,
+      "Item_No": "ABP-PW20A-1",
+      "Description": "ALUM PAN 7 W/ DOME LID 4 CT. (60)",
+      "CasePk": 60,
+      "Shipped_Qty": 1,
+      "Unit_Price": 59.40,
+      "Line_Total": 59.40
+    },
+    {
+      "#": 7,
+      "Item_No": "ABP-PW20A-1A",
+      "Description": "ALUM 9 PAN W/ DOME COVER 3 CT. (38)",
+      "CasePk": 38,
+      "Shipped_Qty": 1,
+      "Unit_Price": 37.62,
+      "Line_Total": 37.62
+    },
+    {
+      "#": 8,
+      "Item_No": "ABP-PW0043",
+      "Description": "9 COMBO PACK 3/C W/ BOARD LIDS 24",
+      "CasePk": 24,
+      "Shipped_Qty": 1,
+      "Unit_Price": 18.00,
+      "Line_Total": 18.00
+    },
+    {
+      "#": 9,
+      "Item_No": "ABP-PW0043A",
+      "Description": "HINGED 8.5 X 5 X 3 COMPARTMENT CONTAINER 3 CT",
+      "CasePk": 31,
+      "Shipped_Qty": 1,
+      "Unit_Price": 61.69,
+      "Line_Total": 61.69
+    },
+    {
+      "#": 10,
+      "Item_No": "ABP-PW2432",
+      "Description": "HINGED 8X8X3 CONTAINER BLACK 3 CT",
+      "CasePk": 30,
+      "Shipped_Qty": 1,
+      "Unit_Price": 59.70,
+      "Line_Total": 59.70
+    },
+    {
+      "#": 11,
+      "Item_No": "ABP-PW2434",
+      "Description": "HINGED 8X8X3 CONTAINER W/ COMP BLACK 3 CT",
+      "CasePk": 30,
+      "Shipped_Qty": 1,
+      "Unit_Price": 59.70,
+      "Line_Total": 59.70
+    },
+    {
+      "#": 12,
+      "Item_No": "ABP-PW7431",
+      "Description": "HINGED 9X6X3 RECT. CONTAINER 3 CT",
+      "CasePk": 32,
+      "Shipped_Qty": 1,
+      "Unit_Price": 57.28,
+      "Line_Total": 57.28
+    },
+    {
+      "#": 13,
+      "Item_No": "PAM-0897",
+      "Description": "DELI CONTAINER 24 OZ W/ LID 3 CT 48/ CS",
+      "CasePk": 48,
+      "Shipped_Qty": 1,
+      "Unit_Price": 47.04,
+      "Line_Total": 47.04
+    },
+    {
+      "#": 14,
+      "Item_No": "PAM-08803",
+      "Description": "DELI CONTAINER 32 OZ W/ LID 3 CT 48/ CS",
+      "CasePk": 48,
+      "Shipped_Qty": 1,
+      "Unit_Price": 37.44,
+      "Line_Total": 37.44
+    },
+    {
+      "#": 15,
+      "Item_No": "PAM-08812",
+      "Description": "DELI CONTAINER 64 OZ W/ LID 2 CT 32/ CS",
+      "CasePk": 32,
+      "Shipped_Qty": 1,
+      "Unit_Price": 47.68,
+      "Line_Total": 47.68
+    },
+    {
+      "#": 16,
+      "Item_No": "ABP-PW133-A",
+      "Description": "MICROWAVEABLE 8 OZ CONTAINER 2 CT 24",
+      "CasePk": 24,
+      "Shipped_Qty": 1,
+      "Unit_Price": 64.56,
+      "Line_Total": 64.56
+    },
+    {
+      "#": 17,
+      "Item_No": "ABP-PW177-2",
+      "Description": "MULTI PACK 32 OZ SOUP CONTAINER 10",
+      "CasePk": 21,
+      "Shipped_Qty": 1,
+      "Unit_Price": 61.95,
+      "Line_Total": 61.95
+    },
+    {
+      "#": 18,
+      "Item_No": "ABP-PW177A",
+      "Description": "MULTI PACK 16 OZ SOUP CONTAINER 10",
+      "CasePk": 30,
+      "Shipped_Qty": 1,
+      "Unit_Price": 80.70,
+      "Line_Total": 80.70
+    },
+    {
+      "#": 19,
+      "Item_No": "ABP-PW177-24",
+      "Description": "MICROWAVEABLE 16 OZ SOUP CONTAINER 6 CT",
+      "CasePk": 40,
+      "Shipped_Qty": 1,
+      "Unit_Price": 71.60,
+      "Line_Total": 71.60
+    },
+    {
+      "#": 20,
+      "Item_No": "ABP-PW177-21",
+      "Description": "MICROWAVEABLE 8 OZ SOUP CONTAINER 6 CT",
+      "CasePk": 40,
+      "Shipped_Qty": 1,
+      "Unit_Price": 70.00,
+      "Line_Total": 70.00
+    },
+    {
+      "#": 21,
+      "Item_No": "ABP-PW2161-A",
+      "Description": "5 LB LOAF PAN W/ LIDS 2 CT",
+      "CasePk": 34,
+      "Shipped_Qty": 1,
+      "Unit_Price": 50.66,
+      "Line_Total": 50.66
+    },
+    {
+      "#": 22,
+      "Item_No": "PAM-08957",
+      "Description": "MW ROUND 40 OZ CONTAINER 2 CT 48/ CS",
+      "CasePk": 48,
+      "Shipped_Qty": 1,
+      "Unit_Price": 45.60,
+      "Line_Total": 45.60
+    }
+  ],
+  "Agent": {
+    "Agent_Code": "99DA",
+    "Page": "1 of 8"
+  }
+}

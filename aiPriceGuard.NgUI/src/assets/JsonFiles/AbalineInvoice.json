@@ -1,0 +1,1761 @@
+{
+  "Delivery Note": "241731",
+  "Delivery Date": "09-06-2024",
+  "Order Date": "09-05-2024",
+  "Customer Code": "992587",
+  "Tel": "732-582-0200",
+  "Fax": "732-596-1308",
+  "Delivery Address": {
+    "Name": "DCON DISCOUNT INC",
+    "Address": "4412 White Plains Rd, Bronx, NY 10470-1607"
+  },
+  "Customer Ref No.": "3828-090524-1081",
+  "Sales Order Number": "293118",
+  "Summary": [
+    {
+      "#": 1,
+      "Item No.": "kk-213",
+      "Description": "MULTI PACK ALUM 2-1/4 W/DOME LID 12 CT 29",
+      "CasePk": 29,
+      "Shipped Qty": 1,
+      "Unit Price": 68.15,
+      "Line Total": 68.15
+    },
+    {
+      "#": 2,
+      "Item No.": "ABP-PW250-A",
+      "Description": "MULTI PACK ALUM 9 W/DOME LID 12 CT 26",
+      "CasePk": 26,
+      "Shipped Qty": 1,
+      "Unit Price": 75.14,
+      "Line Total": 75.14
+    },
+    {
+      "#": 3,
+      "Item No.": "ABP-PW251-A",
+      "Description": "MULTI PACK ALUM 9 W/BOARD LID 12 CT 21",
+      "CasePk": 21,
+      "Shipped Qty": 1,
+      "Unit Price": 60.69,
+      "Line Total": 60.69
+    },
+    {
+      "#": 4,
+      "Item No.": "ABP-PW252-A",
+      "Description": "MULTI PACK ALUM 7 W/DOME LID 12 CT 38",
+      "CasePk": 38,
+      "Shipped Qty": 1,
+      "Unit Price": 70.30,
+      "Line Total": 70.30
+    },
+    {
+      "#": 5,
+      "Item No.": "ABP-PW256-A",
+      "Description": "MULTI PACK ALUM 1LB W/DOME LID 12 CT 56",
+      "CasePk": 56,
+      "Shipped Qty": 1,
+      "Unit Price": 112.00,
+      "Line Total": 112.00
+    },
+    {
+      "#": 6,
+      "Item No.": "ABP-PW202-A",
+      "Description": "ALUM PAN 7 W/DOME LID 4 CT. (60)",
+      "CasePk": 60,
+      "Shipped Qty": 1,
+      "Unit Price": 59.40,
+      "Line Total": 59.40
+    },
+    {
+      "#": 7,
+      "Item No.": "ABP-PW201-A",
+      "Description": "ALUM 9 PAN W/DOME COVER 3 CT. (38)",
+      "CasePk": 38,
+      "Shipped Qty": 1,
+      "Unit Price": 37.62,
+      "Line Total": 37.62
+    },
+    {
+      "#": 8,
+      "Item No.": "ABP-PW00433",
+      "Description": "9 COMBO PACK 3PK W/BOARD LIDS 24 CT 18",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 18.00,
+      "Line Total": 18.00
+    },
+    {
+      "#": 9,
+      "Item No.": "ABP-PW28430",
+      "Description": "HINGED 8.5 X 8.5 X 3 COMPARTMENT CONTAINER 3 CT",
+      "CasePk": 31,
+      "Shipped Qty": 1,
+      "Unit Price": 61.69,
+      "Line Total": 61.69
+    },
+    {
+      "#": 10,
+      "Item No.": "ABP-PW28432",
+      "Description": "HINGED 8X8X3 CONTAINER BLACK 3 CT",
+      "CasePk": 30,
+      "Shipped Qty": 1,
+      "Unit Price": 59.70,
+      "Line Total": 59.70
+    },
+    {
+      "#": 11,
+      "Item No.": "ABP-PW28433",
+      "Description": "HINGED 8X8X3 CONTAINER W/COMP BLACK 3 CT",
+      "CasePk": 30,
+      "Shipped Qty": 1,
+      "Unit Price": 59.70,
+      "Line Total": 59.70
+    },
+    {
+      "#": 12,
+      "Item No.": "ABP-PW28431",
+      "Description": "HINGED 9X6X3 RECT. CONTAINER 3 CT.",
+      "CasePk": 32,
+      "Shipped Qty": 1,
+      "Unit Price": 57.28,
+      "Line Total": 57.28
+    },
+    {
+      "#": 13,
+      "Item No.": "PAM-08793",
+      "Description": "DELI CONTAINER 24 OZ W/LID 3 CT 48/CS",
+      "CasePk": 48,
+      "Shipped Qty": 1,
+      "Unit Price": 47.04,
+      "Line Total": 47.04
+    },
+    {
+      "#": 14,
+      "Item No.": "PAM-08031",
+      "Description": "PLATE 10\" BAGASSE WHITE 20 CT 24",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 46.80,
+      "Line Total": 46.80
+    },
+    {
+      "#": 15,
+      "Item No.": "PAM-08812",
+      "Description": "DELI CONTAINER 64 OZ W/LID 2 CT 32/CS",
+      "CasePk": 32,
+      "Shipped Qty": 1,
+      "Unit Price": 47.68,
+      "Line Total": 47.68
+    },
+    {
+      "#": 16,
+      "Item No.": "ABP-PW133-A",
+      "Description": "MICROWAVEABLE 80 OZ CONTAINER 2",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 64.56,
+      "Line Total": 64.56
+    },
+    {
+      "#": 17,
+      "Item No.": "ABP-PW171-A",
+      "Description": "MULTI PACK 32 OZ SOUP CONTAINER 10 CT",
+      "CasePk": 21,
+      "Shipped Qty": 1,
+      "Unit Price": 61.95,
+      "Line Total": 61.95
+    },
+    {
+      "#": 18,
+      "Item No.": "ABP-PW172-A",
+      "Description": "MULTI PACK 16 OZ SOUP CONTAINER 10",
+      "CasePk": 30,
+      "Shipped Qty": 1,
+      "Unit Price": 80.70,
+      "Line Total": 80.70
+    },
+    {
+      "#": 19,
+      "Item No.": "ABP-PW126-A",
+      "Description": "MICROWAVEABLE 16 OZ SOUP CONTAINER 6 CT",
+      "CasePk": 40,
+      "Shipped Qty": 1,
+      "Unit Price": 71.60,
+      "Line Total": 71.60
+    },
+    {
+      "#": 20,
+      "Item No.": "ABP-PW131-A",
+      "Description": "MICROWAVEABLE 8 OZ SOUP CONTAINER 6 CT",
+      "CasePk": 40,
+      "Shipped Qty": 1,
+      "Unit Price": 70.00,
+      "Line Total": 70.00
+    },
+    {
+      "#": 21,
+      "Item No.": "ABP-PW216-A",
+      "Description": "5 LB LOAF PAN W/LIDS 2 CT",
+      "CasePk": 34,
+      "Shipped Qty": 1,
+      "Unit Price": 50.66,
+      "Line Total": 50.66
+    },
+    {
+      "#": 22,
+      "Item No.": "PAM-08953",
+      "Description": "MW ROUND 40 OZ CONTAINER 2 CT 48/CS",
+      "CasePk": 48,
+      "Shipped Qty": 1,
+      "Unit Price": 45.60,
+      "Line Total": 45.60
+    },
+    {
+      "#": 23,
+      "Item No.": "PAM-08952",
+      "Description": "MW ROUND 32 OZ CONTAINER 2 CT 48/CS",
+      "CasePk": 48,
+      "Shipped Qty": 1,
+      "Unit Price": 40.80,
+      "Line Total": 40.80
+    },
+    {
+      "#": 24,
+      "Item No.": "PAM-08957",
+      "Description": "MW RECTANGULAR 24OZ CONT 2 CT 48/CS",
+      "CasePk": 48,
+      "Shipped Qty": 1,
+      "Unit Price": 38.40,
+      "Line Total": 38.40
+    },
+    {
+      "#": 25,
+      "Item No.": "PAM-08958",
+      "Description": "MW RECTANGULAR 38 OZ CONT 2 CT 48/CS",
+      "CasePk": 48,
+      "Shipped Qty": 1,
+      "Unit Price": 42.72,
+      "Line Total": 42.72
+    },
+    {
+      "#": 26,
+      "Item No.": "ABP-PW163-A",
+      "Description": "MULTI PACK 38 OZ RECT CONT 10 CT BLACK",
+      "CasePk": 21,
+      "Shipped Qty": 1,
+      "Unit Price": 94.29,
+      "Line Total": 94.29
+    },
+    {
+      "#": 27,
+      "Item No.": "ABP-W164-A",
+      "Description": "MULTI PACK 38 OZ RECT CONT 10 CT WHITE",
+      "CasePk": 21,
+      "Shipped Qty": 1,
+      "Unit Price": 94.29,
+      "Line Total": 94.29
+    },
+    {
+      "#": 28,
+      "Item No.": "ABP-W161-A",
+      "Description": "MULTI PACK 24 OZ RECT CONT 10 CT BLACK",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 107.76,
+      "Line Total": 107.76
+    },
+    {
+      "#": 29,
+      "Item No.": "ABP-PW169-A",
+      "Description": "MULTI PACK 48 OZ ROUND CONT 8 CT BLACK",
+      "CasePk": 18,
+      "Shipped Qty": 1,
+      "Unit Price": 98.82,
+      "Line Total": 98.82
+    },
+    {
+      "#": 30,
+      "Item No.": "ABP-PW170-A",
+      "Description": "MULTI PACK 48 OZ ROUND CONT 8 CT WHITE",
+      "CasePk": 18,
+      "Shipped Qty": 1,
+      "Unit Price": 98.82,
+      "Line Total": 98.82
+    },
+    {
+      "#": 31,
+      "Item No.": "ABP-PW167-A",
+      "Description": "MULTI PACK 32 OZ ROUND CONT 10 CT BLACK",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 107.76,
+      "Line Total": 107.76
+    },
+    {
+      "#": 32,
+      "Item No.": "ABP-PW168-A",
+      "Description": "MULTI PACK 32 OZ ROUND CONT 12 CT WHITE",
+      "CasePk": 18,
+      "Shipped Qty": 1,
+      "Unit Price": 80.82,
+      "Line Total": 80.82
+    },
+    {
+      "#": 33,
+      "Item No.": "ABP-PW137-A",
+      "Description": "SQUARE MICROWAVEABLE 48 OZ BLACK 5 CT",
+      "CasePk": 33,
+      "Shipped Qty": 1,
+      "Unit Price": 115.17,
+      "Line Total": 115.17
+    },
+    {
+      "#": 34,
+      "Item No.": "ABP-PW138-A",
+      "Description": "SQUARE MICROWAVEABLE 48 OZ WHITE 5 CT",
+      "CasePk": 33,
+      "Shipped Qty": 1,
+      "Unit Price": 115.17,
+      "Line Total": 115.17
+    },
+    {
+      "#": 35,
+      "Item No.": "ABP-PW139-A",
+      "Description": "RECT MICROWAVEABLE 58 OZ BLACK 5 CT",
+      "CasePk": 28,
+      "Shipped Qty": 1,
+      "Unit Price": 111.72,
+      "Line Total": 111.72
+    },
+    {
+      "#": 36,
+      "Item No.": "ABP-PW146-A",
+      "Description": "RECT MICROWAVEABLE 58 OZ WHITE 5 CT",
+      "CasePk": 28,
+      "Shipped Qty": 1,
+      "Unit Price": 111.72,
+      "Line Total": 111.72
+    },
+    {
+      "#": 37,
+      "Item No.": "ABP-PW121-A",
+      "Description": "MICROWAVABLE 48 OZ CONTAINER 4 CT. (black)",
+      "CasePk": 26,
+      "Shipped Qty": 1,
+      "Unit Price": 76.70,
+      "Line Total": 76.70
+    },
+    {
+      "#": 38,
+      "Item No.": "ABP-PW127-A",
+      "Description": "MICROWAVABLE 32 OZ CONTAINER 5 CT",
+      "CasePk": 36,
+      "Shipped Qty": 1,
+      "Unit Price": 70.20,
+      "Line Total": 70.20
+    },
+    {
+      "#": 39,
+      "Item No.": "ABP-PW144-A",
+      "Description": "MICROWAVABLE ROUND 23oz. BLACK 5 CT",
+      "CasePk": 30,
+      "Shipped Qty": 1,
+      "Unit Price": 58.50,
+      "Line Total": 58.50
+    },
+    {
+      "#": 40,
+      "Item No.": "ABP-PW145-A",
+      "Description": "MICROWAVABLE ROUND 23oz. WHITE 5 CT",
+      "CasePk": 30,
+      "Shipped Qty": 1,
+      "Unit Price": 58.50,
+      "Line Total": 58.50
+    },
+    {
+      "#": 41,
+      "Item No.": "ABP-PW159-A",
+      "Description": "MICROWAVABLE 16 OZ CONTAINER 5 CT**WHITE**",
+      "CasePk": 36,
+      "Shipped Qty": 1,
+      "Unit Price": 68.04,
+      "Line Total": 68.04
+    },
+    {
+      "#": 42,
+      "Item No.": "ABP-1800-A",
+      "Description": "STURD DS TALL KIT 13 GAL 21 CT 9/cs",
+      "CasePk": 9,
+      "Shipped Qty": 1,
+      "Unit Price": 46.45,
+      "Line Total": 46.45
+    },
+    {
+      "#": 43,
+      "Item No.": "ABP-PW142-A",
+      "Description": "MICROWAVABLE RECT 25oz. BLACK 5 CT",
+      "CasePk": 0,
+      "Shipped Qty": 1,
+      "Unit Price": 58.05,
+      "Line Total": 58.05
+    },
+    {
+      "#": 44,
+      "Item No.": "ABP-PW160-A",
+      "Description": "MICROWAV. 38 OZ RECT.CONTAINER 5 CT **WHITE**",
+      "CasePk": 36,
+      "Shipped Qty": 1,
+      "Unit Price": 84.60,
+      "Line Total": 84.60
+    },
+    {
+      "#": 45,
+      "Item No.": "ABP-PW00450",
+      "Description": "50ct WHITE 10\" PLATE 14cs (PR)",
+      "CasePk": 14,
+      "Shipped Qty": 1,
+      "Unit Price": 59.50,
+      "Line Total": 59.50
+    },
+    {
+      "#": 46,
+      "Item No.": "ABP-PW00451",
+      "Description": "50ct WHITE 9\" PLATE 14cs (PR)",
+      "CasePk": 14,
+      "Shipped Qty": 1,
+      "Unit Price": 41.30,
+      "Line Total": 41.30
+    },
+    {
+      "#": 47,
+      "Item No.": "ABP-PW681-A",
+      "Description": "PLATE WHITE 9\" PLASTIC 100 CT 4 (CN)",
+      "CasePk": 4,
+      "Shipped Qty": 2,
+      "Unit Price": 17.96,
+      "Line Total": 35.92
+    },
+    {
+      "#": 48,
+      "Item No.": "PAM-08046",
+      "Description": "12\" BAGASSE 5 CP DINNER TRAY 25 CT 20",
+      "CasePk": 20,
+      "Shipped Qty": 1,
+      "Unit Price": 53.00,
+      "Line Total": 53.00
+    },
+    {
+      "#": 49,
+      "Item No.": "PAM-08041",
+      "Description": "PLATE 11\" BAGASSE WHITE 20 CT 24",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 50.40,
+      "Line Total": 50.40
+    },
+    {
+      "#": 50,
+      "Item No.": "PAM-08031",
+      "Description": "PLATE 10\" BAGASSE WHITE 20 CT 24",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 46.80,
+      "Line Total": 46.80
+    },
+    {
+      "#": 51,
+      "Item No.": "PAM-08011",
+      "Description": "PLATE 7\" BAGASSE WHITE 20 CT 24",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 21.36,
+      "Line Total": 21.36
+    },
+    {
+      "#": 52,
+      "Item No.": "PAM-08006",
+      "Description": "PLATE 6\" BAGASSE WHITE 50 CT 8",
+      "CasePk": "8/50",
+      "Shipped Qty": 1,
+      "Unit Price": 11.92,
+      "Line Total": 11.92
+    },
+    {
+      "#": 53,
+      "Item No.": "PAM-08017",
+      "Description": "PLATE 7\" BAGASSE WHITE 50 CT 8",
+      "CasePk": 8,
+      "Shipped Qty": 1,
+      "Unit Price": 25.92,
+      "Line Total": 25.92
+    },
+    {
+      "#": 54,
+      "Item No.": "PAM-08035",
+      "Description": "PLATE 10\" BAGASSE WHITE 50 CT 8",
+      "CasePk": 8,
+      "Shipped Qty": 1,
+      "Unit Price": 35.92,
+      "Line Total": 35.92
+    },
+    {
+      "#": 55,
+      "Item No.": "PAM-08045",
+      "Description": "PLATE 11\" BAGASSE WHITE 50 CT 8",
+      "CasePk": 8,
+      "Shipped Qty": 1,
+      "Unit Price": 38.00,
+      "Line Total": 38.00
+    },
+    {
+      "#": 56,
+      "Item No.": "PAM-08089",
+      "Description": "BOWL 12 OZ BAGASSE WHITE 50 CT 8",
+      "CasePk": "8/50",
+      "Shipped Qty": 1,
+      "Unit Price": 23.60,
+      "Line Total": 23.60
+    },
+    {
+      "#": 57,
+      "Item No.": "PAM-08017",
+      "Description": "BOWL 16 OZ BAGASSE WHITE 50 CT 8",
+      "CasePk": 8,
+      "Shipped Qty": 1,
+      "Unit Price": 27.92,
+      "Line Total": 27.92
+    },
+    {
+      "#": 58,
+      "Item No.": "PAM-06010",
+      "Description": "PAMI 10\" PAPER PLATES 10 CT 32/CS (SCRIBBLE)",
+      "CasePk": 32,
+      "Shipped Qty": 1,
+      "Unit Price": 30.40,
+      "Line Total": 30.40
+    },
+    {
+      "#": 59,
+      "Item No.": "PAM-06008",
+      "Description": "PAMI 9\" PAPER PLATES 15 CT -32/CS (SCRIBBLE)",
+      "CasePk": 32,
+      "Shipped Qty": 1,
+      "Unit Price": 30.40,
+      "Line Total": 30.40
+    },
+    {
+      "#": 60,
+      "Item No.": "PAM-06007",
+      "Description": "PAMI 7\" PAPER PLATES 15 CT 32/CS (SCRIBBLE)",
+      "CasePk": 32,
+      "Shipped Qty": 1,
+      "Unit Price": 30.40,
+      "Line Total": 30.40
+    },
+    {
+      "#": 61,
+      "Item No.": "PAM-06060",
+      "Description": "PAMI 12 OZ PAPER BOWL 10 CT 32/CS (SCRIBBLE)",
+      "CasePk": 32,
+      "Shipped Qty": 1,
+      "Unit Price": 30.40,
+      "Line Total": 30.40
+    },
+    {
+      "#": 62,
+      "Item No.": "PAM-06002",
+      "Description": "PAMI 20 OZ PAPER BOWL 10 CT 32/CS (SCRIBBLE)",
+      "CasePk": 32,
+      "Shipped Qty": 1,
+      "Unit Price": 30.40,
+      "Line Total": 30.40
+    },
+    {
+      "#": 63,
+      "Item No.": "PAM-06012",
+      "Description": "PAMI 10\" PAPER PLATES 50 CT 12/CS (VINTAGE FLOWER)",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 51.00,
+      "Line Total": 51.00
+    },
+    {
+      "#": 64,
+      "Item No.": "PAM-06009",
+      "Description": "PAMI 9\" PAPER PLATES 50 CT 12/CS (VINTAGE FLOWER)",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 39.00,
+      "Line Total": 39.00
+    },
+    {
+      "#": 65,
+      "Item No.": "PAM-06001",
+      "Description": "PAMI 12 OZ PAPER BOWL 50 CT 12/CS (VINTAGE FLOWER)",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 33.00,
+      "Line Total": 33.00
+    },
+    {
+      "#": 66,
+      "Item No.": "PAM-06003",
+      "Description": "PAMI 20 OZ PAPER BOWL 40 CT 12/CS (VINTAGE FLOWER)",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 39.00,
+      "Line Total": 39.00
+    },
+    {
+      "#": 67,
+      "Item No.": "PAM-09362",
+      "Description": "DINNER NAPKIN ZPLY 100 CT",
+      "CasePk": 30,
+      "Shipped Qty": 1,
+      "Unit Price": 34.50,
+      "Line Total": 34.50
+    },
+    {
+      "#": 68,
+      "Item No.": "ABP-60017-A",
+      "Description": "LUNCHEON NAPKINS 150 CT.",
+      "CasePk": 18,
+      "Shipped Qty": 2,
+      "Unit Price": 21.60,
+      "Line Total": 43.20
+    },
+    {
+      "#": 69,
+      "Item No.": "ABP-60019-A",
+      "Description": "NAPKIN LUNCH 500 CT",
+      "CasePk": 12,
+      "Shipped Qty": 2,
+      "Unit Price": 39.00,
+      "Line Total": 78.00
+    },
+    {
+      "#": 70,
+      "Item No.": "PL-318-150",
+      "Description": "NAPKIN LUNCH 150 CT 18",
+      "CasePk": 18,
+      "Shipped Qty": 2,
+      "Unit Price": 24.30,
+      "Line Total": 48.60
+    },
+    {
+      "#": 71,
+      "Item No.": "MRT-SELECT423",
+      "Description": "500ct LUNCH NAPKIN 12cs",
+      "CasePk": 12,
+      "Shipped Qty": 2,
+      "Unit Price": 47.40,
+      "Line Total": 94.80
+    },
+    {
+      "#": 72,
+      "Item No.": "PAM-09534",
+      "Description": "60ct-13gl BLU RECYC T/K DRWSTRNG BAG 6cs",
+      "CasePk": 6,
+      "Shipped Qty": 1,
+      "Unit Price": 29.70,
+      "Line Total": 29.70
+    },
+    {
+      "#": 73,
+      "Item No.": "PAM-09544",
+      "Description": "60ct-13gl CLR RECYC T/K DRWSTRNG BAG 6cs",
+      "CasePk": 6,
+      "Shipped Qty": 1,
+      "Unit Price": 29.70,
+      "Line Total": 29.70
+    },
+    {
+      "#": 74,
+      "Item No.": "PAM-09535",
+      "Description": "35ct-30gl BLU RECYC TRASH DRWSTRNG BAG 6cs",
+      "CasePk": 6,
+      "Shipped Qty": 1,
+      "Unit Price": 29.70,
+      "Line Total": 29.70
+    },
+    {
+      "#": 75,
+      "Item No.": "PAM-09545",
+      "Description": "35ct-30gl CLR RECYC TRASH DRWSTRNG BAG 6cs",
+      "CasePk": 6,
+      "Shipped Qty": 1,
+      "Unit Price": 29.70,
+      "Line Total": 29.70
+    },
+    {
+      "#": 76,
+      "Item No.": "PAM-00708",
+      "Description": "100ct 8gal WHITE MEDIUM TRASH BAG 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 30.60,
+      "Line Total": 30.60
+    },
+    {
+      "#": 77,
+      "Item No.": "PAM-09512",
+      "Description": "WHITE T/K DRAWSTRING14ct24",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 21.36,
+      "Line Total": 21.36
+    },
+    {
+      "#": 78,
+      "Item No.": "PAM-09514",
+      "Description": "WHITE T/K DRAWSTRING50ct6",
+      "CasePk": 6,
+      "Shipped Qty": 1,
+      "Unit Price": 23.70,
+      "Line Total": 23.70
+    },
+    {
+      "#": 79,
+      "Item No.": "PAM-09511",
+      "Description": "WHITE T/K DRAWSTRING30ct12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 22.68,
+      "Line Total": 22.68
+    },
+    {
+      "#": 80,
+      "Item No.": "PAM-09513",
+      "Description": "WHITE T/K DRAWSTRING30ct12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 22.68,
+      "Line Total": 22.68
+    },
+    {
+      "#": 81,
+      "Item No.": "PAM-09553",
+      "Description": "30ct 4gal WHITE SMALL TRASH BAG 24",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 19.20,
+      "Line Total": 19.20
+    },
+    {
+      "#": 82,
+      "Item No.": "PAM-09522",
+      "Description": "BLACK 30gal DRAWSTRING 8ct 24cs",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 31.34,
+      "Line Total": 31.34
+    },
+    {
+      "#": 83,
+      "Item No.": "PAM-09523",
+      "Description": "BLACK 30gal DRAWSTRING 30ct 12cs",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 28.68,
+      "Line Total": 28.68
+    },
+    {
+      "#": 84,
+      "Item No.": "PAM-09524",
+      "Description": "BLACK 30gal DRAWSTRING 35ct 6cs",
+      "CasePk": 6,
+      "Shipped Qty": 1,
+      "Unit Price": 31.14,
+      "Line Total": 31.14
+    },
+    {
+      "#": 85,
+      "Item No.": "PAM-09525",
+      "Description": "BLACK 30gal DRAWSTRING 45ct 4cs",
+      "CasePk": 4,
+      "Shipped Qty": 1,
+      "Unit Price": 41.00,
+      "Line Total": 41.00
+    },
+    {
+      "#": 86,
+      "Item No.": "PAM-09555",
+      "Description": "BLACK 30gal DRAWSTRING 80ct 4cs",
+      "CasePk": 4,
+      "Shipped Qty": 1,
+      "Unit Price": 41.00,
+      "Line Total": 41.00
+    },
+    {
+      "#": 87,
+      "Item No.": "PAM-20003",
+      "Description": "40ct GALLON SLIDER FREEZER BAG 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 23.40,
+      "Line Total": 23.40
+    },
+    {
+      "#": 88,
+      "Item No.": "PAM-20004",
+      "Description": "40ct GALLON SLIDER FREEZER BAG 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 23.40,
+      "Line Total": 23.40
+    },
+    {
+      "#": 89,
+      "Item No.": "PAM-20022",
+      "Description": "75ct QUART DBL ZIPPER FREEZER BAG 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 23.40,
+      "Line Total": 23.40
+    },
+    {
+      "#": 90,
+      "Item No.": "PAM-20020",
+      "Description": "10ct 2 GAL. DBL ZIPPER FREEZER BAG 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 15.00,
+      "Line Total": 15.00
+    },
+    {
+      "#": 91,
+      "Item No.": "PAM-20064",
+      "Description": "40ct GALLON SLIDER STORAGE BAG 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 23.40,
+      "Line Total": 23.40
+    },
+    {
+      "#": 92,
+      "Item No.": "PAM-20068",
+      "Description": "10ct 2.5 GAL. SLIDER STORAGE BAG 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 20.28,
+      "Line Total": 20.28
+    },
+    {
+      "#": 93,
+      "Item No.": "PAM-20082",
+      "Description": "75ct QUART DBL ZIPPER STORAGE BAG 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 23.40,
+      "Line Total": 23.40
+    },
+    {
+      "#": 94,
+      "Item No.": "PAM-20084",
+      "Description": "60ct GALLON DBL ZIPPER STORAGE BAG 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 23.40,
+      "Line Total": 23.40
+    },
+    {
+      "#": 95,
+      "Item No.": "PAM-20080",
+      "Description": "100ct DBL ZIPPER SANDWICH BAG 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 16.20,
+      "Line Total": 16.20
+    },
+    {
+      "#": 96,
+      "Item No.": "PAM-20119",
+      "Description": "100ct GALLON TWIST-TIE STORAGE BAG 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 16.20,
+      "Line Total": 16.20
+    },
+    {
+      "#": 97,
+      "Item No.": "PAM-09670",
+      "Description": "20ct 42gal BLACK CONTRACTOR BAG 6",
+      "CasePk": 6,
+      "Shipped Qty": 1,
+      "Unit Price": 37.50,
+      "Line Total": 37.50
+    },
+    {
+      "#": 98,
+      "Item No.": "ABP-B0003-A",
+      "Description": "NATIONAL TALL KIT BAGS 13 GAL (20)",
+      "CasePk": 36,
+      "Shipped Qty": 1,
+      "Unit Price": 25.00,
+      "Line Total": 25.00
+    },
+    {
+      "#": 99,
+      "Item No.": "ABP-B0002-A",
+      "Description": "NATIONAL TRASH BAGS 26 GAL (15 CT)",
+      "CasePk": 36,
+      "Shipped Qty": 1,
+      "Unit Price": 25.00,
+      "Line Total": 25.00
+    },
+    {
+      "#": 100,
+      "Item No.": "ABP-B0001-A",
+      "Description": "NATIONAL BIN BAGS 10 CT. (33 GAL)",
+      "CasePk": 36,
+      "Shipped Qty": 1,
+      "Unit Price": 25.00,
+      "Line Total": 25.00
+    },
+    {
+      "#": 101,
+      "Item No.": "PAM-09671",
+      "Description": "10ct 42gal BLACK CONTRACTOR BAG 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 41.88,
+      "Line Total": 41.88
+    },
+    {
+      "#": 102,
+      "Item No.": "PAM-09672",
+      "Description": "60ct 30gal BLACK TRASH BAG 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 45.00,
+      "Line Total": 45.00
+    },
+    {
+      "#": 103,
+      "Item No.": "PAM-09565",
+      "Description": "100ct ROLL WHITE T/K TRASH w/TIE - LEMON 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 35.40,
+      "Line Total": 35.40
+    },
+    {
+      "#": 104,
+      "Item No.": "PAM-09566",
+      "Description": "100ct ROLL WHITE T/K TRASH w/TIE - LAVNDR 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 35.40,
+      "Line Total": 35.40
+    },
+    {
+      "#": 105,
+      "Item No.": "MRT-245150",
+      "Description": "FLIP15024 150ctSANDWICH24",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 15.60,
+      "Line Total": 15.60
+    },
+    {
+      "#": 106,
+      "Item No.": "MRT-245SN0",
+      "Description": "50ct ZIPLOCK SNACK BAG 24",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 15.60,
+      "Line Total": 15.60
+    },
+    {
+      "#": 107,
+      "Item No.": "MRT-245SO",
+      "Description": "50ct STORAGE BAG 24cs",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 15.60,
+      "Line Total": 15.60
+    },
+    {
+      "#": 108,
+      "Item No.": "MRT-245SN35",
+      "Description": "35ctZIPLOCK SANDWICH BG24",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 15.60,
+      "Line Total": 15.60
+    },
+    {
+      "#": 109,
+      "Item No.": "MRT-QFS20",
+      "Description": "QTZ5/A ZIPLOCK QT",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 15.60,
+      "Line Total": 15.60
+    },
+    {
+      "#": 110,
+      "Item No.": "MRT-GF515",
+      "Description": "15ct GAL ZIPLOCK BAG 24cs",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 15.60,
+      "Line Total": 15.60
+    },
+    {
+      "#": 111,
+      "Item No.": "MRT-245N",
+      "Description": "2ct 2 GAL ZIPLOCK BAG 24cs",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 15.60,
+      "Line Total": 15.60
+    },
+    {
+      "#": 112,
+      "Item No.": "MRT-29330",
+      "Description": "12ctSLIDE GL STORAGE BG24",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 15.60,
+      "Line Total": 15.60
+    },
+    {
+      "#": 113,
+      "Item No.": "MRT-29331",
+      "Description": "15ctSLIDE QT STORAGE BG24",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 15.60,
+      "Line Total": 15.60
+    },
+    {
+      "#": 114,
+      "Item No.": "ABP-B0004-C",
+      "Description": "BAG GDS FREEZER STORAGE GAL 11 CT. 30 (30)",
+      "CasePk": 30,
+      "Shipped Qty": 1,
+      "Unit Price": 26.70,
+      "Line Total": 26.70
+    },
+    {
+      "#": 115,
+      "Item No.": "ABP-B0005-C",
+      "Description": "BAG GDS FREEZER STORAGE QT 15 CT. 40 (40)",
+      "CasePk": 40,
+      "Shipped Qty": 1,
+      "Unit Price": 30.00,
+      "Line Total": 30.00
+    },
+    {
+      "#": 116,
+      "Item No.": "ABP-B0006-A",
+      "Description": "GOOD SENSE ZIPPER SANDWICH 35 CT. (48)",
+      "CasePk": 48,
+      "Shipped Qty": 1,
+      "Unit Price": 38.40,
+      "Line Total": 38.40
+    },
+    {
+      "#": 117,
+      "Item No.": "ABP-B0009-A",
+      "Description": "BAG GDS GOOD STORAGE GAL 40 CT. 24",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 24.00,
+      "Line Total": 24.00
+    },
+    {
+      "#": 118,
+      "Item No.": "ABP-B0008-A",
+      "Description": "BAG GDS SANDWICH 100 CT.",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 24.00,
+      "Line Total": 24.00
+    },
+    {
+      "#": 119,
+      "Item No.": "ABP-B0019-A",
+      "Description": "SURE TUFF 8 GAL WASTE BASKET 16 CT",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 21.36,
+      "Line Total": 21.36
+    },
+    {
+      "#": 120,
+      "Item No.": "ABP-B0011-A",
+      "Description": "SURE TUFF 13 GAL. KITCHEN 12 CT.",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 21.36,
+      "Line Total": 21.36
+    },
+    {
+      "#": 121,
+      "Item No.": "ABP-B0018-A",
+      "Description": "SURE TUFF 26 GAL TRASH 8 CT.",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 21.36,
+      "Line Total": 21.36
+    },
+    {
+      "#": 122,
+      "Item No.": "ABP-B0024-A",
+      "Description": "GS BLUE TRASH 30 GAL 10 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 2,
+      "Unit Price": 23.40,
+      "Line Total": 46.80
+    },
+    {
+      "#": 123,
+      "Item No.": "ABP-B0025-A",
+      "Description": "GS KITCHEN BLUE 13 GAL 15 CT",
+      "CasePk": 12,
+      "Shipped Qty": 2,
+      "Unit Price": 20.28,
+      "Line Total": 40.56
+    },
+    {
+      "#": 124,
+      "Item No.": "ABP-B0015-A",
+      "Description": "SURE TUFF 13 GAL. KIT. BLUE 12 CT.",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 33.36,
+      "Line Total": 33.36
+    },
+    {
+      "#": 125,
+      "Item No.": "ABP-B0017-A",
+      "Description": "SURE TUFF TRASH 30 GAL BLUE 8 CT",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 33.36,
+      "Line Total": 33.36
+    },
+    {
+      "#": 126,
+      "Item No.": "ABP-B0016-A",
+      "Description": "SURE TUFF CLEAR KITCHEN BAGS 12 CT. 24",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 33.36,
+      "Line Total": 33.36
+    },
+    {
+      "#": 127,
+      "Item No.": "ABP-B0018-A",
+      "Description": "SURE TUFF CLEAR TRASH 8 CT.",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 33.36,
+      "Line Total": 33.36
+    },
+    {
+      "#": 128,
+      "Item No.": "ABP-B0038-A",
+      "Description": "GOODSENSE TRASH BAGS 10 CT. (30 gal)",
+      "CasePk": 12,
+      "Shipped Qty": 2,
+      "Unit Price": 13.08,
+      "Line Total": 26.16
+    },
+    {
+      "#": 129,
+      "Item No.": "ABP-B0020-A",
+      "Description": "GOODSENSE HANDLES TALL KITCHEN 10 CT. 13 GAL (VANILLA)",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 24.00,
+      "Line Total": 24.00
+    },
+    {
+      "#": 130,
+      "Item No.": "ABP-B0094-A",
+      "Description": "GS HANDLES TALL KITCHEN 10 CT. 13 GAL (VANILLA)",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 14.40,
+      "Line Total": 14.40
+    },
+    {
+      "#": 131,
+      "Item No.": "ABP-B0041-A",
+      "Description": "TALL KITCHEN 13 GL ODOR ABSORBING 10 CT",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 14.28,
+      "Line Total": 14.28
+    },
+    {
+      "#": 132,
+      "Item No.": "ABP-B0062-A",
+      "Description": "GOOD N TUFF TALL TRASH 26 GALLON 11 CT.",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 16.20,
+      "Line Total": 16.20
+    },
+    {
+      "#": 133,
+      "Item No.": "ABP-B0063-A",
+      "Description": "GOOD N TUFF LG TRASH 33 GALLON 7 CT.",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 16.20,
+      "Line Total": 16.20
+    },
+    {
+      "#": 134,
+      "Item No.": "ABP-B0064-A",
+      "Description": "GOOD N TUFF LAWN 39 GALLN 6 CT.",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 16.20,
+      "Line Total": 16.20
+    },
+    {
+      "#": 135,
+      "Item No.": "ABP-B0031-A",
+      "Description": "GS TRASH W/FLIP TIES 30 GAL PP 17 CT",
+      "CasePk": 9,
+      "Shipped Qty": 2,
+      "Unit Price": 17.91,
+      "Line Total": 35.82
+    },
+    {
+      "#": 136,
+      "Item No.": "ABP-B0082-A",
+      "Description": "HANDI BAG BILINGUAL TRASH 30 GAL 10 CT 24",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 32.40,
+      "Line Total": 32.40
+    },
+    {
+      "#": 137,
+      "Item No.": "ABP-B0059-A",
+      "Description": "GOOD N TUFF 8 GAL 130 CT.",
+      "CasePk": 6,
+      "Shipped Qty": 1,
+      "Unit Price": 40.50,
+      "Line Total": 40.50
+    },
+    {
+      "#": 138,
+      "Item No.": "ABP-B0058-A",
+      "Description": "HANDI BAG DRAWSTRING 13 GALLON 50 CT",
+      "CasePk": 6,
+      "Shipped Qty": 1,
+      "Unit Price": 40.50,
+      "Line Total": 40.50
+    },
+    {
+      "#": 139,
+      "Item No.": "ABP-B0054-A",
+      "Description": "HANDI BAG 13 GAL 100 CT.",
+      "CasePk": 6,
+      "Shipped Qty": 1,
+      "Unit Price": 40.50,
+      "Line Total": 40.50
+    },
+    {
+      "#": 140,
+      "Item No.": "ABP-B0055-A",
+      "Description": "HANDI BAG 60 GAL 60 CT.",
+      "CasePk": 6,
+      "Shipped Qty": 1,
+      "Unit Price": 40.50,
+      "Line Total": 40.50
+    },
+    {
+      "#": 141,
+      "Item No.": "ABP-B0056-A",
+      "Description": "HANDI BAG LAWN & LEAF 34 CT 6",
+      "CasePk": 6,
+      "Shipped Qty": 1,
+      "Unit Price": 40.50,
+      "Line Total": 40.50
+    },
+    {
+      "#": 142,
+      "Item No.": "ABP-B0073-A",
+      "Description": "STURDI XTRA TALL KIT BG 60 CT 6/cs",
+      "CasePk": 6,
+      "Shipped Qty": 1,
+      "Unit Price": 46.45,
+      "Line Total": 46.45
+    },
+    {
+      "#": 143,
+      "Item No.": "ABP-B0174-A",
+      "Description": "STURDI XTRA TRASH BAGS 30 CT 9/cs",
+      "CasePk": 9,
+      "Shipped Qty": 1,
+      "Unit Price": 46.45,
+      "Line Total": 46.45
+    },
+    {
+      "#": 144,
+      "Item No.": "ABP-B0171-A",
+      "Description": "STURDI DS TALK KIT 13 GALLON 34 CT 9/cs",
+      "CasePk": 9,
+      "Shipped Qty": 1,
+      "Unit Price": 46.45,
+      "Line Total": 46.45
+    },
+    {
+      "#": 145,
+      "Item No.": "ABP-B0172-A",
+      "Description": "STURDI DS TRASH 30 GAL 21 CT. 9/cs",
+      "CasePk": 9,
+      "Shipped Qty": 1,
+      "Unit Price": 46.45,
+      "Line Total": 46.45
+    },
+    {
+      "#": 146,
+      "Item No.": "JMPS-025-A",
+      "Description": "FLEX STRAWS WRAPPED 150 CT.",
+      "CasePk": 48,
+      "Shipped Qty": 1,
+      "Unit Price": 48.00,
+      "Line Total": 48.00
+    },
+    {
+      "#": 147,
+      "Item No.": "PAM-09934",
+      "Description": "PLASTIC CUP 7 OZ 100pk 12/cs",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 14.28,
+      "Line Total": 14.28
+    },
+    {
+      "#": 148,
+      "Item No.": "PAM-00904",
+      "Description": "PLASTIC CUP 9 OZ 100pk 12/cs",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 14.28,
+      "Line Total": 14.28
+    },
+    {
+      "#": 149,
+      "Item No.": "PAM-00902",
+      "Description": "PLASTIC CUP 5 OZ 100pk 24/cs",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 26.40,
+      "Line Total": 26.40
+    },
+    {
+      "#": 150,
+      "Item No.": "PAM-08570",
+      "Description": "PLASTIC CUP 3 OZ (BATHROOM) 100 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 11.40,
+      "Line Total": 11.40
+    },
+    {
+      "#": 151,
+      "Item No.": "ABP-A0800-A",
+      "Description": "ROLL FOIL 12X50 SQ FT",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 37.20,
+      "Line Total": 37.20
+    },
+    {
+      "#": 152,
+      "Item No.": "ABP-A0802-A",
+      "Description": "ROLL FOIL 12X150 SQ FT",
+      "CasePk": 12,
+      "Shipped Qty": 2,
+      "Unit Price": 47.40,
+      "Line Total": 94.80
+    },
+    {
+      "#": 153,
+      "Item No.": "MRT-HS10225",
+      "Description": "25sq FT PARCHMENT PAPER24",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 20.40,
+      "Line Total": 20.40
+    },
+    {
+      "#": 154,
+      "Item No.": "MRT-29300",
+      "Description": "CL PL FOOD WRAP 100FT 24",
+      "CasePk": 24,
+      "Shipped Qty": 1,
+      "Unit Price": 15.60,
+      "Line Total": 15.60
+    },
+    {
+      "#": 155,
+      "Item No.": "PAM-09831",
+      "Description": "CUP 9 OZ RED 80 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 15.00,
+      "Line Total": 15.00
+    },
+    {
+      "#": 156,
+      "Item No.": "PAM-09832",
+      "Description": "CUP 9 OZ YELLOW 80 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 15.00,
+      "Line Total": 15.00
+    },
+    {
+      "#": 157,
+      "Item No.": "PAM-09833",
+      "Description": "CUP 9 OZ GREEN 80 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 15.00,
+      "Line Total": 15.00
+    },
+    {
+      "#": 158,
+      "Item No.": "PAM-09834",
+      "Description": "CUP 9 OZ BLUE 80 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 15.00,
+      "Line Total": 15.00
+    },
+    {
+      "#": 159,
+      "Item No.": "PAM-09835",
+      "Description": "CUP 9 OZ WHITE 80 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 15.00,
+      "Line Total": 15.00
+    },
+    {
+      "#": 160,
+      "Item No.": "PAM-09638",
+      "Description": "CUP 7 OZ RED 100 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 15.00,
+      "Line Total": 15.00
+    },
+    {
+      "#": 161,
+      "Item No.": "PAM-09639",
+      "Description": "CUP 7 OZ YELLOW 100 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 15.00,
+      "Line Total": 15.00
+    },
+    {
+      "#": 162,
+      "Item No.": "PAM-09640",
+      "Description": "CUP 7 OZ GREEN 100 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 15.00,
+      "Line Total": 15.00
+    },
+    {
+      "#": 163,
+      "Item No.": "ABP-09641",
+      "Description": "CUP 7 OZ BLUE 100 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 15.00,
+      "Line Total": 15.00
+    },
+    {
+      "#": 164,
+      "Item No.": "PAM-09642",
+      "Description": "CUP 7 OZ WHITE 100 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 15.00,
+      "Line Total": 15.00
+    },
+    {
+      "#": 165,
+      "Item No.": "PAM-08888",
+      "Description": "PAMI EAZY GRIP RED CUPS 18 OZ 50 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 41.88,
+      "Line Total": 41.88
+    },
+    {
+      "#": 166,
+      "Item No.": "PAM-08889",
+      "Description": "PAMI EAZY GRIP BLUE CUPS 18 OZ 50 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 41.88,
+      "Line Total": 41.88
+    },
+    {
+      "#": 167,
+      "Item No.": "ABP-08922",
+      "Description": "PAMI RED PARTY CUP 16 OZ 30 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 22.20,
+      "Line Total": 22.20
+    },
+    {
+      "#": 168,
+      "Item No.": "ABP-08995",
+      "Description": "PAMI RED PARTY CUPS 16 OZ 50 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 33.00,
+      "Line Total": 33.00
+    },
+    {
+      "#": 169,
+      "Item No.": "ABP-08930",
+      "Description": "PAMI BLUE PARTY CUP 16 OZ 30 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 22.20,
+      "Line Total": 22.20
+    },
+    {
+      "#": 170,
+      "Item No.": "PAM-08905",
+      "Description": "PAMI BLUE PARTY CUPS 16 OZ 50 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 33.00,
+      "Line Total": 33.00
+    },
+    {
+      "#": 171,
+      "Item No.": "ABP-08993",
+      "Description": "PAMI CLEAR PARTY CUP 16 OZ 30 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 22.20,
+      "Line Total": 22.20
+    },
+    {
+      "#": 172,
+      "Item No.": "PAM-08995",
+      "Description": "PAMI CLEAR PARTY CUPS 16 OZ 50 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 33.00,
+      "Line Total": 33.00
+    },
+    {
+      "#": 173,
+      "Item No.": "PAM-08923",
+      "Description": "PAMI WHITE PARTY CUP 16 OZ 30 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 22.20,
+      "Line Total": 22.20
+    },
+    {
+      "#": 174,
+      "Item No.": "PAM-08995",
+      "Description": "PAMI WHITE PARTY CUPS 16 OZ 50 CT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 33.00,
+      "Line Total": 33.00
+    },
+    {
+      "#": 175,
+      "Item No.": "PAM-09562",
+      "Description": "130ct ROLL WHITE T/K TRASH w/TIE - UNSCENT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 35.40,
+      "Line Total": 35.40
+    },
+    {
+      "#": 176,
+      "Item No.": "ABP-W680-A",
+      "Description": "PLATE WHITE 10\" PLASTIC 80 CT 8 (CN)",
+      "CasePk": 8,
+      "Shipped Qty": 3,
+      "Unit Price": 51.92,
+      "Line Total": 155.76
+    },
+    {
+      "#": 177,
+      "Item No.": "ABP-F00501-A",
+      "Description": "AIR FRESHENER FRENCH VANILLA 12.5 OZ",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 12.96,
+      "Line Total": 12.96
+    },
+    {
+      "#": 178,
+      "Item No.": "ABP-F00502-A",
+      "Description": "AIR FRESHENER HAWAIIAN BREEZE 12.5 OZ",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 12.96,
+      "Line Total": 12.96
+    },
+    {
+      "#": 179,
+      "Item No.": "ABP-F00503-A",
+      "Description": "AIR FRESHENER GARDENIA 12.5 OZ",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 12.96,
+      "Line Total": 12.96
+    },
+    {
+      "#": 180,
+      "Item No.": "ABP-F00504-A",
+      "Description": "AIR FRESHENER FRESH CITRUS 12.5 OZ",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 12.96,
+      "Line Total": 12.96
+    },
+    {
+      "#": 181,
+      "Item No.": "ABP-F00507-A",
+      "Description": "AIR FRESHENER WILD LAVENDER 12.5 OZ",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 12.96,
+      "Line Total": 12.96
+    },
+    {
+      "#": 182,
+      "Item No.": "ABP-F00508-A",
+      "Description": "AIR FRESHENER WHITE JASMINE 12.5 OZ",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 12.96,
+      "Line Total": 12.96
+    },
+    {
+      "#": 183,
+      "Item No.": "ABP-F0059-A",
+      "Description": "AIR FRESHENER ROSE PETAL 12.5 OZ",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 12.96,
+      "Line Total": 12.96
+    },
+    {
+      "#": 184,
+      "Item No.": "ABP-F0055-A",
+      "Description": "AIR FRESHENER ASSORTED FLAVORS (lav/rose)",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 12.96,
+      "Line Total": 12.96
+    },
+    {
+      "#": 185,
+      "Item No.": "MRT-HS92618",
+      "Description": "9oz A/F ODOR ELIMINATOR 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 10.56,
+      "Line Total": 10.56
+    },
+    {
+      "#": 186,
+      "Item No.": "MRT-GS90488",
+      "Description": "9oz A/F SPRG FRSH ODR NEUT 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 10.56,
+      "Line Total": 10.56
+    },
+    {
+      "#": 187,
+      "Item No.": "MRT-HS10435",
+      "Description": "9oz A/F HAWAIIAN BREEZE 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 10.56,
+      "Line Total": 10.56
+    },
+    {
+      "#": 188,
+      "Item No.": "MRT-HS10070",
+      "Description": "9oz A/F APPLE & CINNAMON 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 10.56,
+      "Line Total": 10.56
+    },
+    {
+      "#": 189,
+      "Item No.": "MRT-XT752",
+      "Description": "5zAUTO/SPRAY A/F COTN LINEN 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 15.60,
+      "Line Total": 15.60
+    },
+    {
+      "#": 190,
+      "Item No.": "MRT-XT354",
+      "Description": "5ZAUTO/SPRAY A/F BLOSSOM 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 15.60,
+      "Line Total": 15.60
+    },
+    {
+      "#": 191,
+      "Item No.": "MRT-XT374",
+      "Description": "5zAUTO/SPRAY A/F LAVENDER 12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 15.60,
+      "Line Total": 15.60
+    },
+    {
+      "#": 192,
+      "Item No.": "MRT-XT726",
+      "Description": "5zAUTO/SPRAY A/F CLYP FRESH12",
+      "CasePk": 12,
+      "Shipped Qty": 1,
+      "Unit Price": 15.60,
+      "Line Total": 15.60
+    },
+    {
+      "#": 193,
+      "Item No.": "PAM-3151-12",
+      "Description": "8oz SANITIZER CLASSIC 12",
+      "CasePk": 12,
+      "Shipped Qty": 10,
+      "Unit Price": 14.28,
+      "Line Total": 142.80
+    }
+  ],
+  "Total": {
+    "Cases": 214,
+    "Amount": "$7,509.28"
+  },
+  "Agent": {
+    "Report Create Date": "09-09-2024",
+    "Time": "10:44AM"
+  }
+}

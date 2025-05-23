@@ -40,6 +40,9 @@ namespace aiPriceGuard.Models.Models
         [DisplayName(Name = "Fax")]
         public string? Fax { get; set; }
         [HiddenOnRender]
+        [NotMapped]
+        public string? Website { get; set; }
+        [HiddenOnRender]
         public string? crtBy { get; set; }
         [HiddenOnRender]
         public DateTime? crtDate { get; set; }
@@ -47,9 +50,14 @@ namespace aiPriceGuard.Models.Models
         public string? modBy { get; set; }
         [HiddenOnRender]
         public DateTime? modDate { get; set; }
+        [HiddenOnRender]
         public int comID { get; set; }
+        [HiddenOnRender]
+        public string? OCRPrompt { get; set; }
 
-       
+
+
+
 
     }
 }

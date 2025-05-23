@@ -1,12 +1,12 @@
-﻿using eMaestroD.Api.Data;
-using eMaestroD.Models.Models;
+﻿using aiPriceGuard.Api.Data;
+using aiPriceGuard.Models.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using eMaestroD.DataAccess.DataSet;
+using aiPriceGuard.DataAccess.DataSet;
 
-namespace eMaestroD.Api.Controllers
+namespace aiPriceGuard.Api.Controllers
 {
 
     [ApiController]

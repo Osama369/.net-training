@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { FileVM } from '../Models/file-vm.model';
 import { Observable,of } from 'rxjs';
 import { GenericService } from '../../Shared/Services/generic.service';
+import { RenderJson } from '../Models/render-json';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,8 @@ import { GenericService } from '../../Shared/Services/generic.service';
 export class FileUploadService {
   
   private BaseUrl = environment.BaseApiUrl +'/FileUpload';
+  private BaseUrlForInvoice = environment.BaseApiUrl +'/Invoice';
+
   private form:FormData=new FormData();
   private comID:any = localStorage.getItem('comID'); 
   constructor(private http:HttpClient,private genericService:GenericService) { }
@@ -24,13 +27,15 @@ export class FileUploadService {
       this.form.append('comID',this.comID);
       this.form.append('supplierName',suppName);
       
-
       return this.http.post<FileVM>(this.BaseUrl+'/UpsertFile',this.form);   
   }
   GetAllFiles():Observable<any>{
       return this.http.get<any>(this.BaseUrl+'/GetAllFiles/'+this.comID);    
   }
-  ProcessFile(FileID:any){
-    return this.http.get<any>(this.BaseUrl+'/ProcessFile/'+FileID+'/'+this.comID);
+  ProcessFile(FileID:any,supplierID:any){
+    return this.http.get<RenderJson>(this.BaseUrlForInvoice+'/ProcessFile/'+FileID+'/'+this.comID+'/'+supplierID);
+  }
+  Save(jsonObj:any){
+    return this.http.post<RenderJson>(this.BaseUrlForInvoice+'/Save',jsonObj);
   }
 }

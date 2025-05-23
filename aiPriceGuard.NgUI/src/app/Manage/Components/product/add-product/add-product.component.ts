@@ -88,7 +88,29 @@ export class AddProductComponent {
     this.route.params.subscribe(params1 => {
       this.EditProdID = params1['id'];
    });
-   
+   this.productlist[0].prodCode = 'P-' + '0001';
+    // let prodctList =this.sharedService.GetAllProducts();
+    let prodctDt =await lastValueFrom(this.productService.GetAllProducts())
+  
+    let prodctList = (prodctDt as { [key: string]: any })["enttityDataSource"];
+  
+if(prodctList!=undefined){
+    if(this.productlist && this.productlist.length >0){
+      
+      let lastProduct = prodctList[this.productlist.length-1];
+      console.log('prodttt:',lastProduct);
+      let currentProdCode = lastProduct.prodCode;
+      const numericPart = parseInt(currentProdCode.slice(2), 10); // Remove the "P-" part and convert to number
+      const increamentedId =numericPart+1;
+
+      const incrementedId = numericPart + 1;
+      // this.productlist[0].prodCode = 'P-'+ prodctList.toString().padStart(4,'0');
+      const formattedId = 'P-'+incrementedId.toString().padStart(4, '0');
+    
+      this.productlist[0].prodCode =  formattedId;
+      console.log('ProdCode:',this.productlist[0].prodCode );
+    }
+  }
     this.selectedType = this.type[0];
     this.filterType = this.type;
     await this.fetchAllDropdownData();

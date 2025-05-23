@@ -36,7 +36,8 @@ export const APP_ROUTES = {
     creditCard: 'Manage/CreditCard',
     companycse : '/Manage/CompanyCSE',
     bulkStockUpdate: 'Manage/bulkStockUpdate',
-    Files:'Manage/Files'
+    Files:'Manage/Files',
+    Invoice:'Manage/Invoice'
   },
 
   invoices: {

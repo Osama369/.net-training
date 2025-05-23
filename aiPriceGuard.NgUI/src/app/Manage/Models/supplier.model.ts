@@ -8,7 +8,7 @@ export class Supplier {
     PostCode: string | null;
     Phone: string | null;
     Fax: string | null;
-  
+    OCRPrompt:string|null;
     // Optional properties or hidden fields can be added here if necessary
     comID: string;
 }

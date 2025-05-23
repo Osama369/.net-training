@@ -36,6 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\aiPriceGuard.Api.Services\aiPriceGuard.Api.Services.csproj" />
     <ProjectReference Include="..\aiPriceGuard.DataAccess\aiPriceGuard.DataAccess.csproj" />
     <ProjectReference Include="..\aiPriceGuard.Shared\aiPriceGuard.Shared.csproj" />
     <ProjectReference Include="..\Models\aiPriceGuard.Models.csproj" />

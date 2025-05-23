@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace eMaestroD.Api.Hub
+namespace aiPriceGuard.Api.Hub
 {
     public class UserNotificationHub 
     {

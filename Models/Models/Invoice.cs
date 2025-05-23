@@ -1,5 +1,8 @@
-﻿using System;
+﻿using aiPriceGuard.Models.VMModels;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -9,72 +12,69 @@ namespace aiPriceGuard.Models.Models
 {
     public class Invoice
     {
-        public int InvoiceID { get; set; }
-        public int? TxID { get; set; }
-        public int? RelTxID { get; set; }
-        public int? COAID { get; set; }
-        public int? RelCOAID { get; set; }
-        public int? PostTypeID { get; set; }
-        public int? JournalID { get; set; }
-        public int? TxTypeID { get; set; }
-        public int? DepositID { get; set; }
-        public int? SalesManID { get; set; }
-        public int? BookerID { get; set; }
-        public int? LocID { get; set; }
-        public int? EmpID { get; set; }
-        public int? CstID { get; set; }
-        public int? VendID { get; set; }
-        public int? ProdID { get; set; }
-        public decimal? Qty { get; set; }
-        public decimal? QtyBal { get; set; }
-        public decimal? UnitPrice { get; set; }
-        public decimal? BonusQty { get; set; }
-        public decimal? BonusSum { get; set; }
-        public decimal? InstituteOffer { get; set; }
-        public decimal? CreditOffer { get; set; }
-        public decimal? TradeOffer { get; set; }
-        public decimal? AcctBal { get; set; }
-        public decimal? BalSum { get; set; }
-        public decimal? CreditSum { get; set; }
-        public decimal? DebitSum { get; set; }
-        public decimal? DiscountSum { get; set; }
-        public decimal? PaidSum { get; set; }
-        public decimal? TaxSum { get; set; }
-        public decimal? UnusedSum { get; set; }
-        public decimal? VoidedSum { get; set; }
-        public DateTime? DtTx { get; set; }
-        public DateTime? DtDue { get; set; }
-        public string GlComments { get; set; }
-        public bool? IsCleared { get; set; }
-        public bool? IsDeposited { get; set; }
-        public bool? IsPaid { get; set; }
-        public bool? IsVoided { get; set; }
-        public string CheckName { get; set; }
-        public string BatchNo { get; set; }
-        public DateTime? Expiry { get; set; }
-        public decimal? Claim { get; set; }
-        public string CheckAdd { get; set; }
-        public string CheckNo { get; set; }
-        public string VoucherID { get; set; }
-        public string VoucherNo { get; set; }
-        public bool? Active { get; set; }
-        public string CrtBy { get; set; }
-        public DateTime? CrtDate { get; set; }
-        public string ModBy { get; set; }
-        public DateTime? ModDate { get; set; }
-        public int? ComID { get; set; }
-        public string AcctNo { get; set; }
-        public string RelAcctNo { get; set; }
-        public int ProdBCID { get; set; }
-        public decimal? ExtraDiscountSum { get; set; }
-        public decimal? RebateSum { get; set; }
-        public bool? IsConverted { get; set; }
-        public decimal? Mrp { get; set; }
-        public decimal? SellPrice { get; set; }
-        public decimal? LastCost { get; set; }
+        [Key]
+        public int InvoiceId { get; set; }
+        [NotMapped]
+        public List<InvoiceDetail> LineItems { get; set; }
+        [NotMapped]
+        public List<InvoiceDetail> Items { get; set; }
 
         [NotMapped]
-        public List<Product> Products { get; set; }
+        public List<InvoiceDetail> Summary { get; set; }
+        [NotMapped]
+        public DeliveryAddress? delAddress { get; set; }
+        [NotMapped]
+        public List<InvoiceDetail>? ProductDetails { get; set; }
+        [NotMapped]
+        public Supplier? Supplier { get; set; }
+        //[NotMapped]
+        public string? OrderNo { get; set; }         // Nullable, varchar(15)
+        public DateTime? OrderDate { get; set; }    // Nullable datetime
+        public int? comID { get; set; }             // Nullable
+        public int? SupplierFileId { get; set; }    // Nullable
+        public int? SupplierId { get; set; }        // Nullable
+        public string? InvFileUrl { get; set; }      // Nullable, varchar(500)
+        public DateTime? CreatedOn { get; set; }    // Nullable datetime
+        public string? CreatedBy { get; set; }       // Nullable, varchar(50)
+        public decimal? InvoiceTotal { get; set; }  // Nullable decimal
+
+        public string? Fax { get; set; }
+        public string? CustomerCode { get; set; }    // Nullable, varchar(20)
+        public string? DeliveryNote { get; set; }   // Nullable string
+        public DateTime? DeliveryDate { get; set; } // Nullable DateTime
+        public string? Tel { get; set; }         // Nullable string
+        public string? Customer_Ref_No { get; set; } // Nullable string
+        public string? InvNumber { get; set; }       // Nullable, varchar(20)
+        public DateTime? InvDate { get; set; }           // Nullable, int (can be used for a date stored as int)
+        //public DateTime? InvDate { get; set; }
+        public string? PhoneNo { get; set; }         // Nullable, varchar(20)
+        public string? CustomerRefNo { get; set; }   // Nullable, varchar(100)
+        public string? DelNumber { get; set; }       // Nullable, varchar(15)
+        public string? DelNote { get; set; }         // Nullable, varchar(50)
+        public DateTime? DelDate { get; set; }      // Nullable datetime
+        public string? DelAddressLine1 { get; set; } // Nullable, varchar(150)
+        public string? DelAddressLine2 { get; set; } // Nullable, varchar(150)
+        public string? DelAddressLine3 { get; set; } // Nullable, varchar(150)
+        public string? DelSuburb { get; set; }       // Nullable, varchar(50)
+        public string? DelState { get; set; }        // Nullable, varchar(10)
+        public string? DelPostcode { get; set; }     // Nullable, varchar(8)
+        public string? Remarks { get; set; }         // Nullable, varchar(255)
+        public int? SalesOrderNo { get; set; }  // Nullable integer
+        //public int? PurchOrderNo { get; set; }  // Nullable integer
+        public string? Terms { get; set; }      // Nullable string
+        public string? Rep { get; set; }        // Nullable string
+        public DateTime? ShippedOn { get; set; } // Nullable DateTime
+        public string? ShipVia { get; set; }    // Nullable string
+        public string? FreightOnBoard { get; set; } // Nullable string
+        public string? TotalCasesPallets { get; set; } // Nullable string
+        public int? purchaseOrderNo { get; set; }
+        public string? CompanyName { get; set; }  // Nullable string
+        public string? DeliveryAddress { get; set; }  // Nullable string
+    
+      
+        //[NotMapped]
+        //public JObject DeliveryAddress { get; set; }
+
 
     }
 }

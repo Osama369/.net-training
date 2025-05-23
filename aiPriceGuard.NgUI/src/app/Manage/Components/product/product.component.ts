@@ -81,7 +81,7 @@ export class ProductComponent implements OnInit {
           }
           this.cols = (prd as { [key: string]: any })["entityModel"];
 
-
+          console.log('productsList:',this.products);
           this.loading = false;
       });
 
@@ -100,7 +100,7 @@ export class ProductComponent implements OnInit {
 
 
   handleChildData(data: any) {
-    console.log(data)
+    console.log('childDT:',data)
       if(data.type == 'add')
       {
      
@@ -120,8 +120,9 @@ export class ProductComponent implements OnInit {
       {
         // console.log('id:',data.value.prodID);
         this.productService.deleteProduct(data.value.prodID).subscribe(x=>{
-          this.products = this.products.filter(x=>x.prodID
-             == data.value.prodID)
+         
+          this.products = this.products.filter(y=>y.prodID
+             != x.prodID)
           this.sharedDataResolver.DeleteProduct(data.value);
         });
         // this.authService.checkPermission('ProductsDelete').subscribe(x=>{

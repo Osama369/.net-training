@@ -12,7 +12,7 @@ import { SuppliersComponent } from './Components/suppliers/suppliers.component';
 import { ProductComponent } from './Components/product/product.component';
 import { AddProductComponent } from './Components/Product/add-product/add-product.component';
 import { FileUploadComponent } from './Components/file-upload/file-upload.component';
-
+import { RenderInvoiceComponent } from './Components/render-invoice/render-invoice.component';
 
 
 const routes: Routes = [
@@ -22,7 +22,9 @@ const routes: Routes = [
       { path: 'Products', component: ProductComponent  },
       { path: 'AddProducts', component: AddProductComponent  },
       { path: 'AddProducts/:id', component: AddProductComponent  },
-      { path:'Files',component: FileUploadComponent }
+      { path:'Files',component: FileUploadComponent },
+      { path:'Invoice',component: RenderInvoiceComponent}
+
 
     ];
 

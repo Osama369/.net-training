@@ -4,6 +4,7 @@ import { SharedDataService } from '../../../../Shared/Services/shared-data.servi
 import { SupplierService } from '../../../Services/supplier.service';
 import { lastValueFrom } from 'rxjs';
 import { FileUploadService } from '../../../Services/file-upload.service';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -26,7 +27,7 @@ FormValidate:boolean = false;
 @Input() supplierData:any;
 @ViewChild('file') file:any;
 constructor(private sharedService:SharedDataService,private supplierService:SupplierService,
-            private fileService:FileUploadService
+            private fileService:FileUploadService,private toastr: ToastrService
 ){}
 async ngOnInit() {
 
@@ -69,8 +70,9 @@ async ngOnInit() {
 
         // console.log('SupplierID:',this.SelectedSupplier.SupplierId);
         const response =await lastValueFrom(this.fileService.UpsertFile(this.file,this.SelectedSupplier.SupplierId,this.SelectedSupplier.SupplierName));
-        console.log('response:',response);
+        // console.log('response:',response);
         if(response){
+          this.toastr.success('File Added Successfully.');
         this.sharedService.UpsertFile(response);
             this.dataEvent.emit({flag:false,data:undefined});
         }

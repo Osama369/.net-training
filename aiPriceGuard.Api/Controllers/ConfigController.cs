@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 
-namespace eMaestroD.Api.Controllers
+namespace aiPriceGuard.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
