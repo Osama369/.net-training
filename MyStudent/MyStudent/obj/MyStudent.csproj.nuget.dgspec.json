@@ -1,0 +1,284 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent\\MyStudent.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.DataAccess\\MyStudent.DataAccess.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.DataAccess\\MyStudent.DataAccess.csproj",
+        "projectName": "MyStudent.DataAccess",
+        "projectPath": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.DataAccess\\MyStudent.DataAccess.csproj",
+        "packagesPath": "C:\\Users\\IT Support\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.DataAccess\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\IT Support\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.Models\\MyStudent.Models.csproj": {
+                "projectPath": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.Models\\MyStudent.Models.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[6.0.2, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.428\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.Models\\MyStudent.Models.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.Models\\MyStudent.Models.csproj",
+        "projectName": "MyStudent.Models",
+        "projectPath": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.Models\\MyStudent.Models.csproj",
+        "packagesPath": "C:\\Users\\IT Support\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.Models\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\IT Support\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.428\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.Services\\MyStudent.Services.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.Services\\MyStudent.Services.csproj",
+        "projectName": "MyStudent.Services",
+        "projectPath": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.Services\\MyStudent.Services.csproj",
+        "packagesPath": "C:\\Users\\IT Support\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.Services\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\IT Support\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.DataAccess\\MyStudent.DataAccess.csproj": {
+                "projectPath": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.DataAccess\\MyStudent.DataAccess.csproj"
+              },
+              "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.Models\\MyStudent.Models.csproj": {
+                "projectPath": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.Models\\MyStudent.Models.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.428\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent\\MyStudent.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent\\MyStudent.csproj",
+        "projectName": "MyStudent",
+        "projectPath": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent\\MyStudent.csproj",
+        "packagesPath": "C:\\Users\\IT Support\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\IT Support\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.DataAccess\\MyStudent.DataAccess.csproj": {
+                "projectPath": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.DataAccess\\MyStudent.DataAccess.csproj"
+              },
+              "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.Models\\MyStudent.Models.csproj": {
+                "projectPath": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.Models\\MyStudent.Models.csproj"
+              },
+              "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.Services\\MyStudent.Services.csproj": {
+                "projectPath": "C:\\Users\\IT Support\\source\\repos\\MyStudent\\MyStudent.Services\\MyStudent.Services.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[6.0.2, )"
+            },
+            "Microsoft.VisualStudio.Web.CodeGeneration.Design": {
+              "target": "Package",
+              "version": "[6.0.18, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.6.2, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.428\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

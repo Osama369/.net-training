@@ -1,0 +1,17 @@
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\bin\Debug\net6.0\MyStudent.Services.deps.json
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\bin\Debug\net6.0\MyStudent.Services.dll
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\bin\Debug\net6.0\MyStudent.Services.pdb
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\bin\Debug\net6.0\MyStudent.DataAccess.dll
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\bin\Debug\net6.0\MyStudent.Models.dll
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\bin\Debug\net6.0\MyStudent.DataAccess.pdb
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\bin\Debug\net6.0\MyStudent.Models.pdb
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\obj\Debug\net6.0\MyStudent.Services.csproj.AssemblyReference.cache
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\obj\Debug\net6.0\MyStudent.Services.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\obj\Debug\net6.0\MyStudent.Services.AssemblyInfoInputs.cache
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\obj\Debug\net6.0\MyStudent.Services.AssemblyInfo.cs
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\obj\Debug\net6.0\MyStudent.Services.csproj.CoreCompileInputs.cache
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\obj\Debug\net6.0\MyStudent.Services.csproj.CopyComplete
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\obj\Debug\net6.0\MyStudent.Services.dll
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\obj\Debug\net6.0\refint\MyStudent.Services.dll
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\obj\Debug\net6.0\MyStudent.Services.pdb
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Services\obj\Debug\net6.0\ref\MyStudent.Services.dll

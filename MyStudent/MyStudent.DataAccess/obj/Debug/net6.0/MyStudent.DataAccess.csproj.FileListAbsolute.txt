@@ -1,0 +1,15 @@
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.DataAccess\bin\Debug\net6.0\MyStudent.DataAccess.deps.json
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.DataAccess\bin\Debug\net6.0\MyStudent.DataAccess.dll
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.DataAccess\bin\Debug\net6.0\MyStudent.DataAccess.pdb
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.DataAccess\bin\Debug\net6.0\MyStudent.Models.dll
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.DataAccess\bin\Debug\net6.0\MyStudent.Models.pdb
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.DataAccess\obj\Debug\net6.0\MyStudent.DataAccess.csproj.AssemblyReference.cache
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.DataAccess\obj\Debug\net6.0\MyStudent.DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.DataAccess\obj\Debug\net6.0\MyStudent.DataAccess.AssemblyInfoInputs.cache
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.DataAccess\obj\Debug\net6.0\MyStudent.DataAccess.AssemblyInfo.cs
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.DataAccess\obj\Debug\net6.0\MyStudent.DataAccess.csproj.CoreCompileInputs.cache
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.DataAccess\obj\Debug\net6.0\MyStudent.DataAccess.csproj.CopyComplete
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.DataAccess\obj\Debug\net6.0\MyStudent.DataAccess.dll
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.DataAccess\obj\Debug\net6.0\refint\MyStudent.DataAccess.dll
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.DataAccess\obj\Debug\net6.0\MyStudent.DataAccess.pdb
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.DataAccess\obj\Debug\net6.0\ref\MyStudent.DataAccess.dll

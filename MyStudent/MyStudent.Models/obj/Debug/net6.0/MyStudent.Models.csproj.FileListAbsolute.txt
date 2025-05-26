@@ -1,0 +1,12 @@
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Models\bin\Debug\net6.0\MyStudent.Models.deps.json
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Models\bin\Debug\net6.0\MyStudent.Models.dll
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Models\bin\Debug\net6.0\MyStudent.Models.pdb
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Models\obj\Debug\net6.0\MyStudent.Models.csproj.AssemblyReference.cache
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Models\obj\Debug\net6.0\MyStudent.Models.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Models\obj\Debug\net6.0\MyStudent.Models.AssemblyInfoInputs.cache
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Models\obj\Debug\net6.0\MyStudent.Models.AssemblyInfo.cs
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Models\obj\Debug\net6.0\MyStudent.Models.csproj.CoreCompileInputs.cache
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Models\obj\Debug\net6.0\MyStudent.Models.dll
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Models\obj\Debug\net6.0\refint\MyStudent.Models.dll
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Models\obj\Debug\net6.0\MyStudent.Models.pdb
+C:\Users\IT Support\source\repos\MyStudent\MyStudent.Models\obj\Debug\net6.0\ref\MyStudent.Models.dll
