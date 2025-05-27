@@ -13,13 +13,17 @@ namespace MyStudent.Models.Models
         public string StudentName { get; set; }
         public string RollNumber { get; set; }
         // FK of classID
-        public int? ClassID { get; set; }    
+        public int? ClassID { get; set; } // FK for class 
         // these fileds not be in database 
 
-        [NotMapped]
-        public Class Classes { get; set; }
-        [NotMapped]
-        public List<Course> Courses { get; set; }
+        public int? CourseID { get; set; }  // FK for course
+
+        public Class? Classes { get; set; } 
+        
+        public Course? Courses { get; set; }
+
+      //  [NotMapped]
+       // public List<Course>? Courses { get; set; }
 
 
     }

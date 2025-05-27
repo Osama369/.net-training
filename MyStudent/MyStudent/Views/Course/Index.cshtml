@@ -1,0 +1,44 @@
+﻿@model List<MyStudent.Models.Models.Course>
+
+@{
+    ViewData["Title"] = "Courses List";
+}
+
+<h2>Courses</h2>
+
+<p>
+    <a asp-action="Add" class="btn btn-success">Add New Course</a>
+</p>
+
+@if (Model == null || !Model.Any())
+{
+    <p class="text-danger">No courses found.</p>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Course ID</th>
+                <th>Course Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var course in Model)
+            {
+                <tr>
+                    <td>@course.CourseID</td>
+                    <td>@course.CourseTile</td>
+                    <td>@course.CourseDescription</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@course.CourseID" class="btn btn-sm btn-primary">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@course.CourseID" class="btn btn-sm btn-danger">Delete</a>
+                        <a asp-action="Details" asp-route-id="@course.CourseID" class="btn btn-sm btn-info">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

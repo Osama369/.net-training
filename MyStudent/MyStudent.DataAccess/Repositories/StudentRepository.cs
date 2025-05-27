@@ -1,4 +1,5 @@
-﻿using MyStudent.DataAccess.DbSet;
+﻿using Microsoft.EntityFrameworkCore;
+using MyStudent.DataAccess.DbSet;
 using MyStudent.DataAccess.IRepositories;
 using MyStudent.Models.Models;
 using System;
@@ -44,10 +45,10 @@ namespace MyStudent.DataAccess.Repositories
             return _dbcontext.Students.FirstOrDefault(s => s.StudentID == stuentID);
         }
 
-        public List<Student> GetAll()
+        public async Task<List<Student>> GetAllAsync()
         {
-            return _dbcontext.Students.ToList();
-            
+            return await _dbcontext.Students.Include(s => s.Classes).ToListAsync();
+
         }
 
         public async Task Remove(Student student)

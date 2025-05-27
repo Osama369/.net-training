@@ -12,11 +12,14 @@ namespace MyStudent.Models.Models
     {
         [Key]
         public int ClassID { get; set; }
-        public string ClassName { get; set; }
+
+        [Required(ErrorMessage = "Class name is required")]
+        [StringLength(100)]
+        public string? ClassName { get; set; }
 
         // list of students
         [NotMapped]
-        public List<Student> Students { get; set; }
+        public List<Student>? Students { get; set; }
 
     }
 }

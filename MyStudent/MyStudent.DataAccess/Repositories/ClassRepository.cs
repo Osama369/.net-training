@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace MyStudent.DataAccess.Repositories
 {
-    internal class ClassRepository : IClassRepository
+    public class ClassRepository : IClassRepository
     {
         private readonly MyDbContext _dbcontext;
 
@@ -39,7 +39,7 @@ namespace MyStudent.DataAccess.Repositories
               return new Class();
         }
 
-        public List<Class> GetAll()
+        public async Task<List<Class>> GetAllClassesAsync()
         {
             return _dbcontext.Classes.ToList();
             

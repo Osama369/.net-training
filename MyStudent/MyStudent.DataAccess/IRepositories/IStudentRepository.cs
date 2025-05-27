@@ -18,6 +18,6 @@ namespace MyStudent.DataAccess.IRepositories
         Task Remove(Student student);
         Task<Student> Update(Student student); // return student 
         Task<Student> FindByIdAsync(int studentID);
-        List<Student> GetAll();  // getall students toList krke denge 
+        Task<List<Student>> GetAllAsync();  // getall students toList krke denge 
     }
 }

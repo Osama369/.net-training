@@ -14,10 +14,14 @@ namespace MyStudent.Services.Services
     {
         // fields of interfaces 
         private readonly IStudentRepository _studentRepositoty;
+        private readonly IClassRepository _classRepositoty;
+        private readonly ICourseRepository _courseRepository;
         
-        public StudentServices(IStudentRepository _studentRepository)
+        public StudentServices(IStudentRepository _studentRepository, IClassRepository _classRepositoty , ICourseRepository _courseRepository)
         {
             this._studentRepositoty = _studentRepository;
+            this._classRepositoty = _classRepositoty;
+            this._courseRepository= _courseRepository;
         }
         public async Task<Student> AddStudentAsync(Student student)
         {
@@ -27,7 +31,18 @@ namespace MyStudent.Services.Services
 
         public async Task<List<Student>> GetAllStudentsAsync()
         {
-            return await Task.FromResult(_studentRepositoty.GetAll());
+            var std = await _studentRepositoty.GetAllAsync();
+            var cls = await _classRepositoty.GetAllClassesAsync();
+            var crs = await _courseRepository.GetAllCoursesAsync();
+
+            foreach (var student in std)
+            {
+                student.Classes = cls.FirstOrDefault(c => c.ClassID == student.ClassID);
+                student.Courses = crs.FirstOrDefault(r => r.CourseID == student.CourseID);
+              
+            }
+            
+            return std;
 
         }
 

@@ -21,8 +21,12 @@ builder.Services.AddDbContext<MyDbContext>(options =>
 
 // add here services using DI 
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<IClassRepository, ClassRepository>();
+builder.Services.AddScoped<ICourseRepository , CourseRepository>();
 
 builder.Services.AddScoped<IStudentService, StudentServices>();
+builder.Services.AddScoped<IClassService, ClassService>();
+builder.Services.AddScoped<ICourseService , CourseService>();
 
 var app = builder.Build();
 

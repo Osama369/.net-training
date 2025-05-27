@@ -13,6 +13,6 @@ namespace MyStudent.DataAccess.IRepositories
         Task<Class> UpdateAsync(Class cls);
         Task RemoveAsync(Class cls);
         Task<Class> FindByIdAsync(int id);
-        List<Class> GetAll();
+       Task<List<Class>> GetAllClassesAsync();
     }
 }
