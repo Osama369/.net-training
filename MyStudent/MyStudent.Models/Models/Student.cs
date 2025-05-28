@@ -22,8 +22,13 @@ namespace MyStudent.Models.Models
         
         public Course? Courses { get; set; }
 
-      //  [NotMapped]
-       // public List<Course>? Courses { get; set; }
+        // ✅ New: Navigation to multiple courses through StudentCourse
+        [NotMapped]
+        public List<int>? SelectedCourseIds { get; set; } // For view binding
+
+
+        [NotMapped]
+        public List<Course>? Course { get; set; }
 
 
     }

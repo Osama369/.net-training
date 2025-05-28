@@ -18,8 +18,8 @@ namespace MyStudent.Models.Models
         public string? ClassName { get; set; }
 
         // list of students
-        [NotMapped]
-        public List<Student>? Students { get; set; }
+     //   [NotMapped]
+      //  public List<Student>? Students { get; set; }
 
     }
 }

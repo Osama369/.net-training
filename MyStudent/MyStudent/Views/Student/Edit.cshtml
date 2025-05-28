@@ -1,0 +1,34 @@
+﻿@model MyStudent.Models.Models.Student
+
+<form asp-action="Edit">
+    <input type="hidden" asp-for="StudentID" />
+
+    <div class="form-group">
+        <label asp-for="StudentName"></label>
+        <input asp-for="StudentName" class="form-control" />
+        <span asp-validation-for="StudentName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="RollNumber"></label>
+        <input asp-for="RollNumber" class="form-control" />
+        <span asp-validation-for="RollNumber" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ClassID">Class</label>
+        <select asp-for="ClassID" class="form-control" asp-items="ViewBag.ClassesList">
+            <option value="">-- Select Class --</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CourseID">Course</label>
+        <select asp-for="CourseID" class="form-control" asp-items="ViewBag.CoursesList">
+            <option value="">-- Select Course --</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

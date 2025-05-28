@@ -13,6 +13,7 @@
             <th>Name</th>
             <th>RollNumber</th>
             <th>Class</th>
+            <th>Course</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -26,6 +27,7 @@
                 <td>@student.StudentName</td>
                 <td>@student.RollNumber</td>
                 <td>@student.Classes?.ClassName</td>
+                <td>@student.Courses?.CourseTile</td>
                 <td>
                     <a asp-action="Details" asp-route-id="@student.StudentID" class="btn btn-info btn-sm">Details</a>
                     <a asp-action="Edit" asp-route-id="@student.StudentID" class="btn btn-warning btn-sm">Edit</a>

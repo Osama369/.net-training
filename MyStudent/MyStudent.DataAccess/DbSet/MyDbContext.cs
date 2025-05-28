@@ -20,6 +20,8 @@ namespace MyStudent.DataAccess.DbSet
 
         public DbSet<Class> Classes { get; set; }
 
+       public DbSet<StudentCourse> StudentCourses { get; set; }
+
     }
 
     // tables name here 

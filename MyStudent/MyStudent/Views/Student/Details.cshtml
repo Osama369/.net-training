@@ -1,0 +1,9 @@
+﻿@model MyStudent.Models.Models.Student
+
+<h2>Student Details</h2>
+<p><strong>ID:</strong> @Model.StudentID</p>
+<p><strong>Name:</strong> @Model.StudentName</p>
+<p><strong>Class:</strong> @Model.Classes?.ClassName</p>
+<p><strong>Course:</strong> @Model.Courses?.CourseTile</p>
+
+<a asp-action="Index" class="btn btn-secondary">Back to List</a>

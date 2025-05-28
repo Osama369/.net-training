@@ -48,11 +48,30 @@ namespace MyStudent.Services.Services
 
         public async Task<Student> GetStudentByIdAsync(int studentId)
         {
-          return  await _studentRepositoty.FindByIdAsync(studentId);
+            var student = await _studentRepositoty.FindByIdAsync(studentId);
+
+            if (student != null)
+            {
+                // Use the foreign key IDs (ClassID and CourseID), not navigation properties
+                if (student.ClassID.HasValue)
+                    student.Classes = await _classRepositoty.FindByIdAsync(student.ClassID.Value);
+                else
+                    student.Classes = null;
+
+                if (student.CourseID.HasValue)
+                    student.Courses = await _courseRepository.FindByIdAsync(student.CourseID.Value);
+                else
+                    student.Courses = null;
+            }
+
+            return student;
         }
+
+
 
         public Student GetStudentByIdOrName(int studentId)
         {
+
             return _studentRepositoty.FirstOrDefaultByStudentId(studentId);
         }
 
