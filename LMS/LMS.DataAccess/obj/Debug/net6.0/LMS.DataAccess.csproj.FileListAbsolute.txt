@@ -1,0 +1,15 @@
+C:\Users\IT Support\source\repos\LMS\LMS.DataAccess\bin\Debug\net6.0\LMS.DataAccess.deps.json
+C:\Users\IT Support\source\repos\LMS\LMS.DataAccess\bin\Debug\net6.0\LMS.DataAccess.dll
+C:\Users\IT Support\source\repos\LMS\LMS.DataAccess\bin\Debug\net6.0\LMS.DataAccess.pdb
+C:\Users\IT Support\source\repos\LMS\LMS.DataAccess\bin\Debug\net6.0\LMS.Models.dll
+C:\Users\IT Support\source\repos\LMS\LMS.DataAccess\bin\Debug\net6.0\LMS.Models.pdb
+C:\Users\IT Support\source\repos\LMS\LMS.DataAccess\obj\Debug\net6.0\LMS.DataAccess.csproj.AssemblyReference.cache
+C:\Users\IT Support\source\repos\LMS\LMS.DataAccess\obj\Debug\net6.0\LMS.DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\IT Support\source\repos\LMS\LMS.DataAccess\obj\Debug\net6.0\LMS.DataAccess.AssemblyInfoInputs.cache
+C:\Users\IT Support\source\repos\LMS\LMS.DataAccess\obj\Debug\net6.0\LMS.DataAccess.AssemblyInfo.cs
+C:\Users\IT Support\source\repos\LMS\LMS.DataAccess\obj\Debug\net6.0\LMS.DataAccess.csproj.CoreCompileInputs.cache
+C:\Users\IT Support\source\repos\LMS\LMS.DataAccess\obj\Debug\net6.0\LMS.DataAccess.csproj.CopyComplete
+C:\Users\IT Support\source\repos\LMS\LMS.DataAccess\obj\Debug\net6.0\LMS.DataAccess.dll
+C:\Users\IT Support\source\repos\LMS\LMS.DataAccess\obj\Debug\net6.0\refint\LMS.DataAccess.dll
+C:\Users\IT Support\source\repos\LMS\LMS.DataAccess\obj\Debug\net6.0\LMS.DataAccess.pdb
+C:\Users\IT Support\source\repos\LMS\LMS.DataAccess\obj\Debug\net6.0\ref\LMS.DataAccess.dll

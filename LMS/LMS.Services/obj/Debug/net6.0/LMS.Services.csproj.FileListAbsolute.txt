@@ -1,0 +1,17 @@
+C:\Users\IT Support\source\repos\LMS\LMS.Services\bin\Debug\net6.0\LMS.Services.deps.json
+C:\Users\IT Support\source\repos\LMS\LMS.Services\bin\Debug\net6.0\LMS.Services.dll
+C:\Users\IT Support\source\repos\LMS\LMS.Services\bin\Debug\net6.0\LMS.Services.pdb
+C:\Users\IT Support\source\repos\LMS\LMS.Services\bin\Debug\net6.0\LMS.DataAccess.dll
+C:\Users\IT Support\source\repos\LMS\LMS.Services\bin\Debug\net6.0\LMS.Models.dll
+C:\Users\IT Support\source\repos\LMS\LMS.Services\bin\Debug\net6.0\LMS.DataAccess.pdb
+C:\Users\IT Support\source\repos\LMS\LMS.Services\bin\Debug\net6.0\LMS.Models.pdb
+C:\Users\IT Support\source\repos\LMS\LMS.Services\obj\Debug\net6.0\LMS.Services.csproj.AssemblyReference.cache
+C:\Users\IT Support\source\repos\LMS\LMS.Services\obj\Debug\net6.0\LMS.Services.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\IT Support\source\repos\LMS\LMS.Services\obj\Debug\net6.0\LMS.Services.AssemblyInfoInputs.cache
+C:\Users\IT Support\source\repos\LMS\LMS.Services\obj\Debug\net6.0\LMS.Services.AssemblyInfo.cs
+C:\Users\IT Support\source\repos\LMS\LMS.Services\obj\Debug\net6.0\LMS.Services.csproj.CoreCompileInputs.cache
+C:\Users\IT Support\source\repos\LMS\LMS.Services\obj\Debug\net6.0\LMS.Services.csproj.CopyComplete
+C:\Users\IT Support\source\repos\LMS\LMS.Services\obj\Debug\net6.0\LMS.Services.dll
+C:\Users\IT Support\source\repos\LMS\LMS.Services\obj\Debug\net6.0\refint\LMS.Services.dll
+C:\Users\IT Support\source\repos\LMS\LMS.Services\obj\Debug\net6.0\LMS.Services.pdb
+C:\Users\IT Support\source\repos\LMS\LMS.Services\obj\Debug\net6.0\ref\LMS.Services.dll

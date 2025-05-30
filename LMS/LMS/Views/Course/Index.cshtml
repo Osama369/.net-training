@@ -1,0 +1,29 @@
+﻿@model IEnumerable<LMS.Models.Models.Course>
+
+@{
+    ViewData["Title"] = "Courses";
+}
+
+<h2>Course List</h2>
+
+<p>
+    <a asp-action="Add" class="btn btn-primary">Add New Course</a>
+</p>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Course Title</th>
+            <th>Course Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var course in Model)
+        {
+            <tr>
+                <td>@course.CourseTitle</td>
+                <td>@course.CourseDescription</td>
+            </tr>
+        }
+    </tbody>
+</table>

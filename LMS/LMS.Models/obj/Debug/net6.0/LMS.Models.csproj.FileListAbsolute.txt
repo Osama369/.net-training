@@ -1,0 +1,12 @@
+C:\Users\IT Support\source\repos\LMS\LMS.Models\bin\Debug\net6.0\LMS.Models.deps.json
+C:\Users\IT Support\source\repos\LMS\LMS.Models\bin\Debug\net6.0\LMS.Models.dll
+C:\Users\IT Support\source\repos\LMS\LMS.Models\bin\Debug\net6.0\LMS.Models.pdb
+C:\Users\IT Support\source\repos\LMS\LMS.Models\obj\Debug\net6.0\LMS.Models.csproj.AssemblyReference.cache
+C:\Users\IT Support\source\repos\LMS\LMS.Models\obj\Debug\net6.0\LMS.Models.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\IT Support\source\repos\LMS\LMS.Models\obj\Debug\net6.0\LMS.Models.AssemblyInfoInputs.cache
+C:\Users\IT Support\source\repos\LMS\LMS.Models\obj\Debug\net6.0\LMS.Models.AssemblyInfo.cs
+C:\Users\IT Support\source\repos\LMS\LMS.Models\obj\Debug\net6.0\LMS.Models.csproj.CoreCompileInputs.cache
+C:\Users\IT Support\source\repos\LMS\LMS.Models\obj\Debug\net6.0\LMS.Models.dll
+C:\Users\IT Support\source\repos\LMS\LMS.Models\obj\Debug\net6.0\refint\LMS.Models.dll
+C:\Users\IT Support\source\repos\LMS\LMS.Models\obj\Debug\net6.0\LMS.Models.pdb
+C:\Users\IT Support\source\repos\LMS\LMS.Models\obj\Debug\net6.0\ref\LMS.Models.dll
