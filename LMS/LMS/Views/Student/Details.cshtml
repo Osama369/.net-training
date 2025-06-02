@@ -1,0 +1,48 @@
+﻿@model LMS.Models.Models.Student
+
+@{
+    ViewData["Title"] = "Student Details";
+}
+
+<h2>Student Details</h2>
+
+<div class="card mb-3" style="max-width: 600px;">
+    <div class="row g-0">
+        <div class="col-md-4 d-flex align-items-center justify-content-center">
+            @if (!string.IsNullOrEmpty(Model.url))
+            {
+                <img src="@Model.url" alt="Profile Image" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;" />
+            }
+            else
+            {
+                <span>No Image</span>
+            }
+        </div>
+        <div class="col-md-8">
+            <div class="card-body">
+                <h5 class="card-title">@Model.StudentName</h5>
+                <p class="card-text"><strong>Roll Number:</strong> @Model.RollNumber</p>
+                <p class="card-text"><strong>Class:</strong> @Model.Classes?.ClassName</p>
+                <p class="card-text"><strong>Courses:</strong>
+                    <br />
+                    @if (Model.Course != null && Model.Course.Count()>0)  // count>0
+                    {
+                        foreach (var course in Model.Course)
+                        {
+                            <span class="badge bg-info text-dark">@course.CourseTitle</span>
+                        }
+                    }
+                    else
+                    {
+                        <span>No Courses</span>
+                    }
+                </p>
+                <div class="mt-3">
+                    <a asp-action="Edit" asp-route-id="@Model.StudentID" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@Model.StudentID" class="btn btn-danger">Delete</a>
+                    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
